@@ -3,7 +3,10 @@ package sliv.tool.view
 import tornadofx.*
 
 class MainView : View() {
-    override val root = hbox {
-        label("Hi there!")
+    override val root = borderpane {
+        top<MenuBarView>()
+        center<SceneView>()
+        left<CatalogueView>()
+        right<SettingsView>()
     }
 }
