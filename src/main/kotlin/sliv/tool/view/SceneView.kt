@@ -5,8 +5,6 @@ import sliv.tool.controller.VisualizationController
 import tornadofx.*
 import java.io.FileInputStream
 
-//Image(FileInputStream("real-data-set1.png"))
-
 class SceneView : View() {
     private val controller: VisualizationController by inject()
 
