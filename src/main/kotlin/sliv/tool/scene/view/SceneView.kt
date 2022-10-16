@@ -1,7 +1,7 @@
-package sliv.tool.visualization.view
+package sliv.tool.scene.view
 
 import javafx.scene.image.Image
-import sliv.tool.visualization.controller.SceneController
+import sliv.tool.scene.controller.SceneController
 import tornadofx.*
 import java.io.FileInputStream
 

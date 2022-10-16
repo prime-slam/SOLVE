@@ -1,6 +1,6 @@
 package sliv.tool.settings.view
 
-import sliv.tool.visualization.controller.SceneController
+import sliv.tool.scene.controller.SceneController
 import tornadofx.*
 
 class SettingsView : View() {

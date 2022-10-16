@@ -1,4 +1,4 @@
-package sliv.tool.visualization.model
+package sliv.tool.scene.model
 
 import com.sun.javafx.geom.Rectangle
 

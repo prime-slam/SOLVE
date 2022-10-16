@@ -1,4 +1,4 @@
-package sliv.tool.visualization.controller
+package sliv.tool.scene.controller
 
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
