@@ -10,12 +10,12 @@ import sliv.tool.common.*
 abstract class Layer(val name: String) {
     var opacity: Double = DEFAULT_OPACITY
         set(value) {
-            if(value < 0 || value > 100)
+            if (!(0.0..100.0).contains(value))
                 throw IllegalArgumentException("Percent value should lie between 0 and 100")
             field = value
         }
 
     var enabled: Boolean = true
 
-    abstract fun matchWithColor(landmarkUid: Long) : Color
+    abstract fun matchWithColor(landmarkUid: Long): Color
 }

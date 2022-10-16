@@ -8,7 +8,7 @@ import java.io.FileInputStream
 //Image(FileInputStream("real-data-set1.png"))
 
 class SceneView : View() {
-    private val controller : VisualizationController by inject()
+    private val controller: VisualizationController by inject()
 
     override val root = vbox {
         scrollpane {
@@ -22,10 +22,18 @@ class SceneView : View() {
                 val step = 50
                 for (x in 0..pointsCount) {
                     val coordinate = (-x * step).toDouble()
-                    rectangle(coordinate, coordinate, pointsSize, pointsSize) { this.fillProperty().bind(controller.landmarksColorProperty) }
-                    rectangle(-coordinate, coordinate, pointsSize, pointsSize) { this.fillProperty().bind(controller.landmarksColorProperty) }
-                    rectangle(coordinate, -coordinate, pointsSize, pointsSize) { this.fillProperty().bind(controller.landmarksColorProperty) }
-                    rectangle(-coordinate, -coordinate, pointsSize, pointsSize) { this.fillProperty().bind(controller.landmarksColorProperty) }
+                    rectangle(coordinate, coordinate, pointsSize, pointsSize) {
+                        this.fillProperty().bind(controller.landmarksColorProperty)
+                    }
+                    rectangle(-coordinate, coordinate, pointsSize, pointsSize) {
+                        this.fillProperty().bind(controller.landmarksColorProperty)
+                    }
+                    rectangle(coordinate, -coordinate, pointsSize, pointsSize) {
+                        this.fillProperty().bind(controller.landmarksColorProperty)
+                    }
+                    rectangle(-coordinate, -coordinate, pointsSize, pointsSize) {
+                        this.fillProperty().bind(controller.landmarksColorProperty)
+                    }
                 }
             }
         }
