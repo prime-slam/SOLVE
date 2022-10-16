@@ -2,17 +2,4 @@ package sliv.tool.project.model
 
 import java.nio.file.Path
 
-class Project {
-    var currentDirectory: Path? = null
-        set(value) {
-            field = value
-            TODO("Validate")
-            updateFrames()
-        }
-
-    var frames: List<ProjectFrame>? = null
-
-    private fun updateFrames() {
-        TODO("Load project frames from the new directory")
-    }
-}
+data class Project(val currentDirectory: Path, val frames: List<ProjectFrame>)
