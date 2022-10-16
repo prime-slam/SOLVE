@@ -9,7 +9,7 @@ import javafx.scene.paint.Color
 sealed class Layer(val name: String) {
     var opacity: Double = DEFAULT_OPACITY
         set(value) {
-            if (!(0.0..100.0).contains(value))
+            if (value !in 0.0..100.0)
                 throw IllegalArgumentException("Percent value should lie between 0 and 100")
             field = value
         }
