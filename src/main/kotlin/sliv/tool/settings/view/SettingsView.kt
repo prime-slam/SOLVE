@@ -1,10 +1,10 @@
-package sliv.tool.view
+package sliv.tool.settings.view
 
-import sliv.tool.controller.VisualizationController
+import sliv.tool.scene.controller.SceneController
 import tornadofx.*
 
 class SettingsView : View() {
-    private val controller : VisualizationController by inject()
+    private val controller: SceneController by inject()
 
     override val root = vbox {
         label("Choose color for landmarks")
