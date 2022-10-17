@@ -16,25 +16,21 @@ class CSVLinesParser : ILinesParser {
     override fun parse(filePath: String): List<LineLandmark> {
         val lineLandmarks = mutableListOf<LineLandmark>()
 
-        println(
-            measureTimeMillis {
-                val textData = ParserUtils.readFileText(filePath) ?: return emptyList()
+        val textData = ParserUtils.readFileText(filePath) ?: return emptyList()
 
-                val csvSchema =
-                    csvMapper.readerFor(CSVLineLandmark::class.java).with(CsvSchema.emptySchema().withHeader())
-                val mappingIterator = csvSchema.readValues<CSVLineLandmark>(textData)
+        val csvSchema = csvMapper.readerFor(CSVLineLandmark::class.java).with(CsvSchema.emptySchema().withHeader())
+        val mappingIterator = csvSchema.readValues<CSVLineLandmark>(textData)
 
-                while (mappingIterator.hasNextValue()) {
-                    val csvLineLandmark: CSVLineLandmark = mappingIterator.nextValue()
-                    val lineLandmark = LineLandmark(
-                        csvLineLandmark.uid,
-                        Point(csvLineLandmark.x0, csvLineLandmark.y0),
-                        Point(csvLineLandmark.y0, csvLineLandmark.y1)
-                    )
-                    lineLandmarks.add(lineLandmark)
-                }
-            }
-        )
+        while (mappingIterator.hasNextValue()) {
+            val csvLineLandmark: CSVLineLandmark = mappingIterator.nextValue()
+            val lineLandmark = LineLandmark(
+                csvLineLandmark.uid,
+                Point(csvLineLandmark.x0, csvLineLandmark.y0),
+                Point(csvLineLandmark.y0, csvLineLandmark.y1)
+            )
+            lineLandmarks.add(lineLandmark)
+        }
+
         return lineLandmarks
     }
 }
