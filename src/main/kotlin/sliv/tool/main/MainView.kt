@@ -2,6 +2,8 @@ package sliv.tool.main
 
 import sliv.tool.catalogue.view.CatalogueView
 import sliv.tool.menubar.view.MenuBarView
+import sliv.tool.scene.model.Landmark
+import sliv.tool.scene.model.Layer
 import sliv.tool.settings.view.SettingsView
 import sliv.tool.scene.view.SceneView
 import tornadofx.*

@@ -5,6 +5,9 @@ package sliv.tool.scene.model
 //Settings menu appearance depends on type of the corresponding layer.
 //Meaningful changes here provokes scene redrawing.
 sealed class Layer(val name: String) {
+    class PointLayer(name: String) : Layer(name)
+    class LineLayer(name: String) : Layer(name)
+    class PlaneLayer(name: String) : Layer(name)
     var opacity: Double = DEFAULT_OPACITY
         set(value) {
             if (value !in 0.0..100.0)
