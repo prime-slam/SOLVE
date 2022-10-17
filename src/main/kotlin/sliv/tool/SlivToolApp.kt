@@ -1,6 +1,6 @@
 package sliv.tool
 
-import sliv.tool.view.MainView
+import sliv.tool.main.MainView
 import javafx.stage.Stage
 import tornadofx.*
 

@@ -1,7 +1,6 @@
-package sliv.tool.view
+package sliv.tool.catalogue.view
 
 import javafx.collections.FXCollections
-import javafx.scene.Parent
 import tornadofx.*
 
 class CatalogueView : View() {
