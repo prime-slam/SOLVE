@@ -1,4 +1,4 @@
-package sliv.tool.parsers.point_parsers
+package sliv.tool.parsers.points_parsers
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema

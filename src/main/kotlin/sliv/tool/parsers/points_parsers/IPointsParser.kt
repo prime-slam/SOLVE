@@ -1,4 +1,4 @@
-package sliv.tool.parsers.point_parsers
+package sliv.tool.parsers.points_parsers
 
 import sliv.tool.data_structures.landmarks.PointLandmark
 
