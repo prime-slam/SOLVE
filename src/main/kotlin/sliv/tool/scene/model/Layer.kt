@@ -1,7 +1,5 @@
 package sliv.tool.scene.model
 
-import javafx.scene.paint.Color
-
 //Stores common context for landmarks drawing.
 //Layers properties being edited in the settings menu.
 //Settings menu appearance depends on type of the corresponding layer.
@@ -15,6 +13,4 @@ sealed class Layer(val name: String) {
         }
 
     var enabled: Boolean = true
-
-    abstract fun matchWithColor(landmark: Landmark): Color
 }

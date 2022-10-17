@@ -1,10 +1,3 @@
 package sliv.tool.scene.model
 
-import javafx.scene.paint.Color
-import tornadofx.c
-
-class PointLayer(name: String) : Layer(name) {
-    private val color: Color = c(DEFAULT_COLOR)
-
-    override fun matchWithColor(landmark: Landmark): Color = color
-}
+class PointLayer(name: String) : Layer(name)
