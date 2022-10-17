@@ -6,27 +6,33 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import sliv.tool.data_structures.landmarks.LineLandmark
 import sliv.tool.data_structures.landmarks.Point
 import sliv.tool.parsers.ParserUtils
-import kotlin.system.measureTimeMillis
 
 class CSVLinesParser : ILinesParser {
-    private data class CSVLineLandmark(val uid: Long, val x0: Double, val y0: Double, val x1: Double, val y1: Double)
+    private data class CSVParserLineLandmark(
+        val uid: Long,
+        val x0: Double,
+        val y0: Double,
+        val x1: Double,
+        val y1: Double
+    )
 
     private val csvMapper = CsvMapper().registerModule(KotlinModule.Builder().build())
 
     override fun parse(filePath: String): List<LineLandmark> {
-        val lineLandmarks = mutableListOf<LineLandmark>()
-
         val textData = ParserUtils.readFileText(filePath) ?: return emptyList()
 
-        val csvSchema = csvMapper.readerFor(CSVLineLandmark::class.java).with(CsvSchema.emptySchema().withHeader())
-        val mappingIterator = csvSchema.readValues<CSVLineLandmark>(textData)
+        val lineLandmarks = mutableListOf<LineLandmark>()
+
+        val csvSchema =
+            csvMapper.readerFor(CSVParserLineLandmark::class.java).with(CsvSchema.emptySchema().withHeader())
+        val mappingIterator = csvSchema.readValues<CSVParserLineLandmark>(textData)
 
         while (mappingIterator.hasNextValue()) {
-            val csvLineLandmark: CSVLineLandmark = mappingIterator.nextValue()
+            val csvParserLineLandmark: CSVParserLineLandmark = mappingIterator.nextValue()
             val lineLandmark = LineLandmark(
-                csvLineLandmark.uid,
-                Point(csvLineLandmark.x0, csvLineLandmark.y0),
-                Point(csvLineLandmark.y0, csvLineLandmark.y1)
+                csvParserLineLandmark.uid,
+                Point(csvParserLineLandmark.x0, csvParserLineLandmark.y0),
+                Point(csvParserLineLandmark.y0, csvParserLineLandmark.y1)
             )
             lineLandmarks.add(lineLandmark)
         }
