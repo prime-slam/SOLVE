@@ -1,7 +1,6 @@
 package sliv.tool.menubar.view
 
 import sliv.tool.importer.view.ImporterView
-
 import tornadofx.*
 
 class MenuBarView : View() {
