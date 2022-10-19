@@ -1,15 +1,15 @@
 package sliv.tool.menubar.view
 
-import sliv.tool.main.MainController
+import sliv.tool.importer.view.ImporterView
+
 import tornadofx.*
 
 class MenuBarView : View() {
-    private val mainController: MainController by inject()
 
     override val root = hbox {
         button("Import project") {
-            action {
-                mainController.importTestData()
+            action{
+                ImporterView().openModal()
             }
         }
         button("Manage plugins") {
