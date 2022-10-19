@@ -8,9 +8,5 @@ class SettingsView : View() {
 
     override val root = vbox {
         label("Choose color for landmarks")
-        combobox {
-            items = controller.availableColors
-            bindSelected(controller.landmarksColorProperty)
-        }
     }
 }
