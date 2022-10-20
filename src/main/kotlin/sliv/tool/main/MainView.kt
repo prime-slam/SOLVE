@@ -7,12 +7,6 @@ import sliv.tool.scene.view.SceneView
 import tornadofx.*
 
 class MainView : View() {
-    private val mainController: MainController by inject()
-
-    init {
-        mainController.toString()
-    }
-
     override val root = borderpane {
         top<MenuBarView>()
         center<SceneView>()
