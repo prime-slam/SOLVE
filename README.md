@@ -4,6 +4,6 @@ The aim of the project is to create a powerful desktop application to make debug
 
 This tool will provide following features:
 
-* Visualization of landmarks of three types(points, lines, planes) on top of images
-* Mapping of the same landmarks between different images due to SLAM data association
-* Correcting landmarks position 
+* Visualization of landmarks of three types (points, lines, planes)
+* Mapping of the same landmarks between different images based on SLAM data association
+* Editing and fine-tuning landmarks positions and association
