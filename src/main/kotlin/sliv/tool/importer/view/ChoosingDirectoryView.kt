@@ -5,7 +5,6 @@ import javafx.stage.DirectoryChooser
 import sliv.tool.importer.controller.ImporterController
 import tornadofx.*
 
-
 class ChoosingDirectoryView : Fragment() {
     private val controller: ImporterController by inject()
 
@@ -15,18 +14,12 @@ class ChoosingDirectoryView : Fragment() {
         label {
             bind(controller.directoryPath)
         }
-        button("Change"){
-            action{
+        button("Change") {
+            action {
                 directoryChooser.title = ("Choose working directory")
                 val dir = directoryChooser.showDialog(currentStage)
                 controller.directoryPath.value = dir.absolutePath
             }
         }
     }
-
-
-
-
-
-    }
-
+}

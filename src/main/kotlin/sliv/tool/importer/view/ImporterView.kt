@@ -2,9 +2,7 @@ package sliv.tool.importer.view
 
 import javafx.geometry.Insets
 import tornadofx.borderpane
-
 import tornadofx.View
-
 
 class ImporterView: View("Choose working directory") {
     override val root = borderpane {
@@ -13,5 +11,4 @@ class ImporterView: View("Choose working directory") {
         padding = Insets(5.0, 0.0, 0.0, 20.0)
         top<ChoosingDirectoryView>()
     }
-
 }
