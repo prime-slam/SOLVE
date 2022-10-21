@@ -3,6 +3,7 @@ package sliv.tool.parsers
 import java.io.File
 import java.io.FileNotFoundException
 
+// Utility functions used in the parser module.
 object ParserUtils {
     fun readFileText(filePath: String): String? {
         var text: String? = null
