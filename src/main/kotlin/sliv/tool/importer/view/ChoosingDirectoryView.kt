@@ -13,7 +13,6 @@ class ChoosingDirectoryView : Fragment() {
         label {
             bind(controller.directoryPath)
         }
-
         button("Change") {
             action {
                 directoryChooser.title = ("Choose working directory")
@@ -24,6 +23,5 @@ class ChoosingDirectoryView : Fragment() {
         }
     }
 }
-
 
 
