@@ -8,13 +8,10 @@ import tornadofx.*
 
 class FrameView(width: Double, height: Double, private val frame: VisualizationFrame) : Fragment() {
     private val canvas = Canvas(width, height)
-    private val landmarksViews = HashMap<Layer, List<LandmarkView>>()
-
-    init {
-        frame.landmarks.forEach { layer ->
-            landmarksViews[layer.key] =
-                layer.value.map { landmark -> LandmarkView.create(canvas.graphicsContext2D, landmark) }
-        }
+    private var landmarksViews = buildMap(frame.landmarks.size) {
+        frame.landmarks.forEach { layer -> run {
+            put(layer.key, layer.value.map { landmark -> LandmarkView.create(landmark) })
+        }}
     }
 
     override val root = group {
@@ -29,7 +26,7 @@ class FrameView(width: Double, height: Double, private val frame: VisualizationF
         val gc = canvas.graphicsContext2D
         gc.clearRect(0.0, 0.0, canvas.width, canvas.height)
         gc.drawImage(frame.image, 0.0, 0.0)
-        doForAllEnabledLandmarks { view -> view.draw() }
+        doForAllEnabledLandmarks { view -> view.draw(gc) }
     }
 
     private fun onMouseMoved(event: MouseEvent) {
@@ -46,11 +43,11 @@ class FrameView(width: Double, height: Double, private val frame: VisualizationF
     }
 
     private fun doForAllEnabledLandmarks(delegate: (LandmarkView) -> Unit) {
-        for (layer in landmarksViews) {
-            if (!layer.key.enabled) {
-                continue
+        landmarksViews.forEach {
+            if (!it.key.enabled) {
+                return
             }
-            layer.value.forEach { view -> delegate(view) }
+            it.value.forEach { view -> delegate(view) }
         }
     }
 }

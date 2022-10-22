@@ -7,13 +7,13 @@ import sliv.tool.scene.model.*
 // Landmarks are not presented as visual node, this class is responsive for drawing and styling for landmarks
 // This has access to landmark data class and its layer
 // Due to possible performance issues it is not allowed to handle any events or receive any notifications
-sealed class LandmarkView(protected val gc: GraphicsContext) {
+sealed class LandmarkView {
     companion object {
-        fun create(gc: GraphicsContext, landmark: Landmark): LandmarkView {
+        fun create(landmark: Landmark): LandmarkView {
             return when (landmark) {
-                is Landmark.Keypoint -> KeypointView(gc, landmark)
-                is Landmark.Line -> LineView(gc, landmark)
-                is Landmark.Plane -> PlaneView(gc, landmark)
+                is Landmark.Keypoint -> KeypointView(landmark)
+                is Landmark.Line -> LineView(landmark)
+                is Landmark.Plane -> PlaneView(landmark)
             }
         }
     }
@@ -21,6 +21,6 @@ sealed class LandmarkView(protected val gc: GraphicsContext) {
     var state = LandmarkState.Ordinary
         protected set
 
-    abstract fun draw()
+    abstract fun draw(gc: GraphicsContext)
     abstract fun updateIsHovered(event: MouseEvent)
 }

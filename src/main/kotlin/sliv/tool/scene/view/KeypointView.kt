@@ -7,14 +7,14 @@ import sliv.tool.scene.model.Landmark
 import kotlin.math.abs
 import kotlin.math.hypot
 
-class KeypointView(gc: GraphicsContext, private val keypoint: Landmark.Keypoint) : LandmarkView(gc) {
+class KeypointView(private val keypoint: Landmark.Keypoint) : LandmarkView() {
     companion object {
         private const val OrdinaryRadius: Double = 10.0
     }
 
     private var radius = OrdinaryRadius
 
-    override fun draw() {
+    override fun draw(gc: GraphicsContext) {
         gc.fill = keypoint.layer.color
         gc.globalAlpha = keypoint.layer.opacity
         val x = keypoint.coordinate.x.toDouble()

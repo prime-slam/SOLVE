@@ -4,14 +4,14 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.input.MouseEvent
 import sliv.tool.scene.model.Landmark
 
-class LineView(gc: GraphicsContext, private val line: Landmark.Line) : LandmarkView(gc) {
+class LineView(private val line: Landmark.Line) : LandmarkView() {
     companion object {
         private const val OrdinaryWidth: Double = 5.0
     }
 
     private var width = OrdinaryWidth
 
-    override fun draw() {
+    override fun draw(gc: GraphicsContext) {
         gc.fill = line.layer.getColor(line)
         gc.globalAlpha = line.layer.opacity
         val x1 = line.startCoordinate.x.toDouble()

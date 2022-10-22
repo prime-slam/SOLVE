@@ -13,10 +13,14 @@ sealed class Layer(val name: String) {
 
     class LineLayer(name: String) : Layer(name) {
         private val colorMap = HashMap<Long, Color>()
+        private val usedColors = HashSet<Color>()
+
         fun getColor(landmark: Landmark): Color {
             val result = colorMap[landmark.uid]
             if (result == null) {
-                colorMap[landmark.uid] = generateRandomColor()
+                val color = generateRandomColorUnique(usedColors)
+                usedColors.add(color)
+                colorMap[landmark.uid] = color
             }
             return colorMap[landmark.uid]!!
         }

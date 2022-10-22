@@ -17,7 +17,7 @@ class MainController : Controller() {
         val layer = ProjectLayer(LayerKind.KEYPOINT, "ORB")
         val path = Paths.get("test/data/real-data-set1.png")
         val timestamp = LocalDateTime.now().atZone(ZoneId.of("UTC+03:00")).toInstant().toEpochMilli()
-        val landmarks = listOf(LandmarkFile(layer, Paths.get("test"), listOf()))
+        val landmarks = listOf(LandmarkFile(layer, Paths.get("test"), emptyList()))
         val frames = listOf(ProjectFrame(timestamp, path, landmarks))
         sceneFacade.visualize(listOf(layer), frames)
     }

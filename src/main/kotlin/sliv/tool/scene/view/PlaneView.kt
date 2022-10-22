@@ -5,8 +5,8 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import sliv.tool.scene.model.Landmark
 
-class PlaneView(gc: GraphicsContext, private val plane: Landmark.Plane) : LandmarkView(gc) {
-    override fun draw() {
+class PlaneView(private val plane: Landmark.Plane) : LandmarkView() {
+    override fun draw(gc: GraphicsContext) {
         gc.fill = Color.RED //TODO: use some colorizing delegate here
         gc.globalAlpha = plane.layer.opacity
         when (state) {
