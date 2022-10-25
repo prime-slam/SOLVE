@@ -1,5 +1,6 @@
 package sliv.tool.parsers
 
+import sliv.tool.scene.model.Point
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -15,4 +16,6 @@ object ParserUtils {
 
         return text
     }
+
+    fun doubleCoordinatesToScenePoint(x: Double, y: Double) = Point(x.toInt().toShort(), y.toInt().toShort())
 }

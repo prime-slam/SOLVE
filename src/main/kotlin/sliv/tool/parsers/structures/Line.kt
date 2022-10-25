@@ -1,6 +1,6 @@
-package sliv.tool.models.landmarks.csv
+package sliv.tool.parsers.structures
 
-data class CSVLineLandmark(
+data class Line(
     val uid: Long,
     val x0: Double,
     val y0: Double,

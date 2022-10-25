@@ -1,6 +1,6 @@
 package sliv.tool.parsers.lines
 
-import sliv.tool.models.landmarks.csv.CSVLineLandmark
+import sliv.tool.parsers.structures.Line
 import sliv.tool.parsers.CSVParser
 
-object CSVLinesParser : CSVParser<CSVLineLandmark>(CSVLineLandmark::class.java)
+object CSVLinesParser : CSVParser<Line>(Line::class.java)
