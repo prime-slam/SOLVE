@@ -7,10 +7,19 @@ import sliv.tool.scene.model.*
 import java.io.FileInputStream
 
 class SceneFacade(private val controller: SceneController) {
+    private val visualizationLayers = HashMap<String, Layer>()
+
     fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
+        layers.forEach { projectLayer ->
+            val visualizationLayer = visualizationLayers[projectLayer.name]
+            if (visualizationLayer != null && visualizationLayer.kind == projectLayer.kind) {
+                return //don't rewrite existing settings
+            }
+            visualizationLayers[projectLayer.name] = projectLayer.toVisualizationLayer()
+        }
         val visualizationLayers = layers.map { it.toVisualizationLayer() }
         val scene =
-            Scene({ i -> frames[i].toVisualizationFrame(visualizationLayers) }, frames.count(), visualizationLayers)
+            Scene({ i -> frames[i].toVisualizationFrame() }, frames.count(), visualizationLayers)
         controller.scene.value = scene
     }
 
@@ -22,19 +31,19 @@ class SceneFacade(private val controller: SceneController) {
         }
     }
 
-    private fun ProjectFrame.toVisualizationFrame(layers: List<Layer>): VisualizationFrame {
+    private fun ProjectFrame.toVisualizationFrame(): VisualizationFrame {
         val image = Image(FileInputStream(this.imagePath.toFile()))
         val landmarks = HashMap<Layer, List<Landmark>>()
-        this.landmarkFiles.forEach {
-            landmarks[layers.first { layer -> layer.name == it.projectLayer.name }] =
-                createLandmarks(it, layers).toList()
+        landmarkFiles.forEach { file ->
+            landmarks[visualizationLayers[file.projectLayer.name]!!] =
+                createLandmarks(file).toList()
         }
         return VisualizationFrame(image, this.timestamp, landmarks.toMap())
     }
 
     //TODO: use real parser instead of test data
-    private fun createLandmarks(file: LandmarkFile, layers: List<Layer>): Sequence<Landmark> {
-        val layer = layers.first { layer -> layer.name == file.projectLayer.name }
+    private fun createLandmarks(file: LandmarkFile): Sequence<Landmark> {
+        val layer = visualizationLayers[file.projectLayer.name]!!
         return when (file.projectLayer.kind) {
             LayerKind.KEYPOINT -> sequence {
                 for (i in 1..20) {
