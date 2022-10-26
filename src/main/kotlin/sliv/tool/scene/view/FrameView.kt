@@ -8,11 +8,9 @@ import tornadofx.*
 
 class FrameView(width: Double, height: Double, private val frame: VisualizationFrame) : Fragment() {
     private val canvas = Canvas(width, height)
-    private var landmarksViews = buildMap(frame.landmarks.size) {
-        frame.landmarks.forEach { layer -> run {
-            put(layer.key, layer.value.map { landmark -> LandmarkView.create(landmark) })
-        }}
-    }
+
+    private var landmarksViews =
+        frame.landmarks.mapValues { it.value.map { landmark -> LandmarkView.create(landmark) } }
 
     override val root = group {
         draw()
@@ -43,11 +41,11 @@ class FrameView(width: Double, height: Double, private val frame: VisualizationF
     }
 
     private fun doForAllEnabledLandmarks(delegate: (LandmarkView) -> Unit) {
-        landmarksViews.forEach {
-            if (!it.key.enabled) {
+        landmarksViews.forEach { (layer, landmarkViews) ->
+            if (!layer.enabled) {
                 return
             }
-            it.value.forEach { view -> delegate(view) }
+            landmarkViews.forEach { view -> delegate(view) }
         }
     }
 }

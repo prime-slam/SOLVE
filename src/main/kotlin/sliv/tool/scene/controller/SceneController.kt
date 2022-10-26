@@ -5,5 +5,5 @@ import sliv.tool.scene.model.*
 import tornadofx.*
 
 class SceneController : Controller() {
-    val scene = SimpleObjectProperty(Scene({ _ -> null }, 0, emptyList()))
+    val scene = SimpleObjectProperty(Scene({ index -> null }, 0, emptyList()))
 }

@@ -8,7 +8,7 @@ import java.io.FileInputStream
 
 class SceneFacade(private val controller: SceneController) {
     fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
-        val visualizationLayers = layers.map { x -> x.toVisualizationLayer() }
+        val visualizationLayers = layers.map { it.toVisualizationLayer() }
         val scene =
             Scene({ i -> frames[i].toVisualizationFrame(visualizationLayers) }, frames.count(), visualizationLayers)
         controller.scene.value = scene
