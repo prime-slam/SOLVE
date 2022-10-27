@@ -1,6 +1,6 @@
 package sliv.tool.parsers.lines
 
 import sliv.tool.parsers.CSVParser
-import sliv.tool.parsers.structures.Line as StorageFormatLine
+import sliv.tool.parsers.structures.Line
 
-object CSVLinesParser : CSVParser<StorageFormatLine>(StorageFormatLine::class.java)
+object CSVLinesParser : CSVParser<Line>(Line::class.java)
