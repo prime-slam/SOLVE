@@ -13,13 +13,12 @@ class SceneFacade(private val controller: SceneController) {
         layers.forEach { projectLayer ->
             val visualizationLayer = visualizationLayers[projectLayer.name]
             if (visualizationLayer != null && visualizationLayer.kind == projectLayer.kind) {
-                return //don't rewrite existing settings
+                return@forEach //don't rewrite existing settings
             }
             visualizationLayers[projectLayer.name] = projectLayer.toVisualizationLayer()
         }
-        val visualizationLayers = layers.map { it.toVisualizationLayer() }
         val scene =
-            Scene({ i -> frames[i].toVisualizationFrame() }, frames.count(), visualizationLayers)
+            Scene({ i -> frames[i].toVisualizationFrame() }, frames.count(), visualizationLayers.values.toList())
         controller.scene.value = scene
     }
 
@@ -35,8 +34,9 @@ class SceneFacade(private val controller: SceneController) {
         val image = Image(FileInputStream(this.imagePath.toFile()))
         val landmarks = HashMap<Layer, List<Landmark>>()
         landmarkFiles.forEach { file ->
-            landmarks[visualizationLayers[file.projectLayer.name]!!] =
-                createLandmarks(file).toList()
+            val visualizationLayer = visualizationLayers[file.projectLayer.name]
+                ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
+            landmarks[visualizationLayer] = createLandmarks(file).toList()
         }
         return VisualizationFrame(image, this.timestamp, landmarks.toMap())
     }
