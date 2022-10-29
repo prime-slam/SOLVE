@@ -8,7 +8,7 @@ class MenuBarView : View() {
 
     override val root = hbox {
         button("Import project") {
-            action{
+            action {
                 ImporterView().openModal()
             }
         }
