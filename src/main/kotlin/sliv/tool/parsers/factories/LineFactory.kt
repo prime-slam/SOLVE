@@ -1,4 +1,4 @@
-package sliv.tool.parsers.landmark_factories
+package sliv.tool.parsers.factories
 
 import sliv.tool.parsers.ParserUtils
 import sliv.tool.scene.model.Layer
