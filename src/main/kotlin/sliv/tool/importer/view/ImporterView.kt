@@ -10,6 +10,5 @@ class ImporterView: View("Choose working directory") {
         prefHeight = 600.0
         padding = Insets(5.0, 0.0, 0.0, 20.0)
         top<ChoosingDirectoryView>()
-        bottom<FileStructureView>()
     }
 }

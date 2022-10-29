@@ -8,7 +8,7 @@ import tornadofx.*
 class ChoosingDirectoryView : Fragment() {
     private val controller: ImporterController by inject()
 
-    private val directoryChooser = DirectoryChooser()
+    private val directoryChooser = DirectoryChooser().apply { title = "Choose working directory" }
     override val root = hbox(20) {
         padding = Insets(5.0, 0.0, 0.0, 200.0)
         label {
@@ -16,7 +16,6 @@ class ChoosingDirectoryView : Fragment() {
         }
         button("Change") {
             action {
-                directoryChooser.title = ("Choose working directory")
                 val dir = directoryChooser.showDialog(currentStage)
                 controller.directoryPath.value = dir.absolutePath
             }
