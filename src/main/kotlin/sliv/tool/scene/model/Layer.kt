@@ -1,23 +1,17 @@
 package sliv.tool.scene.model
 
 import javafx.scene.paint.Color
-import sliv.tool.project.model.LayerKind
 
 //Stores common context for landmarks drawing.
 //Layers properties being edited in the settings menu.
 //Settings menu appearance depends on type of the corresponding layer.
 //Meaningful changes here provokes scene redrawing.
 sealed class Layer(val name: String) {
-    abstract val kind: LayerKind
-
     class PointLayer(name: String) : Layer(name) {
-        override val kind = LayerKind.KEYPOINT
         var color: Color = DEFAULT_COLOR
     }
 
     class LineLayer(name: String) : Layer(name) {
-        override val kind = LayerKind.LINE
-
         private val colorMap = HashMap<Long, Color>()
         private val usedColors = HashSet<Color>()
 
@@ -32,9 +26,7 @@ sealed class Layer(val name: String) {
         }
     }
 
-    class PlaneLayer(name: String) : Layer(name) {
-        override val kind = LayerKind.PLANE
-    }
+    class PlaneLayer(name: String) : Layer(name)
 
     var opacity: Double = DEFAULT_OPACITY
         set(value) {

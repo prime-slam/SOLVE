@@ -11,11 +11,9 @@ class SceneFacade(private val controller: SceneController) {
 
     fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
         layers.forEach { projectLayer ->
-            val visualizationLayer = visualizationLayers[projectLayer.name]
-            if (visualizationLayer != null && visualizationLayer.kind == projectLayer.kind) {
-                return@forEach //don't rewrite existing settings
+            if (!visualizationLayers.contains(projectLayer.name)) { //don't rewrite existing settings
+                visualizationLayers[projectLayer.name] = projectLayer.toVisualizationLayer()
             }
-            visualizationLayers[projectLayer.name] = projectLayer.toVisualizationLayer()
         }
         val scene =
             Scene({ i -> frames[i].toVisualizationFrame() }, frames.count(), visualizationLayers.values.toList())
