@@ -15,8 +15,6 @@ class ChoosingDirectoryView : Fragment() {
         }
         button("Change") {
             action {
-                directoryChooser.title = ("Choose working directory")
-
                 val dir = directoryChooser.showDialog(currentStage)
                 controller.directoryPath.value = dir.absolutePath
             }
