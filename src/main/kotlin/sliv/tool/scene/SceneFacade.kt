@@ -6,9 +6,12 @@ import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.model.*
 import java.io.FileInputStream
 
+// Interaction interface of the scene for main controller
+// Should be recreated if new project was imported
 class SceneFacade(private val controller: SceneController) {
     private val visualizationLayers = HashMap<String, Layer>()
 
+    // Display new frames with landmarks
     fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
         layers.forEach { projectLayer ->
             if (!visualizationLayers.contains(projectLayer.name)) { //don't rewrite existing settings
