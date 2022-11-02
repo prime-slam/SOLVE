@@ -1,10 +1,8 @@
 package sliv.tool.scene
 
-import javafx.scene.image.Image
 import sliv.tool.project.model.*
 import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.model.*
-import java.io.FileInputStream
 
 class SceneFacade(private val controller: SceneController) {
     private val visualizationLayers = HashMap<String, Layer>()
@@ -32,13 +30,13 @@ class SceneFacade(private val controller: SceneController) {
     }
 
     private fun ProjectFrame.toVisualizationFrame(): VisualizationFrame {
-        val image = Image(FileInputStream(this.imagePath.toFile()))
+//        val image = Image(FileInputStream(this.imagePath.toFile())) TODO: Can't store in memory thousands of images, data virtualization is needed
         val landmarks = HashMap<Layer, List<Landmark>>()
         landmarkFiles.forEach { file ->
             landmarks[visualizationLayers[file.projectLayer.name]!!] =
                 createLandmarks(file).toList()
         }
-        return VisualizationFrame(image, this.timestamp, landmarks.toMap())
+        return VisualizationFrame(null, this.timestamp, landmarks.toMap())
     }
 
     //TODO: use real parser instead of test data

@@ -7,6 +7,7 @@ plugins {
 version = "0.1.0"
 
 val tornadofxVersion: String by rootProject
+val virtualizedfxVersion: String by rootProject
 
 repositories {
     mavenCentral()
@@ -25,6 +26,7 @@ javafx {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("no.tornado:tornadofx:$tornadofxVersion")
+    implementation("io.github.palexdev:virtualizedfx:$virtualizedfxVersion")
 
     testImplementation(kotlin("test"))
 }
