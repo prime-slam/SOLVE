@@ -1,37 +1,31 @@
 package sliv.tool.scene.view
 
-import io.github.palexdev.virtualizedfx.cell.GridCell
 import javafx.event.EventHandler
 import javafx.scene.Group
-import javafx.scene.Node
 import javafx.scene.canvas.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import sliv.tool.scene.model.*
 import tornadofx.*
 
-class FrameView(width: Double, height: Double, frame: VisualizationFrame?) : Group(), GridCell<VisualizationFrame?> {
-    private var frame: VisualizationFrame? = null
+class FrameView(width: Double, height: Double, frame: VisualizationFrame) : Group() {
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
     private var fakeImageColor: Color? = null
     private val canvas = Canvas(width, height)
 
     init {
-        updateItem(frame)
+        setFrame(frame)
         canvas.onMouseMoved = EventHandler { event: MouseEvent ->
             onMouseMoved(event)
         }
         add(canvas)
     }
 
-    override fun getNode(): Node {
-        return this
-    }
-
-    override fun updateItem(frame: VisualizationFrame?) {
-        this.frame = frame
-        landmarksViews = frame?.landmarks?.mapValues { it.value.map { landmark -> LandmarkView.create(landmark) } }
-        fakeImageColor = generateRandomColor()
+    fun setFrame(frame: VisualizationFrame) {
+        landmarksViews = frame.landmarks.mapValues {
+            it.value.map { landmark -> LandmarkView.create(landmark) }
+        }
+        fakeImageColor = generateRandomColor() //TODO: fake images
         draw()
     }
 
@@ -70,5 +64,4 @@ class FrameView(width: Double, height: Double, frame: VisualizationFrame?) : Gro
             draw()
         }
     }
-
 }

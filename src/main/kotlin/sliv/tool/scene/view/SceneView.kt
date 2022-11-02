@@ -1,13 +1,8 @@
 package sliv.tool.scene.view
 
-import io.github.palexdev.mfxcore.base.beans.Size
-import io.github.palexdev.mfxcore.collections.ObservableGrid
-import io.github.palexdev.virtualizedfx.enums.ScrollPaneEnums
-import io.github.palexdev.virtualizedfx.grid.VirtualGrid
-import io.github.palexdev.virtualizedfx.utils.*
 import sliv.tool.scene.controller.SceneController
+import sliv.tool.scene.view.virtualizedfx.VirtualizedFXGridProvider
 import tornadofx.*
-
 
 class SceneView : View() {
     private val controller: SceneController by inject()
@@ -34,14 +29,19 @@ class SceneView : View() {
         val width = 500.0
         val height = 500.0
 
-        val data = ObservableGrid.fromList(frames, 30)
-        val grid = VirtualGrid(data) { frame -> FrameView(width, height, frame) }
-        grid.cellSize = Size(width + 10.0, height + 10.0)
+        val margin = 10.0
 
-        val vsp = VSPUtils.wrap(grid)
-        vsp.layoutMode = ScrollPaneEnums.LayoutMode.COMPACT
-        vsp.isAutoHideBars = true
+        val columnsNumber = 30 //TODO: should be set from the UI
 
-        add(vsp)
+        val grid =
+            VirtualizedFXGridProvider.createGrid(frames, columnsNumber, width + margin, height + margin) { frame ->
+                FrameView(
+                    width,
+                    height,
+                    frame
+                )
+            }
+
+        add(grid)
     }
 }
