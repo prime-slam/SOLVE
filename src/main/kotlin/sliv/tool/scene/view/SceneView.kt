@@ -36,7 +36,7 @@ class SceneView : View() {
 
         val data = ObservableGrid.fromList(frames, 30)
         val grid = VirtualGrid(data) { frame -> FrameView(width, height, frame) }
-        grid.cellSize = Size(width, height)
+        grid.cellSize = Size(width + 10.0, height + 10.0)
 
         val vsp = VSPUtils.wrap(grid)
         vsp.layoutMode = ScrollPaneEnums.LayoutMode.COMPACT
