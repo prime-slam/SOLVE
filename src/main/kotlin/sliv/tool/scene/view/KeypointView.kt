@@ -17,8 +17,8 @@ class KeypointView(private val keypoint: Landmark.Keypoint) : LandmarkView() {
     override fun draw(gc: GraphicsContext) {
         gc.fill = keypoint.layer.color
         gc.globalAlpha = keypoint.layer.opacity
-        val x = keypoint.coordinate.x.toDouble()
-        val y = keypoint.coordinate.y.toDouble()
+        val x = keypoint.coordinate.x.toDouble() - radius / 2
+        val y = keypoint.coordinate.y.toDouble() - radius / 2
         when (state) {
             LandmarkState.Ordinary -> gc.fillOval(x, y, radius, radius)
             LandmarkState.Hovered -> {
