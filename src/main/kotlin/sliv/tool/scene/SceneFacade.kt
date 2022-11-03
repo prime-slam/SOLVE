@@ -3,6 +3,7 @@ package sliv.tool.scene
 import sliv.tool.project.model.*
 import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.model.*
+import kotlin.random.Random
 
 // Interaction interface of the scene for main controller
 // Should be recreated if new project was imported
@@ -45,10 +46,13 @@ class SceneFacade(private val controller: SceneController) {
         val layer = visualizationLayers[file.projectLayer.name]!!
         return when (file.projectLayer.kind) {
             LayerKind.KEYPOINT -> sequence {
-                for (i in 1..20) {
+                val random = Random(System.currentTimeMillis())
+                for (i in 1..50) {
+                    val x = random.nextInt(0, 500).toShort()
+                    val y = random.nextInt(0, 500).toShort()
                     yield(
                         Landmark.Keypoint(
-                            i.toLong(), layer as Layer.PointLayer, Point((i * 15).toShort(), (i * 15).toShort())
+                            i.toLong(), layer as Layer.PointLayer, Point(x, y)
                         )
                     )
                 }
