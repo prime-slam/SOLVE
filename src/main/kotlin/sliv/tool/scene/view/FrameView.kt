@@ -10,7 +10,6 @@ import tornadofx.*
 
 class FrameView(width: Double, height: Double, frame: VisualizationFrame) : Group() {
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
-    private var fakeImageColor: Color? = null
     private val canvas = Canvas(width, height)
 
     init {
@@ -25,7 +24,6 @@ class FrameView(width: Double, height: Double, frame: VisualizationFrame) : Grou
         landmarksViews = frame.landmarks.mapValues {
             it.value.map { landmark -> LandmarkView.create(landmark) }
         }
-        fakeImageColor = generateRandomColor() //TODO: fake images
         draw()
     }
 
@@ -39,7 +37,7 @@ class FrameView(width: Double, height: Double, frame: VisualizationFrame) : Grou
 
     private fun drawFakeImage() {
         val gc = canvas.graphicsContext2D
-        gc.fill = fakeImageColor
+        gc.fill = Color.GREY
         gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
     }
 
