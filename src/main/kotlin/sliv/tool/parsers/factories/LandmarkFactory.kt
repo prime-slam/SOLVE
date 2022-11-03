@@ -7,6 +7,7 @@ import sliv.tool.scene.model.Layer
 // data storage format.
 // Accepts T parameter as a data class corresponding to the data storage format.
 // Accepts S parameter as a scene landmark class.
-interface LandmarkFactory<T, S : Landmark> {
-    fun buildLandmark(storageFormatLandmark: T, containingLayer: Layer): S
+// Accepts C parameter as a corresponding layer.
+interface LandmarkFactory<T, S : Landmark, C : Layer> {
+    fun buildLandmark(storageFormatLandmark: T, containingLayer: C): S
 }
