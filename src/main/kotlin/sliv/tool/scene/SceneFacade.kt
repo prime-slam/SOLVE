@@ -1,10 +1,9 @@
 package sliv.tool.scene
 
-import javafx.scene.image.Image
 import sliv.tool.project.model.*
 import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.model.*
-import java.io.FileInputStream
+import kotlin.random.Random
 
 // Interaction interface of the scene for main controller
 // Should be recreated if new project was imported
@@ -32,14 +31,14 @@ class SceneFacade(private val controller: SceneController) {
     }
 
     private fun ProjectFrame.toVisualizationFrame(): VisualizationFrame {
-        val image = Image(FileInputStream(this.imagePath.toFile()))
+//        val image = Image(FileInputStream(this.imagePath.toFile())) TODO: Can't store in memory thousands of images, data virtualization is needed
         val landmarks = HashMap<Layer, List<Landmark>>()
         landmarkFiles.forEach { file ->
             val visualizationLayer = visualizationLayers[file.projectLayer.name]
                 ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
             landmarks[visualizationLayer] = createLandmarks(file).toList()
         }
-        return VisualizationFrame(image, this.timestamp, landmarks.toMap())
+        return VisualizationFrame(null, this.timestamp, landmarks.toMap())
     }
 
     //TODO: use real parser instead of test data
@@ -47,10 +46,13 @@ class SceneFacade(private val controller: SceneController) {
         val layer = visualizationLayers[file.projectLayer.name]!!
         return when (file.projectLayer.kind) {
             LayerKind.KEYPOINT -> sequence {
-                for (i in 1..20) {
+                val random = Random(System.currentTimeMillis())
+                for (i in 1..50) {
+                    val x = random.nextInt(0, 500).toShort()
+                    val y = random.nextInt(0, 500).toShort()
                     yield(
                         Landmark.Keypoint(
-                            i.toLong(), layer as Layer.PointLayer, Point((i * 15).toShort(), (i * 15).toShort())
+                            i.toLong(), layer as Layer.PointLayer, Point(x, y)
                         )
                     )
                 }
