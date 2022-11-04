@@ -23,9 +23,9 @@ class SceneView : View() {
         root.children.clear()
 
         val scene = controller.scene.value
-        val frames = (0 until scene.framesCount).map { i -> scene.getFrame.invoke(i)!! }
+        val frames = (0 until scene.framesCount).mapNotNull { i -> scene.getFrame.invoke(i) }
 
-        //TODO: all cells should have the same size. I can get it from the image of the first frame. What to do if some images have another size (irregular case).
+        //TODO: get size from the first image after data virtualization will be done
         val width = 500.0
         val height = 500.0
 
@@ -33,14 +33,16 @@ class SceneView : View() {
 
         val columnsNumber = 30 //TODO: should be set from the UI
 
-        val grid =
-            VirtualizedFXGridProvider.createGrid(frames, columnsNumber, width + margin, height + margin) { frame ->
-                FrameView(
-                    width,
-                    height,
-                    frame
-                )
-            }
+        val grid = VirtualizedFXGridProvider.createGrid(
+            frames,
+            columnsNumber,
+            width + margin,
+            height + margin
+        ) { frame ->
+            FrameView(
+                width, height, frame
+            )
+        }
 
         add(grid)
     }

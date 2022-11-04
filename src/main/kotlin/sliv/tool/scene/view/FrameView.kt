@@ -21,6 +21,7 @@ class FrameView(width: Double, height: Double, frame: VisualizationFrame) : Grou
     }
 
     fun setFrame(frame: VisualizationFrame) {
+        //TODO: warn if image size doesn't equal to the frame size
         landmarksViews = frame.landmarks.mapValues {
             it.value.map { landmark -> LandmarkView.create(landmark) }
         }
