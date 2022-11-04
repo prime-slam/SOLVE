@@ -2,7 +2,6 @@ package sliv.tool.scene.view
 
 import javafx.scene.Node
 import sliv.tool.scene.model.VisualizationFrame
-import java.util.function.Function
 
 interface GridProvider {
     fun createGrid(
@@ -10,6 +9,6 @@ interface GridProvider {
         columnsNumber: Int,
         cellWidth: Double,
         cellHeight: Double,
-        cellFactory: Function<VisualizationFrame, FrameView>
+        cellFactory: (VisualizationFrame) -> FrameView
     ): Node
 }
