@@ -9,6 +9,7 @@ version = "0.1.0"
 val tornadofxVersion: String by rootProject
 val jacksonCSVVersion: String by rootProject
 val jacksonModuleKotlinVersion: String by rootProject
+val virtualizedfxVersion: String by rootProject
 
 repositories {
     mavenCentral()
@@ -29,6 +30,7 @@ dependencies {
     implementation("no.tornado:tornadofx:$tornadofxVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonCSVVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
+    implementation("io.github.palexdev:virtualizedfx:$virtualizedfxVersion")
     testImplementation(kotlin("test"))
 }
 
