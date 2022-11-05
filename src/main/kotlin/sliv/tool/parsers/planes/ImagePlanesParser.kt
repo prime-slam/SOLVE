@@ -9,6 +9,7 @@ import sliv.tool.parsers.Parser
 import sliv.tool.parsers.structures.Plane
 import sliv.tool.scene.model.Point
 
+// Describes types of image formats, according to their color segments number.
 private enum class ColorSegmentsType {
     TRIPLE {
         override fun colorComponentsNumber() = 3
@@ -27,6 +28,7 @@ private enum class ColorSegmentsType {
     abstract fun colorComponentsNumber(): Int
 }
 
+// A parser class for planes stored in images in a form of a mask.
 object ImagePlanesParser : Parser<Plane> {
     private fun isPlanePixel(pixelIndex: Int, imageByteDataArray: ByteArray, segmentsType: ColorSegmentsType): Boolean {
         val segmentsByteOffset = segmentsType.segmentsByteOffset()
