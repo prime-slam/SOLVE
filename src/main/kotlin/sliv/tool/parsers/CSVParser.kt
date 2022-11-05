@@ -16,7 +16,7 @@ abstract class CSVParser<T>(private val format: Class<T>) : Parser<T> {
         return csvSchema.readValues<T>(textData).readAll()
     }
 
-    override fun extractUIDs(filePath: String): List<Long> {
+    protected fun extractUIDs(filePath: String): List<Long> {
         val textData = ParserUtils.readFileText(filePath) ?: return emptyList()
 
         val csvSchema = mapper.readerFor(Map::class.java).with(CsvSchema.emptySchema().withHeader())
