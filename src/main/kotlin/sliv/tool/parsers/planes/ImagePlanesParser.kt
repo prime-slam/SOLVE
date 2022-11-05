@@ -14,13 +14,13 @@ private enum class ColorSegmentsType {
     TRIPLE {
         override fun colorComponentsNumber() = 3
 
-        override fun segmentsByteOffset() = 1
+        override fun segmentsByteOffset() = 0
     },
 
     QUAD {
         override fun colorComponentsNumber() = 4
 
-        override fun segmentsByteOffset() = 0
+        override fun segmentsByteOffset() = 1
     };
 
     abstract fun segmentsByteOffset(): Int
