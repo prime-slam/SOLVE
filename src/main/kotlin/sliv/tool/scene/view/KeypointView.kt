@@ -1,7 +1,6 @@
 package sliv.tool.scene.view
 
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import sliv.tool.scene.model.Landmark
 import kotlin.math.abs
@@ -28,14 +27,9 @@ class KeypointView(private val keypoint: Landmark.Keypoint) : LandmarkView() {
         }
     }
 
-    override fun updateIsHovered(event: MouseEvent) {
-        val xDiff = abs(keypoint.coordinate.x - event.x)
-        val yDiff = abs(keypoint.coordinate.y - event.y)
-
-        state = if (hypot(xDiff, yDiff) < radius) {
-            LandmarkState.Hovered
-        } else {
-            LandmarkState.Ordinary
-        }
+    override fun isHovered(x: Double, y: Double): Boolean {
+        val xDiff = abs(keypoint.coordinate.x - x)
+        val yDiff = abs(keypoint.coordinate.y - y)
+        return hypot(xDiff, yDiff) < radius
     }
 }
