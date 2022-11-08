@@ -10,13 +10,13 @@ class LineView(private val line: Landmark.Line) : LandmarkView() {
 
     private var width = OrdinaryWidth
 
-    override fun draw(gc: GraphicsContext) {
+    override fun draw(gc: GraphicsContext, scale: Double) {
         gc.fill = line.layer.getColor(line)
         gc.globalAlpha = line.layer.opacity
-        val x1 = line.startCoordinate.x.toDouble()
-        val y1 = line.startCoordinate.y.toDouble()
-        val x2 = line.finishCoordinate.y.toDouble()
-        val y2 = line.finishCoordinate.y.toDouble()
+        val x1 = line.startCoordinate.x.toDouble() * scale
+        val y1 = line.startCoordinate.y.toDouble() * scale
+        val x2 = line.finishCoordinate.y.toDouble() * scale
+        val y2 = line.finishCoordinate.y.toDouble() * scale
         gc.lineWidth = width
         when (state) {
             LandmarkState.Ordinary -> gc.strokeLine(x1, y1, x2, y2)
@@ -24,7 +24,7 @@ class LineView(private val line: Landmark.Line) : LandmarkView() {
         }
     }
 
-    override fun isHovered(x: Double, y: Double): Boolean {
+    override fun isHovered(x: Double, y: Double, scale: Double): Boolean {
         TODO("Check if the point within the line")
     }
 }

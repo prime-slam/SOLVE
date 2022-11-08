@@ -5,8 +5,10 @@ import io.github.palexdev.mfxcore.collections.ObservableGrid
 import io.github.palexdev.virtualizedfx.enums.ScrollPaneEnums
 import io.github.palexdev.virtualizedfx.grid.VirtualGrid
 import io.github.palexdev.virtualizedfx.utils.VSPUtils
+import javafx.beans.property.DoubleProperty
 import sliv.tool.scene.model.VisualizationFrame
 import sliv.tool.scene.view.*
+import tornadofx.onChange
 
 object VirtualizedFXGridProvider : GridProvider {
     override fun createGrid(
@@ -14,6 +16,7 @@ object VirtualizedFXGridProvider : GridProvider {
         columnsNumber: Int,
         cellWidth: Double,
         cellHeight: Double,
+        scale: DoubleProperty,
         cellFactory: (VisualizationFrame) -> FrameView
     ): Grid {
         val gridData = ObservableGrid.fromList(data, columnsNumber)
@@ -23,6 +26,16 @@ object VirtualizedFXGridProvider : GridProvider {
         val vsp = VSPUtils.wrap(grid)
         vsp.layoutMode = ScrollPaneEnums.LayoutMode.COMPACT
         vsp.isAutoHideBars = true
+
+        scale.onChange { newScale ->
+            try {
+                grid.cellSize = Size(
+                    cellWidth * newScale, cellHeight * newScale
+                ) //TODO: in many cases VirtualGrid drops position when cell size changed
+            } catch (e: Exception) {
+                println("Cell size exception") //TODO: bug in VirtualGrid
+            }
+        }
 
         return VirtualizedFXGrid(grid, vsp)
     }

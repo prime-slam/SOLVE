@@ -20,19 +20,20 @@ sealed class LandmarkView {
     var state = LandmarkState.Ordinary
         protected set
 
-    abstract fun draw(gc: GraphicsContext)
-    fun updateIsHovered(x: Double, y: Double) {
+    abstract fun draw(gc: GraphicsContext, scale: Double)
+
+    fun updateIsHovered(x: Double, y: Double, scale: Double) {
         if (x < 0 || y < 0) {
             state = LandmarkState.Ordinary
             return
         }
 
-        state = if (isHovered(x, y)) {
+        state = if (isHovered(x, y, scale)) {
             LandmarkState.Hovered
         } else {
             LandmarkState.Ordinary
         }
     }
 
-    protected abstract fun isHovered(x: Double, y: Double): Boolean
+    protected abstract fun isHovered(x: Double, y: Double, scale: Double): Boolean
 }
