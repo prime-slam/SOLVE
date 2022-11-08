@@ -1,6 +1,6 @@
 package sliv.tool.scene.view
 
-import javafx.scene.control.Slider
+import javafx.beans.property.SimpleDoubleProperty
 import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.view.virtualizedfx.VirtualizedFXGridProvider
 import tornadofx.*
@@ -31,22 +31,29 @@ class SceneView : View() {
         val height = 500.0
         val margin = 10.0
 
-        val slider = Slider(0.3, 5.0, 1.0)
+        val scaleProperty = SimpleDoubleProperty(1.0)
 
         val columnsNumber = 30 //TODO: should be set from the UI
 
         val grid = VirtualizedFXGridProvider.createGrid(
-            frames, columnsNumber, width + margin, height + margin, slider.valueProperty()
+            frames, columnsNumber, width + margin, height + margin, scaleProperty
         ) { frame ->
             FrameView(
-                width, height, slider.valueProperty(), frame
+                width, height, scaleProperty, frame
             )
         }
 
         grid.setUpPanning()
-        vbox {
-            add(slider)
-            add(grid.getNode())
+
+        val scaleFactor = 0.05
+        grid.getNode().setOnScroll { event ->
+            if(event.deltaY > 0) {
+                scaleProperty.value += scaleFactor
+            } else if(event.deltaY < 0) {
+                scaleProperty.value -= scaleFactor
+            }
         }
+
+        add(grid.getNode())
     }
 }
