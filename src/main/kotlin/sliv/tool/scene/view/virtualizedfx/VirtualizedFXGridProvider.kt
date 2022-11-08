@@ -26,6 +26,8 @@ object VirtualizedFXGridProvider : GridProvider {
         val vsp = VSPUtils.wrap(grid)
         vsp.layoutMode = ScrollPaneEnums.LayoutMode.COMPACT
         vsp.isAutoHideBars = true
+        vsp.isSmoothScroll = true
+        VSPUtils.setVSpeed(vsp, 50.0, 0.0, 50.0) //TODO: temporary solution to avoid vsp scrolling
 
         scale.onChange { newScale ->
             try {
