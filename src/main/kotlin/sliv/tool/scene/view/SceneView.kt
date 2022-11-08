@@ -44,6 +44,7 @@ class SceneView : View() {
             )
         }
 
-        add(grid)
+        grid.setUpPanning()
+        add(grid.getNode())
     }
 }

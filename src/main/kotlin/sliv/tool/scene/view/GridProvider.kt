@@ -1,6 +1,5 @@
 package sliv.tool.scene.view
 
-import javafx.scene.Node
 import sliv.tool.scene.model.VisualizationFrame
 
 interface GridProvider {
@@ -10,5 +9,5 @@ interface GridProvider {
         cellWidth: Double,
         cellHeight: Double,
         cellFactory: (VisualizationFrame) -> FrameView
-    ): Node
+    ): Grid
 }

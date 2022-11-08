@@ -5,7 +5,6 @@ import io.github.palexdev.mfxcore.collections.ObservableGrid
 import io.github.palexdev.virtualizedfx.enums.ScrollPaneEnums
 import io.github.palexdev.virtualizedfx.grid.VirtualGrid
 import io.github.palexdev.virtualizedfx.utils.VSPUtils
-import javafx.scene.Node
 import sliv.tool.scene.model.VisualizationFrame
 import sliv.tool.scene.view.*
 
@@ -16,7 +15,7 @@ object VirtualizedFXGridProvider : GridProvider {
         cellWidth: Double,
         cellHeight: Double,
         cellFactory: (VisualizationFrame) -> FrameView
-    ): Node {
+    ): Grid {
         val gridData = ObservableGrid.fromList(data, columnsNumber)
         val grid = VirtualGrid(gridData) { item -> FrameViewAdapter(cellFactory(item)) }
         grid.cellSize = Size(cellWidth, cellHeight)
@@ -25,6 +24,6 @@ object VirtualizedFXGridProvider : GridProvider {
         vsp.layoutMode = ScrollPaneEnums.LayoutMode.COMPACT
         vsp.isAutoHideBars = true
 
-        return vsp
+        return VirtualizedFXGrid(grid, vsp)
     }
 }
