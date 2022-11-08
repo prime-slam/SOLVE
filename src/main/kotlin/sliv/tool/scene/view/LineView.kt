@@ -1,7 +1,6 @@
 package sliv.tool.scene.view
 
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.input.MouseEvent
 import sliv.tool.scene.model.Landmark
 
 class LineView(private val line: Landmark.Line) : LandmarkView() {
@@ -25,7 +24,7 @@ class LineView(private val line: Landmark.Line) : LandmarkView() {
         }
     }
 
-    override fun updateIsHovered(event: MouseEvent) {
+    override fun isHovered(x: Double, y: Double): Boolean {
         TODO("Check if the point within the line")
     }
 }

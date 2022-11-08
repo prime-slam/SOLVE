@@ -1,7 +1,6 @@
 package sliv.tool.scene.view
 
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.input.MouseEvent
 import sliv.tool.scene.model.*
 
 // Landmarks are not presented as visual node, this class is responsive for drawing and styling for landmarks
@@ -22,5 +21,18 @@ sealed class LandmarkView {
         protected set
 
     abstract fun draw(gc: GraphicsContext)
-    abstract fun updateIsHovered(event: MouseEvent)
+    fun updateIsHovered(x: Double, y: Double) {
+        if (x < 0 || y < 0) {
+            state = LandmarkState.Ordinary
+            return
+        }
+
+        state = if (isHovered(x, y)) {
+            LandmarkState.Hovered
+        } else {
+            LandmarkState.Ordinary
+        }
+    }
+
+    protected abstract fun isHovered(x: Double, y: Double): Boolean
 }

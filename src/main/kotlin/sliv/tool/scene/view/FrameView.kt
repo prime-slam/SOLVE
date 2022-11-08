@@ -1,9 +1,7 @@
 package sliv.tool.scene.view
 
-import javafx.event.EventHandler
 import javafx.scene.Group
 import javafx.scene.canvas.*
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import sliv.tool.scene.model.*
 import tornadofx.*
@@ -14,8 +12,11 @@ class FrameView(width: Double, height: Double, frame: VisualizationFrame) : Grou
 
     init {
         setFrame(frame)
-        canvas.onMouseMoved = EventHandler { event: MouseEvent ->
-            onMouseMoved(event)
+        canvas.setOnMouseMoved { event ->
+            onMouseMoved(event.x, event.y)
+        }
+        canvas.setOnMouseExited {
+            onMouseMoved(-1.0, -1.0)
         }
         add(canvas)
     }
@@ -51,11 +52,11 @@ class FrameView(width: Double, height: Double, frame: VisualizationFrame) : Grou
         }
     }
 
-    private fun onMouseMoved(event: MouseEvent) {
+    private fun onMouseMoved(x: Double, y: Double) {
         var stateChanged = false
         doForAllEnabledLandmarks { view ->
             val prevState = view.state
-            view.updateIsHovered(event)
+            view.updateIsHovered(x, y)
             stateChanged = stateChanged || view.state != prevState
         }
 

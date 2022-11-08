@@ -1,7 +1,6 @@
 package sliv.tool.scene.view
 
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import sliv.tool.scene.model.Landmark
 
@@ -20,7 +19,7 @@ class PlaneView(private val plane: Landmark.Plane) : LandmarkView() {
         }
     }
 
-    override fun updateIsHovered(event: MouseEvent) {
-        TODO("Check if the point within the plane")
+    override fun isHovered(x: Double, y: Double): Boolean {
+        TODO("Not yet implemented")
     }
 }
