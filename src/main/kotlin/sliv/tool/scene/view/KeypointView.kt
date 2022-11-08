@@ -13,11 +13,11 @@ class KeypointView(private val keypoint: Landmark.Keypoint) : LandmarkView() {
 
     private var radius = OrdinaryRadius
 
-    override fun draw(gc: GraphicsContext) {
+    override fun draw(gc: GraphicsContext, scale: Double) {
         gc.fill = keypoint.layer.color
         gc.globalAlpha = keypoint.layer.opacity
-        val x = keypoint.coordinate.x.toDouble() - radius / 2
-        val y = keypoint.coordinate.y.toDouble() - radius / 2
+        val x = keypoint.coordinate.x.toDouble() * scale - radius / 2
+        val y = keypoint.coordinate.y.toDouble() * scale - radius / 2
         when (state) {
             LandmarkState.Ordinary -> gc.fillOval(x, y, radius, radius)
             LandmarkState.Hovered -> {
@@ -27,9 +27,9 @@ class KeypointView(private val keypoint: Landmark.Keypoint) : LandmarkView() {
         }
     }
 
-    override fun isHovered(x: Double, y: Double): Boolean {
-        val xDiff = abs(keypoint.coordinate.x - x)
-        val yDiff = abs(keypoint.coordinate.y - y)
-        return hypot(xDiff, yDiff) < radius
+    override fun isHovered(x: Double, y: Double, scale: Double): Boolean {
+        val xDiff = abs(keypoint.coordinate.x - x / scale)
+        val yDiff = abs(keypoint.coordinate.y - y / scale)
+        return hypot(xDiff, yDiff) < radius / scale
     }
 }

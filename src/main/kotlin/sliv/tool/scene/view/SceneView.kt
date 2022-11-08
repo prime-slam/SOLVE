@@ -1,5 +1,6 @@
 package sliv.tool.scene.view
 
+import javafx.scene.control.Slider
 import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.view.virtualizedfx.VirtualizedFXGridProvider
 import tornadofx.*
@@ -28,23 +29,24 @@ class SceneView : View() {
         //TODO: get size from the first image after data virtualization will be done
         val width = 500.0
         val height = 500.0
-
         val margin = 10.0
+
+        val slider = Slider(0.3, 5.0, 1.0)
 
         val columnsNumber = 30 //TODO: should be set from the UI
 
         val grid = VirtualizedFXGridProvider.createGrid(
-            frames,
-            columnsNumber,
-            width + margin,
-            height + margin
+            frames, columnsNumber, width + margin, height + margin, slider.valueProperty()
         ) { frame ->
             FrameView(
-                width, height, frame
+                width, height, slider.valueProperty(), frame
             )
         }
 
         grid.setUpPanning()
-        add(grid.getNode())
+        vbox {
+            add(slider)
+            add(grid.getNode())
+        }
     }
 }

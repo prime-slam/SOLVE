@@ -1,5 +1,6 @@
 package sliv.tool.scene.view
 
+import javafx.beans.property.DoubleProperty
 import sliv.tool.scene.model.VisualizationFrame
 
 interface GridProvider {
@@ -8,6 +9,7 @@ interface GridProvider {
         columnsNumber: Int,
         cellWidth: Double,
         cellHeight: Double,
+        scale: DoubleProperty,
         cellFactory: (VisualizationFrame) -> FrameView
     ): Grid
 }
