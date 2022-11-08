@@ -46,10 +46,9 @@ class SceneFacade(private val controller: SceneController) {
         val layer = visualizationLayers[file.projectLayer.name]!!
         return when (file.projectLayer.kind) {
             LayerKind.KEYPOINT -> sequence {
-                val random = Random(System.currentTimeMillis())
                 for (i in 1..50) {
-                    val x = random.nextInt(0, 500).toShort()
-                    val y = random.nextInt(0, 500).toShort()
+                    val x = Random.nextInt(0, 500).toShort()
+                    val y = Random.nextInt(0, 500).toShort()
                     yield(
                         Landmark.Keypoint(
                             i.toLong(), layer as Layer.PointLayer, Point(x, y)
