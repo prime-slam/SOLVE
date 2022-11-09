@@ -47,8 +47,6 @@ class SceneView : View() {
 
         grid.setUpPanning()
 
-        val gridNode = grid.getNode()
-
         val scaleFactor = 1.05
         val minScale = 0.2
 
@@ -56,7 +54,7 @@ class SceneView : View() {
         // To solve the problem, a user should set VM option -Dprism.order=sw
         val maxScale = 15.0
 
-        gridNode.setOnScroll { event ->
+        grid.setOnScroll { event ->
             if(event.isConsumed) { // If event is consumed by vsp
                 return@setOnScroll
             }
@@ -78,6 +76,6 @@ class SceneView : View() {
             grid.scrollTo(translatedMouseX - event.x, translatedMouseY - event.y)
         }
 
-        add(gridNode)
+        add(grid.getNode())
     }
 }
