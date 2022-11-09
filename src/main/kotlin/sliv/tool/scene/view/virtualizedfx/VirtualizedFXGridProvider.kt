@@ -28,7 +28,7 @@ object VirtualizedFXGridProvider : GridProvider {
         vsp.layoutMode = ScrollPaneEnums.LayoutMode.COMPACT
         vsp.isAutoHideBars = true
         vsp.isSmoothScroll = true
-        VSPUtils.setVSpeed(vsp, 50.0, 0.0, 50.0) //TODO: temporary solution to avoid vsp scrolling
+        VSPUtils.setVSpeed(vsp, 100.0, 100.0, 100.0)
 
         scale.onChange { newScale ->
             // Virtual grid breaks if cell size changes when x position differs from 0.0
@@ -38,6 +38,10 @@ object VirtualizedFXGridProvider : GridProvider {
             grid.cellSize = Size(
                 cellWidth * newScale, cellHeight * newScale
             )
+        }
+
+        grid.setOnScroll { event ->
+            event.consume() // Avoid vsp scrolling if mouse is on the grid pane
         }
 
         return VirtualizedFXGrid(grid, vsp)
