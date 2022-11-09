@@ -4,6 +4,8 @@ import javafx.beans.property.SimpleDoubleProperty
 import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.view.virtualizedfx.VirtualizedFXGridProvider
 import tornadofx.*
+import kotlin.math.max
+import kotlin.math.min
 
 class SceneView : View() {
     private val controller: SceneController by inject()
@@ -45,15 +47,20 @@ class SceneView : View() {
 
         grid.setUpPanning()
 
+        val gridNode = grid.getNode()
+
         val scaleFactor = 0.05
-        grid.getNode().setOnScroll { event ->
+        val minScale = 0.6 // TODO: invalid grid appearance if scale is too small. 0.65 looks great, 0.6 doesn't
+        val maxScale = 8.0 // Canvas breaks if scale is too big
+
+        gridNode.setOnScroll { event ->
             if(event.deltaY > 0) {
-                scaleProperty.value += scaleFactor
+                scaleProperty.value = min(scaleProperty.value + scaleFactor, maxScale)
             } else if(event.deltaY < 0) {
-                scaleProperty.value -= scaleFactor
+                scaleProperty.value = max(scaleProperty.value - scaleFactor, minScale)
             }
         }
 
-        add(grid.getNode())
+        add(gridNode)
     }
 }
