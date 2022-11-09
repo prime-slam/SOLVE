@@ -49,9 +49,9 @@ class SceneView : View() {
 
         val gridNode = grid.getNode()
 
-        val scaleFactor = 0.05
+        val scaleFactor = 1.05
         val minScale = 0.65 // TODO: invalid grid appearance if scale is too small. 0.65 looks great, 0.6 doesn't
-        val maxScale = 8.0 // Canvas breaks if scale is too big
+        val maxScale = 8.0 // TODO: Canvas breaks if scale is too big. For example: with 10.0 scale javafx rendering breaks
 
         gridNode.setOnScroll { event ->
             if(event.isConsumed) { // If event is consumed by vsp
@@ -64,9 +64,9 @@ class SceneView : View() {
             val initialMouseY = (initialPos.second + event.y) / scaleProperty.value
 
             if(event.deltaY > 0) {
-                scaleProperty.value = min(scaleProperty.value + scaleFactor, maxScale)
+                scaleProperty.value = min(scaleProperty.value * scaleFactor, maxScale)
             } else if(event.deltaY < 0) {
-                scaleProperty.value = max(scaleProperty.value - scaleFactor, minScale)
+                scaleProperty.value = max(scaleProperty.value / scaleFactor, minScale)
             }
 
             val translatedMouseX = initialMouseX * scaleProperty.value
