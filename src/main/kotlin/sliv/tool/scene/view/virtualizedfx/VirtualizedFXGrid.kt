@@ -28,5 +28,22 @@ class VirtualizedFXGrid(
         }
     }
 
+    override fun scrollTo(x: Double, y: Double) {
+        virtualGrid.scrollTo(x, Orientation.HORIZONTAL)
+        virtualGrid.scrollTo(y, Orientation.VERTICAL)
+    }
+
+    override fun scrollBy(x: Double, y: Double) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPosition(): Pair<Double, Double> {
+        return Pair(virtualGrid.position.x, virtualGrid.position.y)
+    }
+
+    override fun getSize(): Pair<Double, Double> {
+        return Pair(virtualGrid.width, virtualGrid.height)
+    }
+
     override fun getNode(): Node = vsp
 }
