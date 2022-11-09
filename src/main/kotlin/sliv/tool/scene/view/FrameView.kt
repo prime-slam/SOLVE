@@ -11,7 +11,7 @@ class FrameView(
     private val width: Double, private val height: Double, private val scale: DoubleProperty, frame: VisualizationFrame
 ) : Group() {
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
-    private val canvas = Canvas(width, height)
+    private val canvas = Canvas(width * scale.value, height * scale.value)
 
     init {
         scale.onChange { newScale ->
