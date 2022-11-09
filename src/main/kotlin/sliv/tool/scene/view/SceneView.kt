@@ -69,11 +69,8 @@ class SceneView : View() {
             if(event.isConsumed) { // If event is consumed by vsp
                 return@setOnScroll
             }
-            println("Scroll x:${event.x} y:${event.y}")
 
             val initialPos = grid.getPosition()
-            val initialX = initialPos.first / scaleProperty.value
-            val initialY = initialPos.second / scaleProperty.value
 
             val initialMouseX = (initialPos.first + event.x) / scaleProperty.value
             val initialMouseY = (initialPos.second + event.y) / scaleProperty.value
@@ -84,13 +81,10 @@ class SceneView : View() {
                 scaleProperty.value = max(scaleProperty.value - scaleFactor, minScale)
             }
 
-            val translatedX = initialX * scaleProperty.value
-            val translatedY = initialY * scaleProperty.value
-
             val translatedMouseX = initialMouseX * scaleProperty.value
             val translatedMouseY = initialMouseY * scaleProperty.value
 
-            grid.scrollTo(translatedX, translatedY)
+            grid.scrollTo(translatedMouseX - event.x, translatedMouseY - event.y)
         }
 
         add(gridNode)
