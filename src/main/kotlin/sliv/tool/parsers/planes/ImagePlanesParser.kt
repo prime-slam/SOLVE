@@ -86,8 +86,7 @@ object ImagePlanesParser : Parser<Plane> {
 
         bufferedImage.forEachPixelColor { _, color ->
             val uid = color.toLong()
-            if (!uids.contains(uid))
-                uids.add(uid)
+            uids.add(uid)
         }
 
         return uids.toList()
