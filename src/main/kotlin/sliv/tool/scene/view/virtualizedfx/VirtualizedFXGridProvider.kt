@@ -6,6 +6,7 @@ import io.github.palexdev.virtualizedfx.enums.ScrollPaneEnums
 import io.github.palexdev.virtualizedfx.grid.VirtualGrid
 import io.github.palexdev.virtualizedfx.utils.VSPUtils
 import javafx.beans.property.DoubleProperty
+import javafx.geometry.Orientation
 import sliv.tool.scene.model.VisualizationFrame
 import sliv.tool.scene.view.*
 import tornadofx.onChange
@@ -30,13 +31,13 @@ object VirtualizedFXGridProvider : GridProvider {
         VSPUtils.setVSpeed(vsp, 50.0, 0.0, 50.0) //TODO: temporary solution to avoid vsp scrolling
 
         scale.onChange { newScale ->
-            try {
-                grid.cellSize = Size(
-                    cellWidth * newScale, cellHeight * newScale
-                ) //TODO: in many cases VirtualGrid drops position when cell size changed
-            } catch (e: Exception) {
-                println("Cell size exception") //TODO: bug in VirtualGrid
-            }
+            // Virtual grid breaks if cell size changes when x position differs from 0.0
+            // Virtual grid always drops position to (0, 0) when cell size changes, so this solution is ok
+            grid.scrollTo(0.0, Orientation.HORIZONTAL)
+            grid.scrollTo(0.0, Orientation.VERTICAL)
+            grid.cellSize = Size(
+                cellWidth * newScale, cellHeight * newScale
+            )
         }
 
         return VirtualizedFXGrid(grid, vsp)
