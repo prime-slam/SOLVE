@@ -53,18 +53,6 @@ class SceneView : View() {
         val minScale = 0.65 // TODO: invalid grid appearance if scale is too small. 0.65 looks great, 0.6 doesn't
         val maxScale = 8.0 // Canvas breaks if scale is too big
 
-        gridNode.setOnZoom {
-            println("zoom")
-        }
-
-        gridNode.setOnScrollStarted {
-            println("scroll started")
-        }
-
-        gridNode.setOnScrollFinished {
-            println("scroll finished")
-        }
-
         gridNode.setOnScroll { event ->
             if(event.isConsumed) { // If event is consumed by vsp
                 return@setOnScroll
