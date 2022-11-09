@@ -6,6 +6,8 @@ import sliv.tool.parsers.ParserUtils
 import sliv.tool.parsers.structures.Plane
 import sliv.tool.scene.model.Point
 import java.awt.image.BufferedImage
+import kotlin.math.abs
+import kotlin.system.measureTimeMillis
 
 // A parser class for planes stored in images in a form of a mask.
 object ImagePlanesParser : Parser<Plane> {
@@ -18,7 +20,7 @@ object ImagePlanesParser : Parser<Plane> {
             fun getColorSegmentsType(colorComponentsNumber: Int) = when (colorComponentsNumber) {
                 3 -> TRIPLE
                 4 -> QUAD
-                else -> TRIPLE.also {
+                else -> null.also {
                     println("Unexpected color components number: $colorComponentsNumber!")
                 }
             }
@@ -46,10 +48,10 @@ object ImagePlanesParser : Parser<Plane> {
 
     private fun getImageByteDataArray(image: BufferedImage) = (image.data.dataBuffer as DataBufferByte).data
 
-    private fun BufferedImage.forEachPixelColor(action: (index: Int, color: Int) -> Unit) {
+    private inline fun BufferedImage.forEachPixelColor(action: (index: Int, color: Int) -> Unit) {
         val imageByteDataArray = getImageByteDataArray(this)
         val colorSegmentsType: ColorSegmentsType =
-            ColorSegmentsType.getColorSegmentsType(this.colorModel.numComponents)
+            ColorSegmentsType.getColorSegmentsType(this.colorModel.numComponents) ?: return
         val colorComponentsNumber = colorSegmentsType.colorComponentsNumber
 
         for (i in imageByteDataArray.indices step colorComponentsNumber) {
@@ -80,13 +82,12 @@ object ImagePlanesParser : Parser<Plane> {
     override fun extractUIDs(filePath: String): List<Long> {
         val bufferedImage = ParserUtils.loadImage(filePath) ?: return emptyList()
 
-        val uids = mutableListOf<Long>()
+        val uids = mutableSetOf<Long>()
 
         bufferedImage.forEachPixelColor { _, color ->
             val uid = color.toLong()
-            if (!uids.contains(uid)) {
+            if (!uids.contains(uid))
                 uids.add(uid)
-            }
         }
 
         return uids.toList()
