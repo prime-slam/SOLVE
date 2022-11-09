@@ -51,7 +51,10 @@ class SceneView : View() {
 
         val scaleFactor = 1.05
         val minScale = 0.2
-        val maxScale = 8.0 // TODO: Canvas breaks if scale is too big. For example: with 10.0 scale javafx rendering breaks
+
+        // In maximum scale pane renders 4 canvases. If size is too big, JavaFX rendering crashes.
+        // To solve the problem, a user should set VM option -Dprism.order=sw
+        val maxScale = 15.0
 
         gridNode.setOnScroll { event ->
             if(event.isConsumed) { // If event is consumed by vsp
