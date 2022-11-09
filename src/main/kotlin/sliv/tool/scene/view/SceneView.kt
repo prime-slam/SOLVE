@@ -75,11 +75,6 @@ class SceneView : View() {
             grid.scrollTo(translatedMouseX - event.x, translatedMouseY - event.y)
         }
 
-        vbox {
-            label {
-                bind(scaleProperty)
-            }
-            add(gridNode)
-        }
+        add(gridNode)
     }
 }
