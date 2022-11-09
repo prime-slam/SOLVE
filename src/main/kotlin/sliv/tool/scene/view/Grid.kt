@@ -8,9 +8,5 @@ interface Grid {
 
     fun scrollTo(x: Double, y: Double)
 
-    fun scrollBy(x: Double, y: Double)
-
     fun getPosition(): Pair<Double, Double>
-
-    fun getSize(): Pair<Double, Double>
 }
