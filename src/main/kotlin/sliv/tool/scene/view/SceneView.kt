@@ -52,7 +52,7 @@ class SceneView : View() {
 
         // In maximum scale pane renders 4 canvases. If size is too big, JavaFX rendering crashes.
         // To solve the problem, a user should set VM option -Dprism.order=sw
-        val maxScale = 15.0
+        val maxScale = 8.0
 
         grid.setOnScroll { event ->
             if(event.isConsumed) { // If event is consumed by vsp
