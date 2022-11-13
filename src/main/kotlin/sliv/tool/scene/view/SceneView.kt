@@ -55,7 +55,7 @@ class SceneView : View() {
             if (event.isConsumed) { // If event is consumed by vsp
                 return@setOnScroll
             }
-            if(event.deltaY.compareTo(0) == 0) {
+            if (event.deltaY.compareTo(0) == 0) {
                 return@setOnScroll
             }
             zoomGrid(scaleProperty, grid, event.x to event.y, event.deltaY > 0)
@@ -64,11 +64,11 @@ class SceneView : View() {
         add(grid.node)
     }
 
-    private fun zoomGrid(scaleProperty: DoubleProperty, grid: Grid, mousePos: Pair<Double, Double>, isPositive: Boolean) {
-        val initialPos = grid.getPosition()
+    private fun zoomGrid(scaleProperty: DoubleProperty, grid: Grid, mousePosition: Pair<Double, Double>, isPositive: Boolean) {
+        val initialPos = grid.currentPosition
 
-        val initialMouseX = (initialPos.first + mousePos.first) / scaleProperty.value
-        val initialMouseY = (initialPos.second + mousePos.second) / scaleProperty.value
+        val initialMouseX = (initialPos.first + mousePosition.first) / scaleProperty.value
+        val initialMouseY = (initialPos.second + mousePosition.second) / scaleProperty.value
 
         if (isPositive) {
             scaleProperty.value = min(scaleProperty.value * scaleFactor, maxScale)
@@ -79,7 +79,7 @@ class SceneView : View() {
         val translatedMouseX = initialMouseX * scaleProperty.value
         val translatedMouseY = initialMouseY * scaleProperty.value
 
-        grid.scrollTo(translatedMouseX - mousePos.first, translatedMouseY - mousePos.second)
+        grid.scrollTo(translatedMouseX - mousePosition.first, translatedMouseY - mousePosition.second)
     }
 
     companion object {
