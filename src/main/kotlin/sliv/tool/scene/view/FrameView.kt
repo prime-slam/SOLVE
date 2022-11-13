@@ -3,13 +3,14 @@ package sliv.tool.scene.view
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.canvas.*
-import javafx.scene.paint.Color
+import javafx.scene.image.Image
 import sliv.tool.scene.model.*
 import tornadofx.*
 
 class FrameView(
     private val width: Double, private val height: Double, private val scale: DoubleProperty, frame: VisualizationFrame
 ) : Group() {
+    private var image: Image? = null
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
     private val canvas = Canvas(width * scale.value, height * scale.value)
 
@@ -35,21 +36,15 @@ class FrameView(
         landmarksViews = frame.landmarks.mapValues {
             it.value.map { landmark -> LandmarkView.create(landmark) }
         }
+        image = frame.image
         draw()
     }
 
     private fun draw() {
         val gc = canvas.graphicsContext2D
         gc.clearRect(0.0, 0.0, canvas.width, canvas.height)
-//        gc.drawImage(frame.image, 0.0, 0.0)
-        drawFakeImage() //TODO: real images can be used only with data virtualization
+        gc.drawImage(image, 0.0, 0.0, canvas.width, canvas.height)
         doForAllEnabledLandmarks { view -> view.draw(gc, scale.value) }
-    }
-
-    private fun drawFakeImage() {
-        val gc = canvas.graphicsContext2D
-        gc.fill = Color.GREY
-        gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
     }
 
     private fun doForAllEnabledLandmarks(delegate: (LandmarkView) -> Unit) {

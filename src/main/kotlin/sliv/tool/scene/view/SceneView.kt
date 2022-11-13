@@ -30,11 +30,10 @@ class SceneView : View() {
         root.children.clear()
 
         val scene = controller.scene.value
-        val frames = (0 until scene.framesCount).mapNotNull { i -> scene.getFrame.invoke(i) }
 
-        //TODO: get size from the first image after data virtualization will be done
-        val width = 500.0
-        val height = 500.0
+        val firstImage = scene.frames.first().image
+        val width = firstImage.width
+        val height = firstImage.height
         val margin = 10.0
 
         val scaleProperty = SimpleDoubleProperty(1.0)
@@ -42,7 +41,7 @@ class SceneView : View() {
         val columnsNumber = 30 //TODO: should be set from the UI
 
         val grid = VirtualizedFXGridProvider.createGrid(
-            frames, columnsNumber, width + margin, height + margin, scaleProperty
+            scene.frames, columnsNumber, width + margin, height + margin, scaleProperty
         ) { frame ->
             FrameView(
                 width, height, scaleProperty, frame
