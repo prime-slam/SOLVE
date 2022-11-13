@@ -11,7 +11,7 @@ class PlaneView(private val plane: Landmark.Plane) : LandmarkView() {
         when (state) {
             LandmarkState.Ordinary -> {
                 plane.points.forEach {
-                    gc.fillRect(it.x.toDouble() * scale, it.y.toDouble() * scale, 1.0 * scale, 1.0 * scale)
+                    gc.fillRect(it.x.toDouble() * scale, it.y.toDouble() * scale, scale, scale)
                 }
             }
 
