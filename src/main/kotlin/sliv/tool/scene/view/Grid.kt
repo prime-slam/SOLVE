@@ -9,9 +9,9 @@ interface Grid {
 
     val node: Node
 
+    val currentPosition: Pair<Double, Double>
+
     fun setOnScroll(handler: EventHandler<ScrollEvent>)
 
     fun scrollTo(x: Double, y: Double)
-
-    fun getPosition(): Pair<Double, Double>
 }
