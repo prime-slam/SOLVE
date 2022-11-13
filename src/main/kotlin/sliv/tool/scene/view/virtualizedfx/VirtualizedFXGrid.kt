@@ -23,8 +23,8 @@ class VirtualizedFXGrid(
         }
 
         virtualGrid.setOnMouseDragged { event ->
-            val xDelta = -(event.x - dragStart.x)
-            val yDelta = -(event.y - dragStart.y)
+            val xDelta = dragStart.x - event.x
+            val yDelta = dragStart.y - event.y
             virtualGrid.scrollTo(initialValues.x + xDelta, Orientation.HORIZONTAL)
             virtualGrid.scrollTo(initialValues.y + yDelta, Orientation.VERTICAL)
         }
@@ -40,8 +40,8 @@ class VirtualizedFXGrid(
     }
 
     override fun getPosition(): Pair<Double, Double> {
-        return Pair(virtualGrid.position.x, virtualGrid.position.y)
+        return virtualGrid.position.x to virtualGrid.position.y
     }
 
-    override fun getNode(): Node = vsp
+    override val node: Node = vsp
 }

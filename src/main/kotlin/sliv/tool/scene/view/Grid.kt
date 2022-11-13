@@ -6,7 +6,8 @@ import javafx.scene.input.ScrollEvent
 
 interface Grid {
     fun setUpPanning()
-    fun getNode(): Node
+
+    val node: Node
 
     fun setOnScroll(handler: EventHandler<ScrollEvent>)
 
