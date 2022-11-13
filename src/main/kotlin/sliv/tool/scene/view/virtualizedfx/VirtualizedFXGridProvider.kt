@@ -28,6 +28,7 @@ object VirtualizedFXGridProvider : GridProvider {
         vsp.layoutMode = ScrollPaneEnums.LayoutMode.COMPACT
         vsp.isAutoHideBars = true
         vsp.isSmoothScroll = true
+        // Set up scrolling speed to achieve smooth scrolling
         VSPUtils.setVSpeed(vsp, 100.0, 100.0, 100.0)
 
         scale.onChange { newScale ->
