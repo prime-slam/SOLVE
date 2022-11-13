@@ -1,8 +1,13 @@
 package sliv.tool.scene
 
-import sliv.tool.project.model.*
+import javafx.scene.image.Image
+import sliv.tool.project.model.LandmarkFile
+import sliv.tool.project.model.LayerKind
+import sliv.tool.project.model.ProjectFrame
+import sliv.tool.project.model.ProjectLayer
 import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.model.*
+import java.io.FileInputStream
 import kotlin.random.Random
 
 // Interaction interface of the scene for main controller
@@ -17,8 +22,8 @@ class SceneFacade(private val controller: SceneController) {
                 visualizationLayers[projectLayer.name] = projectLayer.toVisualizationLayer()
             }
         }
-        val scene =
-            Scene({ i -> frames[i].toVisualizationFrame() }, frames.count(), visualizationLayers.values.toList())
+        val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame() }
+        val scene = Scene(visualizationFrames, visualizationLayers.values.toList())
         controller.scene.value = scene
     }
 
@@ -31,14 +36,19 @@ class SceneFacade(private val controller: SceneController) {
     }
 
     private fun ProjectFrame.toVisualizationFrame(): VisualizationFrame {
-//        val image = Image(FileInputStream(this.imagePath.toFile())) TODO: Can't store in memory thousands of images, data virtualization is needed
-        val landmarks = HashMap<Layer, List<Landmark>>()
-        landmarkFiles.forEach { file ->
-            val visualizationLayer = visualizationLayers[file.projectLayer.name]
-                ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
-            landmarks[visualizationLayer] = createLandmarks(file).toList()
+        val getImage = { Image(FileInputStream(imagePath.toFile())) }
+
+        val getLandmarks = {
+            val landmarks = HashMap<Layer, List<Landmark>>()
+            landmarkFiles.forEach { file ->
+                val visualizationLayer = visualizationLayers[file.projectLayer.name]
+                    ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
+                landmarks[visualizationLayer] = createLandmarks(file).toList()
+            }
+            landmarks.toMap()
         }
-        return VisualizationFrame(null, this.timestamp, landmarks.toMap())
+
+        return VisualizationFrame(this.timestamp, getImage, getLandmarks)
     }
 
     //TODO: use real parser instead of test data
