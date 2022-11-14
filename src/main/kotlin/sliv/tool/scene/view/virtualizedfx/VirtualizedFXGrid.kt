@@ -14,7 +14,7 @@ class VirtualizedFXGrid(
     private val virtualGrid: VirtualGrid<VisualizationFrame, FrameViewAdapter>, private val vsp: VirtualScrollPane
 ) : Grid {
     private var dragStartMousePosition = Position.of(-1.0, -1.0)
-    private var initialValues = Position.of(0.0, 0.0)
+    private var dragStartGridPosition = Position.of(0.0, 0.0)
 
     override val currentPosition: Pair<Double, Double>
         get() = virtualGrid.position.x to virtualGrid.position.y
@@ -24,14 +24,14 @@ class VirtualizedFXGrid(
     override fun setUpPanning() {
         virtualGrid.setOnMousePressed { event ->
             dragStartMousePosition = Position.of(event.x, event.y)
-            initialValues = virtualGrid.position
+            dragStartGridPosition = virtualGrid.position
         }
 
         virtualGrid.setOnMouseDragged { event ->
             val xDelta = dragStartMousePosition.x - event.x
             val yDelta = dragStartMousePosition.y - event.y
-            virtualGrid.scrollTo(initialValues.x + xDelta, Orientation.HORIZONTAL)
-            virtualGrid.scrollTo(initialValues.y + yDelta, Orientation.VERTICAL)
+            virtualGrid.scrollTo(dragStartGridPosition.x + xDelta, Orientation.HORIZONTAL)
+            virtualGrid.scrollTo(dragStartGridPosition.y + yDelta, Orientation.VERTICAL)
         }
     }
 
