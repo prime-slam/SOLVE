@@ -1,22 +1,14 @@
 package sliv.tool.scene
 
+import java.io.FileInputStream
 import javafx.scene.image.Image
-import sliv.tool.parsers.factories.LineFactory
-import sliv.tool.parsers.factories.PlaneFactory
-import sliv.tool.parsers.factories.PointFactory
+import sliv.tool.parsers.factories.*
 import sliv.tool.parsers.lines.CSVLinesParser
 import sliv.tool.parsers.planes.ImagePlanesParser
 import sliv.tool.parsers.points.CSVPointsParser
-import sliv.tool.project.model.LandmarkFile
-import sliv.tool.project.model.LayerKind
-import sliv.tool.project.model.ProjectFrame
-import sliv.tool.project.model.ProjectLayer
+import sliv.tool.project.model.*
 import sliv.tool.scene.controller.SceneController
-import sliv.tool.scene.model.Landmark
-import sliv.tool.scene.model.Layer
-import sliv.tool.scene.model.Scene
-import sliv.tool.scene.model.VisualizationFrame
-import java.io.FileInputStream
+import sliv.tool.scene.model.*
 
 // Interaction interface of the scene for main controller
 // Should be recreated if new project was imported
