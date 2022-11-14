@@ -1,14 +1,22 @@
 package sliv.tool.scene
 
 import javafx.scene.image.Image
+import sliv.tool.parsers.factories.LineFactory
+import sliv.tool.parsers.factories.PlaneFactory
+import sliv.tool.parsers.factories.PointFactory
+import sliv.tool.parsers.lines.CSVLinesParser
+import sliv.tool.parsers.planes.ImagePlanesParser
+import sliv.tool.parsers.points.CSVPointsParser
 import sliv.tool.project.model.LandmarkFile
 import sliv.tool.project.model.LayerKind
 import sliv.tool.project.model.ProjectFrame
 import sliv.tool.project.model.ProjectLayer
 import sliv.tool.scene.controller.SceneController
-import sliv.tool.scene.model.*
+import sliv.tool.scene.model.Landmark
+import sliv.tool.scene.model.Layer
+import sliv.tool.scene.model.Scene
+import sliv.tool.scene.model.VisualizationFrame
 import java.io.FileInputStream
-import kotlin.random.Random
 
 // Interaction interface of the scene for main controller
 // Should be recreated if new project was imported
@@ -51,39 +59,19 @@ class SceneFacade(private val controller: SceneController) {
         return VisualizationFrame(this.timestamp, getImage, getLandmarks)
     }
 
-    //TODO: use real parser instead of test data
-    private fun createLandmarks(file: LandmarkFile): Sequence<Landmark> {
+    private fun createLandmarks(file: LandmarkFile): List<Landmark> {
         val layer = visualizationLayers[file.projectLayer.name]!!
         return when (file.projectLayer.kind) {
-            LayerKind.KEYPOINT -> sequence {
-                for (i in 1..50) {
-                    val x = Random.nextInt(0, 500).toShort()
-                    val y = Random.nextInt(0, 500).toShort()
-                    yield(
-                        Landmark.Keypoint(
-                            i.toLong(), layer as Layer.PointLayer, Point(x, y)
-                        )
-                    )
-                }
+            LayerKind.KEYPOINT -> CSVPointsParser.parse(file.path.toString()).map { point ->
+                PointFactory.buildLandmark(point, layer as Layer.PointLayer)
             }
 
-            LayerKind.LINE -> sequence {
-                yield(
-                    Landmark.Line(
-                        10, layer as Layer.LineLayer, Point(0, 0), Point(10, 10)
-                    )
-                )
+            LayerKind.LINE -> CSVLinesParser.parse(file.path.toString()).map { line ->
+                LineFactory.buildLandmark(line, layer as Layer.LineLayer)
             }
 
-
-            LayerKind.PLANE -> sequence {
-                yield(
-                    Landmark.Plane(
-                        100,
-                        layer as Layer.PlaneLayer,
-                        (0..100).flatMap { x -> (0..100).map { y -> Point(x.toShort(), y.toShort()) } }.toTypedArray()
-                    )
-                )
+            LayerKind.PLANE -> ImagePlanesParser.parse(file.path.toString()).map { plane ->
+                PlaneFactory.buildLandmark(plane, layer as Layer.PlaneLayer)
             }
         }
     }
