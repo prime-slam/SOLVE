@@ -4,6 +4,8 @@ import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.canvas.*
 import javafx.scene.image.Image
+import javafx.scene.paint.Color
+import kotlinx.coroutines.*
 import sliv.tool.scene.model.*
 import tornadofx.*
 
@@ -32,19 +34,51 @@ class FrameView(
     }
 
     fun setFrame(frame: VisualizationFrame) {
-        //TODO: warn if image size doesn't equal to the frame size
+        landmarksViews = null
+        image = null
+
+        GlobalScope.launch(Dispatchers.Default) {
+            reloadData(frame)
+            delay(2000)
+            draw()
+            println("Drawn from ${Thread.currentThread().name}")
+        }
+        println("Drawn from ${Thread.currentThread().name}")
+        draw()
+    }
+
+    private fun reloadData(frame: VisualizationFrame) {
         landmarksViews = frame.landmarks.mapValues {
             it.value.map { landmark -> LandmarkView.create(landmark) }
         }
         image = frame.image
-        draw()
+        if(image!!.height != height || image!!.width != width) {
+            println("Image size doesn't equal to the frame size") //TODO: warn user
+        }
     }
 
     private fun draw() {
         val gc = canvas.graphicsContext2D
         gc.clearRect(0.0, 0.0, canvas.width, canvas.height)
+
+        if(!isDataLoaded) {
+            drawPlaceHolder()
+            return
+        }
+
         gc.drawImage(image, 0.0, 0.0, canvas.width, canvas.height)
         doForAllEnabledLandmarks { view -> view.draw(gc, scale.value) }
+    }
+
+    private val isDataLoaded
+        get() = landmarksViews != null && image != null
+
+    private fun drawPlaceHolder() {
+        val gc = canvas.graphicsContext2D
+        gc.fill = Color.GREY
+        gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
+        gc.fill = Color.RED
+        gc.fillText("Loading...", canvas.width / 2, canvas.height /2)
     }
 
     private fun doForAllEnabledLandmarks(delegate: (LandmarkView) -> Unit) {
