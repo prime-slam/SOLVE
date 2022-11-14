@@ -13,7 +13,7 @@ import sliv.tool.scene.view.Grid
 class VirtualizedFXGrid(
     private val virtualGrid: VirtualGrid<VisualizationFrame, FrameViewAdapter>, private val vsp: VirtualScrollPane
 ) : Grid {
-    private var dragStartGridPosition = Position.of(-1.0, -1.0)
+    private var dragStartMousePosition = Position.of(-1.0, -1.0)
     private var initialValues = Position.of(0.0, 0.0)
 
     override val currentPosition: Pair<Double, Double>
@@ -23,13 +23,13 @@ class VirtualizedFXGrid(
 
     override fun setUpPanning() {
         virtualGrid.setOnMousePressed { event ->
-            dragStartGridPosition = Position.of(event.x, event.y)
+            dragStartMousePosition = Position.of(event.x, event.y)
             initialValues = virtualGrid.position
         }
 
         virtualGrid.setOnMouseDragged { event ->
-            val xDelta = dragStartGridPosition.x - event.x
-            val yDelta = dragStartGridPosition.y - event.y
+            val xDelta = dragStartMousePosition.x - event.x
+            val yDelta = dragStartMousePosition.y - event.y
             virtualGrid.scrollTo(initialValues.x + xDelta, Orientation.HORIZONTAL)
             virtualGrid.scrollTo(initialValues.y + yDelta, Orientation.VERTICAL)
         }
