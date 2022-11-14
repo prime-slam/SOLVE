@@ -54,7 +54,7 @@ class SceneView : View() {
             if (event.isConsumed) { // If event is consumed by vsp
                 return@setOnScroll
             }
-            if (event.deltaY.compareTo(0) == 0) {
+            if (event.deltaY == 0.0) {
                 return@setOnScroll
             }
             zoomGrid(scaleProperty, grid, event.x to event.y, event.deltaY > 0)
