@@ -10,6 +10,7 @@ val tornadofxVersion: String by rootProject
 val jacksonCSVVersion: String by rootProject
 val jacksonModuleKotlinVersion: String by rootProject
 val virtualizedfxVersion: String by rootProject
+val coroutinesVersion: String by rootProject
 
 repositories {
     mavenCentral()
@@ -31,6 +32,8 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonCSVVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
     implementation("io.github.palexdev:virtualizedfx:$virtualizedfxVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:$coroutinesVersion")
     testImplementation(kotlin("test"))
 }
 
