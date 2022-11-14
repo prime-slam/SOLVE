@@ -1,4 +1,4 @@
-# SLAM Landmarks Interactive Visuailizer
+# SLAM Landmarks Interactive Visualizer
 
 The aim of the project is to create a powerful desktop application to make debugging of SLAM frontend algorithms easier.
 
