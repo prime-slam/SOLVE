@@ -46,14 +46,11 @@ class FrameView(
             withContext(Dispatchers.JavaFx) {
                 draw()
             }
-            println("Drawn from ${Thread.currentThread().name}")
         }
-        println("Drawn from ${Thread.currentThread().name}")
         draw()
     }
 
     private fun reloadData(frame: VisualizationFrame) {
-        Thread.sleep(1000)
         landmarksViews = frame.landmarks.mapValues {
             it.value.map { landmark -> LandmarkView.create(landmark) }
         }
