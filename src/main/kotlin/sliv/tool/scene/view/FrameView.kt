@@ -6,6 +6,7 @@ import javafx.scene.canvas.*
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import kotlinx.coroutines.*
+import kotlinx.coroutines.javafx.JavaFx
 import sliv.tool.scene.model.*
 import tornadofx.*
 
@@ -15,6 +16,8 @@ class FrameView(
     private var image: Image? = null
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
     private val canvas = Canvas(width * scale.value, height * scale.value)
+    private val scope = CoroutineScope(Dispatchers.Default)
+    private var currentJob: Job? = null
 
     init {
         scale.onChange { newScale ->
@@ -34,13 +37,15 @@ class FrameView(
     }
 
     fun setFrame(frame: VisualizationFrame) {
+        currentJob?.cancel()
         landmarksViews = null
         image = null
 
-        GlobalScope.launch(Dispatchers.Default) {
+        currentJob = scope.launch {
             reloadData(frame)
-            delay(2000)
-            draw()
+            withContext(Dispatchers.JavaFx) {
+                draw()
+            }
             println("Drawn from ${Thread.currentThread().name}")
         }
         println("Drawn from ${Thread.currentThread().name}")
@@ -48,6 +53,7 @@ class FrameView(
     }
 
     private fun reloadData(frame: VisualizationFrame) {
+        Thread.sleep(1000)
         landmarksViews = frame.landmarks.mapValues {
             it.value.map { landmark -> LandmarkView.create(landmark) }
         }
