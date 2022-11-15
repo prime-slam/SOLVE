@@ -68,7 +68,7 @@ class FrameView(
         gc.clearRect(0.0, 0.0, canvas.width, canvas.height)
 
         if(!isDataLoaded) {
-            drawPlaceHolder()
+            drawLoadingIndicator()
             return
         }
 
@@ -79,7 +79,7 @@ class FrameView(
     private val isDataLoaded
         get() = landmarksViews != null && image != null
 
-    private fun drawPlaceHolder() {
+    private fun drawLoadingIndicator() {
         val gc = canvas.graphicsContext2D
         gc.fill = Color.GREY
         gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
