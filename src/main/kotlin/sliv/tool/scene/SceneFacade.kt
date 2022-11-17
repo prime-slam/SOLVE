@@ -43,7 +43,7 @@ class SceneFacade(private val controller: SceneController) {
             landmarkFiles.forEach { file ->
                 val visualizationLayer = visualizationLayers[file.projectLayer.name]
                     ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
-                landmarks[visualizationLayer] = createLandmarks(file).toList()
+                landmarks[visualizationLayer] = createLandmarks(file, visualizationLayer)
             }
             landmarks.toMap()
         }
@@ -51,8 +51,7 @@ class SceneFacade(private val controller: SceneController) {
         return VisualizationFrame(this.timestamp, getImage, getLandmarks)
     }
 
-    private fun createLandmarks(file: LandmarkFile): List<Landmark> {
-        val layer = visualizationLayers[file.projectLayer.name]!!
+    private fun createLandmarks(file: LandmarkFile, layer: Layer): List<Landmark> {
         return when (file.projectLayer.kind) {
             LayerKind.KEYPOINT -> CSVPointsParser.parse(file.path.toString()).map { point ->
                 PointFactory.buildLandmark(point, layer as Layer.PointLayer)

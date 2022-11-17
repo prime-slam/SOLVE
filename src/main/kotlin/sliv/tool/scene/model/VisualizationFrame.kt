@@ -8,9 +8,7 @@ class VisualizationFrame(
     private val getLandmarks: () -> Map<Layer, List<Landmark>>
 ) {
     val image: Image
-        get() {
-            return getImage()
-        }
+        get() = getImage()
 
     val landmarks: Map<Layer, List<Landmark>>
         get() = getLandmarks()
