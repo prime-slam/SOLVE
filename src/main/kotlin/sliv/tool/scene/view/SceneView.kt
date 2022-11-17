@@ -28,6 +28,11 @@ class SceneView : View() {
 
         val scene = controller.scene.value
 
+        if(scene.frames.isEmpty()) {
+            label("No frames was provided")
+            return
+        }
+
         val firstImage = scene.frames.first().image
         val width = firstImage.width
         val height = firstImage.height
