@@ -2,18 +2,27 @@ package sliv.tool.scene.view
 
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.view.virtualizedfx.VirtualizedFXGridProvider
-import tornadofx.*
+import tornadofx.View
+import tornadofx.label
+import tornadofx.onChange
+import tornadofx.vbox
 import kotlin.math.max
 import kotlin.math.min
 
 class SceneView : View() {
     private val controller: SceneController by inject()
+    private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
 
     init {
         controller.scene.onChange { scene ->
             if (scene != null) {
+                frameDataLoadingScope.cancel()
+                frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
                 draw()
             }
         }
@@ -28,7 +37,7 @@ class SceneView : View() {
 
         val scene = controller.scene.value
 
-        if(scene.frames.isEmpty()) {
+        if (scene.frames.isEmpty()) {
             label("No frames was provided")
             return
         }
@@ -46,7 +55,7 @@ class SceneView : View() {
             scene.frames, columnsNumber, width + margin, height + margin, scaleProperty
         ) { frame ->
             FrameView(
-                width, height, scaleProperty, frame
+                width, height, scaleProperty, frameDataLoadingScope, frame
             )
         }
 
@@ -65,7 +74,12 @@ class SceneView : View() {
         add(grid.node)
     }
 
-    private fun zoomGrid(scaleProperty: DoubleProperty, grid: Grid, mousePosition: Pair<Double, Double>, isPositive: Boolean) {
+    private fun zoomGrid(
+        scaleProperty: DoubleProperty,
+        grid: Grid,
+        mousePosition: Pair<Double, Double>,
+        isPositive: Boolean
+    ) {
         val initialPos = grid.currentPosition
 
         val initialMouseX = (initialPos.first + mousePosition.first) / scaleProperty.value
@@ -85,6 +99,7 @@ class SceneView : View() {
 
     companion object {
         private const val scaleFactor = 1.05
+
         // In maximum scale pane renders 4 canvases. If size is too big, JavaFX rendering crashes.
         // To solve the problem, a user should set VM option -Dprism.order=sw
         // Now max scale is limited to avoid the issue.
