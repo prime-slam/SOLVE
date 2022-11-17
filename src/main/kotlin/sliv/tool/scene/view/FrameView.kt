@@ -2,21 +2,33 @@ package sliv.tool.scene.view
 
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
-import javafx.scene.canvas.*
+import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
-import sliv.tool.scene.model.*
-import tornadofx.*
+import sliv.tool.scene.model.Layer
+import sliv.tool.scene.model.VisualizationFrame
+import tornadofx.add
+import tornadofx.onChange
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 class FrameView(
-    private val width: Double, private val height: Double, private val scale: DoubleProperty, frame: VisualizationFrame
+    private val width: Double,
+    private val height: Double,
+    private val scale: DoubleProperty,
+    private val coroutineScope: CoroutineScope,
+    frame: VisualizationFrame
 ) : Group() {
+    //Frame data be loaded concurrently, so these fields should be volatile
+    @Volatile
     private var image: Image? = null
+
+    @Volatile
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
+
     private val canvas = Canvas(width * scale.value, height * scale.value)
-    private val scope = CoroutineScope(Dispatchers.Default)
     private var currentJob: Job? = null
 
     init {
@@ -41,7 +53,7 @@ class FrameView(
         landmarksViews = null
         image = null
 
-        currentJob = scope.launch {
+        currentJob = coroutineScope.launch {
             reloadData(frame)
             withContext(Dispatchers.JavaFx) {
                 draw()
@@ -55,7 +67,7 @@ class FrameView(
             it.value.map { landmark -> LandmarkView.create(landmark) }
         }
         val frameImage = frame.image
-        if(frameImage.height != height || frameImage.width != width) {
+        if (frameImage.height != height || frameImage.width != width) {
             println("Image size doesn't equal to the frame size") //TODO: warn user
         }
         image = frameImage
@@ -65,7 +77,7 @@ class FrameView(
         val gc = canvas.graphicsContext2D
         gc.clearRect(0.0, 0.0, canvas.width, canvas.height)
 
-        if(!isDataLoaded) {
+        if (!isDataLoaded) {
             drawLoadingIndicator()
             return
         }
@@ -82,7 +94,7 @@ class FrameView(
         gc.fill = Color.GREY
         gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
         gc.fill = Color.RED
-        gc.fillText("Loading...", canvas.width / 2, canvas.height /2)
+        gc.fillText("Loading...", canvas.width / 2, canvas.height / 2)
     }
 
     private fun doForAllEnabledLandmarks(delegate: (LandmarkView) -> Unit) {
