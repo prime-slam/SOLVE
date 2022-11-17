@@ -54,10 +54,11 @@ class FrameView(
         landmarksViews = frame.landmarks.mapValues {
             it.value.map { landmark -> LandmarkView.create(landmark) }
         }
-        image = frame.image
-        if(image!!.height != height || image!!.width != width) {
+        val frameImage = frame.image
+        if(frameImage.height != height || frameImage.width != width) {
             println("Image size doesn't equal to the frame size") //TODO: warn user
         }
+        image = frameImage
     }
 
     private fun draw() {

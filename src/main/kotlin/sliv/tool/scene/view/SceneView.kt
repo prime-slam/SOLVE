@@ -4,10 +4,7 @@ import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import sliv.tool.scene.controller.SceneController
 import sliv.tool.scene.view.virtualizedfx.VirtualizedFXGridProvider
-import tornadofx.View
-import tornadofx.label
-import tornadofx.onChange
-import tornadofx.vbox
+import tornadofx.*
 import kotlin.math.max
 import kotlin.math.min
 
