@@ -4,15 +4,15 @@ import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
+import javafx.scene.transform.Scale
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
 import sliv.tool.scene.model.Layer
 import sliv.tool.scene.model.VisualizationFrame
 import tornadofx.add
 import tornadofx.onChange
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 class FrameView(
     private val width: Double,
@@ -28,11 +28,23 @@ class FrameView(
     @Volatile
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
 
+    private val imageView = ImageView()
     private val canvas = Canvas(width * scale.value, height * scale.value)
     private var currentJob: Job? = null
 
     init {
         scale.onChange { newScale ->
+            imageView.transforms.clear()
+            if(newScale > 1) {
+                imageView.fitWidth = width
+                imageView.fitHeight = height
+                val scaleTransform = Scale(newScale, newScale)
+                imageView.transforms.add(scaleTransform)
+            } else {
+                imageView.fitWidth = width * newScale
+                imageView.fitHeight = height * newScale
+            }
+
             canvas.height = height * newScale
             canvas.width = width * newScale
             draw()
@@ -45,6 +57,7 @@ class FrameView(
         canvas.setOnMouseExited {
             onMouseMoved(-1.0, -1.0)
         }
+        add(imageView)
         add(canvas)
     }
 
@@ -82,7 +95,7 @@ class FrameView(
             return
         }
 
-        gc.drawImage(image, 0.0, 0.0, canvas.width, canvas.height)
+        imageView.image = image
         doForAllEnabledLandmarks { view -> view.draw(gc, scale.value) }
     }
 
