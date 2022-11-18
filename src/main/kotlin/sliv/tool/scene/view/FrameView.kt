@@ -35,7 +35,7 @@ class FrameView(
     init {
         scale.onChange { newScale ->
             imageView.transforms.clear()
-            if(newScale > 1) {
+            if (newScale > 1) {
                 imageView.fitWidth = width
                 imageView.fitHeight = height
                 val scaleTransform = Scale(newScale, newScale)
