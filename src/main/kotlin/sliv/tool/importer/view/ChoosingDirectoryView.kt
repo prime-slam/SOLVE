@@ -8,7 +8,6 @@ import sliv.tool.importer.ProjectParser
 import sliv.tool.importer.controller.ImporterController
 import tornadofx.*
 
-
 class ChoosingDirectoryView : Fragment() {
     private val controller: ImporterController by inject()
     private val path = SimpleStringProperty()
@@ -30,8 +29,8 @@ class ChoosingDirectoryView : Fragment() {
             }
         }
 
-        path.onChange { op ->
-            rootTree = ProjectParser.createTree(op, rootTree)
+        path.onChange {
+            rootTree = ProjectParser.createTreeWithFiles(it, rootTree)
         }
         treeview(rootTree) {
         }
