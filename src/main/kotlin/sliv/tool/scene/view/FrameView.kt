@@ -80,7 +80,6 @@ class FrameView(
 
     private fun draw() {
         children.clear()
-        //doForAllLandmarks { view -> children.remove(view.shape) }
 
         if (!isDataLoaded) {
             drawLoadingIndicator()
