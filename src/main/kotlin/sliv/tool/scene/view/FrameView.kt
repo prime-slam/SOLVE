@@ -4,9 +4,7 @@ import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
-import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 import javafx.scene.shape.Shape
 import javafx.scene.transform.Scale
 import kotlinx.coroutines.*
@@ -14,7 +12,6 @@ import kotlinx.coroutines.javafx.JavaFx
 import sliv.tool.scene.model.Layer
 import sliv.tool.scene.model.VisualizationFrame
 import tornadofx.add
-import tornadofx.imageview
 import tornadofx.onChange
 
 class FrameView(
@@ -35,7 +32,6 @@ class FrameView(
     private var currentJob: Job? = null
 
     init {
-        println("create frame")
         scale.onChange { newScale ->
             imageCanvas.transforms.clear()
             if (newScale > 1) {
