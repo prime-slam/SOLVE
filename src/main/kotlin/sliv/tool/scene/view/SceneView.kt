@@ -100,10 +100,7 @@ class SceneView : View() {
     companion object {
         private const val scaleFactor = 1.05
 
-        // In maximum scale pane renders 4 canvases. If size is too big, JavaFX rendering crashes.
-        // To solve the problem, a user should set VM option -Dprism.order=sw
-        // Now max scale is limited to avoid the issue.
-        private const val maxScale = 8.0
+        private const val maxScale = 20.0
         private const val minScale = 0.2
     }
 }
