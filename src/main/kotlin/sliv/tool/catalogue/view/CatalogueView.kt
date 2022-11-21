@@ -1,5 +1,6 @@
 package sliv.tool.catalogue.view
 
+import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.RadioButton
@@ -16,20 +17,26 @@ import sliv.tool.catalogue.selectedItems
 import tornadofx.*
 
 class CatalogueView : View() {
+    companion object {
+        private val initialViewFormat = ViewFormat.FILE_NAME
+    }
+
     private val controller: CatalogueController by inject()
 
-    private var fields = getFields()
+    private var fields = FXCollections.observableArrayList<CatalogueField>()
 
     private val viewFormatToggleGroup = ToggleGroup()
     private lateinit var fileNameViewRadioButton: RadioButton
     private lateinit var imagePreviewRadioButton: RadioButton
-    private var currentViewFormat = ViewFormat.FILE_NAME
+    private var currentViewFormat = initialViewFormat
 
     private val checkedAllProperty = booleanProperty(false)
 
     init {
         controller.model.frames.onChange {
-            fields = getFields()
+            resetNodes()
+            fields.clear()
+            fields.addAll(getFields())
         }
     }
 
@@ -117,5 +124,10 @@ class CatalogueView : View() {
                 checkedAllProperty.value = false
             }
         }
+    }
+
+    private fun resetNodes() {
+        checkedAllProperty.value = false
+        viewFormatToggleGroup.selectToggle(getViewFormatToggle(initialViewFormat))
     }
 }
