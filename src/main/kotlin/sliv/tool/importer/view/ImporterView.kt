@@ -4,7 +4,7 @@ import javafx.geometry.Insets
 import tornadofx.borderpane
 import tornadofx.View
 
-class ImporterView: View("Choose working directory") {
+class ImporterView : View("Choose working directory") {
     override val root = borderpane {
         prefWidth = 500.0
         prefHeight = 600.0
