@@ -17,20 +17,20 @@ object ProjectParser {
 
         for (folder in File(path).listFiles()) {
             if (folder.name == img) {
-                for (file in folder.listFiles()){
-                    images.add(ImageInfo(file.nameWithoutExtension, file.absolutePath))
-                }}
-            else {
-                for (file in folder.listFiles()){
-                    files.add(OutputInfo(file.nameWithoutExtension, folder.nameWithoutExtension, file.absolutePath))
-                }
+                images.addAll(folder.listFiles().map {
+                    ImageInfo(it.nameWithoutExtension, it.absolutePath)
+                })
+            } else {
+                files.addAll(folder.listFiles().map {
+                    OutputInfo(it.nameWithoutExtension, folder.nameWithoutExtension, it.absolutePath)
+                })
             }
         }
 
         tree.value = path.split("/").last()
-        images.map{ thisImg ->
+        images.map { thisImg ->
             var img = TreeItem(thisImg.name)
-            files.map{ thisFile ->
+            files.map { thisFile ->
                 if (thisImg.name == thisFile.name) {
                     img.children.add(TreeItem(thisFile.algo))
                 }

@@ -17,7 +17,7 @@ class ChoosingDirectoryView : Fragment() {
         var rootTree = TreeItem("").apply { isExpanded = true }
         padding = Insets(5.0, 10.0, 0.0, 10.0)
         path.bindBidirectional(controller.directoryPath)
-        hbox(20){
+        hbox(20) {
             label {
                 bind(controller.directoryPath)
             }
@@ -32,7 +32,6 @@ class ChoosingDirectoryView : Fragment() {
         path.onChange {
             rootTree = ProjectParser.createTreeWithFiles(it, rootTree)
         }
-        treeview(rootTree) {
-        }
+        treeview(rootTree)
     }
 }
