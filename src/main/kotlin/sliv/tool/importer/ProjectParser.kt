@@ -7,34 +7,38 @@ import java.io.File
 object ProjectParser {
     const val img = "images"
 
-    fun createTreeWithFiles(path: String?, tree: TreeItem<String>): TreeItem<String> {
-        val files = FXCollections.observableArrayList<OutputInfo>()
-        val images = FXCollections.observableArrayList<ImageInfo>()
+    val files = FXCollections.observableHashMap<Long, MutableList<OutputInfo>>()
+    val images = FXCollections.observableArrayList<ImageInfo>()
 
+    fun createTreeWithFiles(path: String?, tree: TreeItem<String>): TreeItem<String> {
         if (path == null) {
             throw Exception("Directory not selected")
         }
+        var directory = File(path)
 
-        for (folder in File(path).listFiles()) {
+        for (folder in directory.listFiles()) {
             if (folder.name == img) {
                 images.addAll(folder.listFiles().map {
                     ImageInfo(it.nameWithoutExtension, it.absolutePath)
                 })
             } else {
-                files.addAll(folder.listFiles().map {
-                    OutputInfo(it.nameWithoutExtension, folder.nameWithoutExtension, it.absolutePath)
-                })
+                folder.listFiles().forEach {
+                    var key = it.nameWithoutExtension.toLong()
+                    if (files.containsKey(key)) {
+                        files.getValue(key).add(OutputInfo(folder.nameWithoutExtension, it.absolutePath))
+                    } else {
+                        files[key] = mutableListOf(OutputInfo(folder.nameWithoutExtension, it.absolutePath))
+                    }
+                }
             }
         }
 
-        tree.value = path.split("/").last()
-        images.map { thisImg ->
-            var img = TreeItem(thisImg.name)
-            files.map { thisFile ->
-                if (thisImg.name == thisFile.name) {
-                    img.children.add(TreeItem(thisFile.algo))
-                }
-            }
+        tree.value = directory.name
+        files.map { thisImg ->
+            var img = TreeItem(thisImg.key.toString())
+            img.children.addAll(thisImg.value.map {
+                TreeItem(it.algo)
+            })
             tree.children.add(img)
         }
         return tree
