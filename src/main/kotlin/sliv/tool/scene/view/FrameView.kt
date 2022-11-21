@@ -2,10 +2,10 @@ package sliv.tool.scene.view
 
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
-import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 import javafx.scene.transform.Scale
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
@@ -29,10 +29,10 @@ class FrameView(
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
 
     private val imageView = ImageView()
-    private val canvas = Canvas(width * scale.value, height * scale.value)
     private var currentJob: Job? = null
 
     init {
+        println("create frame")
         scale.onChange { newScale ->
             imageView.transforms.clear()
             if (newScale > 1) {
@@ -45,20 +45,11 @@ class FrameView(
                 imageView.fitHeight = height * newScale
             }
 
-            canvas.height = height * newScale
-            canvas.width = width * newScale
-            draw()
+            doForAllLandmarks { view -> view.scale = newScale }
         }
 
         setFrame(frame)
-        canvas.setOnMouseMoved { event ->
-            onMouseMoved(event.x, event.y)
-        }
-        canvas.setOnMouseExited {
-            onMouseMoved(-1.0, -1.0)
-        }
         add(imageView)
-        add(canvas)
     }
 
     fun setFrame(frame: VisualizationFrame) {
@@ -72,12 +63,13 @@ class FrameView(
                 draw()
             }
         }
+
         draw()
     }
 
     private fun reloadData(frame: VisualizationFrame) {
         landmarksViews = frame.landmarks.mapValues {
-            it.value.map { landmark -> LandmarkView.create(landmark) }
+            it.value.map { landmark -> LandmarkView.create(landmark, scale.value) }
         }
         val frameImage = frame.image
         if (frameImage.height != height || frameImage.width != width) {
@@ -87,8 +79,8 @@ class FrameView(
     }
 
     private fun draw() {
-        val gc = canvas.graphicsContext2D
-        gc.clearRect(0.0, 0.0, canvas.width, canvas.height)
+        children.clear()
+        //doForAllLandmarks { view -> children.remove(view.shape) }
 
         if (!isDataLoaded) {
             drawLoadingIndicator()
@@ -96,39 +88,22 @@ class FrameView(
         }
 
         imageView.image = image
-        doForAllEnabledLandmarks { view -> view.draw(gc, scale.value) }
+        children.add(imageView)
+        doForAllLandmarks { view -> children.add(view.shape) }
     }
 
     private val isDataLoaded
         get() = landmarksViews != null && image != null
 
     private fun drawLoadingIndicator() {
-        val gc = canvas.graphicsContext2D
-        gc.fill = Color.GREY
-        gc.fillRect(0.0, 0.0, canvas.width, canvas.height)
-        gc.fill = Color.RED
-        gc.fillText("Loading...", canvas.width / 2, canvas.height / 2)
+        val rect = Rectangle(width, height)
+        rect.fill = Color.GREY
+        rect.transforms.add(Scale(scale.value, scale.value))
+        children.add(rect)
     }
 
-    private fun doForAllEnabledLandmarks(delegate: (LandmarkView) -> Unit) {
+    private fun doForAllLandmarks(delegate: (LandmarkView) -> Unit) =
         landmarksViews?.forEach { (layer, landmarkViews) ->
-            if (!layer.enabled) {
-                return
-            }
             landmarkViews.forEach { view -> delegate(view) }
         }
-    }
-
-    private fun onMouseMoved(x: Double, y: Double) {
-        var stateChanged = false
-        doForAllEnabledLandmarks { view ->
-            val prevState = view.state
-            view.updateIsHovered(x, y, scale.value)
-            stateChanged = stateChanged || view.state != prevState
-        }
-
-        if (stateChanged) {
-            draw()
-        }
-    }
 }
