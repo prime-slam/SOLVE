@@ -22,7 +22,7 @@ object ProjectParser {
                     ImageInfo(it.nameWithoutExtension, it.absolutePath)
                 })
             } else {
-                folder.listFiles().forEach {
+                folder.listFiles().map {
                     var key = it.nameWithoutExtension.toLong()
                     if (files.containsKey(key)) {
                         files.getValue(key).add(OutputInfo(folder.nameWithoutExtension, it.absolutePath))
