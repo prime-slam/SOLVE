@@ -1,37 +1,41 @@
 package sliv.tool.scene.view
 
-import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
+import javafx.scene.shape.Ellipse
 import sliv.tool.scene.model.Landmark
-import kotlin.math.abs
-import kotlin.math.hypot
 
-class KeypointView(private val keypoint: Landmark.Keypoint) : LandmarkView() {
+class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : LandmarkView(scale) {
     companion object {
-        private const val OrdinaryRadius: Double = 10.0
+        private const val OrdinaryRadius: Double = 5.0
     }
 
-    private var radius = OrdinaryRadius
+    override val shape: Ellipse = createShape()
 
-    override fun draw(gc: GraphicsContext, scale: Double) {
-        gc.fill = keypoint.layer.color
-        gc.globalAlpha = keypoint.layer.opacity
+    private val coordinates
+        get() = Pair(keypoint.coordinate.x.toDouble() * scale, keypoint.coordinate.y.toDouble() * scale)
 
-        radius = if (scale < 1) OrdinaryRadius * scale else OrdinaryRadius
-        val x = keypoint.coordinate.x.toDouble() * scale - radius / 2
-        val y = keypoint.coordinate.y.toDouble() * scale - radius / 2
-        when (state) {
-            LandmarkState.Ordinary -> gc.fillOval(x, y, radius, radius)
-            LandmarkState.Hovered -> {
-                gc.fill = Color.BLUE
-                gc.fillOval(x, y, radius, radius)
-            }
+    private val radius
+        get() = if (scale < 1) OrdinaryRadius * scale else OrdinaryRadius
+
+    override fun scaleChanged() {
+        shape.centerX = coordinates.first
+        shape.centerY = coordinates.second
+        shape.radiusX = radius
+        shape.radiusY = radius
+    }
+
+    private fun createShape(): Ellipse {
+        val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
+        shape.fill = keypoint.layer.color
+        shape.opacity = keypoint.layer.opacity
+
+        shape.setOnMouseEntered {
+            shape.fill = Color.BLUE
         }
-    }
+        shape.setOnMouseExited {
+            shape.fill = keypoint.layer.color
+        }
 
-    override fun isHovered(x: Double, y: Double, scale: Double): Boolean {
-        val xDiff = abs(keypoint.coordinate.x - x / scale)
-        val yDiff = abs(keypoint.coordinate.y - y / scale)
-        return hypot(xDiff, yDiff) < radius / scale
+        return shape
     }
 }
