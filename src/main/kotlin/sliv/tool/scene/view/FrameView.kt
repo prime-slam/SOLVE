@@ -2,16 +2,19 @@ package sliv.tool.scene.view
 
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
+import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
+import javafx.scene.shape.Shape
 import javafx.scene.transform.Scale
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
 import sliv.tool.scene.model.Layer
 import sliv.tool.scene.model.VisualizationFrame
 import tornadofx.add
+import tornadofx.imageview
 import tornadofx.onChange
 
 class FrameView(
@@ -28,28 +31,28 @@ class FrameView(
     @Volatile
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
 
-    private val imageView = ImageView()
+    private val imageCanvas = Canvas(width, height)
     private var currentJob: Job? = null
 
     init {
         println("create frame")
         scale.onChange { newScale ->
-            imageView.transforms.clear()
+            imageCanvas.transforms.clear()
             if (newScale > 1) {
-                imageView.fitWidth = width
-                imageView.fitHeight = height
+                imageCanvas.width = width
+                imageCanvas.height = height
                 val scaleTransform = Scale(newScale, newScale)
-                imageView.transforms.add(scaleTransform)
+                imageCanvas.transforms.add(scaleTransform)
             } else {
-                imageView.fitWidth = width * newScale
-                imageView.fitHeight = height * newScale
+                imageCanvas.width = width * newScale
+                imageCanvas.height = height * newScale
             }
 
+            drawImage()
             doForAllLandmarks { view -> view.scale = newScale }
         }
 
         setFrame(frame)
-        add(imageView)
     }
 
     fun setFrame(frame: VisualizationFrame) {
@@ -64,6 +67,7 @@ class FrameView(
             }
         }
 
+        add(imageCanvas)
         draw()
     }
 
@@ -79,26 +83,29 @@ class FrameView(
     }
 
     private fun draw() {
-        children.clear()
+        children.removeIf { x -> x is Shape }
 
         if (!isDataLoaded) {
             drawLoadingIndicator()
             return
         }
 
-        imageView.image = image
-        children.add(imageView)
+        drawImage()
         doForAllLandmarks { view -> children.add(view.shape) }
+    }
+
+    private fun drawImage() {
+        imageCanvas.graphicsContext2D.clearRect(0.0, 0.0, imageCanvas.width, imageCanvas.height)
+        imageCanvas.graphicsContext2D.drawImage(image, 0.0, 0.0, imageCanvas.width, imageCanvas.height)
     }
 
     private val isDataLoaded
         get() = landmarksViews != null && image != null
 
     private fun drawLoadingIndicator() {
-        val rect = Rectangle(width, height)
-        rect.fill = Color.GREY
-        rect.transforms.add(Scale(scale.value, scale.value))
-        children.add(rect)
+        imageCanvas.graphicsContext2D.clearRect(0.0, 0.0, imageCanvas.width, imageCanvas.height)
+        imageCanvas.graphicsContext2D.fill = Color.GREY
+        imageCanvas.graphicsContext2D.fillRect(0.0, 0.0, imageCanvas.width, imageCanvas.height)
     }
 
     private fun doForAllLandmarks(delegate: (LandmarkView) -> Unit) =
