@@ -33,23 +33,12 @@ class FrameView(
 
     init {
         scale.onChange { newScale ->
-            imageCanvas.transforms.clear()
-            if (newScale > 1) {
-                imageCanvas.width = width
-                imageCanvas.height = height
-                val scaleTransform = Scale(newScale, newScale)
-                imageCanvas.transforms.add(scaleTransform)
-            } else {
-                imageCanvas.width = width * newScale
-                imageCanvas.height = height * newScale
-            }
-
-            drawImage()
-            doForAllLandmarks { view -> view.scale = newScale }
+            scaleImageAndLandmarks(newScale)
         }
 
         add(imageCanvas)
         setFrame(frame)
+        scaleImageAndLandmarks(scale.value)
     }
 
     fun setFrame(frame: VisualizationFrame) {
@@ -88,6 +77,22 @@ class FrameView(
 
         drawImage()
         doForAllLandmarks { view -> children.add(view.shape) }
+    }
+
+    private fun scaleImageAndLandmarks(newScale: Double) {
+        imageCanvas.transforms.clear()
+        if (newScale > 1) {
+            imageCanvas.width = width
+            imageCanvas.height = height
+            val scaleTransform = Scale(newScale, newScale)
+            imageCanvas.transforms.add(scaleTransform)
+        } else {
+            imageCanvas.width = width * newScale
+            imageCanvas.height = height * newScale
+        }
+
+        drawImage()
+        doForAllLandmarks { view -> view.scale = newScale }
     }
 
     private fun drawImage() {
