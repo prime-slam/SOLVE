@@ -3,20 +3,25 @@ package sliv.tool.catalogue.view
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
+import javafx.scene.control.CheckBox
 import javafx.scene.control.RadioButton
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.Toggle
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.Priority
+import sliv.tool.catalogue.*
 import sliv.tool.catalogue.controller.CatalogueController
-import sliv.tool.catalogue.deselectAllItems
 import sliv.tool.catalogue.model.CatalogueField
 import sliv.tool.catalogue.model.ViewFormat
-import sliv.tool.catalogue.selectAllItems
-import sliv.tool.catalogue.selectedItems
 import tornadofx.*
 
 class CatalogueView : View() {
+    enum class SelectionState {
+        ALL,
+        NONE,
+        PART
+    }
+
     companion object {
         private val initialViewFormat = ViewFormat.FILE_NAME
     }
@@ -30,7 +35,23 @@ class CatalogueView : View() {
     private lateinit var imagePreviewRadioButton: RadioButton
     private var currentViewFormat = initialViewFormat
 
-    private val checkedAllProperty = booleanProperty(false)
+    private val selectionCheckBoxBoolProperty = booleanProperty(false)
+    private lateinit var selectionCheckBox: CheckBox
+
+    private var previousSelectedField: CatalogueField? = null
+    private var previousSelectedFieldsCount = 0
+    private val currentSelectedField: CatalogueField?
+        get() = fileNamesListView.selectedItem
+    private val currentSelectionState: SelectionState
+        get() = when {
+            areSelectedAllFields -> SelectionState.ALL
+            areNotSelectedAllFields -> SelectionState.NONE
+            else -> SelectionState.PART
+        }
+    private val areSelectedAllFields: Boolean
+        get() = fileNamesListView.selectedItemsCount() == controller.model.frames.count()
+    private val areNotSelectedAllFields: Boolean
+        get() = fileNamesListView.selectedItems().isEmpty()
 
     init {
         controller.model.frames.onChange {
@@ -54,12 +75,10 @@ class CatalogueView : View() {
             prefWidth = 300.0
             padding = Insets(5.0, 5.0, 5.0, 5.0)
             spacing = 5.0
-            checkbox("Select all", checkedAllProperty) {
+            selectionCheckBox = checkbox("Select all", selectionCheckBoxBoolProperty) {
                 action {
-                    if (isSelected) {
-                        fileNamesListView.selectAllItems()
-                        checkedAllProperty.value = true
-                    }
+                    println(isSelected)
+                    if (isSelected) fileNamesListView.selectAllItems()
                     else fileNamesListView.deselectAllItems()
                 }
             }
@@ -115,19 +134,38 @@ class CatalogueView : View() {
         viewFormatToggleGroup.selectToggle(getViewFormatToggle(currentViewFormat))
     }
 
-    private fun areSelectedAll() =
-        fileNamesListView.selectionModel.selectedItems.count() == controller.model.frames.count()
+    private fun setSelectionCheckBoxState(selectionState: SelectionState) {
+        when (selectionState) {
+            SelectionState.ALL -> {
+                selectionCheckBox.isIndeterminate = false
+                selectionCheckBoxBoolProperty.value = true
+            }
+            SelectionState.NONE -> {
+                selectionCheckBox.isIndeterminate = false
+                selectionCheckBoxBoolProperty.value = false
+            }
+            SelectionState.PART -> selectionCheckBox.isIndeterminate = true
+        }
+    }
+
+    private fun haveFieldDoubleClick() = previousSelectedField != null && previousSelectedField == currentSelectedField
 
     private fun initializeSelectionNodes() {
-        fileNamesListView.selectionModel.selectedItemProperty().onChange {
-            if (checkedAllProperty.value && !areSelectedAll()) {
-                checkedAllProperty.value = false
+        fileNamesListView.setOnMouseClicked {
+            if (haveFieldDoubleClick() && previousSelectedFieldsCount == 1) {
+                fileNamesListView.deselectAllItems()
+                fileNamesListView.selectItem(currentSelectedField)
             }
+            previousSelectedField = currentSelectedField
+            previousSelectedFieldsCount = fileNamesListView.selectedItemsCount()
+        }
+        fileNamesListView.selectionModel.selectedItemProperty().onChange {
+            setSelectionCheckBoxState(currentSelectionState)
         }
     }
 
     private fun resetNodes() {
-        checkedAllProperty.value = false
+        setSelectionCheckBoxState(SelectionState.NONE)
         viewFormatToggleGroup.selectToggle(getViewFormatToggle(initialViewFormat))
     }
 }

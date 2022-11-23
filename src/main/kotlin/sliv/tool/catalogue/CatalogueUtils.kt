@@ -10,6 +10,10 @@ fun <T> ListView<T>.deselectAllItems() = this.selectionModel.clearSelection()
 
 fun <T> ListView<T>.selectedItems(): List<T> = this.selectionModel.selectedItems
 
+fun <T> ListView<T>.selectedItemsCount(): Int = this.selectedItems().count()
+
+fun <T> ListView<T>.selectItem(item: T) = this.selectionModel.select(item)
+
 fun ProjectFrame.extractLayers(): List<ProjectLayer> {
     val layersSet = mutableSetOf<ProjectLayer>()
     this.landmarkFiles.forEach {layersSet.add(it.projectLayer) }
