@@ -4,6 +4,7 @@ import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
+import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import javafx.scene.transform.Scale
@@ -24,6 +25,8 @@ class FrameView(
     //Frame data be loaded concurrently, so these fields should be volatile
     @Volatile
     private var image: Image? = null
+    @Volatile
+    private var timestamp: Long? = null
 
     @Volatile
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
@@ -32,9 +35,23 @@ class FrameView(
     private var currentJob: Job? = null
 
     private val isDataLoaded
-        get() = landmarksViews != null && image != null
+        get() = landmarksViews != null && image != null && timestamp != null
 
     init {
+        FramesEventManager.LandmarkSelected += { e ->
+            println("receive landmark selected in $timestamp")
+            if (e.frameTimestamp != timestamp) {
+                val landmarkView = landmarksViews?.values?.flatten()?.firstOrNull { it.landmark.uid == e.uid }
+                landmarkView?.highlight()
+            }
+        }
+        FramesEventManager.LandmarkUnselected += { e ->
+            println("receive landmark unselected in $timestamp")
+            if (e.frameTimestamp != timestamp) {
+                val landmarkView = landmarksViews?.values?.flatten()?.firstOrNull { it.landmark.uid == e.uid }
+                landmarkView?.unhighlight()
+            }
+        }
         scale.onChange { newScale ->
             scaleImageAndLandmarks(newScale)
         }
@@ -48,6 +65,7 @@ class FrameView(
         currentJob?.cancel()
         landmarksViews = null
         image = null
+        timestamp = null
 
         clearLandmarks()
         clearImage()
@@ -75,6 +93,7 @@ class FrameView(
             println("Image size doesn't equal to the frame size") //TODO: warn user
         }
         image = frameImage
+        timestamp = frame.timestamp
     }
 
     private fun draw() {
@@ -84,7 +103,15 @@ class FrameView(
         }
 
         drawImage()
-        doForAllLandmarks { view -> children.add(view.shape) }
+        doForAllLandmarks { view ->
+            view.shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
+                FramesEventManager.LandmarkSelected.invoke(LandmarkEventArgs(view.landmark.uid, -1))
+            }
+            view.shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
+                FramesEventManager.LandmarkUnselected.invoke(LandmarkEventArgs((view.landmark.uid), -1))
+            }
+            children.add(view.shape)
+        }
     }
 
     private fun scaleImageAndLandmarks(newScale: Double) {

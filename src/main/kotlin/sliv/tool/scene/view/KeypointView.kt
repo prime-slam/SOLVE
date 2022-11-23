@@ -1,10 +1,11 @@
 package sliv.tool.scene.view
 
+import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Ellipse
 import sliv.tool.scene.model.Landmark
 
-class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : LandmarkView(scale) {
+class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : LandmarkView(scale, keypoint) {
     companion object {
         private const val OrdinaryRadius: Double = 5.0
     }
@@ -24,16 +25,24 @@ class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : Lan
         shape.radiusY = radius
     }
 
+    override fun highlight() {
+        shape.fill = Color.BLUE
+    }
+
+    override fun unhighlight() {
+        shape.fill = keypoint.layer.color
+    }
+
     private fun createShape(): Ellipse {
         val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
         shape.fill = keypoint.layer.color
         shape.opacity = keypoint.layer.opacity
 
-        shape.setOnMouseEntered {
-            shape.fill = Color.BLUE
+        shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
+            highlight()
         }
-        shape.setOnMouseExited {
-            shape.fill = keypoint.layer.color
+        shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
+            unhighlight()
         }
 
         return shape
