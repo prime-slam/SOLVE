@@ -5,7 +5,7 @@ import sliv.tool.scene.model.*
 
 // Responsive for creating and setting visual effects for landmarks presenting controls
 // This has access to landmark data class and its layer
-sealed class LandmarkView(scale: Double) {
+sealed class LandmarkView(scale: Double, val landmark: Landmark) {
     companion object {
         fun create(landmark: Landmark, scale: Double): LandmarkView {
             return when (landmark) {
@@ -24,4 +24,7 @@ sealed class LandmarkView(scale: Double) {
         }
 
     protected abstract fun scaleChanged()
+
+    abstract fun highlight()
+    abstract fun unhighlight()
 }

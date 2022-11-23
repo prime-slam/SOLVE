@@ -13,4 +13,9 @@ class FrameViewAdapter(private val view: FrameView) : GridCell<VisualizationFram
     override fun updateItem(frame: VisualizationFrame?) {
         view.setFrame(frame)
     }
+
+    override fun dispose() {
+        println("disposed")
+        super.dispose()
+    }
 }

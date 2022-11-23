@@ -3,7 +3,7 @@ package sliv.tool.scene.view
 import javafx.scene.shape.Line
 import sliv.tool.scene.model.Landmark
 
-class LineView(private val line: Landmark.Line, scale: Double) : LandmarkView(scale) {
+class LineView(private val line: Landmark.Line, scale: Double) : LandmarkView(scale, line) {
     companion object {
         private const val OrdinaryWidth: Double = 5.0
     }
@@ -31,5 +31,13 @@ class LineView(private val line: Landmark.Line, scale: Double) : LandmarkView(sc
         shape.opacity = line.layer.opacity
         shape.strokeWidth = width
         return shape
+    }
+
+    override fun highlight() {
+        TODO("Not yet implemented")
+    }
+
+    override fun unhighlight() {
+        TODO("Not yet implemented")
     }
 }
