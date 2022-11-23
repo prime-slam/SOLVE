@@ -48,6 +48,7 @@ class FrameView(
             doForAllLandmarks { view -> view.scale = newScale }
         }
 
+        add(imageCanvas)
         setFrame(frame)
     }
 
@@ -63,7 +64,6 @@ class FrameView(
             }
         }
 
-        add(imageCanvas)
         draw()
     }
 
