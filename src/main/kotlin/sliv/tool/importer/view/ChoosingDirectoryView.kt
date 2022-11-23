@@ -5,6 +5,7 @@ import javafx.geometry.Insets
 import javafx.scene.control.TreeItem
 import javafx.stage.DirectoryChooser
 import sliv.tool.importer.ProjectParser
+import sliv.tool.importer.ProjectParser.parseDirectory
 import sliv.tool.importer.controller.ImporterController
 import tornadofx.*
 
@@ -30,8 +31,12 @@ class ChoosingDirectoryView : Fragment() {
         }
 
         path.onChange {
-            rootTree = ProjectParser.createTreeWithFiles(it, rootTree)
+            var project = parseDirectory(it.toString())
+            rootTree = ProjectParser.createTreeWithFiles(project, rootTree)
         }
-        treeview(rootTree)
+
+        treeview(rootTree) {
+            visibleWhen { path.isNotEmpty }
+        }
     }
 }
