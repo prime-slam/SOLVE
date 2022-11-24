@@ -3,8 +3,6 @@ package sliv.tool.common
 class Event<T> {
     private val listeners = mutableSetOf<(T) -> Unit>()
 
-    fun clear() = listeners.clear()
-
     operator fun plusAssign(observer: (T) -> Unit) {
         listeners.add(observer)
     }

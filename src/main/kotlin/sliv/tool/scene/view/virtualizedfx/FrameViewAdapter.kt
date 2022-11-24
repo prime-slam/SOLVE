@@ -15,7 +15,7 @@ class FrameViewAdapter(private val view: FrameView) : GridCell<VisualizationFram
     }
 
     override fun dispose() {
-        println("disposed")
+        view.dispose()
         super.dispose()
     }
 }

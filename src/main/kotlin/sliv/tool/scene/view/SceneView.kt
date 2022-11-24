@@ -17,12 +17,14 @@ import kotlin.math.min
 class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
+    private var frameEventManager = FramesEventManager()
 
     init {
         controller.scene.onChange { scene ->
             if (scene != null) {
                 frameDataLoadingScope.cancel()
                 frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
+                frameEventManager = FramesEventManager()
                 draw()
             }
         }
@@ -57,7 +59,7 @@ class SceneView : View() {
             frames, columnsNumber, width + margin, height + margin, scaleProperty
         ) { frame ->
             FrameView(
-                width, height, scaleProperty, frameDataLoadingScope, frame
+                width, height, scaleProperty, frameDataLoadingScope, frameEventManager, frame
             )
         }
 
@@ -77,10 +79,7 @@ class SceneView : View() {
     }
 
     private fun zoomGrid(
-        scaleProperty: DoubleProperty,
-        grid: Grid,
-        mousePosition: Pair<Double, Double>,
-        isPositive: Boolean
+        scaleProperty: DoubleProperty, grid: Grid, mousePosition: Pair<Double, Double>, isPositive: Boolean
     ) {
         val initialPos = grid.currentPosition
 
