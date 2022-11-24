@@ -6,7 +6,6 @@ import javafx.geometry.Pos
 import javafx.scene.control.CheckBox
 import javafx.scene.control.RadioButton
 import javafx.scene.control.SelectionMode
-import javafx.scene.control.Toggle
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.Priority
 import sliv.tool.catalogue.*
@@ -15,6 +14,8 @@ import sliv.tool.catalogue.model.CatalogueField
 import sliv.tool.catalogue.model.ViewFormat
 import sliv.tool.project.model.ProjectFrame
 import tornadofx.*
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 class CatalogueView : View() {
     enum class SelectionState {
@@ -25,6 +26,7 @@ class CatalogueView : View() {
 
     companion object {
         private val initialViewFormat = ViewFormat.FileName
+        private val initialSelectionState = SelectionState.All
     }
 
     private val controller: CatalogueController by inject()
@@ -34,10 +36,11 @@ class CatalogueView : View() {
     private val viewFormatToggleGroup = ToggleGroup()
     private lateinit var fileNameViewRadioButton: RadioButton
     private lateinit var imagePreviewRadioButton: RadioButton
-    private var currentViewFormat = initialViewFormat
+    private var viewFormat: ViewFormat by viewFormatRadioButtonDelegate()
 
     private val selectionCheckBoxBoolProperty = booleanProperty(false)
     private lateinit var selectionCheckBox: CheckBox
+    private var checkBoxSelectionState: SelectionState by checkBoxSelectionStateDelegate()
 
     private var previousSelectedField: CatalogueField? = null
     private var previousSelectedFieldsCount = 0
@@ -58,9 +61,9 @@ class CatalogueView : View() {
 
     init {
         controller.model.frames.onChange {
-            resetNodes()
             reinitializeFields()
             visualizeProjectImportSelection()
+            resetNodes()
         }
     }
 
@@ -108,15 +111,6 @@ class CatalogueView : View() {
 
     override val root = catalogueBorderpane.also { initializeNodes() }
 
-    private fun onViewFormatToggleSwitched(switchedToToggle: Toggle) {
-        val selectedViewFormat = when (switchedToToggle as RadioButton) {
-            fileNameViewRadioButton -> ViewFormat.FileName
-            imagePreviewRadioButton -> ViewFormat.ImagePreview
-            else -> ViewFormat.FileName.also { println("Unexpected view format toggle!") }
-        }
-        updateViewFormatNode(selectedViewFormat)
-    }
-
     private fun getViewFormatNode(withFormat: ViewFormat) = when (withFormat) {
         ViewFormat.FileName -> fileNamesListView
         ViewFormat.ImagePreview -> null // TODO("Add an image preview format")
@@ -127,36 +121,61 @@ class CatalogueView : View() {
     }
 
     private fun initializeNodes() {
-        initializeViewFormatToggles()
+        initializeViewFormatRadioButtons()
         initializeSelectionNodes()
     }
 
-    private fun getViewFormatToggle(viewFormat: ViewFormat) = when (viewFormat) {
+    private fun getRadioButtonViewFormat(radioButton: RadioButton) = when (radioButton) {
+        fileNameViewRadioButton -> ViewFormat.FileName
+        imagePreviewRadioButton -> ViewFormat.ImagePreview
+        else -> ViewFormat.FileName.also { println("Unexpected view format radio button!") }
+    }
+
+    private fun viewFormatRadioButtonDelegate(): ReadWriteProperty<Any?, ViewFormat> =
+        object : ReadWriteProperty<Any?, ViewFormat> {
+            var currentValue = initialViewFormat
+            override fun getValue(thisRef: Any?, property: KProperty<*>): ViewFormat = currentValue
+            override fun setValue(thisRef: Any?, property: KProperty<*>, value: ViewFormat) {
+                currentValue = value
+                updateViewFormatNode(currentValue)
+                viewFormatToggleGroup.selectToggle(getViewFormatRadioButton(currentValue))
+            }
+        }
+
+    private fun getViewFormatRadioButton(viewFormat: ViewFormat) = when (viewFormat) {
         ViewFormat.FileName -> fileNameViewRadioButton
         ViewFormat.ImagePreview -> imagePreviewRadioButton
     }
 
-    private fun initializeViewFormatToggles() {
+    private fun initializeViewFormatRadioButtons() {
         viewFormatToggleGroup.selectedToggleProperty().onChange {
             it ?: return@onChange
-            onViewFormatToggleSwitched(it)
+            viewFormat = getRadioButtonViewFormat(it as RadioButton)
         }
-        viewFormatToggleGroup.selectToggle(getViewFormatToggle(currentViewFormat))
     }
 
-    private fun setSelectionCheckBoxState(selectionState: SelectionState) {
-        when (selectionState) {
-            SelectionState.All -> {
-                selectionCheckBox.isIndeterminate = false
-                selectionCheckBoxBoolProperty.value = true
+    private fun checkBoxSelectionStateDelegate(): ReadWriteProperty<Any?, SelectionState> =
+        object : ReadWriteProperty<Any?, SelectionState> {
+            var currentValue = initialSelectionState
+            override fun getValue(thisRef: Any?, property: KProperty<*>): SelectionState = currentValue
+            override fun setValue(thisRef: Any?, property: KProperty<*>, value: SelectionState) {
+                currentValue = value
+                when (currentValue) {
+                    SelectionState.All -> {
+                        selectionCheckBox.isIndeterminate = false
+                        selectionCheckBoxBoolProperty.value = true
+                    }
+                    SelectionState.None -> {
+                        selectionCheckBox.isIndeterminate = false
+                        selectionCheckBoxBoolProperty.value = false
+                    }
+                    SelectionState.Part -> {
+                        selectionCheckBox.isIndeterminate = true
+                        selectionCheckBoxBoolProperty.value = false
+                    }
+                }
             }
-            SelectionState.None -> {
-                selectionCheckBox.isIndeterminate = false
-                selectionCheckBoxBoolProperty.value = false
-            }
-            SelectionState.Part -> selectionCheckBox.isIndeterminate = true
         }
-    }
 
     private fun haveFieldDoubleClick() = previousSelectedField != null && previousSelectedField == currentSelectedField
 
@@ -170,7 +189,7 @@ class CatalogueView : View() {
             previousSelectedFieldsCount = fileNamesListView.selectedItemsCount
         }
         fileNamesListView.selectionModel.selectedItemProperty().onChange {
-            setSelectionCheckBoxState(currentSelectionState)
+            checkBoxSelectionState = currentSelectionState
         }
     }
 
@@ -180,7 +199,7 @@ class CatalogueView : View() {
     }
 
     private fun resetNodes() {
-        setSelectionCheckBoxState(SelectionState.None)
-        viewFormatToggleGroup.selectToggle(getViewFormatToggle(initialViewFormat))
+        checkBoxSelectionState = currentSelectionState
+        viewFormatToggleGroup.selectToggle(getViewFormatRadioButton(initialViewFormat))
     }
 }
