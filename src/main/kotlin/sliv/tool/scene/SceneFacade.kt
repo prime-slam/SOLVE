@@ -29,9 +29,9 @@ class SceneFacade(private val controller: SceneController) {
 
     private fun ProjectLayer.toVisualizationLayer(): Layer {
         return when (kind) {
-            LayerKind.KEYPOINT -> Layer.PointLayer(this.name)
-            LayerKind.LINE -> Layer.LineLayer(this.name)
-            LayerKind.PLANE -> Layer.PlaneLayer(this.name)
+            LayerKind.Keypoint -> Layer.PointLayer(this.name)
+            LayerKind.Line -> Layer.LineLayer(this.name)
+            LayerKind.Plane -> Layer.PlaneLayer(this.name)
         }
     }
 
@@ -53,15 +53,15 @@ class SceneFacade(private val controller: SceneController) {
 
     private fun createLandmarks(file: LandmarkFile, layer: Layer): List<Landmark> {
         return when (file.projectLayer.kind) {
-            LayerKind.KEYPOINT -> CSVPointsParser.parse(file.path.toString()).map { point ->
+            LayerKind.Keypoint -> CSVPointsParser.parse(file.path.toString()).map { point ->
                 PointFactory.buildLandmark(point, layer as Layer.PointLayer)
             }
 
-            LayerKind.LINE -> CSVLinesParser.parse(file.path.toString()).map { line ->
+            LayerKind.Line -> CSVLinesParser.parse(file.path.toString()).map { line ->
                 LineFactory.buildLandmark(line, layer as Layer.LineLayer)
             }
 
-            LayerKind.PLANE -> ImagePlanesParser.parse(file.path.toString()).map { plane ->
+            LayerKind.Plane -> ImagePlanesParser.parse(file.path.toString()).map { plane ->
                 PlaneFactory.buildLandmark(plane, layer as Layer.PlaneLayer)
             }
         }

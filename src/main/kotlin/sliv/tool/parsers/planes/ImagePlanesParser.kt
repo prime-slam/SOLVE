@@ -6,20 +6,18 @@ import sliv.tool.parsers.ParserUtils
 import sliv.tool.parsers.structures.Plane
 import sliv.tool.scene.model.Point
 import java.awt.image.BufferedImage
-import kotlin.math.abs
-import kotlin.system.measureTimeMillis
 
 // A parser class for planes stored in images in a form of a mask.
 object ImagePlanesParser : Parser<Plane> {
     // Describes types of image formats, according to their color segments number.
     private enum class ColorSegmentsType(val colorComponentsNumber: Int, val segmentsByteOffset: Int) {
-        TRIPLE(3, 0),
-        QUAD(4, 1);
+        Triple(3, 0),
+        Quad(4, 1);
 
         companion object {
             fun getColorSegmentsType(colorComponentsNumber: Int) = when (colorComponentsNumber) {
-                3 -> TRIPLE
-                4 -> QUAD
+                3 -> Triple
+                4 -> Quad
                 else -> null.also {
                     println("Unexpected color components number: $colorComponentsNumber!")
                 }
