@@ -56,12 +56,16 @@ class CatalogueView : View() {
     init {
         controller.model.frames.onChange {
             resetNodes()
-            fields.clear()
-            fields.addAll(getFields())
+            reinitializeFields()
+            createProjectImportSelection()
         }
     }
 
-    private fun getFields() = controller.model.frames.map { CatalogueField(it) }.toObservable()
+    private fun reinitializeFields() {
+        val newFields = controller.model.frames.map { CatalogueField(it) }.toObservable()
+        fields.clear()
+        fields.addAll(newFields)
+    }
 
     private val fileNamesListView = listview(fields) {
         selectionModel.selectionMode = SelectionMode.MULTIPLE
@@ -77,7 +81,6 @@ class CatalogueView : View() {
             spacing = 5.0
             selectionCheckBox = checkbox("Select all", selectionCheckBoxBoolProperty) {
                 action {
-                    println(isSelected)
                     if (isSelected) fileNamesListView.selectAllItems()
                     else fileNamesListView.deselectAllItems()
                 }
@@ -162,6 +165,11 @@ class CatalogueView : View() {
         fileNamesListView.selectionModel.selectedItemProperty().onChange {
             setSelectionCheckBoxState(currentSelectionState)
         }
+    }
+
+    private fun createProjectImportSelection() {
+        fileNamesListView.selectAllItems()
+        controller.createFramesSelection(fileNamesListView.selectedItems().map { it.frame })
     }
 
     private fun resetNodes() {
