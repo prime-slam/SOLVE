@@ -1,8 +1,11 @@
 package sliv.tool.scene.view
 
+import javafx.animation.FillTransition
+import javafx.animation.ScaleTransition
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Ellipse
+import javafx.util.Duration
 import sliv.tool.scene.model.Landmark
 
 class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : LandmarkView(scale, keypoint) {
@@ -25,6 +28,39 @@ class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : Lan
         shape.radiusY = radius
     }
 
+    override fun select() {
+        shape.toFront()
+
+        val scaleTransition = ScaleTransition()
+        scaleTransition.duration = Duration(500.0)
+        scaleTransition.toX = 2.0
+        scaleTransition.toY = 2.0
+        scaleTransition.node = shape
+
+        val fillTransition = FillTransition()
+        fillTransition.duration = Duration(500.0)
+        fillTransition.toValue = Color.BLUE
+        fillTransition.shape = shape
+        scaleTransition.play()
+        fillTransition.play()
+    }
+
+    override fun unselect() {
+        val scaleTransition = ScaleTransition()
+        scaleTransition.duration = Duration.millis(500.0)
+        scaleTransition.toX = 1.0
+        scaleTransition.toY = 1.0
+        scaleTransition.node = shape
+
+        val fillTransition = FillTransition()
+        fillTransition.duration = Duration(500.0)
+        fillTransition.toValue = keypoint.layer.color
+        fillTransition.shape = shape
+
+        scaleTransition.play()
+        fillTransition.play()
+    }
+
     override fun highlight() {
         shape.fill = Color.BLUE
     }
@@ -39,10 +75,10 @@ class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : Lan
         shape.opacity = keypoint.layer.opacity
 
         shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
-            highlight()
+            select()
         }
         shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
-            unhighlight()
+            unselect()
         }
 
         return shape

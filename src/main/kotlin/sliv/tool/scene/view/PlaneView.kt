@@ -11,6 +11,13 @@ class PlaneView(private val plane: Landmark.Plane, scale: Double) : LandmarkView
         TODO("Not yet implemented")
     }
 
+    override fun select() {
+        TODO("Not yet implemented")
+    }
+
+    override fun unselect() {
+        TODO("Not yet implemented")
+    }
     override fun highlight() {
         TODO("Not yet implemented")
     }
