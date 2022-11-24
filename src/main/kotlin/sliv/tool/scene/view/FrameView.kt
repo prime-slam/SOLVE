@@ -20,6 +20,7 @@ class FrameView(
     private val height: Double,
     private val scale: DoubleProperty,
     private val coroutineScope: CoroutineScope,
+    private val eventManager: FramesEventManager,
     frame: VisualizationFrame?
 ) : Group() {
     //Frame data be loaded concurrently, so these fields should be volatile
@@ -37,21 +38,22 @@ class FrameView(
     private val isDataLoaded
         get() = landmarksViews != null && image != null && timestamp != null
 
+    private val landmarkSelectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
+        if (isDataLoaded && eventArgs.frameTimestamp != timestamp) {
+            getLandmarkView(eventArgs.layer, eventArgs.uid)?.highlight()
+        }
+    }
+
+    private val landmarkUnselectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
+        if (isDataLoaded && eventArgs.frameTimestamp != timestamp) {
+            getLandmarkView(eventArgs.layer, eventArgs.uid)?.unhighlight()
+        }
+    }
+
     init {
-        FramesEventManager.LandmarkSelected += { e ->
-            println("receive landmark selected in $timestamp")
-            if (e.frameTimestamp != timestamp) {
-                val landmarkView = landmarksViews?.values?.flatten()?.firstOrNull { it.landmark.uid == e.uid }
-                landmarkView?.highlight()
-            }
-        }
-        FramesEventManager.LandmarkUnselected += { e ->
-            println("receive landmark unselected in $timestamp")
-            if (e.frameTimestamp != timestamp) {
-                val landmarkView = landmarksViews?.values?.flatten()?.firstOrNull { it.landmark.uid == e.uid }
-                landmarkView?.unhighlight()
-            }
-        }
+        eventManager.landmarkSelected += landmarkSelectedEventHandler
+        eventManager.landmarkUnselected += landmarkUnselectedEventHandler
+
         scale.onChange { newScale ->
             scaleImageAndLandmarks(newScale)
         }
@@ -84,6 +86,14 @@ class FrameView(
         draw()
     }
 
+    fun dispose() {
+        eventManager.landmarkSelected -= landmarkSelectedEventHandler
+        eventManager.landmarkUnselected -= landmarkUnselectedEventHandler
+    }
+
+    private fun getLandmarkView(layer: Layer, uid: Long) =
+        landmarksViews?.get(layer)?.firstOrNull { it.landmark.uid == uid }
+
     private fun reloadData(frame: VisualizationFrame) {
         landmarksViews = frame.landmarks.mapValues {
             it.value.map { landmark -> LandmarkView.create(landmark, scale.value) }
@@ -105,10 +115,10 @@ class FrameView(
         drawImage()
         doForAllLandmarks { view ->
             view.shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
-                FramesEventManager.LandmarkSelected.invoke(LandmarkEventArgs(view.landmark.uid, -1))
+                eventManager.landmarkSelected.invoke(LandmarkEventArgs(view.landmark.uid, view.landmark.layer, timestamp!!))
             }
             view.shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
-                FramesEventManager.LandmarkUnselected.invoke(LandmarkEventArgs((view.landmark.uid), -1))
+                eventManager.landmarkUnselected.invoke(LandmarkEventArgs((view.landmark.uid), view.landmark.layer, timestamp!!))
             }
             children.add(view.shape)
         }
