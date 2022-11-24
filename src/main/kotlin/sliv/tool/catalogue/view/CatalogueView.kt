@@ -13,6 +13,7 @@ import sliv.tool.catalogue.*
 import sliv.tool.catalogue.controller.CatalogueController
 import sliv.tool.catalogue.model.CatalogueField
 import sliv.tool.catalogue.model.ViewFormat
+import sliv.tool.project.model.ProjectFrame
 import tornadofx.*
 
 class CatalogueView : View() {
@@ -45,19 +46,21 @@ class CatalogueView : View() {
     private val currentSelectionState: SelectionState
         get() = when {
             areSelectedAllFields -> SelectionState.All
-            areNotSelectedAllFields -> SelectionState.None
+            isSelectionEmpty -> SelectionState.None
             else -> SelectionState.Part
         }
     private val areSelectedAllFields: Boolean
-        get() = fileNamesListView.selectedItemsCount() == controller.model.frames.count()
-    private val areNotSelectedAllFields: Boolean
-        get() = fileNamesListView.selectedItems().isEmpty()
+        get() = fileNamesListView.selectedItemsCount == controller.model.frames.count()
+    private val isSelectionEmpty: Boolean
+        get() = fileNamesListView.selectedItems.isEmpty()
+    private val selectedFrames: List<ProjectFrame>
+        get() = fileNamesListView.selectedItems.map { it.frame }
 
     init {
         controller.model.frames.onChange {
             resetNodes()
             reinitializeFields()
-            createProjectImportSelection()
+            visualizeProjectImportSelection()
         }
     }
 
@@ -81,8 +84,11 @@ class CatalogueView : View() {
             spacing = 5.0
             selectionCheckBox = checkbox("Select all", selectionCheckBoxBoolProperty) {
                 action {
-                    if (isSelected) fileNamesListView.selectAllItems()
-                    else fileNamesListView.deselectAllItems()
+                    if (isSelected) {
+                        fileNamesListView.selectAllItems()
+                    } else {
+                        fileNamesListView.deselectAllItems()
+                    }
                 }
             }
             pane().hgrow = Priority.ALWAYS
@@ -93,7 +99,7 @@ class CatalogueView : View() {
             hbox(alignment = Pos.CENTER) {
                 button("Apply") {
                     action {
-                        controller.createFramesSelection(fileNamesListView.selectedItems().map { it.frame })
+                        controller.visualizeFramesSelection(fileNamesListView.selectedItems.map { it.frame })
                     }
                 }
             }
@@ -115,6 +121,7 @@ class CatalogueView : View() {
         ViewFormat.FileName -> fileNamesListView
         ViewFormat.ImagePreview -> null // TODO("Add an image preview format")
     }
+
     private fun updateViewFormatNode(withFormat: ViewFormat) {
         catalogueBorderpane.center = getViewFormatNode(withFormat)
     }
@@ -160,16 +167,16 @@ class CatalogueView : View() {
                 fileNamesListView.selectItem(currentSelectedField)
             }
             previousSelectedField = currentSelectedField
-            previousSelectedFieldsCount = fileNamesListView.selectedItemsCount()
+            previousSelectedFieldsCount = fileNamesListView.selectedItemsCount
         }
         fileNamesListView.selectionModel.selectedItemProperty().onChange {
             setSelectionCheckBoxState(currentSelectionState)
         }
     }
 
-    private fun createProjectImportSelection() {
+    private fun visualizeProjectImportSelection() {
         fileNamesListView.selectAllItems()
-        controller.createFramesSelection(fileNamesListView.selectedItems().map { it.frame })
+        controller.visualizeFramesSelection(selectedFrames)
     }
 
     private fun resetNodes() {

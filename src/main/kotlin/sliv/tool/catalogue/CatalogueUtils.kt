@@ -8,15 +8,13 @@ fun <T> ListView<T>.selectAllItems() = this.selectionModel.selectAll()
 
 fun <T> ListView<T>.deselectAllItems() = this.selectionModel.clearSelection()
 
-fun <T> ListView<T>.selectedItems(): List<T> = this.selectionModel.selectedItems
+val <T> ListView<T>.selectedItems: List<T>
+    get() = this.selectionModel.selectedItems
 
-fun <T> ListView<T>.selectedItemsCount(): Int = this.selectedItems().count()
+val <T> ListView<T>.selectedItemsCount: Int
+    get() = this.selectedItems.count()
 
 fun <T> ListView<T>.selectItem(item: T) = this.selectionModel.select(item)
 
-fun ProjectFrame.extractLayers(): List<ProjectLayer> {
-    val layersSet = mutableSetOf<ProjectLayer>()
-    this.landmarkFiles.forEach {layersSet.add(it.projectLayer) }
-
-    return layersSet.toList()
-}
+val ProjectFrame.layers: List<ProjectLayer>
+    get() = this.landmarkFiles.map { it.projectLayer }.distinct()

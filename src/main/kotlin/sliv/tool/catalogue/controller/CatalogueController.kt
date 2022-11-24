@@ -1,10 +1,8 @@
 package sliv.tool.catalogue.controller
 
-import sliv.tool.catalogue.extractLayers
+import sliv.tool.catalogue.layers
 import sliv.tool.catalogue.model.CatalogueModel
-import sliv.tool.project.model.LayerKind
 import sliv.tool.project.model.ProjectFrame
-import sliv.tool.project.model.ProjectLayer
 import sliv.tool.scene.SceneFacade
 import sliv.tool.scene.controller.SceneController
 import tornadofx.Controller
@@ -19,8 +17,8 @@ class CatalogueController: Controller() {
         model.reinitializeFrames(frames)
     }
 
-    fun createFramesSelection(frames: List<ProjectFrame>) {
-        val layers = frames.map { it.extractLayers() }.toSet().flatten()
+    fun visualizeFramesSelection(frames: List<ProjectFrame>) {
+        val layers = frames.flatMap { it.layers }.distinct()
         sceneFacade.visualize(layers, frames)
     }
 }
