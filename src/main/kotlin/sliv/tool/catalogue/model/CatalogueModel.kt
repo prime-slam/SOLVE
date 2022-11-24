@@ -5,8 +5,8 @@ import javafx.collections.ObservableList
 import sliv.tool.project.model.ProjectFrame
 
 enum class ViewFormat {
-    FILE_NAME,
-    IMAGE_PREVIEW
+    FileName,
+    ImagePreview
 }
 
 class CatalogueModel {

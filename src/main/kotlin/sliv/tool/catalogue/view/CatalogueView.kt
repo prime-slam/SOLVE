@@ -17,13 +17,13 @@ import tornadofx.*
 
 class CatalogueView : View() {
     enum class SelectionState {
-        ALL,
-        NONE,
-        PART
+        All,
+        None,
+        Part
     }
 
     companion object {
-        private val initialViewFormat = ViewFormat.FILE_NAME
+        private val initialViewFormat = ViewFormat.FileName
     }
 
     private val controller: CatalogueController by inject()
@@ -44,9 +44,9 @@ class CatalogueView : View() {
         get() = fileNamesListView.selectedItem
     private val currentSelectionState: SelectionState
         get() = when {
-            areSelectedAllFields -> SelectionState.ALL
-            areNotSelectedAllFields -> SelectionState.NONE
-            else -> SelectionState.PART
+            areSelectedAllFields -> SelectionState.All
+            areNotSelectedAllFields -> SelectionState.None
+            else -> SelectionState.Part
         }
     private val areSelectedAllFields: Boolean
         get() = fileNamesListView.selectedItemsCount() == controller.model.frames.count()
@@ -101,16 +101,16 @@ class CatalogueView : View() {
 
     private fun onViewFormatToggleSwitched(switchedToToggle: Toggle) {
         val selectedViewFormat = when (switchedToToggle as RadioButton) {
-            fileNameViewRadioButton -> ViewFormat.FILE_NAME
-            imagePreviewRadioButton -> ViewFormat.IMAGE_PREVIEW
-            else -> ViewFormat.FILE_NAME.also { println("Unexpected view format toggle!") }
+            fileNameViewRadioButton -> ViewFormat.FileName
+            imagePreviewRadioButton -> ViewFormat.ImagePreview
+            else -> ViewFormat.FileName.also { println("Unexpected view format toggle!") }
         }
         updateViewFormatNode(selectedViewFormat)
     }
 
     private fun getViewFormatNode(withFormat: ViewFormat) = when (withFormat) {
-        ViewFormat.FILE_NAME -> fileNamesListView
-        ViewFormat.IMAGE_PREVIEW -> null // TODO("Add an image preview format")
+        ViewFormat.FileName -> fileNamesListView
+        ViewFormat.ImagePreview -> null // TODO("Add an image preview format")
     }
     private fun updateViewFormatNode(withFormat: ViewFormat) {
         catalogueBorderpane.center = getViewFormatNode(withFormat)
@@ -122,8 +122,8 @@ class CatalogueView : View() {
     }
 
     private fun getViewFormatToggle(viewFormat: ViewFormat) = when (viewFormat) {
-        ViewFormat.FILE_NAME -> fileNameViewRadioButton
-        ViewFormat.IMAGE_PREVIEW -> imagePreviewRadioButton
+        ViewFormat.FileName -> fileNameViewRadioButton
+        ViewFormat.ImagePreview -> imagePreviewRadioButton
     }
 
     private fun initializeViewFormatToggles() {
@@ -136,15 +136,15 @@ class CatalogueView : View() {
 
     private fun setSelectionCheckBoxState(selectionState: SelectionState) {
         when (selectionState) {
-            SelectionState.ALL -> {
+            SelectionState.All -> {
                 selectionCheckBox.isIndeterminate = false
                 selectionCheckBoxBoolProperty.value = true
             }
-            SelectionState.NONE -> {
+            SelectionState.None -> {
                 selectionCheckBox.isIndeterminate = false
                 selectionCheckBoxBoolProperty.value = false
             }
-            SelectionState.PART -> selectionCheckBox.isIndeterminate = true
+            SelectionState.Part -> selectionCheckBox.isIndeterminate = true
         }
     }
 
@@ -165,7 +165,7 @@ class CatalogueView : View() {
     }
 
     private fun resetNodes() {
-        setSelectionCheckBoxState(SelectionState.NONE)
+        setSelectionCheckBoxState(SelectionState.None)
         viewFormatToggleGroup.selectToggle(getViewFormatToggle(initialViewFormat))
     }
 }

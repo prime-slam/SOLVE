@@ -5,8 +5,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import sliv.tool.catalogue.controller.CatalogueController
 import sliv.tool.project.model.*
-import sliv.tool.scene.SceneFacade
-import sliv.tool.scene.controller.SceneController
 import tornadofx.*
 
 class MainController : Controller() {
@@ -16,7 +14,7 @@ class MainController : Controller() {
 
     //TODO: temporary solution to fill scene with data
     fun importTestData() {
-        val layer = ProjectLayer(LayerKind.KEYPOINT, "ORB")
+        val layer = ProjectLayer(LayerKind.Keypoint, "ORB")
         val path = Paths.get("test/data/room.jpg")
         val currentTimestamp = {
             LocalDateTime.now().atZone(ZoneId.of("UTC+03:00")).toInstant().toEpochMilli()
