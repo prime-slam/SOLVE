@@ -25,6 +25,8 @@ sealed class LandmarkView(scale: Double, val landmark: Landmark) {
 
     protected abstract fun scaleChanged()
 
+    abstract fun select()
+    abstract fun unselect()
     abstract fun highlight()
     abstract fun unhighlight()
 }

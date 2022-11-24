@@ -33,6 +33,13 @@ class LineView(private val line: Landmark.Line, scale: Double) : LandmarkView(sc
         return shape
     }
 
+    override fun select() {
+        TODO("Not yet implemented")
+    }
+
+    override fun unselect() {
+        TODO("Not yet implemented")
+    }
     override fun highlight() {
         TODO("Not yet implemented")
     }

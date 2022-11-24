@@ -40,13 +40,13 @@ class FrameView(
 
     private val landmarkSelectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
         if (isDataLoaded && eventArgs.frameTimestamp != timestamp) {
-            getLandmarkView(eventArgs.layer, eventArgs.uid)?.highlight()
+            getLandmarkView(eventArgs.layer, eventArgs.uid)?.select()
         }
     }
 
     private val landmarkUnselectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
         if (isDataLoaded && eventArgs.frameTimestamp != timestamp) {
-            getLandmarkView(eventArgs.layer, eventArgs.uid)?.unhighlight()
+            getLandmarkView(eventArgs.layer, eventArgs.uid)?.unselect()
         }
     }
 
