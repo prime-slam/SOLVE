@@ -8,12 +8,19 @@ import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import sliv.tool.scene.model.Landmark
 
-class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : LandmarkView(scale, keypoint) {
+class KeypointView(
+    private val keypoint: Landmark.Keypoint,
+    scale: Double,
+    frameTimestamp: Long,
+    eventManager: FramesEventManager
+) : LandmarkView(scale, keypoint, frameTimestamp, eventManager) {
     companion object {
         private const val OrdinaryRadius: Double = 5.0
     }
 
-    override val shape: Ellipse = createShape()
+    override val node: Ellipse = createShape().apply {
+        setUpShape(this)
+    }
 
     private val coordinates
         get() = Pair(keypoint.coordinate.x.toDouble() * scale, keypoint.coordinate.y.toDouble() * scale)
@@ -22,25 +29,25 @@ class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : Lan
         get() = if (scale < 1) OrdinaryRadius * scale else OrdinaryRadius
 
     override fun scaleChanged() {
-        shape.centerX = coordinates.first
-        shape.centerY = coordinates.second
-        shape.radiusX = radius
-        shape.radiusY = radius
+        node.centerX = coordinates.first
+        node.centerY = coordinates.second
+        node.radiusX = radius
+        node.radiusY = radius
     }
 
     override fun select() {
-        shape.toFront()
+        node.toFront()
 
         val scaleTransition = ScaleTransition()
         scaleTransition.duration = Duration(500.0)
         scaleTransition.toX = 2.0
         scaleTransition.toY = 2.0
-        scaleTransition.node = shape
+        scaleTransition.node = node
 
         val fillTransition = FillTransition()
         fillTransition.duration = Duration(500.0)
         fillTransition.toValue = Color.BLUE
-        fillTransition.shape = shape
+        fillTransition.shape = node
         scaleTransition.play()
         fillTransition.play()
     }
@@ -50,23 +57,23 @@ class KeypointView(private val keypoint: Landmark.Keypoint, scale: Double) : Lan
         scaleTransition.duration = Duration.millis(500.0)
         scaleTransition.toX = 1.0
         scaleTransition.toY = 1.0
-        scaleTransition.node = shape
+        scaleTransition.node = node
 
         val fillTransition = FillTransition()
         fillTransition.duration = Duration(500.0)
         fillTransition.toValue = keypoint.layer.color
-        fillTransition.shape = shape
+        fillTransition.shape = node
 
         scaleTransition.play()
         fillTransition.play()
     }
 
     override fun highlight() {
-        shape.fill = Color.BLUE
+        node.fill = Color.BLUE
     }
 
     override fun unhighlight() {
-        shape.fill = keypoint.layer.color
+        node.fill = keypoint.layer.color
     }
 
     private fun createShape(): Ellipse {

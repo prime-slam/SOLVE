@@ -4,7 +4,6 @@ import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import javafx.scene.transform.Scale
@@ -26,6 +25,7 @@ class FrameView(
     //Frame data be loaded concurrently, so these fields should be volatile
     @Volatile
     private var image: Image? = null
+
     @Volatile
     private var timestamp: Long? = null
 
@@ -96,7 +96,7 @@ class FrameView(
 
     private fun reloadData(frame: VisualizationFrame) {
         landmarksViews = frame.landmarks.mapValues {
-            it.value.map { landmark -> LandmarkView.create(landmark, scale.value) }
+            it.value.map { landmark -> LandmarkView.create(landmark, scale.value, frame.timestamp, eventManager) }
         }
         val frameImage = frame.image
         if (frameImage.height != height || frameImage.width != width) {
@@ -114,13 +114,7 @@ class FrameView(
 
         drawImage()
         doForAllLandmarks { view ->
-            view.shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
-                eventManager.landmarkSelected.invoke(LandmarkEventArgs(view.landmark.uid, view.landmark.layer, timestamp!!))
-            }
-            view.shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
-                eventManager.landmarkUnselected.invoke(LandmarkEventArgs((view.landmark.uid), view.landmark.layer, timestamp!!))
-            }
-            children.add(view.shape)
+            children.add(view.node)
         }
     }
 
