@@ -11,8 +11,8 @@ class KeypointView(
     private val keypoint: Landmark.Keypoint,
     scale: Double,
     frameTimestamp: Long,
-    private val eventManager: LandmarkStateSynchronizationManager
-) : LandmarkView(scale, keypoint, frameTimestamp, eventManager) {
+    private val stateSynchronizationManager: LandmarkStateSynchronizationManager
+) : LandmarkView(scale, keypoint, frameTimestamp, stateSynchronizationManager) {
     companion object {
         private const val OrdinaryRadius: Double = 5.0
     }
@@ -79,8 +79,8 @@ class KeypointView(
 
         // If landmark is already in the selected state.
         // Animation can not be applied because shape is not in visual tree at the moment.
-        if (eventManager.selectedLandmarksUids.contains(landmark.uid)
-            || eventManager.hoveredLandmarksUids.contains(landmark.uid)
+        if (stateSynchronizationManager.selectedLandmarksUids.contains(landmark.uid)
+            || stateSynchronizationManager.hoveredLandmarksUids.contains(landmark.uid)
         ) {
             highlightShapeInstantly(shape)
         }

@@ -11,14 +11,14 @@ sealed class LandmarkView(
     scale: Double,
     val landmark: Landmark,
     private val frameTimestamp: Long,
-    private val eventManager: LandmarkStateSynchronizationManager
+    private val stateSynchronizationManager: LandmarkStateSynchronizationManager
 ) {
     companion object {
-        fun create(landmark: Landmark, scale: Double, frameTimestamp: Long, eventManager: LandmarkStateSynchronizationManager): LandmarkView {
+        fun create(landmark: Landmark, scale: Double, frameTimestamp: Long, stateSynchronizationManager: LandmarkStateSynchronizationManager): LandmarkView {
             return when (landmark) {
-                is Landmark.Keypoint -> KeypointView(landmark, scale, frameTimestamp, eventManager)
-                is Landmark.Line -> LineView(landmark, scale, frameTimestamp, eventManager)
-                is Landmark.Plane -> PlaneView(landmark, scale, frameTimestamp, eventManager)
+                is Landmark.Keypoint -> KeypointView(landmark, scale, frameTimestamp, stateSynchronizationManager)
+                is Landmark.Line -> LineView(landmark, scale, frameTimestamp, stateSynchronizationManager)
+                is Landmark.Plane -> PlaneView(landmark, scale, frameTimestamp, stateSynchronizationManager)
             }
         }
     }
@@ -60,23 +60,23 @@ sealed class LandmarkView(
     }
 
     init {
-        eventManager.landmarkSelected += landmarkSelectedEventHandler
-        eventManager.landmarkUnselected += landmarkUnselectedEventHandler
-        eventManager.landmarkMouseEntered += landmarkMouseEnteredEventHandler
-        eventManager.landmarkMouseExited += landmarkMouseExitedEventHandler
+        stateSynchronizationManager.landmarkSelected += landmarkSelectedEventHandler
+        stateSynchronizationManager.landmarkUnselected += landmarkUnselectedEventHandler
+        stateSynchronizationManager.landmarkMouseEntered += landmarkMouseEnteredEventHandler
+        stateSynchronizationManager.landmarkMouseExited += landmarkMouseExitedEventHandler
     }
 
     fun dispose() {
-        eventManager.landmarkSelected -= landmarkSelectedEventHandler
-        eventManager.landmarkUnselected -= landmarkUnselectedEventHandler
-        eventManager.landmarkMouseEntered -= landmarkMouseEnteredEventHandler
-        eventManager.landmarkMouseExited -= landmarkMouseExitedEventHandler
+        stateSynchronizationManager.landmarkSelected -= landmarkSelectedEventHandler
+        stateSynchronizationManager.landmarkUnselected -= landmarkUnselectedEventHandler
+        stateSynchronizationManager.landmarkMouseEntered -= landmarkMouseEnteredEventHandler
+        stateSynchronizationManager.landmarkMouseExited -= landmarkMouseExitedEventHandler
     }
 
     // Set up common shape properties
     // Can not be called during LandmarkView initialization because shape is created by inheritors
     protected fun setUpShape(shape: Shape) {
-        if (eventManager.selectedLandmarksUids.contains(landmark.uid)) {
+        if (stateSynchronizationManager.selectedLandmarksUids.contains(landmark.uid)) {
             state = LandmarkState.Selected
         }
 
@@ -84,13 +84,13 @@ sealed class LandmarkView(
             when (state) {
                 LandmarkState.Ordinary -> {
                     select()
-                    eventManager.landmarkSelected.invoke(
+                    stateSynchronizationManager.landmarkSelected.invoke(
                         LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
                     )
                 }
                 LandmarkState.Selected -> {
                     unselect()
-                    eventManager.landmarkUnselected.invoke(
+                    stateSynchronizationManager.landmarkUnselected.invoke(
                         LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
                     )
                 }
@@ -103,7 +103,7 @@ sealed class LandmarkView(
             }
 
             handleMouseEntered()
-            eventManager.landmarkMouseEntered.invoke(
+            stateSynchronizationManager.landmarkMouseEntered.invoke(
                 LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
             )
         }
@@ -114,7 +114,7 @@ sealed class LandmarkView(
             }
 
             handleMouseExited()
-            eventManager.landmarkMouseExited.invoke(
+            stateSynchronizationManager.landmarkMouseExited.invoke(
                 LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
             )
         }
