@@ -38,22 +38,7 @@ class FrameView(
     private val isDataLoaded
         get() = landmarksViews != null && image != null && timestamp != null
 
-    private val landmarkSelectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (isDataLoaded && eventArgs.frameTimestamp != timestamp) {
-            getLandmarkView(eventArgs.layer, eventArgs.uid)?.select()
-        }
-    }
-
-    private val landmarkUnselectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (isDataLoaded && eventArgs.frameTimestamp != timestamp) {
-            getLandmarkView(eventArgs.layer, eventArgs.uid)?.unselect()
-        }
-    }
-
     init {
-        eventManager.landmarkSelected += landmarkSelectedEventHandler
-        eventManager.landmarkUnselected += landmarkUnselectedEventHandler
-
         scale.onChange { newScale ->
             scaleImageAndLandmarks(newScale)
         }
@@ -65,6 +50,7 @@ class FrameView(
 
     fun setFrame(frame: VisualizationFrame?) {
         currentJob?.cancel()
+        disposeLandmarkViews()
         landmarksViews = null
         image = null
         timestamp = null
@@ -87,12 +73,8 @@ class FrameView(
     }
 
     fun dispose() {
-        eventManager.landmarkSelected -= landmarkSelectedEventHandler
-        eventManager.landmarkUnselected -= landmarkUnselectedEventHandler
+        disposeLandmarkViews()
     }
-
-    private fun getLandmarkView(layer: Layer, uid: Long) =
-        landmarksViews?.get(layer)?.firstOrNull { it.landmark.uid == uid }
 
     private fun reloadData(frame: VisualizationFrame) {
         landmarksViews = frame.landmarks.mapValues {
@@ -105,6 +87,8 @@ class FrameView(
         image = frameImage
         timestamp = frame.timestamp
     }
+
+    private fun disposeLandmarkViews() = doForAllLandmarks { view -> view.dispose() }
 
     private fun draw() {
         if (!isDataLoaded) {

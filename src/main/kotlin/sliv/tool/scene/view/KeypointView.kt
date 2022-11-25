@@ -2,7 +2,6 @@ package sliv.tool.scene.view
 
 import javafx.animation.FillTransition
 import javafx.animation.ScaleTransition
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
@@ -35,7 +34,7 @@ class KeypointView(
         node.radiusY = radius
     }
 
-    override fun select() {
+    override fun highlightShape() {
         node.toFront()
 
         val scaleTransition = ScaleTransition()
@@ -52,7 +51,7 @@ class KeypointView(
         fillTransition.play()
     }
 
-    override fun unselect() {
+    override fun unhighlightShape() {
         val scaleTransition = ScaleTransition()
         scaleTransition.duration = Duration.millis(500.0)
         scaleTransition.toX = 1.0
@@ -68,25 +67,10 @@ class KeypointView(
         fillTransition.play()
     }
 
-    override fun highlight() {
-        node.fill = Color.BLUE
-    }
-
-    override fun unhighlight() {
-        node.fill = keypoint.layer.color
-    }
-
     private fun createShape(): Ellipse {
         val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
         shape.fill = keypoint.layer.color
         shape.opacity = keypoint.layer.opacity
-
-        shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
-            select()
-        }
-        shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
-            unselect()
-        }
 
         return shape
     }

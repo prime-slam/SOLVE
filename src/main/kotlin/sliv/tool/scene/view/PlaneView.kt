@@ -16,19 +16,11 @@ class PlaneView(
         TODO("Not yet implemented")
     }
 
-    override fun select() {
+    override fun highlightShape() {
         TODO("Not yet implemented")
     }
 
-    override fun unselect() {
-        TODO("Not yet implemented")
-    }
-
-    override fun highlight() {
-        TODO("Not yet implemented")
-    }
-
-    override fun unhighlight() {
+    override fun unhighlightShape() {
         TODO("Not yet implemented")
     }
 }
