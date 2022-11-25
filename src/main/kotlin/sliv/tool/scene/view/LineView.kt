@@ -7,14 +7,16 @@ class LineView(
     private val line: Landmark.Line,
     scale: Double,
     frameTimestamp: Long,
-    eventManager: FramesEventManager
+    eventManager: LandmarkStateSynchronizationManager
 ) : LandmarkView(scale, line, frameTimestamp, eventManager) {
     companion object {
         private const val OrdinaryWidth: Double = 5.0
     }
 
-    override val node: Line = createShape().apply {
-        setUpShape(this)
+    override val node: Line = createShape()
+
+    init {
+        setUpShape(node)
     }
 
     private val startCoordinates

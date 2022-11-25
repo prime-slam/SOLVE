@@ -11,10 +11,10 @@ sealed class LandmarkView(
     scale: Double,
     val landmark: Landmark,
     private val frameTimestamp: Long,
-    private val eventManager: FramesEventManager
+    private val eventManager: LandmarkStateSynchronizationManager
 ) {
     companion object {
-        fun create(landmark: Landmark, scale: Double, frameTimestamp: Long, eventManager: FramesEventManager): LandmarkView {
+        fun create(landmark: Landmark, scale: Double, frameTimestamp: Long, eventManager: LandmarkStateSynchronizationManager): LandmarkView {
             return when (landmark) {
                 is Landmark.Keypoint -> KeypointView(landmark, scale, frameTimestamp, eventManager)
                 is Landmark.Line -> LineView(landmark, scale, frameTimestamp, eventManager)
@@ -37,13 +37,13 @@ sealed class LandmarkView(
 
     private val landmarkSelectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
         if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
-            selectShape()
+            select()
         }
     }
 
     private val landmarkUnselectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
         if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
-            unselectShape()
+            unselect()
         }
     }
 
@@ -74,16 +74,23 @@ sealed class LandmarkView(
     }
 
     protected fun setUpShape(shape: Shape) {
+        if (eventManager.selectedLandmarksUids.contains(landmark.uid)) {
+            select()
+        }
+        if (eventManager.hoveredLandmarksUids.contains(landmark.uid)) {
+            handleMouseEntered()
+        }
+
         shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
             when (state) {
                 LandmarkState.Ordinary -> {
-                    selectShape()
+                    select()
                     eventManager.landmarkSelected.invoke(
                         LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
                     )
                 }
                 LandmarkState.Selected -> {
-                    unselectShape()
+                    unselect()
                     eventManager.landmarkUnselected.invoke(
                         LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
                     )
@@ -114,12 +121,12 @@ sealed class LandmarkView(
         }
     }
 
-    private fun selectShape() {
+    private fun select() {
         state = LandmarkState.Selected
         highlightShape()
     }
 
-    private fun unselectShape() {
+    private fun unselect() {
         state = LandmarkState.Ordinary
         unhighlightShape()
     }

@@ -11,14 +11,16 @@ class KeypointView(
     private val keypoint: Landmark.Keypoint,
     scale: Double,
     frameTimestamp: Long,
-    eventManager: FramesEventManager
+    eventManager: LandmarkStateSynchronizationManager
 ) : LandmarkView(scale, keypoint, frameTimestamp, eventManager) {
     companion object {
         private const val OrdinaryRadius: Double = 5.0
     }
 
-    override val node: Ellipse = createShape().apply {
-        setUpShape(this)
+    override val node: Ellipse = createShape()
+
+    init {
+        setUpShape(node)
     }
 
     private val coordinates

@@ -19,7 +19,7 @@ class FrameView(
     private val height: Double,
     private val scale: DoubleProperty,
     private val coroutineScope: CoroutineScope,
-    private val eventManager: FramesEventManager,
+    private val eventManager: LandmarkStateSynchronizationManager,
     frame: VisualizationFrame?
 ) : Group() {
     //Frame data be loaded concurrently, so these fields should be volatile
