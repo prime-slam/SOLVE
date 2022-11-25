@@ -17,14 +17,14 @@ import kotlin.math.min
 class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
-    private var frameEventManager = FramesEventManager()
+    private var frameEventManager = LandmarkStateSynchronizationManager()
 
     init {
         controller.scene.onChange { scene ->
             if (scene != null) {
                 frameDataLoadingScope.cancel()
                 frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
-                frameEventManager = FramesEventManager()
+                frameEventManager = LandmarkStateSynchronizationManager()
                 draw()
             }
         }
