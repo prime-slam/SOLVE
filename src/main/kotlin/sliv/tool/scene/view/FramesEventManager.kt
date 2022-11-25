@@ -5,4 +5,6 @@ import sliv.tool.common.*
 class FramesEventManager {
     val landmarkSelected = Event<LandmarkEventArgs>()
     val landmarkUnselected = Event<LandmarkEventArgs>()
+    val landmarkMouseEntered = Event<LandmarkEventArgs>()
+    val landmarkMouseExited = Event<LandmarkEventArgs>()
 }

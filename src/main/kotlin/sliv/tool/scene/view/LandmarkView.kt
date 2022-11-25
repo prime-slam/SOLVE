@@ -27,29 +27,121 @@ sealed class LandmarkView(
     // setUpShape() should be called to set up common features for all landmarks
     abstract val node: Node
 
+    private var state: LandmarkState = LandmarkState.Ordinary
+
     var scale: Double = scale
         set(value) {
             field = value
             scaleChanged()
         }
 
+    private val landmarkSelectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
+        if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
+            selectShape()
+        }
+    }
+
+    private val landmarkUnselectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
+        if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
+            unselectShape()
+        }
+    }
+
+    private val landmarkMouseEnteredEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
+        if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
+            handleMouseEntered()
+        }
+    }
+
+    private val landmarkMouseExitedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
+        if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
+            handleMouseExited()
+        }
+    }
+
+    init {
+        eventManager.landmarkSelected += landmarkSelectedEventHandler
+        eventManager.landmarkUnselected += landmarkUnselectedEventHandler
+        eventManager.landmarkMouseEntered += landmarkMouseEnteredEventHandler
+        eventManager.landmarkMouseExited += landmarkMouseExitedEventHandler
+    }
+
+    fun dispose() {
+        eventManager.landmarkSelected -= landmarkSelectedEventHandler
+        eventManager.landmarkUnselected -= landmarkUnselectedEventHandler
+        eventManager.landmarkMouseEntered -= landmarkMouseEnteredEventHandler
+        eventManager.landmarkMouseExited -= landmarkMouseExitedEventHandler
+    }
+
     protected fun setUpShape(shape: Shape) {
+        shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
+            when (state) {
+                LandmarkState.Ordinary -> {
+                    selectShape()
+                    eventManager.landmarkSelected.invoke(
+                        LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
+                    )
+                }
+                LandmarkState.Selected -> {
+                    unselectShape()
+                    eventManager.landmarkUnselected.invoke(
+                        LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
+                    )
+                }
+            }
+        }
+
         shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
-            eventManager.landmarkSelected.invoke(
+            if (state == LandmarkState.Selected) {
+                return@addEventHandler
+            }
+
+            handleMouseEntered()
+            eventManager.landmarkMouseEntered.invoke(
                 LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
             )
         }
+
         shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
-            eventManager.landmarkUnselected.invoke(
+            if (state == LandmarkState.Selected) {
+                return@addEventHandler
+            }
+
+            handleMouseExited()
+            eventManager.landmarkMouseExited.invoke(
                 LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
             )
         }
     }
 
+    private fun selectShape() {
+        state = LandmarkState.Selected
+        highlightShape()
+    }
+
+    private fun unselectShape() {
+        state = LandmarkState.Ordinary
+        unhighlightShape()
+    }
+
+    private fun handleMouseEntered() {
+        if (state == LandmarkState.Selected) {
+            return
+        }
+
+        highlightShape()
+    }
+
+    private fun handleMouseExited() {
+        if (state == LandmarkState.Selected) {
+            return
+        }
+
+        unhighlightShape()
+    }
+
     protected abstract fun scaleChanged()
 
-    abstract fun select()
-    abstract fun unselect()
-    abstract fun highlight()
-    abstract fun unhighlight()
+    protected abstract fun highlightShape()
+    protected abstract fun unhighlightShape()
 }
