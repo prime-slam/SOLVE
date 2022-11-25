@@ -3,8 +3,13 @@ package sliv.tool.scene.view
 import javafx.scene.shape.Shape
 import sliv.tool.scene.model.Landmark
 
-class PlaneView(private val plane: Landmark.Plane, scale: Double) : LandmarkView(scale, plane) {
-    override val shape: Shape
+class PlaneView(
+    private val plane: Landmark.Plane,
+    scale: Double,
+    frameTimestamp: Long,
+    eventManager: FramesEventManager
+) : LandmarkView(scale, plane, frameTimestamp, eventManager) {
+    override val node: Shape
         get() = TODO("Not yet implemented")
 
     override fun scaleChanged() {
@@ -18,6 +23,7 @@ class PlaneView(private val plane: Landmark.Plane, scale: Double) : LandmarkView
     override fun unselect() {
         TODO("Not yet implemented")
     }
+
     override fun highlight() {
         TODO("Not yet implemented")
     }
