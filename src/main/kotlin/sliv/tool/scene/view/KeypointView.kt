@@ -11,7 +11,7 @@ class KeypointView(
     private val keypoint: Landmark.Keypoint,
     scale: Double,
     frameTimestamp: Long,
-    eventManager: LandmarkStateSynchronizationManager
+    private val eventManager: LandmarkStateSynchronizationManager
 ) : LandmarkView(scale, keypoint, frameTimestamp, eventManager) {
     companion object {
         private const val OrdinaryRadius: Double = 5.0
@@ -54,6 +54,9 @@ class KeypointView(
     }
 
     override fun unhighlightShape() {
+        node.radiusX = radius
+        node.radiusY = radius
+
         val scaleTransition = ScaleTransition()
         scaleTransition.duration = Duration.millis(500.0)
         scaleTransition.toX = 1.0
@@ -74,6 +77,20 @@ class KeypointView(
         shape.fill = keypoint.layer.color
         shape.opacity = keypoint.layer.opacity
 
+        // If landmark is already in the selected state.
+        // Animation can not be applied because shape is not in visual tree at the moment.
+        if (eventManager.selectedLandmarksUids.contains(landmark.uid)
+            || eventManager.hoveredLandmarksUids.contains(landmark.uid)
+        ) {
+            highlightShapeInstantly(shape)
+        }
+
         return shape
+    }
+
+    private fun highlightShapeInstantly(shape: Ellipse) {
+        shape.radiusX = radius * 2
+        shape.radiusY = radius * 2
+        shape.fill = Color.BLUE
     }
 }
