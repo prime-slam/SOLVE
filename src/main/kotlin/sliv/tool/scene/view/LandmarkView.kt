@@ -77,10 +77,7 @@ sealed class LandmarkView(
     // Can not be called during LandmarkView initialization because shape is created by inheritors
     protected fun setUpShape(shape: Shape) {
         if (eventManager.selectedLandmarksUids.contains(landmark.uid)) {
-            select()
-        }
-        if (eventManager.hoveredLandmarksUids.contains(landmark.uid)) {
-            handleMouseEntered()
+            state = LandmarkState.Selected
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
