@@ -7,8 +7,8 @@ class PlaneView(
     private val plane: Landmark.Plane,
     scale: Double,
     frameTimestamp: Long,
-    eventManager: LandmarkStateSynchronizationManager
-) : LandmarkView(scale, plane, frameTimestamp, eventManager) {
+    stateSynchronizationManager: LandmarkStateSynchronizationManager
+) : LandmarkView(scale, plane, frameTimestamp, stateSynchronizationManager) {
     override val node: Shape
         get() = TODO("Not yet implemented")
 

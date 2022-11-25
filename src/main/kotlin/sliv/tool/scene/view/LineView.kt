@@ -7,8 +7,8 @@ class LineView(
     private val line: Landmark.Line,
     scale: Double,
     frameTimestamp: Long,
-    eventManager: LandmarkStateSynchronizationManager
-) : LandmarkView(scale, line, frameTimestamp, eventManager) {
+    stateSynchronizationManager: LandmarkStateSynchronizationManager
+) : LandmarkView(scale, line, frameTimestamp, stateSynchronizationManager) {
     companion object {
         private const val OrdinaryWidth: Double = 5.0
     }
