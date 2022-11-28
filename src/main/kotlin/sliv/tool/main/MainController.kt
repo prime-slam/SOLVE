@@ -10,7 +10,7 @@ import java.time.ZoneId
 
 class MainController : Controller() {
     private val sceneController: SceneController by inject()
-    private val sceneFacade = SceneFacade(sceneController)
+    val sceneFacade = SceneFacade(sceneController)
 
     //TODO: temporary solution to fill scene with data
     fun importTestData() {
