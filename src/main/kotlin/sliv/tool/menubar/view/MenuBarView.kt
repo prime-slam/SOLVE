@@ -6,11 +6,12 @@ import tornadofx.*
 
 class MenuBarView : View() {
     private val mainController: MainController by inject()
+    val importer = find<ImporterView>()
 
     override val root = hbox {
         button("Import project") {
             action {
-                ImporterView().openModal()
+                importer.openModal()
                 mainController.importTestData()
             }
         }
