@@ -19,7 +19,7 @@ class FrameView(
     private val height: Double,
     private val scale: DoubleProperty,
     private val coroutineScope: CoroutineScope,
-    frame: VisualizationFrame
+    frame: VisualizationFrame?
 ) : Group() {
     //Frame data be loaded concurrently, so these fields should be volatile
     @Volatile
@@ -31,6 +31,9 @@ class FrameView(
     private val imageCanvas = Canvas(width, height)
     private var currentJob: Job? = null
 
+    private val isDataLoaded
+        get() = landmarksViews != null && image != null
+
     init {
         scale.onChange { newScale ->
             scaleImageAndLandmarks(newScale)
@@ -41,10 +44,18 @@ class FrameView(
         scaleImageAndLandmarks(scale.value)
     }
 
-    fun setFrame(frame: VisualizationFrame) {
+    fun setFrame(frame: VisualizationFrame?) {
         currentJob?.cancel()
         landmarksViews = null
         image = null
+
+        clearLandmarks()
+        clearImage()
+
+        if (frame == null) {
+            clearImage()
+            return
+        }
 
         currentJob = coroutineScope.launch {
             reloadData(frame)
@@ -68,8 +79,6 @@ class FrameView(
     }
 
     private fun draw() {
-        children.removeIf { x -> x is Shape }
-
         if (!isDataLoaded) {
             drawLoadingIndicator()
             return
@@ -81,6 +90,8 @@ class FrameView(
 
     private fun scaleImageAndLandmarks(newScale: Double) {
         imageCanvas.transforms.clear()
+        clearImage()
+
         if (newScale > 1) {
             imageCanvas.width = width
             imageCanvas.height = height
@@ -96,15 +107,18 @@ class FrameView(
     }
 
     private fun drawImage() {
-        imageCanvas.graphicsContext2D.clearRect(0.0, 0.0, imageCanvas.width, imageCanvas.height)
         imageCanvas.graphicsContext2D.drawImage(image, 0.0, 0.0, imageCanvas.width, imageCanvas.height)
     }
 
-    private val isDataLoaded
-        get() = landmarksViews != null && image != null
+    private fun clearImage() {
+        imageCanvas.graphicsContext2D.clearRect(0.0, 0.0, imageCanvas.width, imageCanvas.height)
+    }
+
+    private fun clearLandmarks() {
+        children.removeIf { x -> x is Shape }
+    }
 
     private fun drawLoadingIndicator() {
-        imageCanvas.graphicsContext2D.clearRect(0.0, 0.0, imageCanvas.width, imageCanvas.height)
         imageCanvas.graphicsContext2D.fill = Color.GREY
         imageCanvas.graphicsContext2D.fillRect(0.0, 0.0, imageCanvas.width, imageCanvas.height)
     }

@@ -13,12 +13,12 @@ import tornadofx.onChange
 
 object VirtualizedFXGridProvider : GridProvider {
     override fun createGrid(
-        data: List<VisualizationFrame>,
+        data: List<VisualizationFrame?>,
         columnsNumber: Int,
         cellWidth: Double,
         cellHeight: Double,
         scale: DoubleProperty,
-        cellFactory: (VisualizationFrame) -> FrameView
+        cellFactory: (VisualizationFrame?) -> FrameView
     ): Grid {
         val gridData = ObservableGrid.fromList(data, columnsNumber)
         val grid = VirtualGrid(gridData) { item -> FrameViewAdapter(cellFactory(item)) }

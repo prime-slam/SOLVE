@@ -5,12 +5,12 @@ import javafx.scene.Node
 import sliv.tool.scene.model.VisualizationFrame
 import sliv.tool.scene.view.FrameView
 
-class FrameViewAdapter(private val view: FrameView) : GridCell<VisualizationFrame> {
+class FrameViewAdapter(private val view: FrameView) : GridCell<VisualizationFrame?> {
     override fun getNode(): Node {
         return view
     }
 
-    override fun updateItem(frame: VisualizationFrame) {
+    override fun updateItem(frame: VisualizationFrame?) {
         view.setFrame(frame)
     }
 }
