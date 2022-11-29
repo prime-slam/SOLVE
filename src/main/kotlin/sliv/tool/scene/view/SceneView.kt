@@ -50,9 +50,11 @@ class SceneView : View() {
         val scaleProperty = SimpleDoubleProperty(1.0)
 
         val columnsNumber = 30 //TODO: should be set from the UI
+        val emptyFrames = (0 until (30 - scene.frames.count() % columnsNumber)).map { null }
+        val frames = scene.frames + emptyFrames
 
         val grid = VirtualizedFXGridProvider.createGrid(
-            scene.frames, columnsNumber, width + margin, height + margin, scaleProperty
+            frames, columnsNumber, width + margin, height + margin, scaleProperty
         ) { frame ->
             FrameView(
                 width, height, scaleProperty, frameDataLoadingScope, frame

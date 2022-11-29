@@ -5,11 +5,11 @@ import sliv.tool.scene.model.VisualizationFrame
 
 interface GridProvider {
     fun createGrid(
-        data: List<VisualizationFrame>,
+        data: List<VisualizationFrame?>,
         columnsNumber: Int,
         cellWidth: Double,
         cellHeight: Double,
         scale: DoubleProperty,
-        cellFactory: (VisualizationFrame) -> FrameView
+        cellFactory: (VisualizationFrame?) -> FrameView
     ): Grid
 }

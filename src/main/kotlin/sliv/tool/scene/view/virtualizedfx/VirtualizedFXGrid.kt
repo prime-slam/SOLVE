@@ -11,7 +11,7 @@ import sliv.tool.scene.model.VisualizationFrame
 import sliv.tool.scene.view.Grid
 
 class VirtualizedFXGrid(
-    private val virtualGrid: VirtualGrid<VisualizationFrame, FrameViewAdapter>, private val vsp: VirtualScrollPane
+    private val virtualGrid: VirtualGrid<VisualizationFrame?, FrameViewAdapter>, private val vsp: VirtualScrollPane
 ) : Grid {
     private var dragStartMousePosition = Position.of(-1.0, -1.0)
     private var dragStartGridPosition = Position.of(0.0, 0.0)
