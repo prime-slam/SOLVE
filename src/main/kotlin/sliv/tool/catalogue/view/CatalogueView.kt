@@ -177,17 +177,7 @@ class CatalogueView : View() {
             }
         }
 
-    private fun haveFieldDoubleClick() = previousSelectedField != null && previousSelectedField == currentSelectedField
-
     private fun initializeSelectionNodes() {
-        fileNamesListView.setOnMouseClicked {
-            if (haveFieldDoubleClick() && previousSelectedFieldsCount == 1) {
-                fileNamesListView.deselectAllItems()
-                fileNamesListView.selectItem(currentSelectedField)
-            }
-            previousSelectedField = currentSelectedField
-            previousSelectedFieldsCount = fileNamesListView.selectedItemsCount
-        }
         fileNamesListView.selectionModel.selectedItemProperty().onChange {
             checkBoxSelectionState = currentSelectionState
         }
