@@ -24,6 +24,6 @@ class MainController : Controller() {
         }
         val landmarks = listOf(LandmarkFile(layer, Paths.get("test/data/points.csv"), emptyList()))
         val frames = (1..30000).map { ProjectFrame(currentTimestamp(), path, landmarks) }
-        catalogueController.displayFrames(frames)
+        catalogueController.setCatalogueFrames(frames)
     }
 }

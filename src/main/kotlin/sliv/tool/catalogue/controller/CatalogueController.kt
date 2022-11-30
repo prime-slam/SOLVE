@@ -10,7 +10,7 @@ import tornadofx.Controller
 class CatalogueController: Controller() {
     val model = CatalogueModel()
 
-    fun displayFrames(frames: List<ProjectFrame>) {
+    fun setCatalogueFrames(frames: List<ProjectFrame>) {
         model.reinitializeFrames(frames)
     }
 

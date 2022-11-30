@@ -3,20 +3,22 @@ package sliv.tool.catalogue.view
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
-import javafx.scene.control.CheckBox
-import javafx.scene.control.RadioButton
-import javafx.scene.control.SelectionMode
-import javafx.scene.control.ToggleGroup
+import javafx.scene.control.*
 import javafx.scene.image.Image
+import javafx.scene.input.ClipboardContent
+import javafx.scene.input.TransferMode
 import javafx.scene.layout.Priority
+import javafx.util.Callback
 import sliv.tool.catalogue.*
 import sliv.tool.catalogue.controller.CatalogueController
 import sliv.tool.catalogue.model.CatalogueField
 import sliv.tool.catalogue.model.ViewFormat
 import sliv.tool.project.model.ProjectFrame
+import sliv.tool.scene.view.SceneView
 import tornadofx.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+
 
 class CatalogueView : View() {
     enum class SelectionState {
@@ -31,6 +33,7 @@ class CatalogueView : View() {
     }
 
     private val controller: CatalogueController by inject()
+    private val sceneView: SceneView by inject()
 
     private val fields = FXCollections.observableArrayList<CatalogueField>()
 
@@ -76,15 +79,42 @@ class CatalogueView : View() {
     private val infoLabel = label()
 
     private val fileNamesListView = listview(fields) {
+        val cells = mutableListOf<ListCell<CatalogueField>>()
+
+        fun getSelectedCells(): List<ListCell<CatalogueField>> {
+            return cells.slice(1..cells.lastIndex).filterIndexed {
+                    index, _ -> index in this.selectedIndices
+            }
+        }
+
         selectionModel.selectionMode = SelectionMode.MULTIPLE
-        cellFormat {
-            text = it.fileName
-            val iconFile =
-                this.javaClass.classLoader.getResource("catalogue_image_icon.png")?.openStream()
-            if (iconFile != null) {
-                graphic = imageview(Image(iconFile)) {
-                    fitHeight = 18.0
-                    isPreserveRatio = true
+        cellFactory = Callback {
+            object : ListCell<CatalogueField>() {
+                init {
+                    cells.add(this)
+                    setOnDragDetected {
+                        val dragboard = this.startDragAndDrop(TransferMode.MOVE)
+                        val clipboardContent = ClipboardContent()
+                        clipboardContent.putString("") // It is necessary to display a drag view image.
+                        dragboard.setContent(clipboardContent)
+                        dragboard.dragView = createFileNameFieldsSnapshot(getSelectedCells())
+                    }
+                    setOnDragDone { event ->
+                        if (sceneView.containsPoint(event.x, event.y))
+                            controller.visualizeFramesSelection(selectedFrames)
+                    }
+                }
+                override fun updateItem(item: CatalogueField?, empty: Boolean) {
+                    super.updateItem(item, empty)
+                    text = item?.fileName
+                    val iconFile =
+                        this.javaClass.classLoader.getResource("catalogue_image_icon.png")?.openStream()
+                    if (iconFile != null) {
+                        graphic = imageview(Image(iconFile)) {
+                            fitHeight = 18.0
+                            isPreserveRatio = true
+                        }
+                    }
                 }
             }
         }
@@ -140,6 +170,9 @@ class CatalogueView : View() {
         infoLabel.isVisible = false
         isDisplayingInfoLabel = false
     }
+
+    private fun createFileNameFieldsSnapshot(fields: List<ListCell<CatalogueField>>): Image =
+        combineImagesVertically(fields.map { it.snapshot(null, null) })
 
     private fun checkForEmptyFields() {
         if (fields.isEmpty()) {
@@ -217,7 +250,10 @@ class CatalogueView : View() {
         }
 
     private fun initializeSelectionNodes() {
-        fileNamesListView.selectionModel.selectedItemProperty().onChange {
+        fileNamesListView.onSelectionChanged {
+            checkBoxSelectionState = currentSelectionState
+        }
+        fileNamesListView.setOnMouseClicked {
             checkBoxSelectionState = currentSelectionState
         }
     }
