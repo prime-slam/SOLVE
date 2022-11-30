@@ -36,25 +36,25 @@ sealed class LandmarkView(
         }
 
     private val landmarkSelectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
+        if (eventArgs.uid == landmark.uid) {
             select()
         }
     }
 
     private val landmarkUnselectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
+        if (eventArgs.uid == landmark.uid) {
             unselect()
         }
     }
 
     private val landmarkMouseEnteredEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
+        if (eventArgs.uid == landmark.uid) {
             handleMouseEntered()
         }
     }
 
     private val landmarkMouseExitedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (frameTimestamp != eventArgs.frameTimestamp && eventArgs.uid == landmark.uid) {
+        if (eventArgs.uid == landmark.uid) {
             handleMouseExited()
         }
     }
@@ -83,13 +83,11 @@ sealed class LandmarkView(
         shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
             when (state) {
                 LandmarkState.Ordinary -> {
-                    select()
                     stateSynchronizationManager.landmarkSelected.invoke(
                         LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
                     )
                 }
                 LandmarkState.Selected -> {
-                    unselect()
                     stateSynchronizationManager.landmarkUnselected.invoke(
                         LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
                     )
@@ -98,22 +96,12 @@ sealed class LandmarkView(
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
-            if (state == LandmarkState.Selected) {
-                return@addEventHandler
-            }
-
-            handleMouseEntered()
             stateSynchronizationManager.landmarkMouseEntered.invoke(
                 LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
             )
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
-            if (state == LandmarkState.Selected) {
-                return@addEventHandler
-            }
-
-            handleMouseExited()
             stateSynchronizationManager.landmarkMouseExited.invoke(
                 LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
             )
