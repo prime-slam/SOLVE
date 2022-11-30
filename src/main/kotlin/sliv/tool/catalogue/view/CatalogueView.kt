@@ -31,7 +31,7 @@ class CatalogueView : View() {
 
     private val controller: CatalogueController by inject()
 
-    private var fields = FXCollections.observableArrayList<CatalogueField>()
+    private val fields = FXCollections.observableArrayList<CatalogueField>()
 
     private val viewFormatToggleGroup = ToggleGroup()
     private lateinit var fileNameViewRadioButton: RadioButton
@@ -42,10 +42,8 @@ class CatalogueView : View() {
     private lateinit var selectionCheckBox: CheckBox
     private var checkBoxSelectionState: SelectionState by checkBoxSelectionStateDelegate()
 
-    private var previousSelectedField: CatalogueField? = null
-    private var previousSelectedFieldsCount = 0
-    private val currentSelectedField: CatalogueField?
-        get() = fileNamesListView.selectedItem
+    private var isDisplayingInfoLabel = false
+
     private val currentSelectionState: SelectionState
         get() = when {
             areSelectedAllFields -> SelectionState.All
@@ -73,6 +71,9 @@ class CatalogueView : View() {
         fields.addAll(newFields)
     }
 
+
+    private val infoLabel = label()
+
     private val fileNamesListView = listview(fields) {
         selectionModel.selectionMode = SelectionMode.MULTIPLE
         cellFormat {
@@ -81,22 +82,25 @@ class CatalogueView : View() {
     }
 
     private val catalogueBorderpane = borderpane {
-        top = hbox {
-            prefWidth = 300.0
-            padding = Insets(5.0, 5.0, 5.0, 5.0)
-            spacing = 5.0
-            selectionCheckBox = checkbox("Select all", selectionCheckBoxBoolProperty) {
-                action {
-                    if (isSelected) {
-                        fileNamesListView.selectAllItems()
-                    } else {
-                        fileNamesListView.deselectAllItems()
+        top = vbox {
+            hbox {
+                prefWidth = 300.0
+                padding = Insets(5.0, 5.0, 5.0, 5.0)
+                spacing = 5.0
+                selectionCheckBox = checkbox("Select all", selectionCheckBoxBoolProperty) {
+                    action {
+                        if (isSelected) {
+                            fileNamesListView.selectAllItems()
+                        } else {
+                            fileNamesListView.deselectAllItems()
+                        }
                     }
                 }
+                pane().hgrow = Priority.ALWAYS
+                fileNameViewRadioButton = radiobutton("File view", viewFormatToggleGroup)
+                imagePreviewRadioButton = radiobutton("Image preview", viewFormatToggleGroup)
             }
-            pane().hgrow = Priority.ALWAYS
-            fileNameViewRadioButton = radiobutton("File view", viewFormatToggleGroup)
-            imagePreviewRadioButton = radiobutton("Image preview", viewFormatToggleGroup)
+            add(infoLabel)
         }
         bottom {
             hbox(alignment = Pos.CENTER) {
@@ -111,6 +115,31 @@ class CatalogueView : View() {
 
     override val root = catalogueBorderpane.also { initializeNodes() }
 
+    private fun displayInfoLabel(withText: String) {
+        infoLabel.text = withText
+        infoLabel.isVisible = true
+        infoLabel.isManaged = true
+        isDisplayingInfoLabel = true
+    }
+
+    private fun hideInfoLabel() {
+        if (!isDisplayingInfoLabel) {
+            return
+        }
+
+        infoLabel.isManaged = false
+        infoLabel.isVisible = false
+        isDisplayingInfoLabel = false
+    }
+
+    private fun checkForEmptyFields() {
+        if (fields.isEmpty()) {
+            displayInfoLabel("No files found!")
+        } else {
+            hideInfoLabel()
+        }
+    }
+
     private fun getViewFormatNode(withFormat: ViewFormat) = when (withFormat) {
         ViewFormat.FileName -> fileNamesListView
         ViewFormat.ImagePreview -> null // TODO("Add an image preview format")
@@ -123,6 +152,7 @@ class CatalogueView : View() {
     private fun initializeNodes() {
         initializeViewFormatRadioButtons()
         initializeSelectionNodes()
+        resetNodes()
     }
 
     private fun getRadioButtonViewFormat(radioButton: RadioButton) = when (radioButton) {
@@ -191,5 +221,6 @@ class CatalogueView : View() {
     private fun resetNodes() {
         checkBoxSelectionState = currentSelectionState
         viewFormatToggleGroup.selectToggle(getViewFormatRadioButton(initialViewFormat))
+        checkForEmptyFields()
     }
 }
