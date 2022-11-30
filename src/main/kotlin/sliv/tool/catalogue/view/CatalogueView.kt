@@ -7,6 +7,7 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.RadioButton
 import javafx.scene.control.SelectionMode
 import javafx.scene.control.ToggleGroup
+import javafx.scene.image.Image
 import javafx.scene.layout.Priority
 import sliv.tool.catalogue.*
 import sliv.tool.catalogue.controller.CatalogueController
@@ -78,6 +79,14 @@ class CatalogueView : View() {
         selectionModel.selectionMode = SelectionMode.MULTIPLE
         cellFormat {
             text = it.fileName
+            val iconFile =
+                this.javaClass.classLoader.getResource("catalogue_image_icon.png")?.openStream()
+            if (iconFile != null) {
+                graphic = imageview(Image(iconFile)) {
+                    fitHeight = 18.0
+                    isPreserveRatio = true
+                }
+            }
         }
     }
 
