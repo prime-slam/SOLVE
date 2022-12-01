@@ -1,5 +1,8 @@
 # SLAM Landmarks Interactive Visualizer
 
+
+[![Build Status](https://github.com/prime-slam/SLIV/workflows/Build/badge.svg)](https://github.com/prime-slam/SLIV/actions/workflows/build.yml)
+
 The aim of the project is to create a powerful desktop application to make debugging of SLAM frontend algorithms easier.
 
 This tool will provide following features:
