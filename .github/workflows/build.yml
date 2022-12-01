@@ -13,9 +13,10 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           java-version: 17
-          java-package: jdk
-          cache: gradle
           distribution: corretto
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
       - name: Build
         run: ./gradlew :clean :assemble
       - name: Cleanup Gradle Cache
