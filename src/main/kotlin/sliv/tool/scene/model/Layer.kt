@@ -11,24 +11,24 @@ sealed class Layer(val name: String) {
     val selectedLandmarksUids = mutableSetOf<Long>().toObservable()
     val hoveredLandmarksUids = mutableSetOf<Long>().toObservable()
 
+    private val colorMap = HashMap<Long, Color>()
+    private val usedColors = HashSet<Color>()
+
+    fun getColor(landmark: Landmark): Color {
+        val result = colorMap[landmark.uid]
+        if (result == null) {
+            val color = generateRandomColorUnique(usedColors)
+            usedColors.add(color)
+            colorMap[landmark.uid] = color
+        }
+        return colorMap[landmark.uid]!!
+    }
+
     class PointLayer(name: String) : Layer(name) {
         var color: Color = DEFAULT_COLOR
     }
 
-    class LineLayer(name: String) : Layer(name) {
-        private val colorMap = HashMap<Long, Color>()
-        private val usedColors = HashSet<Color>()
-
-        fun getColor(landmark: Landmark): Color {
-            val result = colorMap[landmark.uid]
-            if (result == null) {
-                val color = generateRandomColorUnique(usedColors)
-                usedColors.add(color)
-                colorMap[landmark.uid] = color
-            }
-            return colorMap[landmark.uid]!!
-        }
-    }
+    class LineLayer(name: String) : Layer(name)
 
     class PlaneLayer(name: String) : Layer(name)
 
