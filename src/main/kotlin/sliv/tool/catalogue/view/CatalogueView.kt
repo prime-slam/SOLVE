@@ -3,23 +3,14 @@ package sliv.tool.catalogue.view
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
-import javafx.scene.Scene
 import javafx.scene.control.*
-import javafx.scene.image.Image
-import javafx.scene.image.WritableImage
-import javafx.scene.input.ClipboardContent
-import javafx.scene.input.DragEvent
-import javafx.scene.input.TransferMode
 import javafx.scene.layout.Priority
 import sliv.tool.catalogue.*
 import sliv.tool.catalogue.controller.CatalogueController
 import sliv.tool.catalogue.model.CatalogueField
 import sliv.tool.catalogue.model.ViewFormat
-import sliv.tool.main.MainView
 import sliv.tool.project.model.ProjectFrame
-import sliv.tool.scene.view.SceneView
 import tornadofx.*
-import kotlin.math.min
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -34,16 +25,11 @@ class CatalogueView : View() {
     companion object {
         private val initialViewFormat = ViewFormat.FileName
         private val initialSelectionState = SelectionState.All
-        private const val DragViewMaxFieldsNumber = 100
 
         private const val CatalogueWidth = 300.0
-        private const val ListViewFieldCellHeight = 30.0
-        private const val ListViewFieldIconSize = 20.0
     }
 
     private val controller: CatalogueController by inject()
-    private val sceneView: SceneView by inject()
-    private val mainView: MainView by inject()
 
     private val fields = FXCollections.observableArrayList<CatalogueField>()
 
@@ -55,23 +41,24 @@ class CatalogueView : View() {
     private val selectionCheckBoxBoolProperty = booleanProperty(false)
     private lateinit var selectionCheckBox: CheckBox
     private var checkBoxSelectionState: SelectionState by checkBoxSelectionStateDelegate()
+    private val displayingSelectionNode: SelectionNode?
+        get() = getSelectableView(viewFormat)
+    private val selectedFrames: List<ProjectFrame>
+        get() = displayingSelectionNode?.selectedFrames ?: emptyList()
 
     private var isDisplayingInfoLabel = false
 
-    private var isDragging = false
-
     private val currentSelectionState: SelectionState
-        get() = when {
-            areSelectedAllFields -> SelectionState.All
-            isSelectionEmpty -> SelectionState.None
-            else -> SelectionState.Part
+        get() {
+            val selectionNode = displayingSelectionNode
+            selectionNode ?: return initialSelectionState
+
+            return when {
+                selectionNode.areSelectedAllItems -> SelectionState.All
+                selectionNode.isSelectionEmpty -> SelectionState.None
+                else -> SelectionState.Part
+            }
         }
-    private val areSelectedAllFields: Boolean
-        get() = fileNamesListView.selectedItemsCount == controller.model.frames.count()
-    private val isSelectionEmpty: Boolean
-        get() = fileNamesListView.selectedItems.isEmpty()
-    private val selectedFrames: List<ProjectFrame>
-        get() = fileNamesListView.selectedItems.map { it.frame }
 
     init {
         controller.model.frames.onChange {
@@ -79,26 +66,6 @@ class CatalogueView : View() {
             visualizeProjectImportSelection()
             resetNodes()
         }
-    }
-    private fun onSceneDragDropped(event: DragEvent) {
-        if (isDragging)
-            controller.visualizeFramesSelection(selectedFrames)
-
-        isDragging = false
-    }
-
-    private fun onSceneDragOver(event: DragEvent) {
-        if (isDragging)
-            event.acceptTransferModes(TransferMode.MOVE)
-    }
-
-    private fun onCatalogueDragDetected() {
-        val dragboard = mainView.root.startDragAndDrop(TransferMode.MOVE)
-        val clipboardContent = ClipboardContent()
-        clipboardContent.putString("") // It is necessary to display a drag view image.
-        dragboard.setContent(clipboardContent)
-        dragboard.dragView = createFileNameFieldsSnapshot(fileNamesListView.selectedItems)
-        isDragging = true
     }
 
     private fun reinitializeFields() {
@@ -109,25 +76,7 @@ class CatalogueView : View() {
 
     private val infoLabel = label()
 
-    private fun setFileNamesListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
-        labeled.text = item?.fileName
-        labeled.graphic = imageview(fileNamesFieldIconImage) {
-            fitHeight = ListViewFieldIconSize
-            isPreserveRatio = true
-        }
-        labeled.prefHeight = ListViewFieldCellHeight
-    }
-
-    private val fileNamesFieldIconImage =
-        Image(this.javaClass.classLoader.getResource("catalogue_image_icon.png")?.openStream())
-
-    private val fileNamesListView = listview(fields) {
-        selectionModel.selectionMode = SelectionMode.MULTIPLE
-
-        cellFormat {
-            setFileNamesListViewCellFormat(this, it)
-        }
-    }
+    private val fileNamesListView = CatalogueFileNamesFieldsView(fields)
 
     private val catalogueBorderpane = borderpane {
         prefWidth = CatalogueWidth
@@ -163,22 +112,6 @@ class CatalogueView : View() {
 
     override val root = catalogueBorderpane.also { initializeNodes() }
 
-    private fun createFileNameFieldsSnapshot(fields: List<CatalogueField>): Image {
-        val snapshotFields = fields.take(DragViewMaxFieldsNumber).asObservable()
-        val prefSnapshotHeight = (snapshotFields.count() * ListViewFieldCellHeight).floor()
-
-        val fieldsSnapshotNode = listview(snapshotFields) {
-            cellFormat {
-                setFileNamesListViewCellFormat(this, it)
-            }
-        }
-        val snapshotScene = Scene(fieldsSnapshotNode)
-        val nodeSnapshot = fieldsSnapshotNode.snapshot(null, null)
-        return WritableImage(
-            nodeSnapshot.pixelReader, nodeSnapshot.width.floor(), min(nodeSnapshot.height.floor(), prefSnapshotHeight)
-        )
-    }
-
     private fun displayInfoLabel(withText: String) {
         infoLabel.text = withText
         infoLabel.isVisible = true
@@ -204,19 +137,18 @@ class CatalogueView : View() {
         }
     }
 
-    private fun getViewFormatNode(withFormat: ViewFormat) = when (withFormat) {
+    private fun getSelectableView(withFormat: ViewFormat) = when (withFormat) {
         ViewFormat.FileName -> fileNamesListView
         ViewFormat.ImagePreview -> null // TODO("Add an image preview format")
     }
 
     private fun updateViewFormatNode(withFormat: ViewFormat) {
-        catalogueBorderpane.center = getViewFormatNode(withFormat)
+        catalogueBorderpane.center = getSelectableView(withFormat)?.root
     }
 
     private fun initializeNodes() {
         initializeViewFormatRadioButtons()
         initializeSelectionNodes()
-        initializeDragEvents()
         resetNodes()
     }
 
@@ -273,20 +205,12 @@ class CatalogueView : View() {
         }
 
     private fun initializeSelectionNodes() {
-        fileNamesListView.onSelectionChanged {
+        fileNamesListView.root.onSelectionChanged {
             checkBoxSelectionState = currentSelectionState
         }
-        fileNamesListView.setOnMouseClicked {
+        fileNamesListView.root.setOnMouseClicked {
             checkBoxSelectionState = currentSelectionState
         }
-    }
-
-    private fun initializeDragEvents() {
-        fileNamesListView.setOnDragDetected {
-            onCatalogueDragDetected()
-        }
-        sceneView.root.addEventFilter(DragEvent.DRAG_OVER, ::onSceneDragOver)
-        sceneView.root.addEventFilter(DragEvent.DRAG_DROPPED, ::onSceneDragDropped)
     }
 
     private fun visualizeProjectImportSelection() {
