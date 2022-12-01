@@ -11,7 +11,6 @@ val jacksonCSVVersion: String by rootProject
 val jacksonModuleKotlinVersion: String by rootProject
 val virtualizedfxVersion: String by rootProject
 val coroutinesVersion: String by rootProject
-val fxsvgimageVersion: String by rootProject
 
 repositories {
     mavenCentral()
