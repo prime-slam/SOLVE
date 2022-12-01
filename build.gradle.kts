@@ -16,8 +16,6 @@ val fxsvgimageVersion: String by rootProject
 repositories {
     mavenCentral()
     maven(uri("https://oss.sonatype.org/content/repositories/snapshots"))
-    maven(uri("https://jitpack.io"))
-
 }
 
 application {
@@ -37,8 +35,6 @@ dependencies {
     implementation("io.github.palexdev:virtualizedfx:$virtualizedfxVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:$coroutinesVersion")
-    testImplementation(kotlin("test"))
-    implementation("com.github.hervegirod:fxsvgimage:$fxsvgimageVersion")
 }
 
 tasks {
