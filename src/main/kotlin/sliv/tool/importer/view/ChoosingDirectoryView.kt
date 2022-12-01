@@ -48,10 +48,10 @@ class ChoosingDirectoryView : Fragment() {
         vbox {
             padding = Insets(0.0, 0.0, 0.0, 10.0)
             button("Import") {
-                this.isDisable = true
+                isDisable = true
                 project.onChange {
                     if (project.value.frames.isNotEmpty()) {
-                        this.isDisable = false
+                        isDisable = false
                     }
                 }
                 action {
