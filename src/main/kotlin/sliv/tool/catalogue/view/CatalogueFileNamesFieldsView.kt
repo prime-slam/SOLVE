@@ -31,7 +31,7 @@ class CatalogueFileNamesFieldsView(fields: ObservableList<CatalogueField>): View
     override val areSelectedAllItems: Boolean
         get() = fileNamesListView.selectedItemsCount == controller.model.frames.count()
     override val isSelectionEmpty: Boolean
-        get() = controller.model.frames.isEmpty()
+        get() = fileNamesListView.selectedItems.isEmpty()
     override val selectedItems: List<CatalogueField>
         get() = fileNamesListView.selectedItems
     override val selectedFrames: List<ProjectFrame>
