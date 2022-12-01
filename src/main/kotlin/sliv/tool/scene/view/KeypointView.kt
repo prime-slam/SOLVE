@@ -2,7 +2,6 @@ package sliv.tool.scene.view
 
 import javafx.animation.FillTransition
 import javafx.animation.ScaleTransition
-import javafx.scene.paint.Color
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import sliv.tool.scene.model.Landmark
@@ -45,7 +44,7 @@ class KeypointView(
 
         val fillTransition = FillTransition()
         fillTransition.duration = Duration(500.0)
-        fillTransition.toValue = Color.BLUE
+        fillTransition.toValue = landmark.layer.getColor(landmark)
         fillTransition.shape = node
         scaleTransition.play()
         fillTransition.play()
@@ -89,6 +88,6 @@ class KeypointView(
     private fun highlightShapeInstantly(shape: Ellipse) {
         shape.radiusX = radius * 2
         shape.radiusY = radius * 2
-        shape.fill = Color.BLUE
+        shape.fill = landmark.layer.getColor(landmark)
     }
 }
