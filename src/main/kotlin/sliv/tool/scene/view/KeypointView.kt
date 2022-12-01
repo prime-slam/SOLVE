@@ -36,10 +36,11 @@ class KeypointView(
     override fun highlightShape() {
         node.toFront()
 
+        val increasedRadiusScale = (radius / node.radiusX) * 2.0
         val scaleTransition = ScaleTransition()
         scaleTransition.duration = Duration(500.0)
-        scaleTransition.toX = 2.0
-        scaleTransition.toY = 2.0
+        scaleTransition.toX = increasedRadiusScale
+        scaleTransition.toY = increasedRadiusScale
         scaleTransition.node = node
 
         val fillTransition = FillTransition()
@@ -51,15 +52,12 @@ class KeypointView(
     }
 
     override fun unhighlightShape() {
-        node.radiusX = radius
-        node.radiusY = radius
-
+        val defaultRadiusScale = radius / node.radiusX
         val scaleTransition = ScaleTransition()
         scaleTransition.duration = Duration.millis(500.0)
-        scaleTransition.toX = 1.0
-        scaleTransition.toY = 1.0
+        scaleTransition.toX = defaultRadiusScale
+        scaleTransition.toY = defaultRadiusScale
         scaleTransition.node = node
-
         val fillTransition = FillTransition()
         fillTransition.duration = Duration(500.0)
         fillTransition.toValue = keypoint.layer.color
