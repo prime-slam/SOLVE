@@ -1,12 +1,16 @@
 package sliv.tool.scene.model
 
 import javafx.scene.paint.Color
+import tornadofx.toObservable
 
 //Stores common context for landmarks drawing.
 //Layers properties being edited in the settings menu.
 //Settings menu appearance depends on type of the corresponding layer.
 //Meaningful changes here provokes scene redrawing.
 sealed class Layer(val name: String) {
+    val selectedLandmarksUids = mutableSetOf<Long>().toObservable()
+    val hoveredLandmarksUids = mutableSetOf<Long>().toObservable()
+
     class PointLayer(name: String) : Layer(name) {
         var color: Color = DEFAULT_COLOR
     }

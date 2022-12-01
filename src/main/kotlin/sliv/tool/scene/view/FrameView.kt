@@ -19,7 +19,6 @@ class FrameView(
     private val height: Double,
     private val scale: DoubleProperty,
     private val coroutineScope: CoroutineScope,
-    private val stateSynchronizationManager: LandmarkStateSynchronizationManager,
     frame: VisualizationFrame?
 ) : Group() {
     //Frame data be loaded concurrently, so these fields should be volatile
@@ -80,7 +79,7 @@ class FrameView(
         val landmarks = frame.landmarks
         withContext(Dispatchers.JavaFx) {
             landmarksViews = landmarks.mapValues {
-                it.value.map { landmark -> LandmarkView.create(landmark, scale.value, stateSynchronizationManager) }
+                it.value.map { landmark -> LandmarkView.create(landmark, scale.value) }
             }
         }
         val frameImage = frame.image
