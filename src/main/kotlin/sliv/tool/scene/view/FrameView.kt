@@ -80,7 +80,7 @@ class FrameView(
         val landmarks = frame.landmarks
         withContext(Dispatchers.JavaFx) {
             landmarksViews = landmarks.mapValues {
-                it.value.map { landmark -> LandmarkView.create(landmark, scale.value, frame.timestamp, stateSynchronizationManager) }
+                it.value.map { landmark -> LandmarkView.create(landmark, scale.value, stateSynchronizationManager) }
             }
         }
         val frameImage = frame.image
