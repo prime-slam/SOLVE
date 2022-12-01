@@ -15,7 +15,7 @@ jobs:
           java-version: 17
           java-package: jdk
           cache: gradle
-          distribution: coretto
+          distribution: corretto
       - name: Build
         run: ./gradlew :clean :assemble
       - name: Cleanup Gradle Cache
