@@ -5,7 +5,6 @@ import javafx.scene.control.Alert
 import javafx.scene.control.TreeItem
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import sliv.tool.parsers.planes.ImagePlanesParser.extractUIDs
 import sliv.tool.project.model.*
 import tornadofx.alert
 import java.io.File
@@ -14,8 +13,8 @@ import kotlin.io.path.Path
 object ProjectParser {
     private const val IMAGE_DIRECTORY_NAME = "images"
 
-    private fun selectKind(nameDirectory: String, indexOfSeparator: Int): LayerKind? {
-        return when (nameDirectory.substring(indexOfSeparator + 1)) {
+    private fun selectKind(kindString: String): LayerKind? {
+        return when (kindString) {
             "keypoint" -> LayerKind.KEYPOINT
             "plane" -> LayerKind.PLANE
             "line" -> LayerKind.LINE
@@ -33,13 +32,14 @@ object ProjectParser {
         val layers = FXCollections.observableArrayList<ProjectLayer>()
         val errorFolders = mutableListOf<String>()
 
-        for (folder in directory.listFiles()) {
+        for (folder in directory.listFiles()!!) {
             if (folder.name != IMAGE_DIRECTORY_NAME) {
                 val directoryName = folder.name
                 val indexOfSeparator = directoryName.lastIndexOf("_")
                 val name = directoryName.substring(0, indexOfSeparator)
+                val kindString = directoryName.substring(indexOfSeparator + 1)
 
-                val kind = selectKind(directoryName, indexOfSeparator)
+                val kind = selectKind(kindString)
                 if (kind != null) {
                     layers.add(ProjectLayer(kind, name))
                 } else {
@@ -47,13 +47,13 @@ object ProjectParser {
                     continue
                 }
                 val errorOutputs = mutableListOf<String>()
-                folder.listFiles().forEach {
+                folder.listFiles()?.forEach {
                     val imageName = it.nameWithoutExtension
                     try {
                         val longName = imageName.toLong()
                         landmarks.putIfAbsent(
                             longName,
-                            mutableListOf(LandmarkFile(layers.last(), Path(it.path), extractUIDs(it.path)))
+                            mutableListOf()
                         )
                     } catch (e: Exception) {
                         errorOutputs.add(imageName)
@@ -67,7 +67,7 @@ object ProjectParser {
                 }
             } else {
                 val errorImages = mutableListOf<String>()
-                folder.listFiles().forEach {
+                folder.listFiles()?.forEach {
                     val imageName = it.nameWithoutExtension
                     try {
                         val longName = imageName.toLong()
