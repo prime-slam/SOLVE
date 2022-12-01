@@ -11,15 +11,14 @@ import sliv.tool.scene.model.Landmark
 sealed class LandmarkView(
     scale: Double,
     val landmark: Landmark,
-    private val frameTimestamp: Long,
     private val stateSynchronizationManager: LandmarkStateSynchronizationManager
 ) {
     companion object {
-        fun create(landmark: Landmark, scale: Double, frameTimestamp: Long, stateSynchronizationManager: LandmarkStateSynchronizationManager): LandmarkView {
+        fun create(landmark: Landmark, scale: Double, stateSynchronizationManager: LandmarkStateSynchronizationManager): LandmarkView {
             return when (landmark) {
-                is Landmark.Keypoint -> KeypointView(landmark, scale, frameTimestamp, stateSynchronizationManager)
-                is Landmark.Line -> LineView(landmark, scale, frameTimestamp, stateSynchronizationManager)
-                is Landmark.Plane -> PlaneView(landmark, scale, frameTimestamp, stateSynchronizationManager)
+                is Landmark.Keypoint -> KeypointView(landmark, scale, stateSynchronizationManager)
+                is Landmark.Line -> LineView(landmark, scale, stateSynchronizationManager)
+                is Landmark.Plane -> PlaneView(landmark, scale, stateSynchronizationManager)
             }
         }
     }

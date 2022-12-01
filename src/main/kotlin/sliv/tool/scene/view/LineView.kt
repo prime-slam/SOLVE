@@ -6,9 +6,8 @@ import sliv.tool.scene.model.Landmark
 class LineView(
     private val line: Landmark.Line,
     scale: Double,
-    frameTimestamp: Long,
     stateSynchronizationManager: LandmarkStateSynchronizationManager
-) : LandmarkView(scale, line, frameTimestamp, stateSynchronizationManager) {
+) : LandmarkView(scale, line, stateSynchronizationManager) {
     companion object {
         private const val OrdinaryWidth: Double = 5.0
     }

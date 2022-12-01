@@ -10,9 +10,8 @@ import sliv.tool.scene.model.Landmark
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
     scale: Double,
-    frameTimestamp: Long,
     private val stateSynchronizationManager: LandmarkStateSynchronizationManager
-) : LandmarkView(scale, keypoint, frameTimestamp, stateSynchronizationManager) {
+) : LandmarkView(scale, keypoint, stateSynchronizationManager) {
     companion object {
         private const val OrdinaryRadius: Double = 5.0
     }
