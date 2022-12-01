@@ -6,8 +6,7 @@ import sliv.tool.scene.model.Landmark
 class PlaneView(
     private val plane: Landmark.Plane,
     scale: Double,
-    stateSynchronizationManager: LandmarkStateSynchronizationManager
-) : LandmarkView(scale, plane, stateSynchronizationManager) {
+) : LandmarkView(scale, plane) {
     override val node: Shape
         get() = TODO("Not yet implemented")
 

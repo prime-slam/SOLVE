@@ -10,8 +10,7 @@ import sliv.tool.scene.model.Landmark
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
     scale: Double,
-    private val stateSynchronizationManager: LandmarkStateSynchronizationManager
-) : LandmarkView(scale, keypoint, stateSynchronizationManager) {
+) : LandmarkView(scale, keypoint) {
     companion object {
         private const val OrdinaryRadius: Double = 5.0
     }
@@ -78,8 +77,8 @@ class KeypointView(
 
         // If landmark is already in the selected state.
         // Animation can not be applied because shape is not in visual tree at the moment.
-        if (stateSynchronizationManager.selectedLandmarksUids.contains(landmark.uid)
-            || stateSynchronizationManager.hoveredLandmarksUids.contains(landmark.uid)
+        if (landmark.layer.selectedLandmarksUids.contains(landmark.uid)
+            || landmark.layer.hoveredLandmarksUids.contains(landmark.uid)
         ) {
             highlightShapeInstantly(shape)
         }

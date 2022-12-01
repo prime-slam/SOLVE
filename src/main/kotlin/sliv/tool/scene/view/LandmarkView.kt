@@ -11,14 +11,13 @@ import sliv.tool.scene.model.Landmark
 sealed class LandmarkView(
     scale: Double,
     val landmark: Landmark,
-    private val stateSynchronizationManager: LandmarkStateSynchronizationManager
 ) {
     companion object {
-        fun create(landmark: Landmark, scale: Double, stateSynchronizationManager: LandmarkStateSynchronizationManager): LandmarkView {
+        fun create(landmark: Landmark, scale: Double): LandmarkView {
             return when (landmark) {
-                is Landmark.Keypoint -> KeypointView(landmark, scale, stateSynchronizationManager)
-                is Landmark.Line -> LineView(landmark, scale, stateSynchronizationManager)
-                is Landmark.Plane -> PlaneView(landmark, scale, stateSynchronizationManager)
+                is Landmark.Keypoint -> KeypointView(landmark, scale)
+                is Landmark.Line -> LineView(landmark, scale)
+                is Landmark.Plane -> PlaneView(landmark, scale)
             }
         }
     }
@@ -62,39 +61,39 @@ sealed class LandmarkView(
     }
 
     init {
-        stateSynchronizationManager.selectedLandmarksUids.addListener(selectedLandmarksChangedEventHandler)
-        stateSynchronizationManager.hoveredLandmarksUids.addListener(hoveredLandmarksChangedEventHandler)
+        landmark.layer.selectedLandmarksUids.addListener(selectedLandmarksChangedEventHandler)
+        landmark.layer.hoveredLandmarksUids.addListener(hoveredLandmarksChangedEventHandler)
     }
 
     fun dispose() {
-        stateSynchronizationManager.selectedLandmarksUids.removeListener(selectedLandmarksChangedEventHandler)
-        stateSynchronizationManager.hoveredLandmarksUids.removeListener(hoveredLandmarksChangedEventHandler)
+        landmark.layer.selectedLandmarksUids.removeListener(selectedLandmarksChangedEventHandler)
+        landmark.layer.hoveredLandmarksUids.removeListener(hoveredLandmarksChangedEventHandler)
     }
 
     // Set up common shape properties
     // Can not be called during LandmarkView initialization because shape is created by inheritors
     protected fun setUpShape(shape: Shape) {
-        if (stateSynchronizationManager.selectedLandmarksUids.contains(landmark.uid)) {
+        if (landmark.layer.selectedLandmarksUids.contains(landmark.uid)) {
             state = LandmarkState.Selected
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
             when (state) {
                 LandmarkState.Ordinary -> {
-                    stateSynchronizationManager.selectedLandmarksUids.add(landmark.uid)
+                    landmark.layer.selectedLandmarksUids.add(landmark.uid)
                 }
                 LandmarkState.Selected -> {
-                    stateSynchronizationManager.selectedLandmarksUids.remove(landmark.uid)
+                    landmark.layer.selectedLandmarksUids.remove(landmark.uid)
                 }
             }
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
-            stateSynchronizationManager.hoveredLandmarksUids.add(landmark.uid)
+            landmark.layer.hoveredLandmarksUids.add(landmark.uid)
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
-            stateSynchronizationManager.hoveredLandmarksUids.remove(landmark.uid)
+            landmark.layer.hoveredLandmarksUids.remove(landmark.uid)
         }
     }
 
