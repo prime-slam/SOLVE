@@ -53,7 +53,6 @@ class FrameView(
         clearImage()
 
         if (frame == null) {
-            clearImage()
             return
         }
 
