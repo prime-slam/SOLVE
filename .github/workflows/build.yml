@@ -19,6 +19,7 @@ jobs:
         with:
           arguments: build
           gradle-executable: ./gradlew
+      - name: Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
         run: |
