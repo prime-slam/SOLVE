@@ -37,6 +37,10 @@ object ProjectParser {
             if (folder.name != IMAGE_DIRECTORY_NAME) {
                 val directoryName = folder.name
                 val indexOfSeparator = directoryName.lastIndexOf("_")
+                if (indexOfSeparator == -1) {
+                    errorFolders.add(directoryName)
+                    continue
+                }
                 val name = directoryName.substring(0, indexOfSeparator)
                 val kindString = directoryName.substring(indexOfSeparator + 1)
 
@@ -56,7 +60,7 @@ object ProjectParser {
                             longName,
                             mutableListOf()
                         )
-                        landmarks[longName]?.add(LandmarkFile(layers.last(), Path(it.path), extractUIDs(it.path)))
+                        landmarks[longName]!!.add(LandmarkFile(layers.last(), Path(it.path), extractUIDs(it.path)))
                     } catch (e: Exception) {
                         errorOutputs.add(imageName)
                     }
