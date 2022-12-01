@@ -1,5 +1,6 @@
 package sliv.tool.scene.view
 
+import javafx.collections.SetChangeListener
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Shape
@@ -35,42 +36,40 @@ sealed class LandmarkView(
             scaleChanged()
         }
 
-    private val landmarkSelectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (eventArgs.uid == landmark.uid) {
-            select()
+    private val selectedLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
+        if (e.wasAdded() && e.elementAdded == landmark.uid) {
+            state = LandmarkState.Selected
+            highlightShape()
+        }
+
+        if (e.wasRemoved() && e.elementRemoved == landmark.uid) {
+            state = LandmarkState.Ordinary
+            unhighlightShape()
         }
     }
 
-    private val landmarkUnselectedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (eventArgs.uid == landmark.uid) {
-            unselect()
+    private val hoveredLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
+        if (state == LandmarkState.Selected) {
+            return@SetChangeListener
         }
-    }
 
-    private val landmarkMouseEnteredEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (eventArgs.uid == landmark.uid) {
-            handleMouseEntered()
+        if (e.wasAdded() && e.elementAdded == landmark.uid) {
+            highlightShape()
         }
-    }
 
-    private val landmarkMouseExitedEventHandler: (LandmarkEventArgs) -> Unit = { eventArgs ->
-        if (eventArgs.uid == landmark.uid) {
-            handleMouseExited()
+        if (e.wasRemoved() && e.elementRemoved == landmark.uid) {
+            unhighlightShape()
         }
     }
 
     init {
-        stateSynchronizationManager.landmarkSelected += landmarkSelectedEventHandler
-        stateSynchronizationManager.landmarkUnselected += landmarkUnselectedEventHandler
-        stateSynchronizationManager.landmarkMouseEntered += landmarkMouseEnteredEventHandler
-        stateSynchronizationManager.landmarkMouseExited += landmarkMouseExitedEventHandler
+        stateSynchronizationManager.selectedLandmarksUids.addListener(selectedLandmarksChangedEventHandler)
+        stateSynchronizationManager.hoveredLandmarksUids.addListener(hoveredLandmarksChangedEventHandler)
     }
 
     fun dispose() {
-        stateSynchronizationManager.landmarkSelected -= landmarkSelectedEventHandler
-        stateSynchronizationManager.landmarkUnselected -= landmarkUnselectedEventHandler
-        stateSynchronizationManager.landmarkMouseEntered -= landmarkMouseEnteredEventHandler
-        stateSynchronizationManager.landmarkMouseExited -= landmarkMouseExitedEventHandler
+        stateSynchronizationManager.selectedLandmarksUids.removeListener(selectedLandmarksChangedEventHandler)
+        stateSynchronizationManager.hoveredLandmarksUids.removeListener(hoveredLandmarksChangedEventHandler)
     }
 
     // Set up common shape properties
@@ -83,55 +82,21 @@ sealed class LandmarkView(
         shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
             when (state) {
                 LandmarkState.Ordinary -> {
-                    stateSynchronizationManager.landmarkSelected.invoke(
-                        LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
-                    )
+                    stateSynchronizationManager.selectedLandmarksUids.add(landmark.uid)
                 }
                 LandmarkState.Selected -> {
-                    stateSynchronizationManager.landmarkUnselected.invoke(
-                        LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
-                    )
+                    stateSynchronizationManager.selectedLandmarksUids.remove(landmark.uid)
                 }
             }
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
-            stateSynchronizationManager.landmarkMouseEntered.invoke(
-                LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
-            )
+            stateSynchronizationManager.hoveredLandmarksUids.add(landmark.uid)
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
-            stateSynchronizationManager.landmarkMouseExited.invoke(
-                LandmarkEventArgs(landmark.uid, landmark.layer, frameTimestamp)
-            )
+            stateSynchronizationManager.hoveredLandmarksUids.remove(landmark.uid)
         }
-    }
-
-    private fun select() {
-        state = LandmarkState.Selected
-        highlightShape()
-    }
-
-    private fun unselect() {
-        state = LandmarkState.Ordinary
-        unhighlightShape()
-    }
-
-    private fun handleMouseEntered() {
-        if (state == LandmarkState.Selected) {
-            return
-        }
-
-        highlightShape()
-    }
-
-    private fun handleMouseExited() {
-        if (state == LandmarkState.Selected) {
-            return
-        }
-
-        unhighlightShape()
     }
 
     protected abstract fun scaleChanged()
