@@ -5,6 +5,7 @@ import javafx.scene.control.Alert
 import javafx.scene.control.TreeItem
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import sliv.tool.parsers.planes.ImagePlanesParser.extractUIDs
 import sliv.tool.project.model.*
 import tornadofx.alert
 import java.io.File
@@ -55,6 +56,7 @@ object ProjectParser {
                             longName,
                             mutableListOf()
                         )
+                        landmarks[longName]?.add(LandmarkFile(layers.last(), Path(it.path), extractUIDs(it.path)))
                     } catch (e: Exception) {
                         errorOutputs.add(imageName)
                     }
