@@ -76,9 +76,12 @@ class FrameView(
         disposeLandmarkViews()
     }
 
-    private fun reloadData(frame: VisualizationFrame) {
-        landmarksViews = frame.landmarks.mapValues {
-            it.value.map { landmark -> LandmarkView.create(landmark, scale.value, frame.timestamp, stateSynchronizationManager) }
+    private suspend fun reloadData(frame: VisualizationFrame) {
+        val landmarks = frame.landmarks
+        withContext(Dispatchers.JavaFx) {
+            landmarksViews = landmarks.mapValues {
+                it.value.map { landmark -> LandmarkView.create(landmark, scale.value, frame.timestamp, stateSynchronizationManager) }
+            }
         }
         val frameImage = frame.image
         if (frameImage.height != height || frameImage.width != width) {
