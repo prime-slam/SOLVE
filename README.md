@@ -10,3 +10,10 @@ This tool will provide following features:
 * Visualization of landmarks of three types (points, lines, planes)
 * Mapping of the same landmarks between different images based on SLAM data association
 * Editing and fine-tuning landmarks positions and association
+
+## Build
+
+Ensure you have JDK 17 to build or run this project.
+
+Build: `./gradlew assemble`  
+Run: `./gradlew run`  
