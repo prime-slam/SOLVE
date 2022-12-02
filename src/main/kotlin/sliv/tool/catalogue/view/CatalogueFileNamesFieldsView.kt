@@ -17,13 +17,15 @@ import sliv.tool.scene.view.SceneView
 import tornadofx.*
 import kotlin.math.min
 
-class CatalogueFileNamesFieldsView(fields: ObservableList<CatalogueField>): View(), SelectionNode {
+class CatalogueFileNamesFieldsView: View(), SelectionNode {
     companion object {
         private const val ListViewFieldCellHeight = 30.0
         private const val ListViewFieldIconSize = 20.0
 
         private const val DragViewMaxFieldsNumber = 100
     }
+
+    private val fields: ObservableList<CatalogueField> by param()
 
     private val controller: CatalogueController by inject()
     private val sceneView: SceneView by inject()
@@ -39,8 +41,33 @@ class CatalogueFileNamesFieldsView(fields: ObservableList<CatalogueField>): View
 
     private var isDragging = false
 
-    private val fileNamesFieldIconImage =
-        Image(this.javaClass.classLoader.getResource("catalogue_image_icon.png")?.openStream())
+    private val fileNamesFieldIconImage = loadImage("catalogue_image_icon.png")
+    private val fileNamesListView = listview(fields) {
+        selectionModel.selectionMode = SelectionMode.MULTIPLE
+        cellFormat {
+            setFileNamesListViewCellFormat(this, it)
+        }
+    }
+
+    override val root = fileNamesListView
+
+    init {
+        initializeDragEvents()
+        initializeInteractionEvent()
+    }
+
+    override fun selectAllItems() = fileNamesListView.selectAllItems()
+
+    override fun deselectAllItems() = fileNamesListView.deselectAllItems()
+
+    private fun initializeInteractionEvent() {
+        fileNamesListView.setOnMouseClicked {
+            fire(CatalogueFieldsInteractionEvent)
+        }
+        fileNamesListView.onSelectionChanged {
+            fire(CatalogueFieldsInteractionEvent)
+        }
+    }
 
     private fun initializeDragEvents() {
         fileNamesListView.setOnDragDetected {
@@ -52,39 +79,32 @@ class CatalogueFileNamesFieldsView(fields: ObservableList<CatalogueField>): View
 
     private fun setFileNamesListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
         labeled.text = item?.fileName
-        labeled.graphic = imageview(fileNamesFieldIconImage) {
-            fitHeight = ListViewFieldIconSize
-            isPreserveRatio = true
+        if (fileNamesFieldIconImage != null) {
+            labeled.graphic = imageview(fileNamesFieldIconImage) {
+                fitHeight = ListViewFieldIconSize
+                isPreserveRatio = true
+            }
         }
         labeled.prefHeight = ListViewFieldCellHeight
     }
 
-    private val fileNamesListView = listview(fields) {
-        selectionModel.selectionMode = SelectionMode.MULTIPLE
-
-        cellFormat {
-            setFileNamesListViewCellFormat(this, it)
-        }
-    }
-
-    override val root = fileNamesListView.also { initializeDragEvents() }
-
     private fun onSceneDragDropped(event: DragEvent) {
-        if (isDragging)
+        if (isDragging) {
             controller.visualizeFramesSelection(selectedFrames)
+        }
 
         isDragging = false
     }
 
     private fun onSceneDragOver(event: DragEvent) {
-        if (isDragging)
+        if (isDragging) {
             event.acceptTransferModes(TransferMode.MOVE)
+        }
     }
 
     private fun onCatalogueDragDetected() {
         val dragboard = root.startDragAndDrop(TransferMode.MOVE)
-        val clipboardContent = ClipboardContent()
-        clipboardContent.putString("") // It is necessary to display a drag view image.
+        val clipboardContent = ClipboardContent().apply { putString("") }
         dragboard.setContent(clipboardContent)
         dragboard.dragView = createFileNameFieldsSnapshot(fileNamesListView.selectedItems)
         isDragging = true
@@ -107,8 +127,4 @@ class CatalogueFileNamesFieldsView(fields: ObservableList<CatalogueField>): View
             nodeSnapshot.pixelReader, nodeSnapshot.width.floor(), min(nodeSnapshot.height.floor(), prefSnapshotHeight)
         )
     }
-
-    override fun selectAllItems() = fileNamesListView.selectAllItems()
-
-    override fun deselectAllItems() = fileNamesListView.deselectAllItems()
 }

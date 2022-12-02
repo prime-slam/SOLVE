@@ -1,6 +1,7 @@
 package sliv.tool.catalogue
 
 import javafx.scene.control.ListView
+import javafx.scene.image.Image
 import sliv.tool.project.model.ProjectFrame
 import sliv.tool.project.model.ProjectLayer
 import tornadofx.onChange
@@ -33,3 +34,9 @@ inline fun <T> ListView<T>.onSelectionChanged(crossinline action: () -> Unit) {
 fun Double.ceil(): Int = ceil(this).toInt()
 
 fun Double.floor(): Int = kotlin.math.floor(this).toInt()
+
+fun loadImage(name: String): Image? {
+    val imageFile = Any::class::class.java.getResource(name)?.openStream() ?: return null
+
+    return Image(imageFile)
+}
