@@ -21,7 +21,7 @@ object ProjectParser {
             "keypoint" -> LayerKind.KEYPOINT
             "plane" -> LayerKind.PLANE
             "line" -> LayerKind.LINE
-            else -> return null
+            else -> null
         }
     }
 
