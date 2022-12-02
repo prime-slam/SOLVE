@@ -9,10 +9,9 @@ import javafx.scene.shape.Shape
 import javafx.scene.transform.Scale
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
-import sliv.tool.scene.model.Layer
-import sliv.tool.scene.model.VisualizationFrame
-import tornadofx.add
-import tornadofx.onChange
+import sliv.tool.scene.model.Landmark
+import sliv.tool.scene.model.*
+import tornadofx.*
 
 class FrameView(
     private val width: Double,
@@ -22,20 +21,10 @@ class FrameView(
     frame: VisualizationFrame?
 ) : Group() {
     //Frame data be loaded concurrently, so these fields should be volatile
-    @Volatile
-    private var image: Image? = null
-
-    @Volatile
-    private var timestamp: Long? = null
-
-    @Volatile
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
-
+    private var drawnImage: Image? = null
     private val imageCanvas = Canvas(width, height)
     private var currentJob: Job? = null
-
-    private val isDataLoaded
-        get() = landmarksViews != null && image != null && timestamp != null
 
     init {
         scale.onChange { newScale ->
@@ -50,10 +39,6 @@ class FrameView(
     fun setFrame(frame: VisualizationFrame?) {
         currentJob?.cancel()
         disposeLandmarkViews()
-        landmarksViews = null
-        image = null
-        timestamp = null
-
         clearLandmarks()
         clearImage()
 
@@ -61,48 +46,41 @@ class FrameView(
             return
         }
 
-        currentJob = coroutineScope.launch {
-            reloadData(frame)
+        currentJob = Job()
+        drawLoadingIndicator()
+
+        coroutineScope.launch(currentJob!!) {
+            if (!isActive) return@launch
+            val landmarkData = frame.landmarks
+
+            if (!isActive) return@launch
+            val image = frame.image
+
             withContext(Dispatchers.JavaFx) {
-                draw()
+                if (!this@launch.isActive) return@withContext
+                draw(landmarkData, image)
             }
         }
-
-        draw()
     }
 
     fun dispose() {
         disposeLandmarkViews()
     }
 
-    private suspend fun reloadData(frame: VisualizationFrame) {
-        val landmarks = frame.landmarks
-        withContext(Dispatchers.JavaFx) {
-            landmarksViews = landmarks.mapValues {
-                it.value.map { landmark -> LandmarkView.create(landmark, scale.value) }
-            }
+    private fun draw(landmarksData: Map<Layer, List<Landmark>>, image: Image) {
+        landmarksViews = landmarksData.mapValues {
+            it.value.map { landmark -> LandmarkView.create(landmark, scale.value) }
         }
-        val frameImage = frame.image
-        if (frameImage.height != height || frameImage.width != width) {
+        drawnImage = image
+        if (image.height != height || image.width != width) {
             println("Image size doesn't equal to the frame size") //TODO: warn user
         }
-        image = frameImage
-        timestamp = frame.timestamp
+
+        drawImage(image)
+        doForAllLandmarks { view -> children.add(view.shape) }
     }
 
     private fun disposeLandmarkViews() = doForAllLandmarks { view -> view.dispose() }
-
-    private fun draw() {
-        if (!isDataLoaded) {
-            drawLoadingIndicator()
-            return
-        }
-
-        drawImage()
-        doForAllLandmarks { view ->
-            children.add(view.node)
-        }
-    }
 
     private fun scaleImageAndLandmarks(newScale: Double) {
         imageCanvas.transforms.clear()
@@ -118,11 +96,11 @@ class FrameView(
             imageCanvas.height = height * newScale
         }
 
-        drawImage()
+        drawImage(drawnImage)
         doForAllLandmarks { view -> view.scale = newScale }
     }
 
-    private fun drawImage() {
+    private fun drawImage(image: Image?) {
         imageCanvas.graphicsContext2D.drawImage(image, 0.0, 0.0, imageCanvas.width, imageCanvas.height)
     }
 
