@@ -14,14 +14,9 @@ sealed class Layer(val name: String) {
     private val colorMap = HashMap<Long, Color>()
     private val usedColors = HashSet<Color>()
 
-    fun getColor(landmark: Landmark): Color {
-        val result = colorMap[landmark.uid]
-        if (result == null) {
-            val color = generateRandomColorUnique(usedColors)
-            usedColors.add(color)
-            colorMap[landmark.uid] = color
-        }
-        return colorMap[landmark.uid]!!
+    fun getColor(landmark: Landmark) = colorMap[landmark.uid] ?: generateRandomColorUnique(usedColors).also { color ->
+        colorMap[landmark.uid] = color
+        usedColors.add(color)
     }
 
     class PointLayer(name: String) : Layer(name) {
