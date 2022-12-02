@@ -1,10 +1,9 @@
 package sliv.tool.scene.view
 
-import javafx.animation.FillTransition
-import javafx.animation.ScaleTransition
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import sliv.tool.scene.model.Landmark
+import sliv.tool.scene.view.utils.*
 
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
@@ -12,6 +11,8 @@ class KeypointView(
 ) : LandmarkView(scale, keypoint) {
     companion object {
         private const val OrdinaryRadius: Double = 5.0
+        private const val HighlightingScaleFactor: Double = 2.0
+        private val HighlightingAnimationDuration = Duration.millis(500.0)
     }
 
     override val node: Ellipse = createShape()
@@ -36,32 +37,18 @@ class KeypointView(
     override fun highlightShape() {
         node.toFront()
 
-        val increasedRadiusScale = (radius / node.radiusX) * 2.0
-        val scaleTransition = ScaleTransition()
-        scaleTransition.duration = Duration(500.0)
-        scaleTransition.toX = increasedRadiusScale
-        scaleTransition.toY = increasedRadiusScale
-        scaleTransition.node = node
+        val increasedRadiusScale = (radius / node.radiusX) * HighlightingScaleFactor
+        val scaleTransition = createScaleAnimation(node, increasedRadiusScale, HighlightingAnimationDuration)
+        val fillTransition = createFillTransition(node, landmark.layer.getColor(landmark), HighlightingAnimationDuration)
 
-        val fillTransition = FillTransition()
-        fillTransition.duration = Duration(500.0)
-        fillTransition.toValue = landmark.layer.getColor(landmark)
-        fillTransition.shape = node
         scaleTransition.play()
         fillTransition.play()
     }
 
     override fun unhighlightShape() {
         val defaultRadiusScale = radius / node.radiusX
-        val scaleTransition = ScaleTransition()
-        scaleTransition.duration = Duration.millis(500.0)
-        scaleTransition.toX = defaultRadiusScale
-        scaleTransition.toY = defaultRadiusScale
-        scaleTransition.node = node
-        val fillTransition = FillTransition()
-        fillTransition.duration = Duration(500.0)
-        fillTransition.toValue = keypoint.layer.color
-        fillTransition.shape = node
+        val scaleTransition = createScaleAnimation(node, defaultRadiusScale, HighlightingAnimationDuration)
+        val fillTransition = createFillTransition(node, keypoint.layer.color, HighlightingAnimationDuration)
 
         scaleTransition.play()
         fillTransition.play()
@@ -84,8 +71,8 @@ class KeypointView(
     }
 
     private fun highlightShapeInstantly(shape: Ellipse) {
-        shape.radiusX = radius * 2
-        shape.radiusY = radius * 2
+        shape.radiusX = radius * HighlightingScaleFactor
+        shape.radiusY = radius * HighlightingScaleFactor
         shape.fill = landmark.layer.getColor(landmark)
     }
 }
