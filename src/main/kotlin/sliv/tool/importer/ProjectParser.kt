@@ -56,7 +56,7 @@ object ProjectParser {
                     longName,
                     mutableListOf()
                 )
-                landmarks[longName]!!.add(LandmarkFile(layers.last(), Path(it.path), extractUIDs(it.path)))
+                landmarks[longName]?.add(LandmarkFile(layers.last(), Path(it.path), extractUIDs(it.path)))
             } catch (e: Exception) {
                 errorOutputs.add(imageName)
             }
