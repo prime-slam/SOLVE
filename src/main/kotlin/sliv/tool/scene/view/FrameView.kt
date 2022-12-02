@@ -77,7 +77,7 @@ class FrameView(
         }
 
         drawImage(image)
-        doForAllLandmarks { view -> children.add(view.shape) }
+        doForAllLandmarks { view -> children.add(view.node) }
     }
 
     private fun disposeLandmarkViews() = doForAllLandmarks { view -> view.dispose() }
