@@ -101,6 +101,10 @@ class FrameView(
     }
 
     private fun drawImage(image: Image?) {
+        if (image == null) {
+            drawLoadingIndicator()
+            return
+        }
         imageCanvas.graphicsContext2D.drawImage(image, 0.0, 0.0, imageCanvas.width, imageCanvas.height)
     }
 
