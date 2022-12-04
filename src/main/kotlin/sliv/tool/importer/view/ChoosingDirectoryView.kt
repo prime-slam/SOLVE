@@ -22,7 +22,6 @@ class ChoosingDirectoryView : Fragment() {
 
     override val root = borderpane {
         var rootTree = TreeItem("").apply { isExpanded = true }
-        padding = Insets(5.0, 15.0, 0.0, 0.0)
         path.bindBidirectional(controller.directoryPath)
         project.bindBidirectional(controller.project)
         top {
@@ -54,6 +53,7 @@ class ChoosingDirectoryView : Fragment() {
             }
         }
         center {
+            padding = Insets(5.0, 0.0, 0.0, 0.0)
             treeview(rootTree) {
                 visibleWhen { path.isNotEmpty }
             }
