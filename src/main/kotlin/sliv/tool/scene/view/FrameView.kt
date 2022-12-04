@@ -109,7 +109,7 @@ class FrameView(
     }
 
     private fun clearImage() {
-        imageCanvas.graphicsContext2D.clearRect(0.0, 0.0, imageCanvas.width, imageCanvas.height)
+        imageCanvas.graphicsContext2D.clearRect(0.0, 0.0, Int.MAX_VALUE.toDouble(), Int.MAX_VALUE.toDouble())
     }
 
     private fun clearLandmarks() {
