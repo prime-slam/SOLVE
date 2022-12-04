@@ -49,7 +49,7 @@ class SceneView : View() {
 
         val scaleProperty = SimpleDoubleProperty(1.0)
 
-        val columnsNumber = 30 //TODO: should be set from the UI
+        val columnsNumber = min(scene.frames.size, defaultNumberOfColumns) //TODO: should be set from the UI
         // VirtualizedFX Grid assumes that frames count is a divider for the columns number
         val emptyFrames = (0 until (columnsNumber - scene.frames.count() % columnsNumber) % columnsNumber).map { null }
         val frames = scene.frames + emptyFrames
@@ -102,5 +102,7 @@ class SceneView : View() {
 
         private const val maxScale = 20.0
         private const val minScale = 0.2
+
+        private const val defaultNumberOfColumns = 15
     }
 }
