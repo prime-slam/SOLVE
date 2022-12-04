@@ -43,7 +43,6 @@ class ChoosingDirectoryView : Fragment() {
                         }
                     }
                 }
-
             }
         }
         path.onChange {
@@ -61,14 +60,12 @@ class ChoosingDirectoryView : Fragment() {
         }
         bottom {
             borderpane {
-
-                padding = Insets(10.0, 10.0, 0.0, 10.0)
+                padding = Insets(10.0, 0.0, 0.0, 0.0)
                 left {
                     button("Cancel") {
                         action {
                             controller.directoryPath.set(null)
                             MenuBarView().importer.close()
-
                         }
                         prefWidth = 180.0
                     }
