@@ -23,7 +23,7 @@ abstract class CatalogueFieldsView: View() {
     val fieldsListView: ListView<CatalogueField> = listview(fields) {
         selectionModel.selectionMode = SelectionMode.MULTIPLE
         cellFormat {
-            setFileNamesListViewCellFormat(this, it)
+            setListViewCellFormat(this, it)
         }
     }
 
@@ -44,7 +44,7 @@ abstract class CatalogueFieldsView: View() {
 
     private var isDragging = false
 
-    protected open fun setFileNamesListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
+    protected open fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
         labeled.prefHeight = listViewCellHeight
     }
 
@@ -102,7 +102,7 @@ abstract class CatalogueFieldsView: View() {
 
         val fieldsSnapshotNode = listview(snapshotFields) {
             cellFormat {
-                setFileNamesListViewCellFormat(this, it)
+                setListViewCellFormat(this, it)
             }
         }
         fieldsListView.getChildList()?.remove(fieldsSnapshotNode)

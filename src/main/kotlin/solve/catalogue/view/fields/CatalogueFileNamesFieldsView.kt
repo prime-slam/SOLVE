@@ -22,8 +22,8 @@ class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
         initialize()
     }
 
-    override fun setFileNamesListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
-        super.setFileNamesListViewCellFormat(labeled, item)
+    override fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
+        super.setListViewCellFormat(labeled, item)
         labeled.text = item?.fileName
         if (fileNamesFieldIconImage != null) {
             labeled.graphic = imageview(fileNamesFieldIconImage) {
