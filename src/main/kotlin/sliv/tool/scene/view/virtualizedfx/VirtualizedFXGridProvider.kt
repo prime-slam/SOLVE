@@ -2,7 +2,6 @@ package sliv.tool.scene.view.virtualizedfx
 
 import io.github.palexdev.mfxcore.base.beans.Size
 import io.github.palexdev.mfxcore.collections.ObservableGrid
-import io.github.palexdev.virtualizedfx.enums.ScrollPaneEnums
 import io.github.palexdev.virtualizedfx.grid.VirtualGrid
 import io.github.palexdev.virtualizedfx.utils.VSPUtils
 import javafx.beans.property.DoubleProperty
@@ -23,9 +22,9 @@ object VirtualizedFXGridProvider : GridProvider {
         val gridData = ObservableGrid.fromList(data, columnsNumber)
         val grid = VirtualGrid(gridData) { item -> FrameViewAdapter(cellFactory(item)) }
         grid.cellSize = Size(cellWidth, cellHeight)
+        grid.prefHeight = Int.MAX_VALUE.toDouble()
 
         val vsp = VSPUtils.wrap(grid)
-        vsp.layoutMode = ScrollPaneEnums.LayoutMode.COMPACT
         vsp.isAutoHideBars = true
         vsp.isSmoothScroll = true
         // Set up scrolling speed to achieve smooth scrolling
