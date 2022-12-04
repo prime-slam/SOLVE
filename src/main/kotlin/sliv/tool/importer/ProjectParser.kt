@@ -18,9 +18,9 @@ object ProjectParser {
 
     private fun selectKind(kindString: String): LayerKind? {
         return when (kindString) {
-            "keypoint" -> LayerKind.KEYPOINT
-            "plane" -> LayerKind.PLANE
-            "line" -> LayerKind.LINE
+            "keypoint" -> LayerKind.Keypoint
+            "plane" -> LayerKind.Plane
+            "line" -> LayerKind.Line
             else -> null
         }
     }
