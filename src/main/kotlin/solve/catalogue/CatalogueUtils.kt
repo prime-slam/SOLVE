@@ -1,32 +1,34 @@
 package solve.catalogue
 
+import javafx.collections.ListChangeListener
 import javafx.scene.control.ListView
 import javafx.scene.image.Image
 import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
 import tornadofx.onChange
+import tornadofx.selectAll
 import kotlin.math.ceil
 
-fun <T> ListView<T>.selectAllItems() = this.selectionModel.selectAll()
+fun <T> ListView<T>.selectAllItems() = selectionModel.selectAll()
 
-fun <T> ListView<T>.deselectAllItems() = this.selectionModel.clearSelection()
+fun <T> ListView<T>.deselectAllItems() = selectionModel.clearSelection()
 
 val <T> ListView<T>.selectedItems: List<T>
-    get() = this.selectionModel.selectedItems
+    get() = selectionModel.selectedItems
 
 val <T> ListView<T>.selectedItemsCount: Int
-    get() = this.selectedItems.count()
+    get() = selectedItems.count()
 
 val <T> ListView<T>.selectedIndices: List<Int>
-    get() = this.selectionModel.selectedIndices
+    get() = selectionModel.selectedIndices
 
-fun <T> ListView<T>.selectItem(item: T) = this.selectionModel.select(item)
+fun <T> ListView<T>.selectItem(item: T) = selectionModel.select(item)
 
 val ProjectFrame.layers: List<ProjectLayer>
-    get() = this.landmarkFiles.map { it.projectLayer }.distinct()
+    get() = landmarkFiles.map { it.projectLayer }.distinct()
 
 inline fun <T> ListView<T>.onSelectionChanged(crossinline action: () -> Unit) {
-    this.selectionModel.selectedItemProperty().onChange {
+    selectionModel.selectedItemProperty().onChange {
         action()
     }
 }
@@ -39,4 +41,8 @@ fun loadImage(name: String): Image? {
     val imageFile = Any::class::class.java.getResource(name)?.openStream() ?: return null
 
     return Image(imageFile)
+}
+
+fun <T> synchronizeListViewsSelections(firstListView: ListView<T>, secondListView: ListView<T>) {
+    secondListView.selectionModel = firstListView.selectionModel
 }

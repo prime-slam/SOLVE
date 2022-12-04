@@ -4,6 +4,7 @@ import javafx.collections.ObservableList
 import javafx.scene.Scene
 import javafx.scene.control.Labeled
 import javafx.scene.control.ListView
+import javafx.scene.control.SelectionMode
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.input.ClipboardContent
@@ -17,23 +18,28 @@ import solve.scene.view.SceneView
 import tornadofx.*
 import kotlin.math.min
 
-abstract class CatalogueFieldsView: View(), SelectionNode {
-    protected val fields: ObservableList<CatalogueField> by param()
+abstract class CatalogueFieldsView: View() {
+    private val fields: ObservableList<CatalogueField> by param()
+    val fieldsListView: ListView<CatalogueField> = listview(fields) {
+        selectionModel.selectionMode = SelectionMode.MULTIPLE
+        cellFormat {
+            setFileNamesListViewCellFormat(this, it)
+        }
+    }
 
     protected abstract val dragViewMaxFieldsNumber: Int
     protected abstract val listViewCellHeight: Double
-    protected abstract val fieldsListView: ListView<CatalogueField>
 
     private val controller: CatalogueController by inject()
     private val sceneView: SceneView by inject()
 
-    override val areSelectedAllItems: Boolean
+    val areSelectedAllItems: Boolean
         get() = fieldsListView.selectedItemsCount == controller.model.frames.count()
-    override val isSelectionEmpty: Boolean
+    val isSelectionEmpty: Boolean
         get() = fieldsListView.selectedItems.isEmpty()
-    override val selectedItems: List<CatalogueField>
+    val selectedItems: List<CatalogueField>
         get() = fieldsListView.selectedItems
-    override val selectedFrames: List<ProjectFrame>
+    val selectedFrames: List<ProjectFrame>
         get() = fieldsListView.selectedItems.map { it.frame }
 
     private var isDragging = false
@@ -42,9 +48,9 @@ abstract class CatalogueFieldsView: View(), SelectionNode {
         labeled.prefHeight = listViewCellHeight
     }
 
-    override fun selectAllItems() = fieldsListView.selectAllItems()
+    fun selectAllItems() = fieldsListView.selectAllItems()
 
-    override fun deselectAllItems() = fieldsListView.deselectAllItems()
+    fun deselectAllItems() = fieldsListView.deselectAllItems()
 
     protected fun initialize() {
         initializeDragEvents()

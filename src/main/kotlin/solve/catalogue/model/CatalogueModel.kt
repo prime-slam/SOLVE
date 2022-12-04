@@ -6,7 +6,12 @@ import solve.project.model.ProjectFrame
 
 enum class ViewFormat {
     FileName,
-    ImagePreview
+    ImagePreview;
+
+    fun differentFormat() = when (this) {
+        FileName -> ImagePreview
+        ImagePreview -> FileName
+    }
 }
 
 class CatalogueModel {
