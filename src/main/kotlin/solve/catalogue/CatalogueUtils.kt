@@ -7,6 +7,10 @@ import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
 import tornadofx.onChange
 import tornadofx.selectAll
+import java.io.File
+import java.io.InputStream
+import kotlin.io.path.Path
+import kotlin.io.path.inputStream
 import kotlin.math.ceil
 
 fun <T> ListView<T>.selectAllItems() = selectionModel.selectAll()
@@ -37,10 +41,10 @@ fun Double.ceil(): Int = ceil(this).toInt()
 
 fun Double.floor(): Int = kotlin.math.floor(this).toInt()
 
-fun loadImage(name: String): Image? {
-    val imageFile = Any::class::class.java.getResource(name)?.openStream() ?: return null
+fun loadImage(path: String): Image? {
+    val fileInputStream = Path(path).inputStream() ?: return null
 
-    return Image(imageFile)
+    return Image(fileInputStream)
 }
 
 fun <T> synchronizeListViewsSelections(firstListView: ListView<T>, secondListView: ListView<T>) {
