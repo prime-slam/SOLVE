@@ -17,13 +17,6 @@ class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
     override val dragViewMaxFieldsNumber = 100
     override val listViewCellHeight = 25.0
 
-    override val fieldsListView: ListView<CatalogueField> = listview(fields) {
-        selectionModel.selectionMode = SelectionMode.MULTIPLE
-        cellFormat {
-            setFileNamesListViewCellFormat(this, it)
-        }
-    }
-
     init {
         initialize()
     }
