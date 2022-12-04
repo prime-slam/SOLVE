@@ -84,7 +84,9 @@ class FrameView(
 
     private fun scaleImageAndLandmarks(newScale: Double) {
         imageCanvas.transforms.clear()
-        clearImage()
+        if (drawnImage != null) {
+            clearImage()
+        }
 
         if (newScale > 1) {
             imageCanvas.width = width
@@ -102,7 +104,6 @@ class FrameView(
 
     private fun drawImage(image: Image?) {
         if (image == null) {
-            drawLoadingIndicator()
             return
         }
         imageCanvas.graphicsContext2D.drawImage(image, 0.0, 0.0, imageCanvas.width, imageCanvas.height)
