@@ -12,6 +12,7 @@ import sliv.tool.menubar.view.MenuBarView
 import sliv.tool.project.model.Project
 import tornadofx.*
 import java.io.File
+import javafx.scene.control.OverrunStyle
 
 class ChoosingDirectoryView : Fragment() {
     private val controller: ImporterController by inject()
@@ -30,6 +31,11 @@ class ChoosingDirectoryView : Fragment() {
                     vbox {
                         label("Project directory")
                         label {
+                            maxWidth = 300.0
+                            textOverrun = OverrunStyle.ELLIPSIS
+                            path.onChange {
+                                tooltip(path.value)
+                            }
                             bind(controller.directoryPath)
                         }
                     }
@@ -38,7 +44,9 @@ class ChoosingDirectoryView : Fragment() {
                     button("Change") {
                         action {
                             val dir = directoryChooser.showDialog(currentStage)
-                            controller.directoryPath.set(dir.absolutePath)
+                            if (dir != null) {
+                                controller.directoryPath.set(dir.absolutePath)
+                            }
                         }
                     }
                 }
@@ -59,31 +67,27 @@ class ChoosingDirectoryView : Fragment() {
             }
         }
         bottom {
-            borderpane {
+            hbox(10) {
                 padding = Insets(10.0, 0.0, 0.0, 0.0)
-                left {
-                    button("Cancel") {
-                        action {
-                            controller.directoryPath.set(null)
-                            MenuBarView().importer.close()
-                        }
-                        prefWidth = 180.0
+                button("Cancel") {
+                    action {
+                        controller.directoryPath.set(null)
+                        MenuBarView().importer.close()
                     }
+                    prefWidth = 180.0
                 }
-                right {
-                    button("Import") {
-                        prefWidth = 180.0
-                        isDisable = true
-                        project.onChange {
-                            if (project.value.frames.isNotEmpty()) {
-                                isDisable = false
-                            }
+                button("Import") {
+                    prefWidth = 180.0
+                    isDisable = true
+                    project.onChange {
+                        if (project.value.frames.isNotEmpty()) {
+                            isDisable = false
                         }
-                        action {
-                            val projectVal = project.value
-                            mainController.sceneFacade.visualize(projectVal.layers, projectVal.frames)
-                            MenuBarView().importer.close()
-                        }
+                    }
+                    action {
+                        val projectVal = project.value
+                        mainController.sceneFacade.visualize(projectVal.layers, projectVal.frames)
+                        MenuBarView().importer.close()
                     }
                 }
             }
