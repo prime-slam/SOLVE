@@ -6,9 +6,7 @@ import tornadofx.View
 
 class ImporterView : View("Choose working directory") {
     override val root = borderpane {
-        prefWidth = 500.0
-        prefHeight = 600.0
-        padding = Insets(5.0, 0.0, 0.0, 20.0)
+        padding = Insets(8.0, 10.0, 8.0, 10.0)
         top<ChoosingDirectoryView>()
     }
 }
