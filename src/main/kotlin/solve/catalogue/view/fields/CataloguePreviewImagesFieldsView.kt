@@ -1,4 +1,4 @@
-package sliv.tool.catalogue.view.fields
+package solve.catalogue.view.fields
 
 import javafx.geometry.Pos
 import javafx.scene.control.Labeled
