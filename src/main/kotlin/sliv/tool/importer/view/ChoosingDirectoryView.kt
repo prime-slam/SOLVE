@@ -87,6 +87,7 @@ class ChoosingDirectoryView : Fragment() {
                     action {
                         val projectVal = project.value
                         mainController.sceneFacade.visualize(projectVal.layers, projectVal.frames)
+                        mainController.displayCatalogueFrames(projectVal.frames)
                         MenuBarView().importer.close()
                     }
                 }
