@@ -1,10 +1,8 @@
-package sliv.tool.catalogue.view
+package sliv.tool.catalogue.view.fields
 
 import sliv.tool.catalogue.model.CatalogueField
 import sliv.tool.project.model.ProjectFrame
 import tornadofx.FXEvent
-
-object CatalogueFieldsInteractionEvent : FXEvent()
 
 interface SelectionNode {
     val areSelectedAllItems: Boolean

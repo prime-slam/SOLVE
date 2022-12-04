@@ -5,27 +5,24 @@ import javafx.geometry.Pos
 import sliv.tool.catalogue.controller.CatalogueController
 import sliv.tool.catalogue.model.CatalogueField
 import sliv.tool.catalogue.model.ViewFormat
+import sliv.tool.catalogue.view.fields.CatalogueFileNamesFieldsView
+import sliv.tool.catalogue.view.fields.SelectionNode
 import sliv.tool.project.model.ProjectFrame
 import tornadofx.*
 
-object CatalogueResetEvent: FXEvent()
-
 class CatalogueView : View() {
     companion object {
-        val initialViewFormat = ViewFormat.FileName
-        val initialSelectionState = CatalogueSettingsView.SelectionState.All
-
         private const val CatalogueWidth = 300.0
     }
 
     val currentSelectionState: CatalogueSettingsView.SelectionState
         get() {
-            val selectionNode = displayingSelectionNode
-            selectionNode ?: return initialSelectionState
+            val node = displayingSelectionNode ?: nonDisplayingSelectionNode
+            node ?: return CatalogueController.initialSelectionState
 
             return when {
-                selectionNode.areSelectedAllItems -> CatalogueSettingsView.SelectionState.All
-                selectionNode.isSelectionEmpty -> CatalogueSettingsView.SelectionState.None
+                node.areSelectedAllItems -> CatalogueSettingsView.SelectionState.All
+                node.isSelectionEmpty -> CatalogueSettingsView.SelectionState.None
                 else -> CatalogueSettingsView.SelectionState.Part
             }
         }
@@ -35,7 +32,9 @@ class CatalogueView : View() {
 
     private val fields = FXCollections.observableArrayList<CatalogueField>()
 
-    private var displayingSelectionNode: SelectionNode? = getSelectableView(initialViewFormat)
+    private var displayingSelectionNode: SelectionNode? = null
+    private var nonDisplayingSelectionNode: SelectionNode? = null
+
     private val selectedFrames: List<ProjectFrame>
         get() = displayingSelectionNode?.selectedFrames ?: emptyList()
 
@@ -48,7 +47,9 @@ class CatalogueView : View() {
             hbox(alignment = Pos.CENTER) {
                 button("Apply") {
                     action {
-                        controller.visualizeFramesSelection(fileNamesListView.selectedItems.map { it.frame })
+                        controller.visualizeFramesSelection(
+                            displayingSelectionNode?.selectedItems?.map { it.frame } ?: emptyList()
+                        )
                     }
                 }
             }
@@ -57,17 +58,25 @@ class CatalogueView : View() {
 
     override val root = catalogueBorderpane.also { initializeNodes() }
 
-    init {
-        controller.model.frames.onChange {
-            reinitializeFields()
-            visualizeProjectImportSelection()
-            resetNodes()
-        }
-        settingsView.viewFormatProperty.onChange { value ->
-            value ?: return@onChange
-            displayingSelectionNode = getSelectableView(value)
-            updateViewFormatNode(value)
-        }
+    fun reinitializeView() {
+        reinitializeFields()
+        visualizeProjectImportSelection()
+        resetNodes()
+    }
+
+    fun changeViewFormat(withFormat: ViewFormat) {
+        nonDisplayingSelectionNode = displayingSelectionNode
+        displayingSelectionNode = getSelectableView(withFormat)
+        catalogueBorderpane.center = getSelectableView(withFormat)?.root
+    }
+
+    fun selectAllFields() {
+        displayingSelectionNode?.selectAllItems()
+        nonDisplayingSelectionNode?.selectAllItems()
+    }
+    fun deselectAllFields() {
+        displayingSelectionNode?.deselectAllItems()
+        nonDisplayingSelectionNode?.deselectAllItems()
     }
 
     private fun reinitializeFields() {
@@ -78,9 +87,9 @@ class CatalogueView : View() {
 
     private fun checkForEmptyFields() {
         if (fields.isEmpty()) {
-            settingsView.displayInfoLabel("No files found!")
+            controller.displayInfoLabel("No files found!")
         } else {
-            settingsView.hideInfoLabel()
+            controller.hideInfoLabel()
         }
     }
 
@@ -89,21 +98,17 @@ class CatalogueView : View() {
         ViewFormat.ImagePreview -> null // TODO("Add an image preview format")
     }
 
-    private fun updateViewFormatNode(withFormat: ViewFormat) {
-        catalogueBorderpane.center = getSelectableView(withFormat)?.root
-    }
-
     private fun initializeNodes() {
+        changeViewFormat(CatalogueController.initialViewFormat)
         resetNodes()
     }
 
     private fun visualizeProjectImportSelection() {
-        fileNamesListView.selectAllItems()
+        displayingSelectionNode?.selectAllItems()
         controller.visualizeFramesSelection(selectedFrames)
     }
 
     private fun resetNodes() {
-        fire(CatalogueResetEvent)
         checkForEmptyFields()
     }
 }
