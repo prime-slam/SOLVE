@@ -98,7 +98,7 @@ class SceneView : View() {
     }
 
     companion object {
-        private const val scaleFactor = 1.05
+        private const val scaleFactor = 1.15
 
         private const val maxScale = 20.0
         private const val minScale = 0.2
