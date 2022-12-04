@@ -1,12 +1,12 @@
 package sliv.tool.catalogue.view
 
-import javafx.beans.property.ReadOnlyObjectProperty
-import javafx.beans.property.ReadOnlyObjectWrapper
+import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Insets
 import javafx.scene.control.CheckBox
 import javafx.scene.control.RadioButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.Priority
+import sliv.tool.catalogue.controller.CatalogueController
 import sliv.tool.catalogue.model.ViewFormat
 import tornadofx.*
 import kotlin.properties.ReadWriteProperty
@@ -14,19 +14,18 @@ import kotlin.reflect.KProperty
 
 class CatalogueSettingsView: View() {
     enum class SelectionState {
-        All,
         None,
-        Part
+        Part,
+        All;
     }
 
-    private val viewFormatWrapper = ReadOnlyObjectWrapper(CatalogueView.initialViewFormat)
-    val viewFormatProperty: ReadOnlyObjectProperty<ViewFormat> = viewFormatWrapper.readOnlyProperty
-    private var viewFormat: ViewFormat
-        get() = viewFormatProperty.value
-        set(value) {
-            viewFormatWrapper.value = value
-            viewFormatToggleGroup.selectToggle(getViewFormatRadioButton(value))
-        }
+    private val controller: CatalogueController by inject()
+
+    private val isSelectionCheckBoxCheckedProperty = booleanProperty(false)
+    private var isSelectionCheckBoxChecked: Boolean by isSelectionCheckBoxCheckedProperty
+
+    private var viewFormatProperty = SimpleObjectProperty(CatalogueController.initialViewFormat)
+    private var viewFormat: ViewFormat by viewFormatProperty
 
     private val catalogueView: CatalogueView by inject()
 
@@ -34,7 +33,6 @@ class CatalogueSettingsView: View() {
     private lateinit var fileNameViewRadioButton: RadioButton
     private lateinit var imagePreviewRadioButton: RadioButton
 
-    private val selectionCheckBoxBoolProperty = booleanProperty(false)
     private lateinit var selectionCheckBox: CheckBox
     private var checkBoxSelectionState: SelectionState by checkBoxSelectionStateDelegate()
 
@@ -44,20 +42,31 @@ class CatalogueSettingsView: View() {
     override val root = hbox {
         padding = Insets(5.0, 5.0, 5.0, 5.0)
         spacing = 5.0
-        selectionCheckBox = checkbox("Select all", selectionCheckBoxBoolProperty)
+        selectionCheckBox = checkbox("Select all", isSelectionCheckBoxCheckedProperty) {
+            action {
+                if (isSelected) {
+                    controller.selectAllFields()
+                } else {
+                    controller.deselectAllFields()
+                }
+            }
+        }
         pane().hgrow = Priority.ALWAYS
         fileNameViewRadioButton = radiobutton("File view", viewFormatToggleGroup)
         imagePreviewRadioButton = radiobutton("Image preview", viewFormatToggleGroup)
         add(infoLabel)
-    }.also { initializeViewFormatRadioButtons() }
+    }.also { initialize() }
 
     init {
-        subscribe<CatalogueFieldsInteractionEvent> {
-            checkBoxSelectionState = catalogueView.currentSelectionState
+        viewFormatProperty.onChange { newFormat ->
+            newFormat ?: return@onChange
+            controller.changeViewFormat(newFormat)
         }
-        subscribe<CatalogueResetEvent> {
-            resetSettingsView()
-        }
+    }
+
+    fun resetSettings() {
+        checkBoxSelectionState = CatalogueController.initialSelectionState
+        viewFormatToggleGroup.selectToggle(getViewFormatRadioButton(CatalogueController.initialViewFormat))
     }
 
     fun displayInfoLabel(withText: String) {
@@ -75,6 +84,15 @@ class CatalogueSettingsView: View() {
         infoLabel.isManaged = false
         infoLabel.isVisible = false
         isDisplayingInfoLabel = false
+    }
+
+    fun updateCheckBoxView() {
+        checkBoxSelectionState = catalogueView.currentSelectionState
+    }
+
+    private fun initialize() {
+        initializeViewFormatRadioButtons()
+        viewFormatToggleGroup.selectToggle(getViewFormatRadioButton(CatalogueController.initialViewFormat))
     }
 
     private fun getRadioButtonViewFormat(radioButton: RadioButton) = when (radioButton) {
@@ -97,29 +115,24 @@ class CatalogueSettingsView: View() {
 
     private fun checkBoxSelectionStateDelegate(): ReadWriteProperty<Any?, SelectionState> =
         object : ReadWriteProperty<Any?, SelectionState> {
-            var currentValue = CatalogueView.initialSelectionState
+            var currentValue = CatalogueController.initialSelectionState
             override fun getValue(thisRef: Any?, property: KProperty<*>): SelectionState = currentValue
             override fun setValue(thisRef: Any?, property: KProperty<*>, value: SelectionState) {
                 currentValue = value
                 when (currentValue) {
                     SelectionState.All -> {
                         selectionCheckBox.isIndeterminate = false
-                        selectionCheckBoxBoolProperty.value = true
+                        isSelectionCheckBoxChecked = true
                     }
                     SelectionState.None -> {
                         selectionCheckBox.isIndeterminate = false
-                        selectionCheckBoxBoolProperty.value = false
+                        isSelectionCheckBoxChecked = false
                     }
                     SelectionState.Part -> {
                         selectionCheckBox.isIndeterminate = true
-                        selectionCheckBoxBoolProperty.value = false
+                        isSelectionCheckBoxChecked = false
                     }
                 }
             }
         }
-
-    private fun resetSettingsView() {
-        checkBoxSelectionState = CatalogueView.initialSelectionState
-        viewFormatToggleGroup.selectToggle(getViewFormatRadioButton(CatalogueView.initialViewFormat))
-    }
 }
