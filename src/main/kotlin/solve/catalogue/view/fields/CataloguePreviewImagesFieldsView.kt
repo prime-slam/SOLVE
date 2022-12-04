@@ -18,8 +18,8 @@ class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
         initialize()
     }
 
-    override fun setFileNamesListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
-        super.setFileNamesListViewCellFormat(labeled, item)
+    override fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
+        super.setListViewCellFormat(labeled, item)
         val previewImage = item?.loadPreviewImage(previewImageHeight)
         labeled.graphic = vbox {
             alignment = Pos.CENTER
