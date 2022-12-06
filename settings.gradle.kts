@@ -1,1 +1,1 @@
-rootProject.name = "SLIV-tool"
+rootProject.name = "SOLVE"

@@ -18,7 +18,7 @@ repositories {
 }
 
 application {
-    mainClass.set("sliv.tool.SlivToolApp")
+    mainClass.set("solve.SolveApp")
 }
 
 javafx {
