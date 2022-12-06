@@ -7,11 +7,16 @@ import javafx.scene.control.Alert
 import javafx.scene.control.TreeItem
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import solve.parsers.lines.CSVLinesParser
+import solve.parsers.planes.ImagePlanesParser
+import solve.parsers.points.CSVPointsParser
 import solve.parsers.planes.ImagePlanesParser.extractUIDs
 import solve.project.model.*
+import sliv.tool.project.model.*
 import tornadofx.alert
 import java.io.File
 import kotlin.io.path.Path
+import kotlin.io.path.extension
 
 object ProjectParser {
     private const val IMAGE_DIRECTORY_NAME = "images"
@@ -96,7 +101,7 @@ object ProjectParser {
         val layers = FXCollections.observableArrayList<ProjectLayer>()
         val errorFolders = mutableListOf<String>()
 
-        for (folder in directory.listFiles()) {
+        for (folder in directory.listFiles()!!) {
             if (folder.name != IMAGE_DIRECTORY_NAME) {
                 parseOutputs(folder, layers, landmarks, errorFolders)
             } else {
@@ -110,7 +115,61 @@ object ProjectParser {
             )
         }
         landmarks.forEach { (name, outputs) ->
-            frames.add(ProjectFrame(name, Path(images[name]!!), outputs))
+            try {
+                val longName = name.toLong()
+                frames.add(ProjectFrame(longName, Path(images[name]!!), outputs))
+            } catch (e: Exception) {
+                frames.add(
+                    ProjectFrame(
+                        0,
+                        Path(images[name]!!),
+                        outputs,
+                        errorMsg = mutableListOf("$name can not converted to Long"),
+                        errorType = mutableListOf(ErrorType.INCORRECT_IMAGE_NAME)
+                    )
+                )
+            }
+        }
+        frames.forEach {
+            it.landmarkFiles.forEach { a ->
+                when (a.projectLayer.kind) {
+                    LayerKind.Plane ->
+                        try {
+                            ImagePlanesParser.parse(a.path.toString())
+                        } catch (e: Exception) {
+                            it.errorType.add(ErrorType.ERROR_PARSER)
+                            it.errorMsg.add("Couldn't parse ${a.projectLayer}")
+                        }
+
+                    LayerKind.Keypoint ->
+                        try {
+                            CSVPointsParser.parse(a.path.toString())
+                        } catch (e: Exception) {
+                            it.errorType.add(ErrorType.ERROR_PARSER)
+                            it.errorMsg.add("Couldn't parse ${a.projectLayer}")
+                        }
+
+                    LayerKind.Line ->
+                        try {
+                            CSVLinesParser.parse(a.path.toString())
+                        } catch (e: Exception) {
+                            it.errorType.add(ErrorType.ERROR_PARSER)
+                            it.errorMsg.add("Couldn't parse ${a.projectLayer}")
+                        }
+                }
+            }
+            if (!(it.imagePath.extension != ".png" && it.imagePath.extension != ".jpg")) {
+                it.errorType.add(ErrorType.INCORRECT_EXTENSION)
+                it.errorMsg.add("Incorrect image file extension")
+            }
+            val diff = layers.minus(it.landmarkFiles.map { landmark ->
+                landmark.projectLayer
+            }.toSet())
+
+            if (diff.isNotEmpty()) {
+                it.errorType.add(ErrorType.NO_OUTPUT)
+                it.errorMsg.add("There is no $diff algorithms for image ${it.timestamp}")
+            }
         }
         return Project(Path(path), frames, layers)
     }
