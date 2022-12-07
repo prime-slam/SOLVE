@@ -2,7 +2,10 @@ package solve.importer.view
 
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
+import javafx.scene.control.OverrunStyle
 import javafx.scene.control.TreeItem
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.stage.DirectoryChooser
 import solve.importer.ProjectParser
 import solve.importer.ProjectParser.parseDirectory
@@ -12,7 +15,6 @@ import solve.menubar.view.MenuBarView
 import solve.project.model.Project
 import tornadofx.*
 import java.io.File
-import javafx.scene.control.OverrunStyle
 
 class ChoosingDirectoryView : Fragment() {
     private val controller: ImporterController by inject()
@@ -26,31 +28,56 @@ class ChoosingDirectoryView : Fragment() {
         path.bindBidirectional(controller.directoryPath)
         project.bindBidirectional(controller.project)
         top {
-            borderpane {
-                left {
-                    vbox {
-                        label("Project directory")
-                        label {
-                            maxWidth = 300.0
-                            textOverrun = OverrunStyle.ELLIPSIS
-                            path.onChange {
-                                tooltip(path.value)
+            vbox {
+                borderpane {
+                    left {
+                        vbox {
+                            label("Project directory")
+                            label {
+                                maxWidth = 300.0
+                                textOverrun = OverrunStyle.ELLIPSIS
+                                path.onChange {
+                                    tooltip(path.value)
+                                }
+                                bind(controller.directoryPath)
                             }
-                            bind(controller.directoryPath)
+                        }
+                    }
+                    right {
+                        button("Change") {
+                            action {
+                                val dir = directoryChooser.showDialog(currentStage)
+                                if (dir != null) {
+                                    controller.directoryPath.set(dir.absolutePath)
+                                }
+                            }
                         }
                     }
                 }
-                right {
-                    button("Change") {
-                        action {
-                            val dir = directoryChooser.showDialog(currentStage)
-                            if (dir != null) {
-                                controller.directoryPath.set(dir.absolutePath)
-                            }
+                label {
+                    visibleWhen { path.isNotEmpty }
+
+                    project.onChange {
+                        val countFiles = it?.frames?.count()
+                        this.text = "${countFiles} images found"
+                        this.graphic = ImageView(Image("file:icons/check_circle.png"))
+                    }
+
+                }
+                label {
+                    visibleWhen { path.isNotEmpty }
+                    padding = Insets(3.0, 0.0, 5.0, 0.0)
+                    project.onChange {
+                        var countErrors = 0
+                        it?.frames?.forEach {
+                            countErrors += it.errorMsg.count()
                         }
+                        this.text = "${countErrors} errors"
+                        this.graphic = ImageView(Image("file:icons/warning.png"))
                     }
                 }
             }
+
         }
         path.onChange {
             if (!it.isNullOrEmpty()) {
@@ -66,6 +93,7 @@ class ChoosingDirectoryView : Fragment() {
                 visibleWhen { path.isNotEmpty }
             }
         }
+
         bottom {
             hbox(10) {
                 padding = Insets(10.0, 0.0, 0.0, 0.0)
@@ -93,5 +121,6 @@ class ChoosingDirectoryView : Fragment() {
                 }
             }
         }
+
     }
 }
