@@ -12,7 +12,6 @@ import solve.parsers.planes.ImagePlanesParser
 import solve.parsers.points.CSVPointsParser
 import solve.parsers.planes.ImagePlanesParser.extractUIDs
 import solve.project.model.*
-import sliv.tool.project.model.*
 import tornadofx.alert
 import java.io.File
 import kotlin.io.path.Path
