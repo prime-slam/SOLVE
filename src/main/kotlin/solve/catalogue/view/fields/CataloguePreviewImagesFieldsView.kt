@@ -4,6 +4,7 @@ import javafx.geometry.Pos
 import javafx.scene.control.Labeled
 import solve.catalogue.model.CatalogueField
 import solve.catalogue.view.fields.CatalogueFieldsView
+import javafx.scene.image.ImageView
 import tornadofx.*
 
 class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
@@ -11,25 +12,42 @@ class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
         private const val previewImageHeight = 80.0
     }
 
-    override val dragViewMaxFieldsNumber = 20
-    override val listViewCellHeight = 100.0
+    override val dragViewMaxFieldsNumber = 30
+    override val listViewCellHeight = 110.0
 
     init {
         initialize()
     }
 
+    private fun createPreviewImageView(field: CatalogueField): ImageView {
+        val previewImage = field.loadPreviewImage(previewImageHeight)
+        return imageview(previewImage) {
+            fitHeight = previewImageHeight
+            isPreserveRatio = true
+        }
+    }
+
     override fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
         super.setListViewCellFormat(labeled, item)
-        val previewImage = item?.loadPreviewImage(previewImageHeight)
+        if (item == null)
+            return
+
         labeled.graphic = vbox {
             alignment = Pos.CENTER
-            if (previewImage != null) {
-                imageview(previewImage) {
-                    fitHeight = previewImageHeight
-                    isPreserveRatio = true
+            add(createPreviewImageView(item))
+            text(item.fileName)
+        }
+    }
+
+    override fun createFieldsSnapshotNode(fields: List<CatalogueField>) = vbox {
+        fields.map {
+            vbox {
+                add(createPreviewImageView(it))
+                label(it.fileName) {
+                    alignment = Pos.CENTER
                 }
+                alignment = Pos.CENTER
             }
-            label(item?.fileName ?: "")
         }
     }
 
