@@ -1,11 +1,11 @@
 package solve.catalogue.view.fields
 
 import javafx.scene.control.Labeled
-import javafx.scene.control.ListView
-import javafx.scene.control.SelectionMode
+
 import solve.catalogue.loadImage
 import solve.catalogue.model.CatalogueField
 import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import tornadofx.*
 
 class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
@@ -22,13 +22,34 @@ class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
         initialize()
     }
 
-    override fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
-        super.setListViewCellFormat(labeled, item)
-        labeled.text = item?.fileName
+    private fun createFieldIconImageView(): ImageView? {
         if (fileNamesFieldIconImage != null) {
-            labeled.graphic = imageview(fileNamesFieldIconImage) {
+           return imageview(fileNamesFieldIconImage) {
                 fitHeight = ListViewFieldIconSize
                 isPreserveRatio = true
+            }
+        }
+
+        return null
+    }
+
+    override fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
+        super.setListViewCellFormat(labeled, item)
+        val iconImageView = createFieldIconImageView()
+        if (iconImageView != null) {
+            labeled.graphic = iconImageView
+        }
+        labeled.text = item?.fileName
+    }
+
+    override fun createFieldsSnapshotNode(fields: List<CatalogueField>) = vbox {
+        fields.map {
+            hbox(4) {
+                val iconImageView = createFieldIconImageView()
+                if (iconImageView != null) {
+                    add(iconImageView)
+                }
+                label(it.fileName)
             }
         }
     }

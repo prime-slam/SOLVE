@@ -1,6 +1,8 @@
 package solve.catalogue.view.fields
 
 import javafx.collections.ObservableList
+import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Labeled
 import javafx.scene.control.ListView
@@ -44,13 +46,15 @@ abstract class CatalogueFieldsView: View() {
 
     private var isDragging = false
 
+    fun selectAllItems() = fieldsListView.selectAllItems()
+
+    fun deselectAllItems() = fieldsListView.deselectAllItems()
+
     protected open fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
         labeled.prefHeight = listViewCellHeight
     }
 
-    fun selectAllItems() = fieldsListView.selectAllItems()
-
-    fun deselectAllItems() = fieldsListView.deselectAllItems()
+    protected abstract fun createFieldsSnapshotNode(fields: List<CatalogueField>): Node
 
     protected fun initialize() {
         initializeDragEvents()
@@ -97,16 +101,12 @@ abstract class CatalogueFieldsView: View() {
     }
 
     private fun createFileNameFieldsSnapshot(fields: List<CatalogueField>): Image {
-        val snapshotFields = fields.take(dragViewMaxFieldsNumber).asObservable()
+        val snapshotFields = fields.take(dragViewMaxFieldsNumber)
         val prefSnapshotHeight = (snapshotFields.count() * listViewCellHeight).floor()
 
-        val fieldsSnapshotNode = listview(snapshotFields) {
-            cellFormat {
-                setListViewCellFormat(this, it)
-            }
-        }
+        val fieldsSnapshotNode = createFieldsSnapshotNode(snapshotFields)
         fieldsListView.getChildList()?.remove(fieldsSnapshotNode)
-        val snapshotScene = Scene(fieldsSnapshotNode)
+        val snapshotScene = Scene(fieldsSnapshotNode as Parent)
 
         val nodeSnapshot = fieldsSnapshotNode.snapshot(null, null)
         return WritableImage(

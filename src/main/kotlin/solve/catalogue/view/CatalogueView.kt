@@ -38,7 +38,6 @@ class CatalogueView : View() {
 
     private var displayingFieldsView: CatalogueFieldsView? = null
     private var nonDisplayingFieldsView: CatalogueFieldsView? = null
-    private var displayingSelectionListener: ListChangeListener<Int>? = null
 
     private val selectedFrames: List<ProjectFrame>
         get() = displayingFieldsView?.selectedFrames ?: emptyList()
