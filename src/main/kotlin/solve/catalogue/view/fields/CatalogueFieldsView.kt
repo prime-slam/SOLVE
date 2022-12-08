@@ -93,6 +93,11 @@ abstract class CatalogueFieldsView: View() {
     }
 
     private fun onCatalogueDragDetected() {
+        val selectedFields = fieldsListView.selectedItems
+        if (selectedFields.isEmpty()) {
+            return
+        }
+        
         val dragboard = root.startDragAndDrop(TransferMode.MOVE)
         val clipboardContent = ClipboardContent().apply { putString("") }
         dragboard.setContent(clipboardContent)
