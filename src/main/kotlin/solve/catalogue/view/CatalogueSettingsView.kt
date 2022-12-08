@@ -2,12 +2,14 @@ package solve.catalogue.view
 
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Insets
+import javafx.geometry.Pos
 import javafx.scene.control.CheckBox
 import javafx.scene.control.RadioButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.Priority
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.ViewFormat
+import solve.catalogue.addNameTooltip
 import tornadofx.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -37,24 +39,36 @@ class CatalogueSettingsView: View() {
     private var checkBoxSelectionState: SelectionState by checkBoxSelectionStateDelegate()
 
     private val infoLabel = label()
+    private val infoNode = vbox {
+        separator()
+        add(infoLabel)
+        alignment = Pos.CENTER
+    }
     private var isDisplayingInfoLabel = false
 
-    override val root = hbox {
-        padding = Insets(5.0, 5.0, 5.0, 5.0)
-        spacing = 5.0
-        selectionCheckBox = checkbox("Select all", isSelectionCheckBoxCheckedProperty) {
-            action {
-                if (isSelected) {
-                    controller.selectAllFields()
-                } else {
-                    controller.deselectAllFields()
+    override val root = vbox(5) {
+        hbox {
+            padding = Insets(5.0, 5.0, 5.0, 5.0)
+            spacing = 5.0
+            selectionCheckBox = checkbox("Select all", isSelectionCheckBoxCheckedProperty) {
+                addNameTooltip()
+                action {
+                    if (isSelected) {
+                        controller.selectAllFields()
+                    } else {
+                        controller.deselectAllFields()
+                    }
                 }
             }
+            pane().hgrow = Priority.ALWAYS
+            fileNameViewRadioButton = radiobutton("File view", viewFormatToggleGroup) {
+                addNameTooltip()
+            }
+            imagePreviewRadioButton = radiobutton("Image preview", viewFormatToggleGroup) {
+                addNameTooltip()
+            }
         }
-        pane().hgrow = Priority.ALWAYS
-        fileNameViewRadioButton = radiobutton("File view", viewFormatToggleGroup)
-        imagePreviewRadioButton = radiobutton("Image preview", viewFormatToggleGroup)
-        add(infoLabel)
+        add(infoNode)
     }.also { initialize() }
 
     init {
@@ -71,8 +85,8 @@ class CatalogueSettingsView: View() {
 
     fun displayInfoLabel(withText: String) {
         infoLabel.text = withText
-        infoLabel.isVisible = true
-        infoLabel.isManaged = true
+        infoNode.isVisible = true
+        infoNode.isManaged = true
         isDisplayingInfoLabel = true
     }
 
@@ -81,8 +95,9 @@ class CatalogueSettingsView: View() {
             return
         }
 
-        infoLabel.isManaged = false
-        infoLabel.isVisible = false
+        infoLabel.text = ""
+        infoNode.isManaged = false
+        infoNode.isVisible = false
         isDisplayingInfoLabel = false
     }
 

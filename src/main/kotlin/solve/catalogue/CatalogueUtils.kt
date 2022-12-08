@@ -1,14 +1,12 @@
 package solve.catalogue
 
-import javafx.collections.ListChangeListener
+import javafx.scene.control.Labeled
 import javafx.scene.control.ListView
 import javafx.scene.image.Image
 import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
 import tornadofx.onChange
-import tornadofx.selectAll
-import java.io.File
-import java.io.InputStream
+import tornadofx.tooltip
 import kotlin.io.path.Path
 import kotlin.io.path.inputStream
 import kotlin.math.ceil
@@ -49,4 +47,8 @@ fun loadImage(path: String): Image? {
 
 fun <T> synchronizeListViewsSelections(firstListView: ListView<T>, secondListView: ListView<T>) {
     secondListView.selectionModel = firstListView.selectionModel
+}
+
+fun Labeled.addNameTooltip() {
+    this.tooltip(this.text)
 }

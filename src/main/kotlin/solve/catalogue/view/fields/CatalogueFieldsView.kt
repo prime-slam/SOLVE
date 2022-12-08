@@ -97,7 +97,7 @@ abstract class CatalogueFieldsView: View() {
         if (selectedFields.isEmpty()) {
             return
         }
-        
+
         val dragboard = root.startDragAndDrop(TransferMode.MOVE)
         val clipboardContent = ClipboardContent().apply { putString("") }
         dragboard.setContent(clipboardContent)
