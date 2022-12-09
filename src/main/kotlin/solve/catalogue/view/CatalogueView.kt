@@ -2,7 +2,6 @@ package solve.catalogue.view
 
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
-import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
