@@ -17,6 +17,7 @@ import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField
 import solve.project.model.ProjectFrame
 import solve.scene.view.SceneView
+import javafx.scene.layout.Priority
 import tornadofx.*
 import kotlin.math.min
 
@@ -27,6 +28,7 @@ abstract class CatalogueFieldsView: View() {
         cellFormat {
             setListViewCellFormat(this, it)
         }
+        vgrow = Priority.ALWAYS
     }
 
     protected abstract val dragViewMaxFieldsNumber: Int

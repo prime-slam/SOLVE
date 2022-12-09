@@ -1,12 +1,18 @@
 package solve.catalogue.view
 
 import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
+import javafx.geometry.Insets
+import javafx.geometry.Orientation
 import javafx.geometry.Pos
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
+import solve.catalogue.addSafely
 import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
 import solve.catalogue.controller.CatalogueController
+import solve.catalogue.loadImage
 import solve.catalogue.model.CatalogueField
 import solve.catalogue.model.ViewFormat
+import solve.catalogue.removeSafely
 import solve.catalogue.view.fields.CatalogueFileNamesFieldsView
 import solve.catalogue.view.fields.SelectionNode
 import solve.project.model.ProjectFrame
@@ -17,6 +23,7 @@ import tornadofx.*
 class CatalogueView : View() {
     companion object {
         private const val CatalogueWidth = 300.0
+        private const val ApplyButtonSize = 15.0
     }
 
     val currentSelectionState: CatalogueSettingsView.SelectionState
@@ -46,23 +53,43 @@ class CatalogueView : View() {
     private val fileNamesFieldsView = find<CatalogueFileNamesFieldsView>(fieldsViewArgs)
     private val previewImagesFieldsView = find<CataloguePreviewImagesFieldsView>(fieldsViewArgs)
 
-    private val catalogueBorderpane = borderpane {
-        prefWidth = CatalogueWidth
-        top = settingsView.root
-        bottom {
-            hbox(alignment = Pos.CENTER) {
-                button("Apply") {
+    private lateinit var fieldsVBox: VBox
+
+    private val catalogueNode = hbox {
+        vbox(5) {
+            add(settingsView.root)
+            hbox(5) {
+                fieldsVBox = vbox {
+                    prefWidth = CatalogueWidth
+                }
+                button {
+                    setPrefSize(ApplyButtonSize, ApplyButtonSize)
+                    val buttonImage = loadImage("icons/catalogue_apply_icon.png")
+                    if (buttonImage != null) {
+                        graphic = imageview(buttonImage) {
+                            fitHeight = ApplyButtonSize
+                            isPreserveRatio = true
+                        }
+                    }
                     action {
                         controller.visualizeFramesSelection(
                             displayingFieldsView?.selectedItems?.map { it.frame } ?: emptyList()
                         )
                     }
                 }
+                alignment = Pos.CENTER
+                vgrow = Priority.ALWAYS
             }
+            border = Border(
+                BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+            )
+            padding = Insets(5.0, 5.0, 5.0, 10.0)
         }
+        padding = Insets(5.0, 5.0, 5.0, 5.0)
+        prefWidth = CatalogueWidth
     }
 
-    override val root = catalogueBorderpane.also { initializeNodes() }
+    override val root = catalogueNode.also { initializeNodes() }
 
     fun reinitializeView() {
         reinitializeFields()
@@ -74,7 +101,8 @@ class CatalogueView : View() {
         displayingFieldsView = getSelectableView(withFormat)
         nonDisplayingFieldsView = getSelectableView(withFormat.differentFormat())
 
-        catalogueBorderpane.center = displayingFieldsView?.fieldsListView
+        fieldsVBox.removeSafely(nonDisplayingFieldsView?.fieldsListView)
+        fieldsVBox.addSafely(displayingFieldsView?.fieldsListView)
     }
 
     fun selectAllFields() {
