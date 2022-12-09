@@ -1,14 +1,17 @@
 package solve.catalogue
 
+import javafx.scene.Node
 import javafx.scene.control.Labeled
 import javafx.scene.control.ListView
 import javafx.scene.image.Image
 import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
+import tornadofx.add
+import tornadofx.getChildList
 import tornadofx.onChange
 import tornadofx.tooltip
-import kotlin.io.path.Path
-import kotlin.io.path.inputStream
+import java.io.File
+import java.io.IOException
 import kotlin.math.ceil
 
 fun <T> ListView<T>.selectAllItems() = selectionModel.selectAll()
@@ -40,9 +43,21 @@ fun Double.ceil(): Int = ceil(this).toInt()
 fun Double.floor(): Int = kotlin.math.floor(this).toInt()
 
 fun loadImage(path: String): Image? {
-    val fileInputStream = Path(path).inputStream() ?: return null
+    val file = File(path)
 
-    return Image(fileInputStream)
+    if (!file.canRead()) {
+        println("The image file cannot be read!")
+        return null
+    }
+
+    var image: Image? = null
+    try {
+        image = Image(file.inputStream())
+    } catch (exception: IOException) {
+        println("Input error while loading the image!\n${exception.message}")
+    }
+
+    return image
 }
 
 fun <T> synchronizeListViewsSelections(firstListView: ListView<T>, secondListView: ListView<T>) {
@@ -50,5 +65,22 @@ fun <T> synchronizeListViewsSelections(firstListView: ListView<T>, secondListVie
 }
 
 fun Labeled.addNameTooltip() {
-    this.tooltip(this.text)
+    tooltip(text)
 }
+
+fun Node.removeSafely(node: Node?) {
+    if (node == null) {
+        return
+    }
+
+    getChildList()?.remove(node)
+}
+
+fun Node.addSafely(node: Node?) {
+    if (node == null) {
+        return
+    }
+
+    add(node)
+}
+

@@ -46,10 +46,8 @@ class CatalogueSettingsView: View() {
     }
     private var isDisplayingInfoLabel = false
 
-    override val root = vbox(5) {
-        hbox {
-            padding = Insets(5.0, 5.0, 5.0, 5.0)
-            spacing = 5.0
+    override val root = vbox {
+        hbox(5) {
             selectionCheckBox = checkbox("Select all", isSelectionCheckBoxCheckedProperty) {
                 addNameTooltip()
                 action {
@@ -67,6 +65,7 @@ class CatalogueSettingsView: View() {
             imagePreviewRadioButton = radiobutton("Image preview", viewFormatToggleGroup) {
                 addNameTooltip()
             }
+            paddingBottom = 4
         }
         add(infoNode)
     }.also { initialize() }
