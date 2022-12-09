@@ -1,7 +1,6 @@
 package solve.catalogue.view
 
 import javafx.beans.property.SimpleObjectProperty
-import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.CheckBox
 import javafx.scene.control.RadioButton
