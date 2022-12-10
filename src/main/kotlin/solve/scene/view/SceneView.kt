@@ -7,10 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import solve.scene.controller.SceneController
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
-import tornadofx.View
-import tornadofx.label
-import tornadofx.onChange
-import tornadofx.vbox
+import tornadofx.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -54,11 +51,14 @@ class SceneView : View() {
         val emptyFrames = (0 until (columnsNumber - scene.frames.count() % columnsNumber) % columnsNumber).map { null }
         val frames = scene.frames + emptyFrames
 
+        val outOfFramesLayer = OutOfFramesLayer()
+        val associationsManager = AssociationsManager(width, height, margin, scaleProperty, scene.frames, columnsNumber, outOfFramesLayer)
+
         val grid = VirtualizedFXGridProvider.createGrid(
-            frames, columnsNumber, width + margin, height + margin, scaleProperty
+            frames, columnsNumber, width + margin, height + margin, scaleProperty, outOfFramesLayer
         ) { frame ->
             FrameView(
-                width, height, scaleProperty, frameDataLoadingScope, frame
+                width, height, scaleProperty, frameDataLoadingScope, associationsManager, frame
             )
         }
 

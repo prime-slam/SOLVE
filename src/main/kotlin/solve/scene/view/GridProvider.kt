@@ -10,6 +10,7 @@ interface GridProvider {
         cellWidth: Double,
         cellHeight: Double,
         scale: DoubleProperty,
+        outOfFramesLayer: OutOfFramesLayer,
         cellFactory: (VisualizationFrame?) -> FrameView
     ): Grid
 }

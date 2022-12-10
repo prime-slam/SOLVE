@@ -18,11 +18,12 @@ class FrameView(
     private val height: Double,
     private val scale: DoubleProperty,
     private val coroutineScope: CoroutineScope,
+    private val associationsManager: AssociationsManager,
     frame: VisualizationFrame?
 ) : Group() {
-    //Frame data be loaded concurrently, so these fields should be volatile
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
+    private var currentFrame: VisualizationFrame? = null
     private val imageCanvas = Canvas(width, height)
     private var currentJob: Job? = null
 
@@ -34,6 +35,22 @@ class FrameView(
         add(imageCanvas)
         setFrame(frame)
         scaleImageAndLandmarks(scale.value)
+
+        setOnMouseClicked {
+            val clickedFrame = currentFrame ?: return@setOnMouseClicked
+            associationsManager.chooseFrame(clickedFrame)
+        }
+
+        contextmenu {
+            item("Associate keypoints").action {
+                val clickedFrame = currentFrame ?: return@action
+                associationsManager.initAssociation(clickedFrame, clickedFrame.landmarks.keys.first()) // TODO
+            }
+            item("Clear association").action {
+                val clickedFrame = currentFrame ?: return@action
+                associationsManager.clearAssociation(clickedFrame, clickedFrame.landmarks.keys.first()) // TODO
+            }
+        }
     }
 
     fun setFrame(frame: VisualizationFrame?) {
@@ -61,6 +78,8 @@ class FrameView(
                 draw(landmarkData, image)
             }
         }
+
+        currentFrame = frame
     }
 
     fun dispose() {
