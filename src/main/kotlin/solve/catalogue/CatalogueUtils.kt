@@ -49,18 +49,10 @@ fun Labeled.addNameTooltip() {
 }
 
 fun Node.removeSafely(node: Node?) {
-    if (node == null) {
-        return
-    }
-
-    getChildList()?.remove(node)
+    node.let { getChildList()?.remove(it) }
 }
 
 fun Node.addSafely(node: Node?) {
-    if (node == null) {
-        return
-    }
-
-    add(node)
+    node?.let { add(it) }
 }
 
