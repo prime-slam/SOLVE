@@ -4,7 +4,6 @@ import javafx.scene.control.Labeled
 
 import solve.catalogue.loadImage
 import solve.catalogue.model.CatalogueField
-import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import tornadofx.*
 
