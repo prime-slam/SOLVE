@@ -3,7 +3,6 @@ package solve.catalogue.view.fields
 import javafx.geometry.Pos
 import javafx.scene.control.Labeled
 import solve.catalogue.model.CatalogueField
-import solve.catalogue.view.fields.CatalogueFieldsView
 import javafx.scene.image.ImageView
 import tornadofx.*
 
