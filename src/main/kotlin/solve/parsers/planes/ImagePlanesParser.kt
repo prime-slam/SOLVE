@@ -2,9 +2,9 @@ package solve.parsers.planes
 
 import java.awt.image.DataBufferByte
 import solve.parsers.Parser
-import solve.parsers.ParserUtils
 import solve.parsers.structures.Plane
 import solve.scene.model.Point
+import solve.utils.loadBufferedImage
 import java.awt.image.BufferedImage
 
 // A parser class for planes stored in images in a form of a mask.
@@ -59,7 +59,7 @@ object ImagePlanesParser : Parser<Plane> {
     }
 
     override fun parse(filePath: String): List<Plane> {
-        val bufferedImage = ParserUtils.loadImage(filePath) ?: return emptyList()
+        val bufferedImage = loadBufferedImage(filePath) ?: return emptyList()
 
         val planePoints = mutableMapOf<Long, MutableList<Point>>()
 
@@ -78,7 +78,7 @@ object ImagePlanesParser : Parser<Plane> {
     }
 
     override fun extractUIDs(filePath: String): List<Long> {
-        val bufferedImage = ParserUtils.loadImage(filePath) ?: return emptyList()
+        val bufferedImage = loadBufferedImage(filePath) ?: return emptyList()
 
         val uids = mutableSetOf<Long>()
 

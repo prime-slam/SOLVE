@@ -3,15 +3,13 @@ package solve.catalogue
 import javafx.scene.Node
 import javafx.scene.control.Labeled
 import javafx.scene.control.ListView
-import javafx.scene.image.Image
 import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
 import tornadofx.add
 import tornadofx.getChildList
 import tornadofx.onChange
 import tornadofx.tooltip
-import java.io.File
-import java.io.IOException
+
 import kotlin.math.ceil
 
 fun <T> ListView<T>.selectAllItems() = selectionModel.selectAll()
@@ -41,24 +39,6 @@ inline fun <T> ListView<T>.onSelectionChanged(crossinline action: () -> Unit) {
 fun Double.ceil(): Int = ceil(this).toInt()
 
 fun Double.floor(): Int = kotlin.math.floor(this).toInt()
-
-fun loadImage(path: String): Image? {
-    val file = File(path)
-
-    if (!file.canRead()) {
-        println("The image file cannot be read!")
-        return null
-    }
-
-    var image: Image? = null
-    try {
-        image = Image(file.inputStream())
-    } catch (exception: IOException) {
-        println("Input error while loading the image!\n${exception.message}")
-    }
-
-    return image
-}
 
 fun <T> synchronizeListViewsSelections(firstListView: ListView<T>, secondListView: ListView<T>) {
     secondListView.selectionModel = firstListView.selectionModel
