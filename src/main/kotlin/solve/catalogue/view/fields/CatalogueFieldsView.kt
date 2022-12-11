@@ -18,12 +18,14 @@ import solve.catalogue.model.CatalogueField
 import solve.project.model.ProjectFrame
 import solve.scene.view.SceneView
 import javafx.scene.layout.Priority
+import javafx.scene.paint.Color
 import tornadofx.*
 import kotlin.math.min
 
 abstract class CatalogueFieldsView: View() {
     private val fields: ObservableList<CatalogueField> by param()
     val fieldsListView: ListView<CatalogueField> = listview(fields) {
+        addStylesheet(CatalogueFieldsStyle::class)
         selectionModel.selectionMode = SelectionMode.MULTIPLE
         cellFormat {
             setListViewCellFormat(this, it)
@@ -119,5 +121,21 @@ abstract class CatalogueFieldsView: View() {
         return WritableImage(
             nodeSnapshot.pixelReader, nodeSnapshot.width.floor(), min(nodeSnapshot.height.floor(), prefSnapshotHeight)
         )
+    }
+}
+
+class CatalogueFieldsStyle : Stylesheet() {
+    companion object {
+        private val SelectedFieldColor = Color.valueOf("#0096c9")
+    }
+
+    init {
+        listView {
+            cell {
+                and(selected) {
+                    backgroundColor += SelectedFieldColor
+                }
+            }
+        }
     }
 }
