@@ -97,9 +97,11 @@ class CatalogueView : View() {
 
     fun changeViewFormat(withFormat: ViewFormat) {
         displayingFieldsView = getSelectableView(withFormat)
-        nonDisplayingFieldsView = getSelectableView(
-            if (withFormat == ViewFormat.FileName) ViewFormat.ImagePreview else ViewFormat.FileName
-        )
+        val nonDisplayingFormat = when (withFormat) {
+            ViewFormat.FileName -> ViewFormat.ImagePreview
+            ViewFormat.ImagePreview -> ViewFormat.FileName
+        }
+        nonDisplayingFieldsView = getSelectableView(nonDisplayingFormat)
 
         fieldsVBox.removeSafely(nonDisplayingFieldsView?.fieldsListView)
         fieldsVBox.addSafely(displayingFieldsView?.fieldsListView)
