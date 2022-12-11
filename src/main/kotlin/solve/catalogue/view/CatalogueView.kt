@@ -8,7 +8,6 @@ import javafx.scene.paint.Color
 import solve.catalogue.addSafely
 import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
 import solve.catalogue.controller.CatalogueController
-import solve.catalogue.loadImage
 import solve.catalogue.model.CatalogueField
 import solve.catalogue.model.ViewFormat
 import solve.catalogue.removeSafely
@@ -16,6 +15,7 @@ import solve.catalogue.view.fields.CatalogueFileNamesFieldsView
 import solve.project.model.ProjectFrame
 import solve.catalogue.synchronizeListViewsSelections
 import solve.catalogue.view.fields.CatalogueFieldsView
+import solve.utils.loadImage
 import tornadofx.*
 
 class CatalogueView : View() {
