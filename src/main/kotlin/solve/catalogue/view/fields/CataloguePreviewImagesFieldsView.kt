@@ -28,8 +28,9 @@ class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
 
     override fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
         super.setListViewCellFormat(labeled, item)
-        if (item == null)
+        if (item == null) {
             return
+        }
 
         labeled.graphic = vbox {
             alignment = Pos.CENTER
