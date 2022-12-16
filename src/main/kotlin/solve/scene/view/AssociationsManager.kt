@@ -1,8 +1,10 @@
 package solve.scene.view
 
 import javafx.beans.property.DoubleProperty
+import javafx.scene.control.Label
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
+import javafx.scene.shape.Rectangle
 import solve.scene.model.*
 import tornadofx.*
 
@@ -18,26 +20,48 @@ class AssociationsManager(
     private var prevScale = scale.value
     private var associationParameters: Pair<VisualizationFrame, Layer>? = null
     private var drawnShapes = mutableMapOf<Pair<VisualizationFrame, Layer>, List<Line>>()
+    private var drawnAdorners = mutableMapOf<VisualizationFrame, Rectangle>()
 
     init {
         scale.onChange { newScale ->
+            val scaleFactor = newScale / prevScale
             doForAllShapes { line ->
-                val scaleFactor = newScale / prevScale
                 line.startX *= scaleFactor
                 line.startY *= scaleFactor
                 line.endX *= scaleFactor
                 line.endY *= scaleFactor
             }
+
+            drawnAdorners.values.forEach { rect ->
+                rect.layoutX *= scaleFactor
+                rect.layoutY *= scaleFactor
+                rect.width *= scaleFactor
+                rect.height *= scaleFactor
+            }
+
             prevScale = newScale
         }
     }
 
     fun initAssociation(frame: VisualizationFrame, layer: Layer) {
         associationParameters = Pair(frame, layer)
+        val rect = Rectangle()
+        val framePosition = getFramePosition(frame)
+        rect.layoutX = framePosition.first * scale.value
+        rect.layoutY = framePosition.second * scale.value
+        rect.width = frameWidth * scale.value
+        rect.height = frameHeight * scale.value
+        rect.fill = Color.BLACK
+        rect.opacity = 0.5
+        drawnAdorners[frame] = rect
+        outOfFramesLayer.add(rect)
     }
 
     fun chooseFrame(frame: VisualizationFrame) {
         val firstFrameParameters = associationParameters ?: return
+
+        outOfFramesLayer.children.remove(drawnAdorners[firstFrameParameters.first])
+        drawnAdorners.remove(firstFrameParameters.first)
 
         if (firstFrameParameters.first == frame) {
             associationParameters = null
