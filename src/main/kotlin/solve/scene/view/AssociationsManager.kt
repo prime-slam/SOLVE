@@ -15,12 +15,20 @@ class AssociationsManager(
     private val columnsNumber: Int,
     private val outOfFramesLayer: OutOfFramesLayer,
 ) {
+    private var prevScale = scale.value
     private var associationParameters: Pair<VisualizationFrame, Layer>? = null
     private var drawnShapes = mutableMapOf<Pair<VisualizationFrame, Layer>, List<Line>>()
 
     init {
-        scale.onChange {
-
+        scale.onChange { newScale ->
+            doForAllShapes { line ->
+                val scaleFactor = newScale / prevScale
+                line.startX *= scaleFactor
+                line.startY *= scaleFactor
+                line.endX *= scaleFactor
+                line.endY *= scaleFactor
+            }
+            prevScale = newScale
         }
     }
 
@@ -55,10 +63,10 @@ class AssociationsManager(
             } as? Landmark.Keypoint ?: return@map null
 
             val line = Line()
-            line.startX = firstFramePosition.first + firstKeypoint.coordinate.x
-            line.startY = firstFramePosition.second + firstKeypoint.coordinate.y
-            line.endX = secondFramePosition.first + secondKeypoint.coordinate.x
-            line.endY = secondFramePosition.second + secondKeypoint.coordinate.y
+            line.startX = (firstFramePosition.first + firstKeypoint.coordinate.x) * scale.value
+            line.startY = (firstFramePosition.second + firstKeypoint.coordinate.y) * scale.value
+            line.endX = (secondFramePosition.first + secondKeypoint.coordinate.x) * scale.value
+            line.endY = (secondFramePosition.second + secondKeypoint.coordinate.y) * scale.value
             line.stroke = Color.RED
             line
         }
@@ -82,4 +90,11 @@ class AssociationsManager(
             outOfFramesLayer.children.remove(line)
         }
     }
+
+    private fun doForAllShapes(delegate: (Line) -> Unit) =
+        drawnShapes.values.forEach { lines ->
+            lines.forEach { line ->
+                delegate(line)
+            }
+        }
 }
