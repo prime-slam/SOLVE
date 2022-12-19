@@ -61,12 +61,12 @@ class SidePanelTapPaneStyle: Stylesheet() {
                 contentDisplay = ContentDisplay.LEFT
                 prefWidth = Dimension(TabLength, Dimension.LinearUnits.px)
             }
-        }
-        tabPane {
-            selected {
+            and(selected) {
                 backgroundColor += SelectedTabColor
                 focusColor = Color.TRANSPARENT
             }
+        }
+        tabPane {
             tabHeaderBackground {
                 backgroundColor += TabPaneBackgroundColor
             }
