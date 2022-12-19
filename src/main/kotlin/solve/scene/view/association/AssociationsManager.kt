@@ -13,34 +13,34 @@ class AssociationsManager(
     private val columnsNumber: Int,
     private val outOfFramesLayer: OutOfFramesLayer,
 ) {
-    private var associationParameters: Pair<VisualizationFrame, Layer>? = null
+    private var associationParameters: Pair<VisualizationFrame, List<Landmark.Keypoint>>? = null
 
     // Maps first frame and layer on it with a list of second frames and drawn shapes
     private var drawnShapes =
-        mutableMapOf<Pair<VisualizationFrame, Layer>, MutableMap<VisualizationFrame, List<AssociationLine>>>()
+        mutableMapOf<VisualizationFrame, MutableMap<VisualizationFrame, List<AssociationLine>>>() // TODO: more than one layer in a frame
     private var drawnAdorners = mutableMapOf<VisualizationFrame, AssociationAdorner>()
 
-    fun initAssociation(frame: VisualizationFrame, layer: Layer.PointLayer) {
+    fun initAssociation(frame: VisualizationFrame, landmarks: List<Landmark.Keypoint>) {
         val firstFrame = associationParameters?.first
-        if(firstFrame != null) {
+        if (firstFrame != null) {
             clearAdorner(firstFrame)
         }
 
-        associationParameters = Pair(frame, layer)
+        associationParameters = Pair(frame, landmarks)
         drawAdorner(frame)
     }
 
-    fun chooseFrame(frame: VisualizationFrame) {
+    fun chooseFrame(frame: VisualizationFrame, landmarks: List<Landmark.Keypoint>) {
         val firstFrameParameters = associationParameters ?: return
 
-       clearAdorner(firstFrameParameters.first)
+        clearAdorner(firstFrameParameters.first)
 
         if (firstFrameParameters.first == frame) {
             associationParameters = null
             return
         }
 
-        associate(firstFrameParameters.first, frame, firstFrameParameters.second)
+        associate(firstFrameParameters.first, frame, firstFrameParameters.second, landmarks)
         associationParameters = null
     }
 
@@ -56,10 +56,12 @@ class AssociationsManager(
         drawnAdorners.remove(frame)
     }
 
-    private fun associate(firstFrame: VisualizationFrame, secondFrame: VisualizationFrame, layer: Layer) {
-        val firstLandmarks = firstFrame.landmarks[layer]!! // TODO: current model structure is bad
-        val secondLandmarks = secondFrame.landmarks[layer]!!
-
+    private fun associate(
+        firstFrame: VisualizationFrame,
+        secondFrame: VisualizationFrame,
+        firstLandmarks: List<Landmark>,
+        secondLandmarks: List<Landmark>
+    ) {
         val firstFramePosition = getFramePosition(firstFrame)
         val secondFramePosition = getFramePosition(secondFrame)
 
@@ -76,9 +78,9 @@ class AssociationsManager(
         lines.forEach { line ->
             outOfFramesLayer.add(line.node)
         }
-        val key = Pair(firstFrame, layer)
-        drawnShapes.putIfAbsent(key, mutableMapOf())
-        drawnShapes[key]?.set(secondFrame, lines)
+
+        drawnShapes.putIfAbsent(firstFrame, mutableMapOf())
+        drawnShapes[firstFrame]?.set(secondFrame, lines)
     }
 
     private fun getFramePosition(frame: VisualizationFrame): Pair<Double, Double> {
@@ -88,8 +90,8 @@ class AssociationsManager(
         return Pair(firstFrameColumn * (frameWidth + framesIndent), firstFrameRow * (frameHeight + framesIndent))
     }
 
-    fun clearAssociation(frame: VisualizationFrame, layer: Layer.PointLayer) {
-        drawnShapes[Pair(frame, layer)]?.values?.forEach { lines ->
+    fun clearAssociation(frame: VisualizationFrame) {
+        drawnShapes[frame]?.values?.forEach { lines ->
             lines.forEach { line ->
                 outOfFramesLayer.children.remove(line.node)
             }
