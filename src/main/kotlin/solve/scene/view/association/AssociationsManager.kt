@@ -20,7 +20,7 @@ class AssociationsManager(
         mutableMapOf<Pair<VisualizationFrame, Layer>, MutableMap<VisualizationFrame, List<AssociationLine>>>()
     private var drawnAdorners = mutableMapOf<VisualizationFrame, AssociationAdorner>()
 
-    fun initAssociation(frame: VisualizationFrame, layer: Layer) {
+    fun initAssociation(frame: VisualizationFrame, layer: Layer.PointLayer) {
         val firstFrame = associationParameters?.first
         if(firstFrame != null) {
             clearAdorner(firstFrame)
@@ -88,7 +88,7 @@ class AssociationsManager(
         return Pair(firstFrameColumn * (frameWidth + framesIndent), firstFrameRow * (frameHeight + framesIndent))
     }
 
-    fun clearAssociation(frame: VisualizationFrame, layer: Layer) {
+    fun clearAssociation(frame: VisualizationFrame, layer: Layer.PointLayer) {
         drawnShapes[Pair(frame, layer)]?.values?.forEach { lines ->
             lines.forEach { line ->
                 outOfFramesLayer.children.remove(line.node)
