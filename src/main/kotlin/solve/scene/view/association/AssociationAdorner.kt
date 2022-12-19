@@ -9,13 +9,20 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import tornadofx.*
 
-class AssociationAdorner(private val width: Double, private val height: Double, private val scale: DoubleProperty) {
+class AssociationAdorner(
+    private val width: Double,
+    private val height: Double,
+    private val framePosition: Pair<Double, Double>,
+    private val scale: DoubleProperty
+) {
     private val pane = StackPane()
     val node: Node = pane
 
     init {
         pane.prefWidth = width * scale.value
         pane.prefHeight = height * scale.value
+        pane.layoutX = framePosition.first * scale.value
+        pane.layoutY = framePosition.second * scale.value
 
         val rect = Rectangle()
         rect.width = width * scale.value
@@ -24,8 +31,12 @@ class AssociationAdorner(private val width: Double, private val height: Double, 
         rect.opacity = RectangleOpacity
 
         val label = Label("Select second frame")
-        label.background = Background(BackgroundFill(Color.WHITE,
-            CornerRadii.EMPTY, Insets.EMPTY))
+        label.background = Background(
+            BackgroundFill(
+                Color.WHITE,
+                CornerRadii.EMPTY, Insets.EMPTY
+            )
+        )
 
         pane.add(rect)
         pane.add(label)
@@ -33,6 +44,8 @@ class AssociationAdorner(private val width: Double, private val height: Double, 
         scale.onChange {
             pane.prefWidth = width * scale.value
             pane.prefHeight = height * scale.value
+            pane.layoutX = framePosition.first * scale.value
+            pane.layoutY = framePosition.second * scale.value
             rect.width = width * scale.value
             rect.height = height * scale.value
         }
