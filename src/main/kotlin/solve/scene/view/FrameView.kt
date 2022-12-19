@@ -4,6 +4,7 @@ import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
+import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import javafx.scene.transform.Scale
@@ -38,7 +39,7 @@ class FrameView(
         scaleImageAndLandmarks(scale.value)
 
         setOnMouseClicked {
-            if (!it.isPrimaryButtonDown) {
+            if (it.button != MouseButton.PRIMARY) {
                 return@setOnMouseClicked
             }
             val clickedFrame = currentFrame ?: return@setOnMouseClicked
