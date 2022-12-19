@@ -11,6 +11,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
 import solve.scene.model.Landmark
 import solve.scene.model.*
+import solve.scene.view.association.AssociationsManager
 import tornadofx.*
 
 class FrameView(
@@ -37,6 +38,9 @@ class FrameView(
         scaleImageAndLandmarks(scale.value)
 
         setOnMouseClicked {
+            if (!it.isPrimaryButtonDown) {
+                return@setOnMouseClicked
+            }
             val clickedFrame = currentFrame ?: return@setOnMouseClicked
             associationsManager.chooseFrame(clickedFrame)
         }
