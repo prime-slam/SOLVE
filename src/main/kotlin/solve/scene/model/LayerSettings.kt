@@ -7,7 +7,7 @@ import tornadofx.toObservable
 //Layers properties being edited in the settings menu.
 //Settings menu appearance depends on type of the corresponding layer.
 //Meaningful changes here provokes scene redrawing.
-sealed class Layer(val name: String) {
+sealed class LayerSettings(val name: String) {
     val selectedLandmarksUids = mutableSetOf<Long>().toObservable()
     val hoveredLandmarksUids = mutableSetOf<Long>().toObservable()
 
@@ -19,13 +19,18 @@ sealed class Layer(val name: String) {
         usedColors.add(color)
     }
 
-    class PointLayer(name: String) : Layer(name) {
+    fun clearSelectionAndHoverState() {
+        selectedLandmarksUids.clear()
+        hoveredLandmarksUids.clear()
+    }
+
+    class PointLayerSettings(name: String) : LayerSettings(name) {
         var color: Color = DEFAULT_COLOR
     }
 
-    class LineLayer(name: String) : Layer(name)
+    class LineLayerSettings(name: String) : LayerSettings(name)
 
-    class PlaneLayer(name: String) : Layer(name)
+    class PlaneLayerSettings(name: String) : LayerSettings(name)
 
     var opacity: Double = DEFAULT_OPACITY
         set(value) {

@@ -13,7 +13,7 @@ import solve.scene.model.*
 // Interaction interface of the scene for main controller
 // Should be recreated if new project was imported
 class SceneFacade(private val controller: SceneController) {
-    private val visualizationLayers = HashMap<String, Layer>()
+    private val visualizationLayers = HashMap<String, LayerSettings>()
 
     // Display new frames with landmarks
     fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
@@ -28,11 +28,11 @@ class SceneFacade(private val controller: SceneController) {
         controller.scene.value = scene
     }
 
-    private fun ProjectLayer.toVisualizationLayer(): Layer {
+    private fun ProjectLayer.toVisualizationLayer(): LayerSettings {
         return when (kind) {
-            LayerKind.Keypoint -> Layer.PointLayer(this.name)
-            LayerKind.Line -> Layer.LineLayer(this.name)
-            LayerKind.Plane -> Layer.PlaneLayer(this.name)
+            LayerKind.Keypoint -> LayerSettings.PointLayerSettings(this.name)
+            LayerKind.Line -> LayerSettings.LineLayerSettings(this.name)
+            LayerKind.Plane -> LayerSettings.PlaneLayerSettings(this.name)
         }
     }
 
@@ -40,7 +40,7 @@ class SceneFacade(private val controller: SceneController) {
         val getImage = { Image(FileInputStream(imagePath.toFile())) }
 
         val getLandmarks = {
-            val landmarks = HashMap<Layer, List<Landmark>>()
+            val landmarks = HashMap<LayerSettings, List<Landmark>>()
             landmarkFiles.forEach { file ->
                 val visualizationLayer = visualizationLayers[file.projectLayer.name]
                     ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
@@ -52,18 +52,18 @@ class SceneFacade(private val controller: SceneController) {
         return VisualizationFrame(this.timestamp, getImage, getLandmarks)
     }
 
-    private fun createLandmarks(file: LandmarkFile, layer: Layer): List<Landmark> {
+    private fun createLandmarks(file: LandmarkFile, layerSettings: LayerSettings): List<Landmark> {
         return when (file.projectLayer.kind) {
             LayerKind.Keypoint -> CSVPointsParser.parse(file.path.toString()).map { point ->
-                PointFactory.buildLandmark(point, layer as Layer.PointLayer)
+                PointFactory.buildLandmark(point, layerSettings as LayerSettings.PointLayerSettings)
             }
 
             LayerKind.Line -> CSVLinesParser.parse(file.path.toString()).map { line ->
-                LineFactory.buildLandmark(line, layer as Layer.LineLayer)
+                LineFactory.buildLandmark(line, layerSettings as LayerSettings.LineLayerSettings)
             }
 
             LayerKind.Plane -> ImagePlanesParser.parse(file.path.toString()).map { plane ->
-                PlaneFactory.buildLandmark(plane, layer as Layer.PlaneLayer)
+                PlaneFactory.buildLandmark(plane, layerSettings as LayerSettings.PlaneLayerSettings)
             }
         }
     }

@@ -23,7 +23,7 @@ class FrameView(
     private val associationsManager: AssociationsManager,
     frame: VisualizationFrame?
 ) : Group() {
-    private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
+    private var landmarksViews: Map<LayerSettings, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
     private var currentFrame: VisualizationFrame? = null
     private val imageCanvas = Canvas(width, height)
@@ -43,23 +43,25 @@ class FrameView(
                 return@setOnMouseClicked
             }
             val clickedFrame = currentFrame ?: return@setOnMouseClicked
-            val layer = clickedFrame.landmarks.keys.filterIsInstance<Layer.PointLayer>().first() // TODO: more than one layer in a frame
-            val landmarks = clickedFrame.landmarks[layer]!!.filterIsInstance<Landmark.Keypoint>() // TODO: bad data structure
-            associationsManager.chooseFrame(clickedFrame, landmarks)
+            associationsManager.chooseFrame(clickedFrame, getKeypoints(clickedFrame))
         }
 
         contextmenu {
             item("Associate keypoints").action {
                 val clickedFrame = currentFrame ?: return@action
-                val layer = clickedFrame.landmarks.keys.filterIsInstance<Layer.PointLayer>().first() // TODO: more than one layer in a frame
-                val landmarks = clickedFrame.landmarks[layer]!!.filterIsInstance<Landmark.Keypoint>() // TODO: bad data structure
-                associationsManager.initAssociation(clickedFrame, landmarks)
+                associationsManager.initAssociation(clickedFrame, getKeypoints(clickedFrame))
             }
             item("Clear associations").action {
                 val clickedFrame = currentFrame ?: return@action
                 associationsManager.clearAssociation(clickedFrame)
             }
         }
+    }
+
+    private fun getKeypoints(frame: VisualizationFrame): List<Landmark.Keypoint> {
+        val landmarks = frame.landmarks
+        val layerSettings = landmarks.keys.filterIsInstance<LayerSettings.PointLayerSettings>().first() // TODO: more than one layer in a frame
+        return landmarks[layerSettings]!!.filterIsInstance<Landmark.Keypoint>() // TODO: bad data structure
     }
 
     fun setFrame(frame: VisualizationFrame?) {
@@ -95,7 +97,7 @@ class FrameView(
         disposeLandmarkViews()
     }
 
-    private fun draw(landmarksData: Map<Layer, List<Landmark>>, image: Image) {
+    private fun draw(landmarksData: Map<LayerSettings, List<Landmark>>, image: Image) {
         landmarksViews = landmarksData.mapValues {
             it.value.map { landmark -> LandmarkView.create(landmark, scale.value) }
         }
