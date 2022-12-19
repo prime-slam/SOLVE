@@ -18,7 +18,9 @@ class AssociationsManager(
 ) {
     private var prevScale = scale.value
     private var associationParameters: Pair<VisualizationFrame, Layer>? = null
-    private var drawnShapes = mutableMapOf<Pair<VisualizationFrame, Layer>, List<Line>>()
+    // Maps first frame and layer on it with a list of second frames and drawn shapes
+    private var drawnShapes =
+        mutableMapOf<Pair<VisualizationFrame, Layer>, MutableMap<VisualizationFrame, List<Line>>>()
     private var drawnAdorners = mutableMapOf<VisualizationFrame, AssociationAdorner>()
 
     init {
@@ -41,6 +43,8 @@ class AssociationsManager(
     }
 
     fun initAssociation(frame: VisualizationFrame, layer: Layer) {
+        outOfFramesLayer.children.remove(drawnAdorners[associationParameters?.first]?.node)
+        drawnAdorners.remove(associationParameters?.first)
         associationParameters = Pair(frame, layer)
 
         val adorner = AssociationAdorner(frameWidth, frameHeight, scale)
@@ -93,7 +97,8 @@ class AssociationsManager(
             outOfFramesLayer.add(it)
         }
         val key = Pair(firstFrame, layer)
-        drawnShapes[key] = lines.filterNotNull()
+        drawnShapes.putIfAbsent(key, mutableMapOf())
+        drawnShapes[key]?.set(secondFrame, lines.filterNotNull())
     }
 
     private fun getFramePosition(frame: VisualizationFrame): Pair<Double, Double> {
@@ -104,15 +109,19 @@ class AssociationsManager(
     }
 
     fun clearAssociation(frame: VisualizationFrame, layer: Layer) {
-        drawnShapes[Pair(frame, layer)]?.forEach { line ->
-            outOfFramesLayer.children.remove(line)
+        drawnShapes[Pair(frame, layer)]?.values?.forEach { lines ->
+            lines.forEach {
+                line -> outOfFramesLayer.children.remove(line)
+            }
         }
     }
 
     private fun doForAllShapes(delegate: (Line) -> Unit) =
-        drawnShapes.values.forEach { lines ->
-            lines.forEach { line ->
-                delegate(line)
+        drawnShapes.values.forEach { associations ->
+            associations.values.forEach { lines ->
+                lines.forEach { line ->
+                    delegate(line)
+                }
             }
         }
 }

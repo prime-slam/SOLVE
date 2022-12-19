@@ -51,7 +51,7 @@ class FrameView(
                 val clickedFrame = currentFrame ?: return@action
                 associationsManager.initAssociation(clickedFrame, clickedFrame.landmarks.keys.first()) // TODO
             }
-            item("Clear association").action {
+            item("Clear associations").action {
                 val clickedFrame = currentFrame ?: return@action
                 associationsManager.clearAssociation(clickedFrame, clickedFrame.landmarks.keys.first()) // TODO
             }
