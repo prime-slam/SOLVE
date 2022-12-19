@@ -35,7 +35,7 @@ class AssociationsManager(
 
         clearAdorner(firstFrameParameters.first)
 
-        if (firstFrameParameters.first == frame) {
+        if (firstFrameParameters.first == frame || isAlreadyAssociated(firstFrameParameters.first, frame)) {
             associationParameters = null
             return
         }
@@ -43,6 +43,9 @@ class AssociationsManager(
         associate(firstFrameParameters.first, frame, firstFrameParameters.second, landmarks)
         associationParameters = null
     }
+
+    private fun isAlreadyAssociated(firstFrame: VisualizationFrame, secondFrame: VisualizationFrame) =
+        drawnShapes[firstFrame]?.containsKey(secondFrame) == true
 
     private fun drawAdorner(frame: VisualizationFrame) {
         val framePosition = getFramePosition(frame)
@@ -96,5 +99,6 @@ class AssociationsManager(
                 outOfFramesLayer.children.remove(line.node)
             }
         }
+        drawnShapes.remove(frame)
     }
 }
