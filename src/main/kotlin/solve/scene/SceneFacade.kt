@@ -21,6 +21,7 @@ class SceneFacade(private val controller: SceneController) {
             if (!visualizationLayers.contains(projectLayer.name)) { //don't rewrite existing settings
                 visualizationLayers[projectLayer.name] = projectLayer.toVisualizationLayer()
             }
+            visualizationLayers[projectLayer.name]?.clearSelectionAndHoverState()
         }
         val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame() }
         val scene = Scene(visualizationFrames, visualizationLayers.values.toList())
