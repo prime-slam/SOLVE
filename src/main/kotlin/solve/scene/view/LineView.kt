@@ -35,8 +35,8 @@ class LineView(
     private fun createShape(): Line {
         val shape =
             Line(startCoordinates.first, startCoordinates.second, finishCoordinates.first, finishCoordinates.second)
-        shape.fill = line.layer.getColor(line)
-        shape.opacity = line.layer.opacity
+        shape.fill = line.layerSettings.getColor(line)
+        shape.opacity = line.layerSettings.opacity
         shape.strokeWidth = width
         return shape
     }

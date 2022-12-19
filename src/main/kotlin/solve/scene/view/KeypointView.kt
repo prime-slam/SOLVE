@@ -39,7 +39,7 @@ class KeypointView(
 
         val increasedRadiusScale = (radius / node.radiusX) * HighlightingScaleFactor
         val scaleTransition = createScaleAnimation(node, increasedRadiusScale, HighlightingAnimationDuration)
-        val fillTransition = createFillTransition(node, landmark.layer.getColor(landmark), HighlightingAnimationDuration)
+        val fillTransition = createFillTransition(node, landmark.layerSettings.getColor(landmark), HighlightingAnimationDuration)
 
         scaleTransition.play()
         fillTransition.play()
@@ -48,7 +48,7 @@ class KeypointView(
     override fun unhighlightShape() {
         val defaultRadiusScale = radius / node.radiusX
         val scaleTransition = createScaleAnimation(node, defaultRadiusScale, HighlightingAnimationDuration)
-        val fillTransition = createFillTransition(node, keypoint.layer.color, HighlightingAnimationDuration)
+        val fillTransition = createFillTransition(node, keypoint.layerSettings.color, HighlightingAnimationDuration)
 
         scaleTransition.play()
         fillTransition.play()
@@ -56,13 +56,13 @@ class KeypointView(
 
     private fun createShape(): Ellipse {
         val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
-        shape.fill = keypoint.layer.color
-        shape.opacity = keypoint.layer.opacity
+        shape.fill = keypoint.layerSettings.color
+        shape.opacity = keypoint.layerSettings.opacity
 
         // If landmark is already in the selected state.
         // Animation can not be applied because shape is not in visual tree at the moment.
-        if (landmark.layer.selectedLandmarksUids.contains(landmark.uid)
-            || landmark.layer.hoveredLandmarksUids.contains(landmark.uid)
+        if (landmark.layerSettings.selectedLandmarksUids.contains(landmark.uid)
+            || landmark.layerSettings.hoveredLandmarksUids.contains(landmark.uid)
         ) {
             highlightShapeInstantly(shape)
         }
@@ -73,6 +73,6 @@ class KeypointView(
     private fun highlightShapeInstantly(shape: Ellipse) {
         shape.radiusX = radius * HighlightingScaleFactor
         shape.radiusY = radius * HighlightingScaleFactor
-        shape.fill = landmark.layer.getColor(landmark)
+        shape.fill = landmark.layerSettings.getColor(landmark)
     }
 }
