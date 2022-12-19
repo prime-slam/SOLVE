@@ -70,16 +70,15 @@ class AssociationsManager(
                 keypoint.uid == firstKeypoint.uid
             } as? Landmark.Keypoint ?: return@map null
 
-            val line = AssociationLine(firstFramePosition, secondFramePosition, firstKeypoint, secondKeypoint, scale)
-            line
-        }
+            AssociationLine(firstFramePosition, secondFramePosition, firstKeypoint, secondKeypoint, scale)
+        }.filterNotNull()
 
-        lines.filterNotNull().forEach { line ->
+        lines.forEach { line ->
             outOfFramesLayer.add(line.node)
         }
         val key = Pair(firstFrame, layer)
         drawnShapes.putIfAbsent(key, mutableMapOf())
-        drawnShapes[key]?.set(secondFrame, lines.filterNotNull())
+        drawnShapes[key]?.set(secondFrame, lines)
     }
 
     private fun getFramePosition(frame: VisualizationFrame): Pair<Double, Double> {
