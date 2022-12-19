@@ -16,6 +16,7 @@ import javafx.scene.control.Skin
 import javafx.scene.layout.Pane
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.*
+import solve.scene.view.association.OutOfFramesLayer
 import tornadofx.*
 
 
