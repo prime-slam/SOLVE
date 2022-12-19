@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import solve.scene.controller.SceneController
+import solve.scene.view.association.AssociationsManager
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
 import tornadofx.*
 import kotlin.math.max

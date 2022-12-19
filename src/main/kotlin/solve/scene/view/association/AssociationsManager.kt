@@ -1,11 +1,10 @@
-package solve.scene.view
+package solve.scene.view.association
 
 import javafx.beans.property.DoubleProperty
-import javafx.scene.control.Label
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
-import javafx.scene.shape.Rectangle
 import solve.scene.model.*
+import solve.scene.view.OutOfFramesLayer
 import tornadofx.*
 
 class AssociationsManager(
@@ -20,7 +19,7 @@ class AssociationsManager(
     private var prevScale = scale.value
     private var associationParameters: Pair<VisualizationFrame, Layer>? = null
     private var drawnShapes = mutableMapOf<Pair<VisualizationFrame, Layer>, List<Line>>()
-    private var drawnAdorners = mutableMapOf<VisualizationFrame, Rectangle>()
+    private var drawnAdorners = mutableMapOf<VisualizationFrame, AssociationAdorner>()
 
     init {
         scale.onChange { newScale ->
@@ -32,11 +31,9 @@ class AssociationsManager(
                 line.endY *= scaleFactor
             }
 
-            drawnAdorners.values.forEach { rect ->
-                rect.layoutX *= scaleFactor
-                rect.layoutY *= scaleFactor
-                rect.width *= scaleFactor
-                rect.height *= scaleFactor
+            drawnAdorners.values.forEach { adorner ->
+                adorner.node.layoutX *= scaleFactor
+                adorner.node.layoutY *= scaleFactor
             }
 
             prevScale = newScale
@@ -45,22 +42,19 @@ class AssociationsManager(
 
     fun initAssociation(frame: VisualizationFrame, layer: Layer) {
         associationParameters = Pair(frame, layer)
-        val rect = Rectangle()
+
+        val adorner = AssociationAdorner(frameWidth, frameHeight, scale)
         val framePosition = getFramePosition(frame)
-        rect.layoutX = framePosition.first * scale.value
-        rect.layoutY = framePosition.second * scale.value
-        rect.width = frameWidth * scale.value
-        rect.height = frameHeight * scale.value
-        rect.fill = Color.BLACK
-        rect.opacity = 0.5
-        drawnAdorners[frame] = rect
-        outOfFramesLayer.add(rect)
+        adorner.node.layoutX = framePosition.first * scale.value
+        adorner.node.layoutY = framePosition.second * scale.value
+        drawnAdorners[frame] = adorner
+        outOfFramesLayer.add(adorner.node)
     }
 
     fun chooseFrame(frame: VisualizationFrame) {
         val firstFrameParameters = associationParameters ?: return
 
-        outOfFramesLayer.children.remove(drawnAdorners[firstFrameParameters.first])
+        outOfFramesLayer.children.remove(drawnAdorners[firstFrameParameters.first]?.node)
         drawnAdorners.remove(firstFrameParameters.first)
 
         if (firstFrameParameters.first == frame) {
