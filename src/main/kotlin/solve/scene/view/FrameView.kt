@@ -23,7 +23,7 @@ class FrameView(
     private val associationsManager: AssociationsManager,
     frame: VisualizationFrame?
 ) : Group() {
-    private var landmarksViews: Map<LayerSettings, List<LandmarkView>>? = null
+    private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
     private var currentFrame: VisualizationFrame? = null
     private val imageCanvas = Canvas(width, height)
@@ -59,9 +59,8 @@ class FrameView(
     }
 
     private fun getKeypoints(frame: VisualizationFrame): List<Landmark.Keypoint> {
-        val landmarks = frame.landmarks
-        val layerSettings = landmarks.keys.filterIsInstance<LayerSettings.PointLayerSettings>().first() // TODO: more than one layer in a frame
-        return landmarks[layerSettings]!!.filterIsInstance<Landmark.Keypoint>() // TODO: bad data structure
+        val layer = frame.layers.filterIsInstance<Layer.PointLayer>().first() // TODO: more than one layer in a frame
+        return layer.getLandmarks()
     }
 
     fun setFrame(frame: VisualizationFrame?) {
@@ -79,10 +78,10 @@ class FrameView(
 
         coroutineScope.launch(currentJob!!) {
             if (!isActive) return@launch
-            val landmarkData = frame.landmarks
+            val landmarkData = frame.layers.associateWith { it.getLandmarks() }
 
             if (!isActive) return@launch
-            val image = frame.image
+            val image = frame.getImage()
 
             withContext(Dispatchers.JavaFx) {
                 if (!this@launch.isActive) return@withContext
@@ -97,10 +96,13 @@ class FrameView(
         disposeLandmarkViews()
     }
 
-    private fun draw(landmarksData: Map<LayerSettings, List<Landmark>>, image: Image) {
-        landmarksViews = landmarksData.mapValues {
-            it.value.map { landmark -> LandmarkView.create(landmark, scale.value) }
+    private fun draw(landmarks: Map<Layer, List<Landmark>>, image: Image) {
+        landmarksViews = landmarks.mapValues {
+            it.value.map { landmark ->
+                LandmarkView.create(landmark, scale.value)
+            }
         }
+
         drawnImage = image
         if (image.height != height || image.width != width) {
             println("Image size doesn't equal to the frame size") //TODO: warn user

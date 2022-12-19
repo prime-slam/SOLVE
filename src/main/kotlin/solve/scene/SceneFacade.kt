@@ -19,7 +19,7 @@ class SceneFacade(private val controller: SceneController) {
     fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
         layers.forEach { projectLayer ->
             if (!visualizationLayers.contains(projectLayer.name)) { //don't rewrite existing settings
-                visualizationLayers[projectLayer.name] = projectLayer.toVisualizationLayer()
+                visualizationLayers[projectLayer.name] = projectLayer.toLayerSettings()
             }
             visualizationLayers[projectLayer.name]?.clearSelectionAndHoverState()
         }
@@ -28,7 +28,7 @@ class SceneFacade(private val controller: SceneController) {
         controller.scene.value = scene
     }
 
-    private fun ProjectLayer.toVisualizationLayer(): LayerSettings {
+    private fun ProjectLayer.toLayerSettings(): LayerSettings {
         return when (kind) {
             LayerKind.Keypoint -> LayerSettings.PointLayerSettings(this.name)
             LayerKind.Line -> LayerSettings.LineLayerSettings(this.name)
@@ -39,31 +39,40 @@ class SceneFacade(private val controller: SceneController) {
     private fun ProjectFrame.toVisualizationFrame(): VisualizationFrame {
         val getImage = { Image(FileInputStream(imagePath.toFile())) }
 
-        val getLandmarks = {
-            val landmarks = HashMap<LayerSettings, List<Landmark>>()
-            landmarkFiles.forEach { file ->
-                val visualizationLayer = visualizationLayers[file.projectLayer.name]
-                    ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
-                landmarks[visualizationLayer] = createLandmarks(file, visualizationLayer)
-            }
-            landmarks.toMap()
+        val layers = landmarkFiles.map { file ->
+            val layerSettings = visualizationLayers[file.projectLayer.name]
+                ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
+            createLayer(file, layerSettings)
         }
 
-        return VisualizationFrame(this.timestamp, getImage, getLandmarks)
+        return VisualizationFrame(this.timestamp, getImage, layers)
     }
 
-    private fun createLandmarks(file: LandmarkFile, layerSettings: LayerSettings): List<Landmark> {
+    private fun createLayer(file: LandmarkFile, layerSettings: LayerSettings): Layer {
         return when (file.projectLayer.kind) {
-            LayerKind.Keypoint -> CSVPointsParser.parse(file.path.toString()).map { point ->
-                PointFactory.buildLandmark(point, layerSettings as LayerSettings.PointLayerSettings)
+            LayerKind.Keypoint -> Layer.PointLayer(
+                file.projectLayer.name,
+                layerSettings as LayerSettings.PointLayerSettings
+            ) {
+                CSVPointsParser.parse(file.path.toString()).map { point ->
+                    PointFactory.buildLandmark(point, layerSettings)
+                }
             }
-
-            LayerKind.Line -> CSVLinesParser.parse(file.path.toString()).map { line ->
-                LineFactory.buildLandmark(line, layerSettings as LayerSettings.LineLayerSettings)
+            LayerKind.Line -> Layer.LineLayer(
+                file.projectLayer.name,
+                layerSettings as LayerSettings.LineLayerSettings
+            ) {
+                CSVLinesParser.parse(file.path.toString()).map { line ->
+                    LineFactory.buildLandmark(line, layerSettings)
+                }
             }
-
-            LayerKind.Plane -> ImagePlanesParser.parse(file.path.toString()).map { plane ->
-                PlaneFactory.buildLandmark(plane, layerSettings as LayerSettings.PlaneLayerSettings)
+            LayerKind.Plane -> Layer.PlaneLayer(
+                file.projectLayer.name,
+                layerSettings as LayerSettings.PlaneLayerSettings
+            ) {
+                ImagePlanesParser.parse(file.path.toString()).map { plane ->
+                    PlaneFactory.buildLandmark(plane, layerSettings)
+                }
             }
         }
     }
