@@ -1,4 +1,4 @@
-package solve.scene.view
+package solve.scene.view.association
 
 import javafx.scene.layout.Pane
 
