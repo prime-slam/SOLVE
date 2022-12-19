@@ -43,19 +43,21 @@ class FrameView(
                 return@setOnMouseClicked
             }
             val clickedFrame = currentFrame ?: return@setOnMouseClicked
-            associationsManager.chooseFrame(clickedFrame)
+            val layer = clickedFrame.landmarks.keys.filterIsInstance<Layer.PointLayer>().first() // TODO: more than one layer in a frame
+            val landmarks = clickedFrame.landmarks[layer]!!.filterIsInstance<Landmark.Keypoint>() // TODO: bad data structure
+            associationsManager.chooseFrame(clickedFrame, landmarks)
         }
 
         contextmenu {
             item("Associate keypoints").action {
                 val clickedFrame = currentFrame ?: return@action
                 val layer = clickedFrame.landmarks.keys.filterIsInstance<Layer.PointLayer>().first() // TODO: more than one layer in a frame
-                associationsManager.initAssociation(clickedFrame, layer)
+                val landmarks = clickedFrame.landmarks[layer]!!.filterIsInstance<Landmark.Keypoint>() // TODO: bad data structure
+                associationsManager.initAssociation(clickedFrame, landmarks)
             }
             item("Clear associations").action {
                 val clickedFrame = currentFrame ?: return@action
-                val layer = clickedFrame.landmarks.keys.filterIsInstance<Layer.PointLayer>().first() // TODO: more than one layer in a frame
-                associationsManager.clearAssociation(clickedFrame, layer)
+                associationsManager.clearAssociation(clickedFrame)
             }
         }
     }
