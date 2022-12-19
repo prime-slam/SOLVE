@@ -41,7 +41,7 @@ class SceneView : View() {
             return
         }
 
-        val firstImage = scene.frames.first().image
+        val firstImage = scene.frames.first().getImage()
         val width = firstImage.width
         val height = firstImage.height
         val margin = 10.0
