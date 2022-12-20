@@ -13,35 +13,41 @@ class AssociationsManager(
     private val columnsNumber: Int,
     private val outOfFramesLayer: OutOfFramesLayer,
 ) {
-    private var associationParameters: Pair<VisualizationFrame, List<Landmark.Keypoint>>? = null
+    private var firstFrameAssociationParameters: AssociationParameters? = null
 
     // Maps first frame and layer on it with a list of second frames and drawn shapes
     private var drawnShapes =
         mutableMapOf<VisualizationFrame, MutableMap<VisualizationFrame, List<AssociationLine>>>() // TODO: more than one layer in a frame
     private var drawnAdorners = mutableMapOf<VisualizationFrame, AssociationAdorner>()
 
-    fun initAssociation(frame: VisualizationFrame, landmarks: List<Landmark.Keypoint>) {
-        val firstFrame = associationParameters?.first
+    fun initAssociation(associationParameters: AssociationParameters) {
+        val firstFrame = firstFrameAssociationParameters?.frame
         if (firstFrame != null) {
             clearAdorner(firstFrame)
         }
 
-        associationParameters = Pair(frame, landmarks)
-        drawAdorner(frame)
+        firstFrameAssociationParameters = associationParameters
+        drawAdorner(associationParameters.frame)
     }
 
-    fun chooseFrame(frame: VisualizationFrame, landmarks: List<Landmark.Keypoint>) {
-        val firstFrameParameters = associationParameters ?: return
+    fun chooseFrame(secondFrameParameters: AssociationParameters) {
+        val firstFrameParameters = firstFrameAssociationParameters ?: return
 
-        clearAdorner(firstFrameParameters.first)
+        clearAdorner(firstFrameParameters.frame)
 
-        if (firstFrameParameters.first == frame || isAlreadyAssociated(firstFrameParameters.first, frame)) {
-            associationParameters = null
+        val isAlreadyAssociated = isAlreadyAssociated(firstFrameParameters.frame, secondFrameParameters.frame)
+        if (isAlreadyAssociated || firstFrameParameters.frame == secondFrameParameters.frame) {
+            firstFrameAssociationParameters = null
             return
         }
 
-        associate(firstFrameParameters.first, frame, firstFrameParameters.second, landmarks)
-        associationParameters = null
+        associate(
+            firstFrameParameters.frame,
+            secondFrameParameters.frame,
+            firstFrameParameters.landmarks,
+            secondFrameParameters.landmarks
+        )
+        firstFrameAssociationParameters = null
     }
 
     private fun isAlreadyAssociated(firstFrame: VisualizationFrame, secondFrame: VisualizationFrame) =
@@ -101,4 +107,6 @@ class AssociationsManager(
         }
         drawnShapes.remove(frame)
     }
+
+    data class AssociationParameters(val frame: VisualizationFrame, val landmarks: List<Landmark.Keypoint>)
 }
