@@ -43,13 +43,15 @@ class FrameView(
                 return@setOnMouseClicked
             }
             val clickedFrame = currentFrame ?: return@setOnMouseClicked
-            associationsManager.chooseFrame(clickedFrame, getKeypoints(clickedFrame))
+            val associationParameters = AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
+            associationsManager.chooseFrame(associationParameters)
         }
 
         contextmenu {
             item("Associate keypoints").action {
                 val clickedFrame = currentFrame ?: return@action
-                associationsManager.initAssociation(clickedFrame, getKeypoints(clickedFrame))
+                val associationParameters = AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
+                associationsManager.initAssociation(associationParameters)
             }
             item("Clear associations").action {
                 val clickedFrame = currentFrame ?: return@action
