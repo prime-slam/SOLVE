@@ -1,6 +1,7 @@
 package solve.utils
 
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import tornadofx.CssBox
 import tornadofx.Dimension
 
@@ -13,6 +14,8 @@ fun createLinearUnitsBox(top: Double, right: Double, bottom: Double, left: Doubl
 
 fun createPxBox(top: Double, right: Double, bottom: Double, left: Double) =
     createLinearUnitsBox(top, right, bottom, left, Dimension.LinearUnits.px)
+
+fun <T> createCssBoxWithValue(value: T) = CssBox(value, value, value, value)
 
 fun createPxBoxWithValue(value: Double) = createPxBox(value, value, value, value)
 

@@ -1,10 +1,14 @@
 package solve.main
 
 import javafx.scene.control.SplitPane
+import javafx.scene.paint.Color
 import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
 import solve.sidepanel.content.SidePanelContentView
 import solve.sidepanel.SidePanelTabsView
+import solve.utils.createCssBoxWithValue
+import solve.utils.createPxBox
+import solve.utils.createPxBoxWithValue
 import tornadofx.*
 
 class MainView : View() {
@@ -21,6 +25,7 @@ class MainView : View() {
     override val root = borderpane {
         top<MenuBarView>()
         mainSplitPane = splitpane {
+            addStylesheet(MainSplitPaneStyle::class)
             add(sidePanelContentView)
             add(sceneView)
             SplitPane.setResizableWithParent(sidePanelContentView.root, false)
@@ -39,5 +44,15 @@ class MainView : View() {
     fun showSidePanelContent() {
         mainSplitPane.items.add(0, sidePanelContentView.root)
         mainSplitPane.setDividerPosition(0, lastSideAndSceneDividerPosition)
+    }
+}
+
+class MainSplitPaneStyle: Stylesheet() {
+    init {
+        splitPane {
+            splitPaneDivider {
+                padding = createPxBox(0.0, 1.0, 0.0, 1.0)
+            }
+        }
     }
 }
