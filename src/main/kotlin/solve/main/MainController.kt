@@ -1,10 +1,11 @@
 package solve.main
 
+import javafx.scene.paint.Color
 import solve.catalogue.controller.CatalogueController
 import solve.project.model.ProjectFrame
 import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
-import solve.utils.ServiceLocator
+import solve.utils.*
 import tornadofx.*
 
 class MainController : Controller() {

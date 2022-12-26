@@ -1,5 +1,6 @@
 package solve.sidepanel
 
+import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
@@ -16,23 +17,34 @@ class SidePanelTabsView: View() {
     private val contentController: SidePanelContentController by inject()
     private val catalogueView: CatalogueView by inject()
 
+    private lateinit var catalogueTab: SidePanelTab
+    private lateinit var filterTab: SidePanelTab
+    private val initialTab: SidePanelTab by lazy { catalogueTab }
+
     private val catalogueTabIconImage = loadImage("icons/sidepanel_catalogue_icon.png")
     private val filterTabIconImage = loadImage("icons/sidepanel_filter_icon.png")
 
     private val tabsVBox = vbox()
     private val tabsToggleGroup = ToggleGroup()
+    private val tabsToggleButtonsMap = mutableMapOf<SidePanelTab, ToggleButton>()
 
     override val root = tabsVBox.also {
         initializeTabs()
+        initializeTabsToggleGroup()
         it.addStylesheet(SidePanelTabsStyle::class)
     }
 
     private fun initializeTabs() {
-        val catalogueTab = SidePanelTab("Catalogue", catalogueTabIconImage, catalogueView.root)
-        val filterTab = SidePanelTab("Filter", filterTabIconImage, pane()) // TODO: add a filter panel.
+        catalogueTab = SidePanelTab("Catalogue", catalogueTabIconImage, catalogueView.root)
+        filterTab = SidePanelTab("Filter", filterTabIconImage, pane()) // TODO: add a filter panel.
 
         addTab(catalogueTab)
         addTab(filterTab)
+    }
+
+    private fun initializeTabsToggleGroup() {
+        onTabSelected(initialTab)
+        tabsToggleGroup.selectToggle(tabsToggleButtonsMap[initialTab])
     }
 
     private fun addTab(tab: SidePanelTab) {
@@ -54,19 +66,24 @@ class SidePanelTabsView: View() {
             usePrefSize = true
 
             action {
-                if (tabsToggleGroup.selectedToggle != null) {
-                    contentController.showContent(tab.contentNode)
-                } else {
-                    contentController.clearContent()
-                }
+                onTabSelected(tab)
             }
         }
         tabsVBox.add(tabButton)
+        tabsToggleButtonsMap[tab] = tabButton
     }
 
     private fun createTabIconImageView(iconImage: Image) = imageview(iconImage) {
         fitHeight = TabIconSize
         isPreserveRatio = true
+    }
+
+    private fun onTabSelected(tab: SidePanelTab) {
+        if (tabsToggleGroup.selectedToggle != null) {
+            contentController.showContent(tab.contentNode)
+        } else {
+            contentController.clearContent()
+        }
     }
 }
 
