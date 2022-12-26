@@ -31,6 +31,7 @@ abstract class CatalogueFieldsView: View() {
             setListViewCellFormat(this, it)
         }
         vgrow = Priority.ALWAYS
+        hgrow = Priority.ALWAYS
     }
 
     protected abstract val dragViewMaxFieldsNumber: Int
