@@ -1,6 +1,5 @@
 package solve.main
 
-import javafx.scene.paint.Color
 import solve.catalogue.controller.CatalogueController
 import solve.project.model.ProjectFrame
 import solve.scene.SceneFacade
