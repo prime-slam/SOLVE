@@ -1,14 +1,11 @@
 package solve.main
 
 import javafx.scene.control.SplitPane
-import javafx.scene.paint.Color
 import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
 import solve.sidepanel.content.SidePanelContentView
 import solve.sidepanel.SidePanelTabsView
-import solve.utils.createCssBoxWithValue
 import solve.utils.createPxBox
-import solve.utils.createPxBoxWithValue
 import tornadofx.*
 
 class MainView : View() {
