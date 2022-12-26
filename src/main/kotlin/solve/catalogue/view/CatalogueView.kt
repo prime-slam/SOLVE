@@ -20,7 +20,6 @@ import tornadofx.*
 
 class CatalogueView : View() {
     companion object {
-        private const val CatalogueWidth = 300.0
         private const val ApplyButtonSize = 15.0
     }
 
@@ -58,7 +57,7 @@ class CatalogueView : View() {
             add(settingsView.root)
             hbox(5) {
                 fieldsVBox = vbox {
-                    prefWidth = CatalogueWidth
+                    hgrow = Priority.ALWAYS
                 }
                 button {
                     setPrefSize(ApplyButtonSize, ApplyButtonSize)
@@ -82,9 +81,10 @@ class CatalogueView : View() {
                 BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
             )
             padding = Insets(5.0, 5.0, 5.0, 10.0)
+            hgrow = Priority.ALWAYS
         }
         padding = Insets(5.0, 5.0, 5.0, 5.0)
-        prefWidth = CatalogueWidth
+        vgrow = Priority.ALWAYS
     }
 
     override val root = catalogueNode.also { initializeNodes() }

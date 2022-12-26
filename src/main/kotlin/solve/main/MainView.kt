@@ -1,23 +1,43 @@
 package solve.main
 
-import solve.catalogue.view.CatalogueView
+import javafx.scene.control.SplitPane
 import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
-import solve.sidepanel.SidePanelView
+import solve.sidepanel.content.SidePanelContentView
+import solve.sidepanel.SidePanelTabsView
 import tornadofx.*
 
 class MainView : View() {
-    private val catalogueView: CatalogueView by inject()
-    private val sidePanelView: SidePanelView by inject()
+    companion object {
+        private const val SideAndSceneDividerPosition = 0.25
+    }
+
+    private val sceneView: SceneView by inject()
+    private val sidePanelContentView: SidePanelContentView by inject()
+
+    private lateinit var mainSplitPane: SplitPane
+    private var lastSideAndSceneDividerPosition = SideAndSceneDividerPosition
 
     override val root = borderpane {
         top<MenuBarView>()
-        center<SceneView>()
-        left {
-            hbox {
-                add(sidePanelView)
-                add(catalogueView)
-            }
+        mainSplitPane = splitpane {
+            add(sidePanelContentView)
+            add(sceneView)
+            SplitPane.setResizableWithParent(sidePanelContentView.root, false)
+            SplitPane.setResizableWithParent(sceneView.root, false)
+            setDividerPosition(0, SideAndSceneDividerPosition)
         }
+        center = mainSplitPane
+        left<SidePanelTabsView>()
+    }
+
+    fun hideSidePanelContent() {
+        lastSideAndSceneDividerPosition = mainSplitPane.dividers.first().position
+        mainSplitPane.items.remove(sidePanelContentView.root)
+    }
+
+    fun showSidePanelContent() {
+        mainSplitPane.items.add(0, sidePanelContentView.root)
+        mainSplitPane.setDividerPosition(0, lastSideAndSceneDividerPosition)
     }
 }

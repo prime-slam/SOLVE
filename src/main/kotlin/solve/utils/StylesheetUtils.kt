@@ -1,7 +1,10 @@
 package solve.utils
 
+import javafx.scene.paint.Color
 import tornadofx.CssBox
 import tornadofx.Dimension
+
+val DarkLightGrayColor: Color = Color.color(0.6647059, 0.6647059, 0.6647059)
 
 fun createLinearUnitsBox(top: Double, right: Double, bottom: Double, left: Double, unitsType: Dimension.LinearUnits) =
     CssBox(
@@ -14,3 +17,5 @@ fun createPxBox(top: Double, right: Double, bottom: Double, left: Double) =
 fun createPxBoxWithValue(value: Double) = createPxBox(value, value, value, value)
 
 fun createPxValue(value: Double) = Dimension(value, Dimension.LinearUnits.px)
+
+fun createDegValue(value: Double) = Dimension(value, Dimension.AngularUnits.deg)
