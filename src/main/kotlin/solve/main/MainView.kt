@@ -28,6 +28,10 @@ class MainView : View() {
             SplitPane.setResizableWithParent(sidePanelContentView.root, false)
             SplitPane.setResizableWithParent(sceneView.root, false)
             setDividerPosition(0, SideAndSceneDividerPosition)
+
+            dividers.first().positionProperty().onChange {
+                mainSplitPane.setDividerPosition(0, SideAndSceneDividerPosition)
+            }
         }
         center = mainSplitPane
         left<SidePanelTabsView>()
