@@ -61,7 +61,7 @@ class CatalogueView : View() {
                 }
                 button {
                     setPrefSize(ApplyButtonSize, ApplyButtonSize)
-                    val buttonImage = loadImage("icons/catalogue_apply_icon.png")
+                    val buttonImage = loadImage("icons/catalogue/catalogue_apply_icon.png")
                     if (buttonImage != null) {
                         graphic = imageview(buttonImage) {
                             fitHeight = ApplyButtonSize
