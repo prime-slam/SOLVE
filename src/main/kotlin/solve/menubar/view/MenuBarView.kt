@@ -13,7 +13,7 @@ class MenuBarView : View() {
             action {
                 controller.directoryPath.set(null)
                 importer.openModal()
-                importer.onDockListeners.apply { minWidth = 50.0 }
+
             }
         }
         button("Manage plugins") {
