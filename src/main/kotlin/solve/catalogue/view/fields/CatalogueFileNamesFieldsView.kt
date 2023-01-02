@@ -2,9 +2,9 @@ package solve.catalogue.view.fields
 
 import javafx.scene.control.Labeled
 
+import solve.utils.loadImage
 import solve.catalogue.model.CatalogueField
 import javafx.scene.image.ImageView
-import solve.utils.loadImage
 import tornadofx.*
 
 class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
@@ -12,7 +12,7 @@ class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
         private const val ListViewFieldIconSize = 20.0
     }
 
-    private val fileNamesFieldIconImage = loadImage("icons/catalogue_image_icon.png")
+    private val fileNamesFieldIconImage = loadImage("icons/catalogue/catalogue_image_icon.png")
 
     override val dragViewMaxFieldsNumber = 100
     override val listViewCellHeight = 25.0
