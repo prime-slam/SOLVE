@@ -24,10 +24,10 @@ class DirectoryPathView : View() {
     private val directoryLabel = label("Project directory") {
         maxWidth = 300.0
         textOverrun = OverrunStyle.ELLIPSIS
-        path.onChange {
+        controller.directoryPath.onChange {
             tooltip(path.value)
             val x = controller.directoryPath.value
-            if (x == null) {
+            if (x == null || controller.project.value == null) {
                 this.text = "Project directory"
             } else {
                 this.text = "Project directory\n$x"
