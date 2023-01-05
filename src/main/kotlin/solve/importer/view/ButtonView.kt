@@ -6,6 +6,7 @@ import solve.importer.ProjectParser.createAlert
 import solve.importer.controller.ImporterController
 import solve.main.MainController
 import solve.menubar.view.MenuBarView
+import solve.project.model.ProjectFrame
 import tornadofx.*
 
 
@@ -25,61 +26,64 @@ class ButtonView : View() {
     private fun importAction(button: Button) {
         val projectVal = directoryPathView.project.value
         try {
-            mainController.sceneFacade.visualize(projectVal.layers, projectVal.frames)
-            mainController.displayCatalogueFrames(projectVal.frames)
+            mainController.sceneFacade.visualize(projectVal.layers, projectVal.frames.map { it.frame })
+            mainController.displayCatalogueFrames(projectVal.frames.map { it.frame })
             directoryPathView.project.set(null)
             button.isDisable = true
             MenuBarView().importer.close()
         } catch (e: Exception) {
-            val alert = createAlert("Visualization error")
-            alert.show()
+            createAlert("Visualization error")
+        }
+    }
+
+    private val cancelButton = button("Cancel") {
+        action {
+            cancelAction()
+        }
+        prefWidth = 180.0
+    }
+
+    private val importButton = button("Import") {
+        isDisable = true
+        directoryPathView.project.onChange {
+            isDisable = it?.hasAnyErrors ?: true
+        }
+        prefWidth = 180.0
+        action {
+            importAction(this)
+        }
+    }
+
+    private fun getListOfAlgorithms(frame: ProjectFrame, listOfKind: MutableList<String>) {
+        frame.landmarkFiles.forEach { landmark ->
+            val algName = landmark.projectLayer.name
+            if (!listOfKind.contains(algName)) {
+                listOfKind.add(landmark.projectLayer.name)
+            }
+        }
+    }
+
+    private val algorithmsLabel = label {
+        val listOfKind = mutableListOf<String>()
+        visibleWhen { directoryPathView.project.isNotNull }
+
+        directoryPathView.project.onChange {
+            if (it != null) {
+                it.frames.forEach { frame ->
+                    getListOfAlgorithms(frame.frame, listOfKind)
+                }
+                this.text = "Algorithms: " + listOfKind.toString().replace("[", "").replace("]", "")
+            }
         }
     }
 
     override val root = vbox(6) {
-        val listOfKind = mutableListOf<String>()
-        label {
-            visibleWhen { directoryPathView.path.isNotEmpty }
-
-            directoryPathView.project.onChange {
-                if (it != null){
-                    it.frames.forEach { frame ->
-                        frame.landmarkFiles.forEach { landmark ->
-                            val algName = landmark.projectLayer.name
-                            if (!listOfKind.contains(algName)){
-                                listOfKind.add(landmark.projectLayer.name)
-                            }
-                        }
-                    }
-                    this.text = "Algorithms: " + listOfKind.toString().replace("[", "").replace("]", "")
-
-                }
-            }
-        }
-
         padding = Insets(10.0, 0.0, 0.0, 0.0)
 
+        add(algorithmsLabel)
         hbox(10) {
-            button("Cancel") {
-                action {
-                    cancelAction()
-                }
-                prefWidth = 180.0
-            }
-            button("Import") {
-                prefWidth = 180.0
-                isDisable = true
-                directoryPathView.project.onChange {
-                    if (directoryPathView.project.value != null) {
-                        if (directoryPathView.project.value.frames.isNotEmpty()) {
-                            isDisable = false
-                        }
-                    }
-                }
-                action {
-                    importAction(this)
-                }
-            }
+            add(cancelButton)
+            add(importButton)
         }
     }
 }
