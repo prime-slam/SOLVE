@@ -3,7 +3,6 @@ package solve.importer.view
 import javafx.geometry.Insets
 import javafx.scene.control.Button
 import solve.importer.ProjectParser.createAlert
-import solve.importer.controller.ImporterController
 import solve.main.MainController
 import solve.menubar.view.MenuBarView
 import solve.project.model.ProjectFrame
@@ -11,15 +10,12 @@ import tornadofx.*
 
 
 class ButtonView : View() {
-    private val controller: ImporterController by inject()
 
     private val mainController: MainController by inject()
 
     private val directoryPathView: DirectoryPathView by inject()
 
     private fun cancelAction() {
-        controller.directoryPath.set(null)
-        directoryPathView.project.set(null)
         MenuBarView().importer.close()
     }
 
