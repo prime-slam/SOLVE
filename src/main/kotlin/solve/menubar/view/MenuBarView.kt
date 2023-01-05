@@ -13,7 +13,6 @@ class MenuBarView : View() {
             action {
                 controller.directoryPath.set(null)
                 importer.openModal()
-
             }
         }
         button("Manage plugins") {
