@@ -61,8 +61,8 @@ class KeypointView(
 
         // If landmark is already in the selected state.
         // Animation can not be applied because shape is not in visual tree at the moment.
-        if (landmark.layerSettings.selectedLandmarksUids.contains(landmark.uid)
-            || landmark.layerSettings.hoveredLandmarksUids.contains(landmark.uid)
+        if (landmark.layerState.selectedLandmarksUids.contains(landmark.uid)
+            || landmark.layerState.hoveredLandmarksUids.contains(landmark.uid)
         ) {
             highlightShapeInstantly(shape)
         }

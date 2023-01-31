@@ -21,9 +21,9 @@ class SceneFacade(private val controller: SceneController) {
             if (!visualizationLayers.contains(projectLayer.name)) { //don't rewrite existing settings
                 visualizationLayers[projectLayer.name] = projectLayer.toLayerSettings()
             }
-            visualizationLayers[projectLayer.name]?.clearSelectionAndHoverState()
         }
-        val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame() }
+        val layerStates = layers.map { projectLayer -> LayerState(projectLayer.name) }
+        val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame(layerStates) }
         val scene = Scene(visualizationFrames, visualizationLayers.values.toList())
         controller.scene.value = scene
     }
@@ -36,26 +36,27 @@ class SceneFacade(private val controller: SceneController) {
         }
     }
 
-    private fun ProjectFrame.toVisualizationFrame(): VisualizationFrame {
+    private fun ProjectFrame.toVisualizationFrame(layerStates: List<LayerState>): VisualizationFrame {
         val getImage = { Image(FileInputStream(imagePath.toFile())) }
 
         val layers = landmarkFiles.map { file ->
             val layerSettings = visualizationLayers[file.projectLayer.name]
                 ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
-            createLayer(file, layerSettings)
+            val layerState = layerStates.single { x -> x.name == file.projectLayer.name}
+            createLayer(file, layerSettings, layerState)
         }
 
         return VisualizationFrame(this.timestamp, getImage, layers)
     }
 
-    private fun createLayer(file: LandmarkFile, layerSettings: LayerSettings): Layer {
+    private fun createLayer(file: LandmarkFile, layerSettings: LayerSettings, layerState: LayerState): Layer {
         return when (file.projectLayer.kind) {
             LayerKind.Keypoint -> Layer.PointLayer(
                 file.projectLayer.name,
                 layerSettings as LayerSettings.PointLayerSettings
             ) {
                 CSVPointsParser.parse(file.path.toString()).map { point ->
-                    PointFactory.buildLandmark(point, layerSettings)
+                    PointFactory.buildLandmark(point, layerSettings, layerState)
                 }
             }
             LayerKind.Line -> Layer.LineLayer(
@@ -63,7 +64,7 @@ class SceneFacade(private val controller: SceneController) {
                 layerSettings as LayerSettings.LineLayerSettings
             ) {
                 CSVLinesParser.parse(file.path.toString()).map { line ->
-                    LineFactory.buildLandmark(line, layerSettings)
+                    LineFactory.buildLandmark(line, layerSettings, layerState)
                 }
             }
             LayerKind.Plane -> Layer.PlaneLayer(
@@ -71,7 +72,7 @@ class SceneFacade(private val controller: SceneController) {
                 layerSettings as LayerSettings.PlaneLayerSettings
             ) {
                 ImagePlanesParser.parse(file.path.toString()).map { plane ->
-                    PlaneFactory.buildLandmark(plane, layerSettings)
+                    PlaneFactory.buildLandmark(plane, layerSettings, layerState)
                 }
             }
         }
