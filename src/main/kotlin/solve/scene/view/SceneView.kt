@@ -16,6 +16,7 @@ import kotlin.math.min
 class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
+    private var currentGrid: Grid? = null
 
     init {
         controller.scene.onChange { scene ->
@@ -32,6 +33,7 @@ class SceneView : View() {
     }
 
     private fun draw() {
+        currentGrid?.dispose()
         root.children.clear()
 
         val scene = controller.scene.value
@@ -76,6 +78,7 @@ class SceneView : View() {
             zoomGrid(scaleProperty, grid, event.x to event.y, event.deltaY > 0)
         }
 
+        currentGrid = grid
         add(grid.node)
     }
 

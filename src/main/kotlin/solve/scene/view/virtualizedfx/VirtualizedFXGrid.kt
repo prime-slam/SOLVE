@@ -1,6 +1,7 @@
 package solve.scene.view.virtualizedfx
 
 import io.github.palexdev.mfxcore.base.beans.Position
+import io.github.palexdev.mfxcore.base.bindings.MFXBindings
 import io.github.palexdev.virtualizedfx.controls.VirtualScrollPane
 import io.github.palexdev.virtualizedfx.grid.VirtualGrid
 import javafx.event.EventHandler
@@ -42,5 +43,11 @@ class VirtualizedFXGrid(
     override fun scrollTo(x: Double, y: Double) {
         virtualGrid.scrollTo(x, Orientation.HORIZONTAL)
         virtualGrid.scrollTo(y, Orientation.VERTICAL)
+    }
+
+    override fun dispose() {
+        val bindings = MFXBindings.instance()
+        bindings.unbindBidirectional(vsp.vValProperty())
+        bindings.unbindBidirectional(vsp.hValProperty())
     }
 }

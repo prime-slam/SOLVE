@@ -14,4 +14,6 @@ interface Grid {
     fun setOnScroll(handler: EventHandler<ScrollEvent>)
 
     fun scrollTo(x: Double, y: Double)
+
+    fun dispose()
 }
