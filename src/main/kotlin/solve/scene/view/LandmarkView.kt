@@ -1,6 +1,6 @@
 package solve.scene.view
 
-import javafx.collections.SetChangeListener
+import javafx.collections.WeakSetChangeListener
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Shape
@@ -34,7 +34,7 @@ sealed class LandmarkView(
             scaleChanged()
         }
 
-    private val selectedLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
+    private val selectedLandmarksChangedEventHandler = WeakSetChangeListener<Long> { e ->
         if (e.wasAdded() && e.elementAdded == landmark.uid) {
             state = LandmarkState.Selected
             highlightShape()
@@ -46,9 +46,9 @@ sealed class LandmarkView(
         }
     }
 
-    private val hoveredLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
+    private val hoveredLandmarksChangedEventHandler = WeakSetChangeListener<Long> { e ->
         if (state == LandmarkState.Selected) {
-            return@SetChangeListener
+            return@WeakSetChangeListener
         }
 
         if (e.wasAdded() && e.elementAdded == landmark.uid) {

@@ -1,5 +1,7 @@
 package solve.scene.view
 
+import javafx.beans.InvalidationListener
+import javafx.beans.WeakInvalidationListener
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.canvas.Canvas
@@ -29,10 +31,10 @@ class FrameView(
     private val imageCanvas = Canvas(width, height)
     private var currentJob: Job? = null
 
+    private val scaleChangedListener = InvalidationListener { _ -> scaleImageAndLandmarks(scale.value) }
+
     init {
-        scale.onChange { newScale ->
-            scaleImageAndLandmarks(newScale)
-        }
+        scale.addListener(WeakInvalidationListener(scaleChangedListener))
 
         add(imageCanvas)
         setFrame(frame)
@@ -43,14 +45,16 @@ class FrameView(
                 return@setOnMouseClicked
             }
             val clickedFrame = currentFrame ?: return@setOnMouseClicked
-            val associationParameters = AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
+            val associationParameters =
+                AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
             associationsManager.chooseFrame(associationParameters)
         }
 
         contextmenu {
             item("Associate keypoints").action {
                 val clickedFrame = currentFrame ?: return@action
-                val associationParameters = AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
+                val associationParameters =
+                    AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
                 associationsManager.initAssociation(associationParameters)
             }
             item("Clear associations").action {
