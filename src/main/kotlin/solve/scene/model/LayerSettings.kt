@@ -1,8 +1,8 @@
 package solve.scene.model
 
 import javafx.scene.paint.Color
-import tornadofx.toObservable
 
+// Contains settings that should be reused when scene is recreated
 //Stores common context for landmarks drawing.
 //Layers properties being edited in the settings menu.
 //Settings menu appearance depends on type of the corresponding layer.

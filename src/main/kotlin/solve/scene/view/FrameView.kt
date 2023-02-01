@@ -31,6 +31,7 @@ class FrameView(
     private val imageCanvas = Canvas(width, height)
     private var currentJob: Job? = null
 
+    // Should be stored to avoid weak listener from be collected
     private val scaleChangedListener = InvalidationListener { _ -> scaleImageAndLandmarks(scale.value) }
 
     init {
