@@ -3,11 +3,6 @@ package solve.scene.model
 import javafx.scene.paint.Color
 import tornadofx.toObservable
 
-class LayerState(val name: String) {
-    val selectedLandmarksUids = mutableSetOf<Long>().toObservable()
-    val hoveredLandmarksUids = mutableSetOf<Long>().toObservable()
-}
-
 //Stores common context for landmarks drawing.
 //Layers properties being edited in the settings menu.
 //Settings menu appearance depends on type of the corresponding layer.
