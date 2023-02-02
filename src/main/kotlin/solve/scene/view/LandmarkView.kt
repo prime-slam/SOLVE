@@ -1,5 +1,6 @@
 package solve.scene.view
 
+import javafx.collections.SetChangeListener
 import javafx.collections.WeakSetChangeListener
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
@@ -34,7 +35,8 @@ sealed class LandmarkView(
             scaleChanged()
         }
 
-    private val selectedLandmarksChangedEventHandler = WeakSetChangeListener<Long> { e ->
+    // Should be stored to avoid weak listener from be collected
+    private val selectedLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
         if (e.wasAdded() && e.elementAdded == landmark.uid) {
             state = LandmarkState.Selected
             highlightShape()
@@ -45,10 +47,12 @@ sealed class LandmarkView(
             unhighlightShape()
         }
     }
+    private val weakSelectedLandmarksChangedEventHandler = WeakSetChangeListener(selectedLandmarksChangedEventHandler)
 
-    private val hoveredLandmarksChangedEventHandler = WeakSetChangeListener<Long> { e ->
+    // Should be stored to avoid weak listener from be collected
+    private val hoveredLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
         if (state == LandmarkState.Selected) {
-            return@WeakSetChangeListener
+            return@SetChangeListener
         }
 
         if (e.wasAdded() && e.elementAdded == landmark.uid) {
@@ -59,15 +63,16 @@ sealed class LandmarkView(
             unhighlightShape()
         }
     }
+    private val weakHoveredLandmarksChangedEventHandler = WeakSetChangeListener(hoveredLandmarksChangedEventHandler)
 
     init {
-        landmark.layerState.selectedLandmarksUids.addListener(selectedLandmarksChangedEventHandler)
-        landmark.layerState.hoveredLandmarksUids.addListener(hoveredLandmarksChangedEventHandler)
+        landmark.layerState.selectedLandmarksUids.addListener(weakSelectedLandmarksChangedEventHandler)
+        landmark.layerState.hoveredLandmarksUids.addListener(weakHoveredLandmarksChangedEventHandler)
     }
 
     fun dispose() {
-        landmark.layerState.selectedLandmarksUids.removeListener(selectedLandmarksChangedEventHandler)
-        landmark.layerState.hoveredLandmarksUids.removeListener(hoveredLandmarksChangedEventHandler)
+        landmark.layerState.selectedLandmarksUids.removeListener(weakSelectedLandmarksChangedEventHandler)
+        landmark.layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
     }
 
     // Set up common shape properties
