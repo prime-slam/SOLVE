@@ -6,7 +6,6 @@ import tornadofx.borderpane
 import tornadofx.View
 
 class ImporterView : View("Choose working directory") {
-
     override fun onDock() {
         (root.scene.window as Stage).minWidth = 390.0
     }
@@ -15,6 +14,6 @@ class ImporterView : View("Choose working directory") {
         padding = Insets(8.0, 10.0, 8.0, 10.0)
         top<DirectoryPathView>()
         center<ProjectTreeView>()
-        bottom<ButtonView>()
+        bottom<ControlPanel>()
     }
 }
