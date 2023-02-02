@@ -1,9 +1,6 @@
 package solve.utils
 
-import javafx.scene.control.Alert
 import javafx.scene.image.Image
-import javafx.stage.Modality
-import javafx.stage.Window
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
@@ -61,15 +58,6 @@ fun loadBufferedImage(filePath: String): BufferedImage? {
     }
 
     return image
-}
-
-fun createAlert(content: String, owner: Window) {
-    val alert = Alert(Alert.AlertType.ERROR, content).apply {
-        headerText = ""
-        initModality(Modality.APPLICATION_MODAL)
-        initOwner(owner)
-    }
-    alert.show()
 }
 
 fun MutableList<String>.toStringWithoutBrackets(): String {
