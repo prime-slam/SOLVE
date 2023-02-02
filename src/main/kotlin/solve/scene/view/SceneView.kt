@@ -33,7 +33,6 @@ class SceneView : View() {
     }
 
     private fun draw() {
-        System.gc()
         currentGrid?.dispose()
         root.children.clear()
 
