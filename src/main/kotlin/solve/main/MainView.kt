@@ -1,5 +1,6 @@
 package solve.main
 
+import javafx.application.Platform
 import javafx.scene.control.SplitPane
 import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
@@ -10,16 +11,19 @@ import tornadofx.*
 
 class MainView : View() {
     companion object {
-        private const val SideAndSceneDividerPosition = 0.25
+        private const val SideAndSceneDividerRatio = 0.25
     }
 
     private val sceneView: SceneView by inject()
     private val sidePanelContentView: SidePanelContentView by inject()
 
     private lateinit var mainSplitPane: SplitPane
-    private var lastSideAndSceneDividerPosition = SideAndSceneDividerPosition
+    private var lastSideAndSceneDividerRatio = SideAndSceneDividerRatio
 
-    override val root = borderpane {
+    private var isWindowResizing = false
+    private var isWindowResizingDetectionInitialized = false
+
+    private val mainViewBorderPane = borderpane {
         top<MenuBarView>()
         mainSplitPane = splitpane {
             addStylesheet(MainSplitPaneStyle::class)
@@ -27,24 +31,47 @@ class MainView : View() {
             add(sceneView)
             SplitPane.setResizableWithParent(sidePanelContentView.root, false)
             SplitPane.setResizableWithParent(sceneView.root, false)
-            setDividerPosition(0, SideAndSceneDividerPosition)
+            setDividerPosition(0, SideAndSceneDividerRatio)
 
             dividers.first().positionProperty().onChange {
-                mainSplitPane.setDividerPosition(0, SideAndSceneDividerPosition)
+                onDividerPositionChanged()
             }
         }
         center = mainSplitPane
         left<SidePanelTabsView>()
     }
 
+    override val root = mainViewBorderPane
+
     fun hideSidePanelContent() {
-        lastSideAndSceneDividerPosition = mainSplitPane.dividers.first().position
         mainSplitPane.items.remove(sidePanelContentView.root)
     }
 
     fun showSidePanelContent() {
         mainSplitPane.items.add(0, sidePanelContentView.root)
-        mainSplitPane.setDividerPosition(0, lastSideAndSceneDividerPosition)
+        mainSplitPane.setDividerPosition(0, lastSideAndSceneDividerRatio)
+    }
+
+    private fun initializeWindowResizingDetection() {
+        mainViewBorderPane.scene.addPreLayoutPulseListener {
+            isWindowResizing = true
+            Platform.runLater {
+                isWindowResizing = false
+            }
+        }
+    }
+
+    private fun onDividerPositionChanged() {
+        if (!isWindowResizingDetectionInitialized) {
+            initializeWindowResizingDetection()
+            isWindowResizingDetectionInitialized = true
+            return
+        }
+
+        if (!isWindowResizing) {
+            lastSideAndSceneDividerRatio = mainSplitPane.dividers.first().position
+        }
+        mainSplitPane.setDividerPosition(0, lastSideAndSceneDividerRatio)
     }
 }
 
