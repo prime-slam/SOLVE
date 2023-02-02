@@ -1,7 +1,5 @@
 package solve.main
 
-import javafx.application.Platform
-import javafx.scene.control.SplitPane
 import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
 import solve.sidepanel.content.SidePanelContentView
@@ -17,61 +15,30 @@ class MainView : View() {
     private val sceneView: SceneView by inject()
     private val sidePanelContentView: SidePanelContentView by inject()
 
-    private lateinit var mainSplitPane: SplitPane
-    private var lastSideAndSceneDividerRatio = SideAndSceneDividerRatio
-
-    private var isWindowResizing = false
-    private var isWindowResizingDetectionInitialized = false
+    private lateinit var mainViewSplitPane: SidePanelSplitPane
 
     private val mainViewBorderPane = borderpane {
         top<MenuBarView>()
-        mainSplitPane = splitpane {
-            addStylesheet(MainSplitPaneStyle::class)
-            add(sidePanelContentView)
-            add(sceneView)
-            SplitPane.setResizableWithParent(sidePanelContentView.root, false)
-            SplitPane.setResizableWithParent(sceneView.root, false)
-            setDividerPosition(0, SideAndSceneDividerRatio)
-
-            dividers.first().positionProperty().onChange {
-                onDividerPositionChanged()
-            }
-        }
-        center = mainSplitPane
+        val splitPaneDividersPositions = listOf(SideAndSceneDividerRatio)
+        val splitPaneContainedNodes = listOf(sidePanelContentView.root, sceneView.root)
+        mainViewSplitPane = SidePanelSplitPane(
+            splitPaneDividersPositions,
+            splitPaneContainedNodes,
+            SidePanelLocation.Left
+        )
+        mainViewSplitPane.addStylesheet(MainSplitPaneStyle::class)
+        center = mainViewSplitPane
         left<SidePanelTabsView>()
     }
 
     override val root = mainViewBorderPane
 
     fun hideSidePanelContent() {
-        mainSplitPane.items.remove(sidePanelContentView.root)
+        mainViewSplitPane.hideNode(sidePanelContentView.root)
     }
 
     fun showSidePanelContent() {
-        mainSplitPane.items.add(0, sidePanelContentView.root)
-        mainSplitPane.setDividerPosition(0, lastSideAndSceneDividerRatio)
-    }
-
-    private fun initializeWindowResizingDetection() {
-        mainViewBorderPane.scene.addPreLayoutPulseListener {
-            isWindowResizing = true
-            Platform.runLater {
-                isWindowResizing = false
-            }
-        }
-    }
-
-    private fun onDividerPositionChanged() {
-        if (!isWindowResizingDetectionInitialized) {
-            initializeWindowResizingDetection()
-            isWindowResizingDetectionInitialized = true
-            return
-        }
-
-        if (!isWindowResizing) {
-            lastSideAndSceneDividerRatio = mainSplitPane.dividers.first().position
-        }
-        mainSplitPane.setDividerPosition(0, lastSideAndSceneDividerRatio)
+        mainViewSplitPane.showNode(sidePanelContentView.root)
     }
 }
 
