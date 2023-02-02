@@ -1,5 +1,15 @@
 package solve.importer.model
 
-import javafx.scene.control.Button
+import javafx.beans.property.SimpleBooleanProperty
+import tornadofx.ItemViewModel
+import tornadofx.getValue
+import tornadofx.setValue
 
-class ButtonModel(text: String) : Button(text)
+class CustomButton {
+    private val disabledProperty = SimpleBooleanProperty()
+    var disabled by disabledProperty
+}
+
+class ButtonModel : ItemViewModel<CustomButton>() {
+    val disabled = bind(CustomButton :: disabled)
+}
