@@ -19,9 +19,7 @@ class SidePanelSplitPane(
     }
 
     fun showNode(node: Node) {
-        if (!isSidePanelNode(node) ||
-            items.contains(node)
-        ) {
+        if (!isSidePanelNode(node) || items.contains(node)) {
             return
         }
 
