@@ -3,16 +3,13 @@ package solve.importer
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.collections.ObservableMap
-import javafx.scene.control.Alert
 import javafx.scene.control.TreeItem
-import javafx.stage.Modality
-import solve.importer.model.FileInfo
-import solve.importer.model.FileInTree
-import solve.importer.model.ImporterProject
-import solve.importer.model.ImporterProjectFrame
+import solve.importer.model.*
 import solve.importer.view.ImporterView
 import solve.parsers.planes.ImagePlanesParser.extractUIDs
 import solve.project.model.*
+import solve.utils.createAlert
+import solve.utils.toStringWithoutBrackets
 import tornadofx.FX.Companion.find
 import java.io.File
 import kotlin.io.path.Path
@@ -36,19 +33,11 @@ object ProjectParser {
         }
     }
 
-    fun createAlert(content: String) {
-        val alert = Alert(Alert.AlertType.ERROR, content).apply {
-            headerText = ""
-            initModality(Modality.APPLICATION_MODAL)
-            initOwner(importer.root.scene.window)
-        }
-        alert.show()
-    }
 
     private fun incorrectExtensionError(frame: ImporterProjectFrame) {
         if (!possibleExtensions.contains(frame.frame.imagePath.extension)) {
             frame.isImageErrored = true
-            frame.errorMessage?.add("The image has an incorrect extension")
+            frame.errorMessage.add("The image has an incorrect extension")
         }
     }
 
@@ -63,15 +52,15 @@ object ProjectParser {
         if (diff.isNotEmpty()) {
             frame.isImageErrored = true
             if (diff.count() == 1) {
-                frame.errorMessage?.add(
+                frame.errorMessage.add(
                     "There is no ${
-                        diffString.toString().replace("[", "").replace("]", "")
+                        diffString.toMutableList().toStringWithoutBrackets()
                     } algorithm for image ${frame.frame.timestamp}"
                 )
             } else {
-                frame.errorMessage?.add(
+                frame.errorMessage.add(
                     "There are no ${
-                        diffString.toString().replace("[", "").replace("]", "")
+                        diffString.toMutableList().toStringWithoutBrackets()
                     } algorithms for image ${frame.frame.timestamp}"
                 )
             }
@@ -115,12 +104,14 @@ object ProjectParser {
             }
         }
         if (errorOutputs.isNotEmpty()) {
-            createAlert("$errorOutputs are incorrect names of files. They can't be converted to Long")
+            createAlert(
+                "$errorOutputs are incorrect names of files. They can't be converted to Long",
+                importer.root.scene.window
+            )
         }
     }
 
     private fun parseImages(folder: File, images: ObservableMap<Long, String>) {
-
         val errorImages = mutableListOf<String>()
         folder.listFiles()?.forEach {
             val imageName = it.nameWithoutExtension
@@ -135,14 +126,16 @@ object ProjectParser {
             if (errorImages.count() == 1) {
                 createAlert(
                     "Image ${
-                        errorImages.toString().replace("[", "").replace("]", "")
-                    } is skipped, because the file name cannot be converted to long."
+                        errorImages.toStringWithoutBrackets()
+                    } is skipped, because the file name cannot be converted to long.",
+                    importer.root.scene.window
                 )
             } else {
                 createAlert(
                     "Images ${
-                        errorImages.toString().replace("[", "").replace("]", "")
-                    } are skipped, because the file names cannot be converted to long."
+                        errorImages.toStringWithoutBrackets()
+                    } are skipped, because the file names cannot be converted to long.",
+                    importer.root.scene.window
                 )
             }
         }
@@ -167,7 +160,7 @@ object ProjectParser {
         }
 
         if (!isImagesExist) {
-            createAlert("The images folder is missing in the directory")
+            createAlert("The images folder is missing in the directory", importer.root.scene.window)
             return null
         }
 
@@ -175,14 +168,16 @@ object ProjectParser {
             if (errorFolders.count() == 1) {
                 createAlert(
                     "The directory ${
-                        errorFolders.toString().replace("[", "").replace("]", "")
-                    } is skipped, because names of folders don't contain correct kind name."
+                        errorFolders.toStringWithoutBrackets()
+                    } is skipped, because names of folders don't contain correct kind name.",
+                    importer.root.scene.window
                 )
             } else {
                 createAlert(
                     "The directories ${
-                        errorFolders.toString().replace("[", "").replace("]", "")
-                    } are skipped, because names of folders don't contain correct kind name."
+                        errorFolders.toStringWithoutBrackets()
+                    } are skipped, because names of folders don't contain correct kind name.",
+                    importer.root.scene.window
                 )
             }
         }
@@ -195,11 +190,11 @@ object ProjectParser {
         frames.forEach {
             incorrectExtensionError(it)
             noSomeAlgorithmError(it, layers)
-            if (it.isImageErrored){
+            if (it.isImageErrored) {
                 hasAnyErrors = true
             }
         }
-        return ImporterProject(Path(path), frames, layers, hasAnyErrors )
+        return ImporterProject(Path(path), frames, layers, hasAnyErrors)
     }
 
     fun createTreeWithFiles(project: ImporterProject, tree: TreeItem<FileInTree>): TreeItem<FileInTree> {

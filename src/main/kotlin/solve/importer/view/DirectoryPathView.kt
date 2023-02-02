@@ -1,22 +1,19 @@
 package solve.importer.view
 
-import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.scene.control.OverrunStyle
 import javafx.scene.image.ImageView
 import javafx.stage.DirectoryChooser
 import solve.importer.ProjectParser.parseDirectory
 import solve.importer.controller.ImporterController
-import solve.importer.model.ImporterProject
 import solve.utils.loadImage
 import tornadofx.*
 import java.io.File
 
 class DirectoryPathView : View() {
     private val controller: ImporterController by inject()
-    val path = SimpleStringProperty()
+
     private val directoryChooser = DirectoryChooser().apply { title = "Choose working directory" }
-    val project = objectProperty<ImporterProject>()
 
     private val filesCountIcon = loadImage("icons/importer/check_circle.png")
     private val errorsCountIcon = loadImage("icons/importer/warning.png")
@@ -25,28 +22,23 @@ class DirectoryPathView : View() {
         maxWidth = 300.0
         textOverrun = OverrunStyle.ELLIPSIS
         controller.directoryPath.onChange {
-            tooltip(path.value)
+            tooltip(controller.directoryPath.value)
             val x = controller.directoryPath.value
-            if (x == null || controller.project.value == null) {
-                this.text = "Project directory"
-            } else {
-                this.text = "Project directory\n$x"
-            }
+            this.text = if (x == null || controller.project.value == null) "Project directory"
+            else "Project directory\n$x"
         }
     }
 
     private val changeButton = button("Change") {
         action {
             val dir = directoryChooser.showDialog(currentStage)
-            if (dir != null) {
-                controller.directoryPath.set(dir.absolutePath)
-            }
+            controller.directoryPath.set(dir?.absolutePath)
         }
     }
 
     private val countImagesLabel = label {
-        visibleWhen { project.isNotNull }
-        project.onChange {
+        visibleWhen { controller.project.isNotNull }
+        controller.project.onChange {
             val countFiles = it?.frames?.count()
             this.text = "$countFiles images found"
             this.graphic = ImageView(filesCountIcon)
@@ -54,9 +46,9 @@ class DirectoryPathView : View() {
     }
 
     private val countErrorsLabel = label {
-        visibleWhen { project.isNotNull }
+        visibleWhen { controller.project.isNotNull }
         padding = Insets(3.0, 0.0, 5.0, 0.0)
-        project.onChange {
+        controller.project.onChange {
             var countErrors = 0
             it?.frames?.forEach { frame ->
                 if (frame.isImageErrored)
@@ -69,16 +61,14 @@ class DirectoryPathView : View() {
 
     override val root =
         vbox {
-            path.bindBidirectional(controller.directoryPath)
-            project.bindBidirectional(controller.project)
-            path.onChange {
+            controller.directoryPath.onChange {
                 if (!it.isNullOrEmpty()) {
                     val tempProject = parseDirectory(it.toString())
                     if (tempProject == null) {
                         controller.directoryPath.set(null)
                     }
-                    project.set(tempProject)
-                    directoryChooser.initialDirectory = File(path.value)
+                    controller.project.set(tempProject)
+                    directoryChooser.initialDirectory = File(controller.directoryPath.value)
                 }
             }
             borderpane {

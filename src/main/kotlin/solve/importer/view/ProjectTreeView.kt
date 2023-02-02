@@ -1,35 +1,34 @@
 package solve.importer.view
 
-import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeTableCell
-import javafx.scene.control.TreeTableColumn
+import javafx.scene.control.*
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
 import javafx.scene.image.ImageView
 import solve.importer.ProjectParser
+import solve.importer.controller.ImporterController
 import solve.importer.model.FileInfo
 import solve.importer.model.FileInTree
 import solve.utils.loadImage
+import solve.utils.toStringWithoutBrackets
 import tornadofx.*
 
 open class ProjectTreeView : View() {
-
     private var rootTree = TreeItem(FileInTree(FileInfo("", false)))
 
-    private val directoryPathView: DirectoryPathView by inject()
+    private val controller: ImporterController by inject()
 
     private fun updateTree() {
-        directoryPathView.path.onChange {
+        controller.directoryPath.onChange {
             if (!it.isNullOrEmpty()) {
-                rootTree.children.remove(0, rootTree.children.size)
-                if (directoryPathView.project.value != null) {
-                    rootTree = ProjectParser.createTreeWithFiles(directoryPathView.project.value, rootTree)
+                rootTree.children.clear()
+                if (controller.project.value != null) {
+                    rootTree = ProjectParser.createTreeWithFiles(controller.project.value, rootTree)
                 }
             }
         }
     }
 
     override val root = treetableview(rootTree) {
-        visibleWhen { directoryPathView.project.isNotNull }
+        visibleWhen { controller.project.isNotNull }
         this.isShowRoot = false
 
         val filesColumn: TreeTableColumn<FileInTree, FileInfo> = TreeTableColumn<FileInTree, FileInfo>().apply {
@@ -79,13 +78,10 @@ open class ProjectTreeView : View() {
             object : TreeTableCell<FileInTree, FileInfo?>() {
                 override fun updateItem(item: FileInfo?, empty: Boolean) {
                     super.updateItem(item, empty)
-                    if (empty) {
-                        text = null
-                    } else {
-                        text = item!!.error.toString().replace("[", "").replace("]", "")
-                        if (text.isNotEmpty()) {
-                            tooltip(text)
-                        }
+                    text = if (empty) null
+                    else item!!.error.toStringWithoutBrackets()
+                    if (!empty && text.isNotEmpty()){
+                        tooltip(text)
                     }
                 }
             }
