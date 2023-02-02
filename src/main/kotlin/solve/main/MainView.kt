@@ -1,5 +1,7 @@
 package solve.main
 
+import solve.main.splitpane.SidePanelLocation
+import solve.main.splitpane.SidePanelSplitPane
 import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
 import solve.sidepanel.content.SidePanelContentView

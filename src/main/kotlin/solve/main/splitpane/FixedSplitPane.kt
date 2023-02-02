@@ -1,4 +1,4 @@
-package solve.main
+package solve.main.splitpane
 
 import javafx.application.Platform
 import javafx.scene.Node

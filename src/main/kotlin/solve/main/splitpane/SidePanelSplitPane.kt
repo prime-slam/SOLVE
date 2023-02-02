@@ -1,17 +1,13 @@
-package solve.main
+package solve.main.splitpane
 
 import javafx.scene.Node
-import javafx.scene.control.SplitPane
-import tornadofx.add
-import tornadofx.onChange
 
 class SidePanelSplitPane(
-    private val dividersInitialPositions: List<Double>,
+    dividersInitialPositions: List<Double>,
     private val containedNodes: List<Node>,
     private val sidePanelLocation: SidePanelLocation
 ): FixedSplitPane(dividersInitialPositions, containedNodes)  {
     private var lastRemovedDivider: Divider? = null
-    private val dividersNumber = dividersInstalledPositions.count()
 
     fun hideNode(node: Node) {
         if (!isSidePanelNode(node))
