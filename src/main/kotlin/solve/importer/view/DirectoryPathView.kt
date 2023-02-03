@@ -1,8 +1,10 @@
 package solve.importer.view
 
 import javafx.geometry.Insets
+import javafx.geometry.Pos
 import javafx.scene.control.OverrunStyle
 import javafx.scene.image.ImageView
+import javafx.scene.layout.BorderPane
 import javafx.stage.DirectoryChooser
 import solve.importer.ProjectParser.parseDirectory
 import solve.importer.controller.ImporterController
@@ -24,7 +26,7 @@ class DirectoryPathView : View() {
         controller.directoryPath.onChange {
             tooltip(controller.directoryPath.value)
             val x = controller.directoryPath.value
-            this.text = if (x == null || controller.project.value == null) "Project directory"
+            this.text = if (x == null) "Project directory"
             else "Project directory\n$x"
         }
     }
@@ -68,16 +70,22 @@ class DirectoryPathView : View() {
                         controller.directoryPath.set(null)
                     }
                     controller.project.set(tempProject)
-                    directoryChooser.initialDirectory = File(controller.directoryPath.value)
+                    if (controller.directoryPath.value != null) {
+                        directoryChooser.initialDirectory = File(controller.directoryPath.value)
+                    }
                 }
             }
+
             borderpane {
                 left {
                     add(directoryLabel)
                 }
                 right {
-                    add(changeButton)
+                    add(changeButton.apply {
+                        BorderPane.setAlignment(this, Pos.CENTER_RIGHT)
+                    })
                 }
+
             }
             add(countImagesLabel)
             add(countErrorsLabel)
