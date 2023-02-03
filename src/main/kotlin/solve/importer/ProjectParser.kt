@@ -24,6 +24,8 @@ object ProjectParser {
 
     private val importer = find<ImporterView>()
 
+    private val ownerWindow = importer.root.scene.window
+
     private fun selectKind(kindString: String): LayerKind? {
         return when (kindString) {
             "keypoint" -> LayerKind.Keypoint
@@ -45,24 +47,22 @@ object ProjectParser {
             landmark.projectLayer
         }.toSet())
         val diffString = diff.map { layer ->
-            layer.name + "_" + layer.kind
+            layer.name
+        }
+
+        fun addNoSomeAlgorithmErrorMessage() {
+            val missingAlgorithms = diffString.toMutableList().toStringWithoutBrackets()
+            val imageTimestamp = frame.importerFrame.timestamp
+            if (diff.count() == 1) {
+                frame.errorMessage.add("There is no $missingAlgorithms algorithm for image $imageTimestamp")
+            } else {
+                frame.errorMessage.add("There are no $missingAlgorithms algorithms for image $imageTimestamp")
+            }
         }
 
         if (diff.isNotEmpty()) {
             frame.isImageErrored = true
-            if (diff.count() == 1) {
-                frame.errorMessage.add(
-                    "There is no ${
-                        diffString.toMutableList().toStringWithoutBrackets()
-                    } algorithm for image ${frame.importerFrame.timestamp}"
-                )
-            } else {
-                frame.errorMessage.add(
-                    "There are no ${
-                        diffString.toMutableList().toStringWithoutBrackets()
-                    } algorithms for image ${frame.importerFrame.timestamp}"
-                )
-            }
+            addNoSomeAlgorithmErrorMessage()
         }
     }
 
@@ -78,12 +78,11 @@ object ProjectParser {
             errorFolders.add(directoryName)
             return
         }
-        val name = directoryName.substring(0, indexOfSeparator)
         val kindString = directoryName.substring(indexOfSeparator + 1)
 
         val kind = selectKind(kindString)
         if (kind != null) {
-            layers.add(ProjectLayer(kind, name))
+            layers.add(ProjectLayer(kind, directoryName))
         } else {
             errorFolders.add(directoryName)
             return
@@ -121,23 +120,24 @@ object ProjectParser {
                 errorImages.add(imageName)
             }
         }
-        if (errorImages.isNotEmpty()) {
-            if (errorImages.count() == 1) {
-                createAlertForError(
-                    "Image ${
-                        errorImages.toStringWithoutBrackets()
-                    } is skipped, because the file name cannot be converted to long.",
-                    importer.root.scene.window
-                )
-            } else {
-                createAlertForError(
-                    "Images ${
-                        errorImages.toStringWithoutBrackets()
-                    } are skipped, because the file names cannot be converted to long.",
-                    importer.root.scene.window
-                )
+
+        fun alertErrorImages() {
+            if (errorImages.isNotEmpty()) {
+                if (errorImages.count() == 1) {
+                    createAlertForError(
+                        "Image ${errorImages.toStringWithoutBrackets()} is skipped, " +
+                                "because the file name can't be converted to long", ownerWindow
+                    )
+                } else {
+                    createAlertForError(
+                        "Image ${errorImages.first()} and ${errorImages.count() - 1} others are skipped, " +
+                                "because the file name can't be converted to long", ownerWindow
+                    )
+                }
             }
         }
+
+        if (errorImages.isNotEmpty()) alertErrorImages()
     }
 
     fun parseDirectory(path: String): ImporterProject? {
@@ -149,6 +149,22 @@ object ProjectParser {
         val errorFolders = mutableListOf<String>()
         var isImagesExist = false
 
+        fun alertErrorFolderMessage() {
+            if (errorFolders.count() == 1) {
+                createAlertForError(
+                    "The directory ${errorFolders.toStringWithoutBrackets()} is skipped, " +
+                            "because names of folders don't contain correct kind name. " +
+                            "The correct directory name should look like: name_kind", ownerWindow
+                )
+            } else {
+                createAlertForError(
+                    "The directory ${errorFolders.first()}  and ${errorFolders.count() - 1} others are skipped, " +
+                            "because names of folders don't contain correct kind name. " +
+                            "The correct directory name should look like: name_kind", ownerWindow
+                )
+            }
+        }
+
         for (folder in directory.listFiles()) {
             if (folder.name != IMAGE_DIRECTORY_NAME) {
                 parseOutputs(folder, layers, landmarks, errorFolders)
@@ -159,26 +175,12 @@ object ProjectParser {
         }
 
         if (!isImagesExist) {
-            createAlertForError("The images folder is missing in the directory", importer.root.scene.window)
+            createAlertForError("The images folder is missing in the directory", ownerWindow)
             return null
         }
 
         if (errorFolders.isNotEmpty()) {
-            if (errorFolders.count() == 1) {
-                createAlertForError(
-                    "The directory ${
-                        errorFolders.toStringWithoutBrackets()
-                    } is skipped, because names of folders don't contain correct kind name.",
-                    importer.root.scene.window
-                )
-            } else {
-                createAlertForError(
-                    "The directories ${
-                        errorFolders.toStringWithoutBrackets()
-                    } are skipped, because names of folders don't contain correct kind name.",
-                    importer.root.scene.window
-                )
-            }
+            alertErrorFolderMessage()
         }
 
         landmarks.forEach { (name, outputs) ->
@@ -196,6 +198,7 @@ object ProjectParser {
         return ImporterProject(Path(path), frames, layers, hasAnyErrors)
     }
 
+
     fun createTreeWithFiles(project: ImporterProject, tree: TreeItem<FileInTree>): TreeItem<FileInTree> {
         tree.value = FileInTree(FileInfo())
         project.frames.forEach {
@@ -212,7 +215,7 @@ object ProjectParser {
             }
             imageNode.children.addAll(it.importerFrame.landmarkFiles.map { landmark ->
                 val layer = landmark.projectLayer
-                val fileName = layer.name + "_" + layer.kind.toString().lowercase()
+                val fileName = layer.name
                 TreeItem(FileInTree(FileInfo(fileName, isLeaf = true)))
             })
             tree.children.add(imageNode)
