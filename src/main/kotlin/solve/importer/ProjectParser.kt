@@ -8,7 +8,7 @@ import solve.importer.model.*
 import solve.importer.view.ImporterView
 import solve.parsers.planes.ImagePlanesParser.extractUIDs
 import solve.project.model.*
-import solve.utils.createAlert
+import solve.utils.createAlertForError
 import solve.utils.toStringWithoutBrackets
 import tornadofx.FX.Companion.find
 import java.io.File
@@ -33,16 +33,15 @@ object ProjectParser {
         }
     }
 
-
     private fun incorrectExtensionError(frame: ImporterProjectFrame) {
-        if (!possibleExtensions.contains(frame.frame.imagePath.extension)) {
+        if (!possibleExtensions.contains(frame.importerFrame.imagePath.extension)) {
             frame.isImageErrored = true
             frame.errorMessage.add("The image has an incorrect extension")
         }
     }
 
     private fun noSomeAlgorithmError(frame: ImporterProjectFrame, layers: ObservableList<ProjectLayer>) {
-        val diff = layers.minus(frame.frame.landmarkFiles.map { landmark ->
+        val diff = layers.minus(frame.importerFrame.landmarkFiles.map { landmark ->
             landmark.projectLayer
         }.toSet())
         val diffString = diff.map { layer ->
@@ -55,13 +54,13 @@ object ProjectParser {
                 frame.errorMessage.add(
                     "There is no ${
                         diffString.toMutableList().toStringWithoutBrackets()
-                    } algorithm for image ${frame.frame.timestamp}"
+                    } algorithm for image ${frame.importerFrame.timestamp}"
                 )
             } else {
                 frame.errorMessage.add(
                     "There are no ${
                         diffString.toMutableList().toStringWithoutBrackets()
-                    } algorithms for image ${frame.frame.timestamp}"
+                    } algorithms for image ${frame.importerFrame.timestamp}"
                 )
             }
         }
@@ -104,7 +103,7 @@ object ProjectParser {
             }
         }
         if (errorOutputs.isNotEmpty()) {
-            createAlert(
+            createAlertForError(
                 "$errorOutputs are incorrect names of files. They can't be converted to Long",
                 importer.root.scene.window
             )
@@ -124,14 +123,14 @@ object ProjectParser {
         }
         if (errorImages.isNotEmpty()) {
             if (errorImages.count() == 1) {
-                createAlert(
+                createAlertForError(
                     "Image ${
                         errorImages.toStringWithoutBrackets()
                     } is skipped, because the file name cannot be converted to long.",
                     importer.root.scene.window
                 )
             } else {
-                createAlert(
+                createAlertForError(
                     "Images ${
                         errorImages.toStringWithoutBrackets()
                     } are skipped, because the file names cannot be converted to long.",
@@ -160,20 +159,20 @@ object ProjectParser {
         }
 
         if (!isImagesExist) {
-            createAlert("The images folder is missing in the directory", importer.root.scene.window)
+            createAlertForError("The images folder is missing in the directory", importer.root.scene.window)
             return null
         }
 
         if (errorFolders.isNotEmpty()) {
             if (errorFolders.count() == 1) {
-                createAlert(
+                createAlertForError(
                     "The directory ${
                         errorFolders.toStringWithoutBrackets()
                     } is skipped, because names of folders don't contain correct kind name.",
                     importer.root.scene.window
                 )
             } else {
-                createAlert(
+                createAlertForError(
                     "The directories ${
                         errorFolders.toStringWithoutBrackets()
                     } are skipped, because names of folders don't contain correct kind name.",
@@ -203,15 +202,15 @@ object ProjectParser {
             val imageNode: TreeItem<FileInTree> = if (it.isImageErrored) {
                 TreeItem(
                     FileInTree(
-                        FileInfo(it.frame.timestamp.toString()),
+                        FileInfo(it.importerFrame.timestamp.toString()),
                     )
                 ).apply {
                     this.value.file.error.add(it.errorMessage.toString())
                 }
             } else {
-                TreeItem(FileInTree(FileInfo(it.frame.timestamp.toString())))
+                TreeItem(FileInTree(FileInfo(it.importerFrame.timestamp.toString())))
             }
-            imageNode.children.addAll(it.frame.landmarkFiles.map { landmark ->
+            imageNode.children.addAll(it.importerFrame.landmarkFiles.map { landmark ->
                 val layer = landmark.projectLayer
                 val fileName = layer.name + "_" + layer.kind.toString().lowercase()
                 TreeItem(FileInTree(FileInfo(fileName, isLeaf = true)))

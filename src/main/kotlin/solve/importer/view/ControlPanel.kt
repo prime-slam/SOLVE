@@ -7,7 +7,7 @@ import solve.importer.model.ButtonModel
 import solve.main.MainController
 import solve.menubar.view.MenuBarView
 import solve.project.model.ProjectFrame
-import solve.utils.createAlert
+import solve.utils.createAlertForError
 import solve.utils.toStringWithoutBrackets
 import tornadofx.*
 
@@ -33,7 +33,7 @@ class ControlPanel : View() {
         controller.project.onChange {
             it?.let {
                 it.frames.forEach { frame ->
-                    getListOfAlgorithms(frame.frame, listOfKind)
+                    getListOfAlgorithms(frame.importerFrame, listOfKind)
                 }
                 this.text = "Algorithms: " + listOfKind.toStringWithoutBrackets()
             }
@@ -44,8 +44,8 @@ class ControlPanel : View() {
         buttonController.changeDisable(importButtonModel)
         isDisable = importButtonModel.disabled.value
         prefWidth = ButtonWidth
-        importButtonModel.disabled.onChange {
-            isDisable = it!!
+        importButtonModel.disabled.onChange{
+            it?.also { isDisable = it }
         }
         action {
             importAction(this)
@@ -75,13 +75,13 @@ class ControlPanel : View() {
     private fun importAction(button: Button) {
         val projectVal = controller.project.value
         try {
-            mainController.visualizeProject(projectVal.layers, projectVal.frames.map { it.frame })
-            mainController.displayCatalogueFrames(projectVal.frames.map { it.frame })
+            mainController.visualizeProject(projectVal.layers, projectVal.frames.map { it.importerFrame })
+            mainController.displayCatalogueFrames(projectVal.frames.map { it.importerFrame })
             controller.project.set(null)
             button.isDisable = true
             MenuBarView().importer.close()
         } catch (e: Exception) {
-            createAlert("Visualization error", MenuBarView().importer.root.scene.window)
+            createAlertForError("Visualization error", find<ImporterView>().root.scene.window)
         }
     }
 
