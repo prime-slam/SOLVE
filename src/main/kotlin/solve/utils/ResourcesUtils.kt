@@ -59,7 +59,3 @@ fun loadBufferedImage(filePath: String): BufferedImage? {
 
     return image
 }
-
-fun MutableList<String>.toStringWithoutBrackets(): String {
-    return this.toString().replace("[", "").replace("]", "")
-}

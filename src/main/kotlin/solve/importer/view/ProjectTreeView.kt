@@ -78,9 +78,10 @@ open class ProjectTreeView : View() {
             object : TreeTableCell<FileInTree, FileInfo?>() {
                 override fun updateItem(item: FileInfo?, empty: Boolean) {
                     super.updateItem(item, empty)
-                    text = if (empty) null
-                    else item!!.error.toStringWithoutBrackets()
-                    if (!empty && text.isNotEmpty()){
+                    text = if (empty) {
+                        null
+                    } else item!!.error.toStringWithoutBrackets()
+                    if (!empty && text.isNotEmpty()) {
                         tooltip(text)
                     }
                 }
