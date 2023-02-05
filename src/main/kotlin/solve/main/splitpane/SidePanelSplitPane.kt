@@ -5,47 +5,60 @@ import javafx.scene.Node
 class SidePanelSplitPane(
     dividersInitialPositions: List<Double>,
     private val containedNodes: List<Node>,
-    private val sidePanelLocation: SidePanelLocation
+    private val panelsLocation: SidePanelLocation
 ): FixedSplitPane(dividersInitialPositions, containedNodes)  {
-    private var lastRemovedDivider: Divider? = null
+    private var isLeftSidePanelHidden = false
+    private var isRightSidePanelHidden = false
 
-    fun hideNode(node: Node) {
-        if (!isSidePanelNode(node))
-            return
-
-        val dividersBeforeHiding = dividers.toSet()
-        items.remove(node)
-        lastRemovedDivider = dividersBeforeHiding.minus(dividers).first()
-    }
-
-    fun showNode(node: Node) {
-        if (!isSidePanelNode(node) || items.contains(node)) {
+    fun hideNodeAt(location: SidePanelLocation) {
+        if (!isSidePanelLocation(location)) {
             return
         }
 
-        val nodeIndex = containedNodes.indexOf(node)
+        if (location == SidePanelLocation.Left && !isLeftSidePanelHidden) {
+            items.removeFirst()
+            isLeftSidePanelHidden = true
+        } else if (location == SidePanelLocation.Right && !isRightSidePanelHidden) {
+            items.removeLast()
+            isRightSidePanelHidden = true
+        } else {
+            return
+        }
 
-        val dividersBeforeAdding = dividers.toSet()
-        items.add(nodeIndex, node)
-        val addedDivider = dividers.minus(dividersBeforeAdding).first()
-
-        initializeAddedDivider(addedDivider)
+        reinitializeDividersPositions()
     }
 
-    private fun initializeAddedDivider(addedDivider: Divider) {
-        dividersInstalledPositions[addedDivider] = dividersInstalledPositions[lastRemovedDivider] ?: 0.0
-        dividersInstalledPositions.remove(lastRemovedDivider)
-        addedDivider.position = dividersInstalledPositions[addedDivider] ?: 0.0
-        initializeDividerPositionControl(addedDivider)
+    fun showNodeAt(location: SidePanelLocation) {
+        if (!isSidePanelLocation(location)) {
+            return
+        }
+
+        //val dividersBeforeAdding = dividers.toSet()
+        if (location == SidePanelLocation.Left && isLeftSidePanelHidden) {
+            items.add(0, containedNodes.first())
+            isLeftSidePanelHidden = false
+        } else if (location == SidePanelLocation.Right && isRightSidePanelHidden) {
+            items.add(items.lastIndex + 1, containedNodes.last())
+            isRightSidePanelHidden = false
+        } else {
+            return
+        }
+
+        //val addedDivider = dividers.minus(dividersBeforeAdding).first()
+        //initializeDividerPositionControl(addedDivider, installedPositionIndex)
+        reinitializeDividersPositions()
     }
 
-    private fun isSidePanelNode(node: Node): Boolean {
-        return when (sidePanelLocation) {
-            SidePanelLocation.Left -> node == containedNodes.first()
-            SidePanelLocation.Right -> node == containedNodes.last()
-            SidePanelLocation.Both -> node == containedNodes.first() || node == containedNodes.last()
+    private fun reinitializeDividersPositions() {
+        val indexOffset = if (isLeftSidePanelHidden) 1 else 0
+
+        dividers.forEachIndexed { index, divider ->
+            initializeDividerPositionControl(divider, index + indexOffset)
         }
     }
+
+    private fun isSidePanelLocation(location: SidePanelLocation) =
+        panelsLocation == SidePanelLocation.Both || panelsLocation == location
 }
 
 enum class SidePanelLocation {
