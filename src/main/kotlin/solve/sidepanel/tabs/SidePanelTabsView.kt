@@ -1,45 +1,43 @@
-package solve.sidepanel
+package solve.sidepanel.tabs
 
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
-import solve.catalogue.view.CatalogueView
+import solve.main.splitpane.SidePanelLocation
+import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentController
-import solve.utils.*
+import solve.utils.DarkLightGrayColor
+import solve.utils.createPxBoxWithValue
 import tornadofx.*
 
-class SidePanelTabsView: View() {
+abstract class SidePanelTabsView(
+    private val tabs: List<SidePanelTab>,
+    location: SidePanelLocation
+): View() {
     companion object {
         private const val TabIconSize = 20.0
     }
 
-    private val contentController: SidePanelContentController by inject()
-    private val catalogueView: CatalogueView by inject()
+    private val contentControllerArgs = "location" to location
+    private val contentController: SidePanelContentController by inject(scope, contentControllerArgs)
 
-    private lateinit var catalogueTab: SidePanelTab
-    private lateinit var filterTab: SidePanelTab
-    private val initialTab: SidePanelTab by lazy { catalogueTab }
-
-    private val catalogueTabIconImage = loadImage("icons/sidepanel_catalogue_icon.png")
-    private val filterTabIconImage = loadImage("icons/sidepanel_filter_icon.png")
+    private val initialTab: SidePanelTab by lazy { tabs.first() }
 
     private val tabsVBox = vbox()
     private val tabsToggleGroup = ToggleGroup()
     private val tabsToggleButtonsMap = mutableMapOf<SidePanelTab, ToggleButton>()
 
     override val root = tabsVBox.also {
-        initializeTabs()
-        initializeTabsToggleGroup()
         it.addStylesheet(SidePanelTabsStyle::class)
     }
 
-    private fun initializeTabs() {
-        catalogueTab = SidePanelTab("Catalogue", catalogueTabIconImage, catalogueView.root)
-        filterTab = SidePanelTab("Filter", filterTabIconImage, pane()) // TODO: add a filter panel.
+    protected fun initializeTabs() {
+        tabs.forEach {
+            addTab(it)
+        }
 
-        addTab(catalogueTab)
-        addTab(filterTab)
+        initializeTabsToggleGroup()
     }
 
     private fun initializeTabsToggleGroup() {
@@ -94,7 +92,7 @@ class SidePanelTabsStyle: Stylesheet() {
         private val PressedTabColor = DarkLightGrayColor
     }
     init {
-        toggleButton {
+        Stylesheet.toggleButton {
             backgroundColor += DefaultTabColor
             backgroundInsets += createPxBoxWithValue(0.0)
             backgroundRadius += createPxBoxWithValue(0.0)

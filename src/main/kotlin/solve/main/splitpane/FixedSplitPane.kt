@@ -13,7 +13,7 @@ open class FixedSplitPane(
     private var isWindowResizing = false
     private var isWindowResizingDetectionInitialized = false
 
-    protected val dividersInstalledPositions = mutableMapOf<Divider, Double>()
+    private val dividersInstalledPositions = mutableMapOf<Int, Double>()
 
     init {
         if (dividersInitialPositions.count() != containedNodes.count() - 1) {
@@ -29,7 +29,13 @@ open class FixedSplitPane(
         initializeDividers()
     }
 
-    protected fun initializeDividerPositionControl(divider: Divider) {
+    protected fun initializeDividerPositionControl(divider: Divider, installedPositionIndex: Int) {
+        if (installedPositionIndex !in 0 until dividersInstalledPositions.count()) {
+            println("Installed position index is out of range!")
+            return
+        }
+        dividersInstalledPositions[installedPositionIndex]?.let { divider.position = it }
+
         divider.positionProperty().onChange {
             if (!isWindowResizingDetectionInitialized) {
                 initializeWindowResizingDetection()
@@ -38,9 +44,9 @@ open class FixedSplitPane(
             }
 
             if (!isWindowResizing) {
-                dividersInstalledPositions[divider] = divider.position
+                dividersInstalledPositions[installedPositionIndex] = divider.position
             }
-            dividersInstalledPositions[divider]?.let { divider.position = it }
+            dividersInstalledPositions[installedPositionIndex]?.let { divider.position = it }
         }
     }
 
@@ -55,8 +61,8 @@ open class FixedSplitPane(
         dividers.forEachIndexed { index, divider ->
             val initialPosition = dividersInitialPositions[index]
             divider.position = initialPosition
-            dividersInstalledPositions[divider] = initialPosition
-            initializeDividerPositionControl(divider)
+            dividersInstalledPositions[index] = initialPosition
+            initializeDividerPositionControl(divider, index)
         }
     }
 

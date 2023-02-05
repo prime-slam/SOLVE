@@ -1,6 +1,7 @@
 package solve.main
 
 import solve.catalogue.controller.CatalogueController
+import solve.main.splitpane.SidePanelLocation
 import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
 import solve.scene.SceneFacade
@@ -16,12 +17,12 @@ class MainController : Controller() {
 
     fun displayCatalogueFrames(frames: List<ProjectFrame>) = catalogueController.setCatalogueFrames(frames)
 
-    fun hideSidePanelContent() {
-        view.hideSidePanelContent()
+    fun hideSidePanelContent(location: SidePanelLocation) {
+        view.hideSidePanelContent(location)
     }
 
-    fun showSidePanelContent() {
-        view.showSidePanelContent()
+    fun showSidePanelContent(location: SidePanelLocation) {
+        view.showSidePanelContent(location)
     }
 
     fun visualizeProject(layers: List<ProjectLayer>, frames: List<ProjectFrame>) = sceneFacade.visualize(layers, frames)
