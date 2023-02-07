@@ -53,10 +53,10 @@ open class ProjectTreeView : View() {
                 override fun updateItem(item: FileInfo?, empty: Boolean) {
                     super.updateItem(item, empty)
                     text = if (empty) null else item?.name
-                    if (item != null) {
-                        graphic = if (empty) {
-                            null
-                        } else {
+                    graphic = if (empty) {
+                        null
+                    } else {
+                        if (item != null) {
                             if (item.isLeaf) {
                                 if (item.errors.isEmpty()) {
                                     ImageView(fileIcon)
@@ -70,6 +70,9 @@ open class ProjectTreeView : View() {
                                     ImageView(errorFolderIcon)
                                 }
                             }
+                        }
+                        else {
+                            ImageView()
                         }
                     }
                 }
