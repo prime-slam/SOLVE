@@ -104,7 +104,7 @@ object ProjectParser {
         if (errorOutputs.isNotEmpty()) {
             createAlertForError(
                 "$errorOutputs are incorrect names of files. They can't be converted to Long",
-                importer.root.scene.window
+                ownerWindow
             )
         }
     }
@@ -197,7 +197,6 @@ object ProjectParser {
         }
         return ImporterProject(Path(path), frames, layers, hasAnyErrors)
     }
-
 
     fun createTreeWithFiles(project: ImporterProject, tree: TreeItem<FileInTree>): TreeItem<FileInTree> {
         tree.value = FileInTree(FileInfo())
