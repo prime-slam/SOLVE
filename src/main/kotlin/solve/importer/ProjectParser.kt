@@ -53,11 +53,7 @@ object ProjectParser {
         fun addNoSomeAlgorithmErrorMessage() {
             val missingAlgorithms = diffString.toMutableList().toStringWithoutBrackets()
             val imageTimestamp = frame.importerFrame.timestamp
-            if (diff.count() == 1) {
-                frame.errorMessage.add("There is no $missingAlgorithms algorithm for image $imageTimestamp")
-            } else {
-                frame.errorMessage.add("There are no $missingAlgorithms algorithms for image $imageTimestamp")
-            }
+            frame.errorMessage.add("There ${if (diff.count() == 1) "is" else "are"} no $missingAlgorithms for image $imageTimestamp")
         }
 
         if (diff.isNotEmpty()) {
@@ -123,17 +119,13 @@ object ProjectParser {
 
         fun alertErrorImages() {
             if (errorImages.isNotEmpty()) {
-                if (errorImages.count() == 1) {
-                    createAlertForError(
-                        "Image ${errorImages.toStringWithoutBrackets()} is skipped, " +
-                                "because the file name can't be converted to long", ownerWindow
-                    )
-                } else {
-                    createAlertForError(
-                        "Image ${errorImages.first()} and ${errorImages.count() - 1} others are skipped, " +
-                                "because the file name can't be converted to long", ownerWindow
-                    )
-                }
+                createAlertForError(
+                    "Image ${
+                        if (errorImages.count() == 1) "${errorImages.toStringWithoutBrackets()} is"
+                        else "${errorImages.first()} and ${errorImages.count() - 1} others are"
+                    } " +
+                            "because the file name can't be converted to long", ownerWindow
+                )
             }
         }
 
@@ -150,19 +142,14 @@ object ProjectParser {
         var isImagesExist = false
 
         fun alertErrorFolderMessage() {
-            if (errorFolders.count() == 1) {
-                createAlertForError(
-                    "The directory ${errorFolders.toStringWithoutBrackets()} is skipped, " +
-                            "because names of folders don't contain correct kind name. " +
-                            "The correct directory name should look like: name_kind", ownerWindow
-                )
-            } else {
-                createAlertForError(
-                    "The directory ${errorFolders.first()}  and ${errorFolders.count() - 1} others are skipped, " +
-                            "because names of folders don't contain correct kind name. " +
-                            "The correct directory name should look like: name_kind", ownerWindow
-                )
-            }
+            createAlertForError(
+                "The directory ${
+                    if (errorFolders.count() == 1) "${errorFolders.toStringWithoutBrackets()} is" else
+                        "${errorFolders.first()} and ${errorFolders.count() - 1} others are"
+                } skipped, " +
+                        "because names of folders don't contain correct kind name. " +
+                        "The correct directory name should look like: name_kind", ownerWindow
+            )
         }
 
         for (folder in directory.listFiles()) {
