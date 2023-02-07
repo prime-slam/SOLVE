@@ -52,21 +52,23 @@ open class ProjectTreeView : View() {
 
                 override fun updateItem(item: FileInfo?, empty: Boolean) {
                     super.updateItem(item, empty)
-                    text = if (empty) null else item!!.name
-                    graphic = if (empty) {
-                        null
-                    } else {
-                        if (item!!.isLeaf) {
-                            if (item.error.isEmpty()) {
-                                ImageView(fileIcon)
-                            } else {
-                                ImageView(errorFileIcon)
-                            }
+                    text = if (empty) null else item?.name
+                    if (item != null) {
+                        graphic = if (empty) {
+                            null
                         } else {
-                            if (item.error.isEmpty()) {
-                                ImageView(imageIcon)
+                            if (item.isLeaf) {
+                                if (item.errors.isEmpty()) {
+                                    ImageView(fileIcon)
+                                } else {
+                                    ImageView(errorFileIcon)
+                                }
                             } else {
-                                ImageView(errorFolderIcon)
+                                if (item.errors.isEmpty()) {
+                                    ImageView(imageIcon)
+                                } else {
+                                    ImageView(errorFolderIcon)
+                                }
                             }
                         }
                     }
@@ -80,7 +82,7 @@ open class ProjectTreeView : View() {
                     super.updateItem(item, empty)
                     text = if (empty) {
                         null
-                    } else item!!.error.toStringWithoutBrackets()
+                    } else item?.errors?.toStringWithoutBrackets()
                     if (!empty && text.isNotEmpty()) {
                         tooltip(text)
                     }
