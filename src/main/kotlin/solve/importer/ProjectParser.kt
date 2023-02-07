@@ -205,7 +205,7 @@ object ProjectParser {
                         FileInfo(it.importerFrame.timestamp.toString()),
                     )
                 ).apply {
-                    this.value.file.error.add(it.errorMessage.toString())
+                    this.value.file.errors.add(it.errorMessage.toString())
                 }
             } else {
                 TreeItem(FileInTree(FileInfo(it.importerFrame.timestamp.toString())))

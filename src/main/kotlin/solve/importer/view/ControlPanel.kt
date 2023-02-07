@@ -44,8 +44,8 @@ class ControlPanel : View() {
         buttonController.changeDisable(importButtonModel)
         isDisable = importButtonModel.disabled.value
         prefWidth = ButtonWidth
-        importButtonModel.disabled.onChange{
-            it?.also { isDisable = it }
+        importButtonModel.disabled.onChange{ disableValue ->
+            disableValue?.also { isDisable = it }
         }
         action {
             importAction(this)
