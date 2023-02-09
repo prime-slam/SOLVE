@@ -9,7 +9,7 @@ import tornadofx.*
 class SidePanelContentController : Controller() {
     private val location: SidePanelLocation by param()
 
-    private val view = find(SidePanelContentView::class, scope)
+    private val view: SidePanelContentView by inject(scope)
     private val mainController: MainController by inject(FX.defaultScope)
 
     private var isContentShowing = true

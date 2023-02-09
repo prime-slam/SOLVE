@@ -46,9 +46,9 @@ class CatalogueView : View() {
     private val selectedFrames: List<ProjectFrame>
         get() = displayingFieldsView?.selectedFrames ?: emptyList()
 
-    private val fieldsViewArgs = Pair("fields", fields)
-    private val fileNamesFieldsView = find<CatalogueFileNamesFieldsView>(fieldsViewArgs)
-    private val previewImagesFieldsView = find<CataloguePreviewImagesFieldsView>(fieldsViewArgs)
+    private val fieldsViewParams = Pair("fields", fields)
+    private val fileNamesFieldsView = find<CatalogueFileNamesFieldsView>(fieldsViewParams)
+    private val previewImagesFieldsView = find<CataloguePreviewImagesFieldsView>(fieldsViewParams)
 
     private lateinit var fieldsVBox: VBox
 

@@ -11,18 +11,18 @@ import solve.utils.DarkLightGrayColor
 import solve.utils.createPxBoxWithValue
 import tornadofx.*
 
-abstract class SidePanelTabsView(
-    private val tabs: List<SidePanelTab>,
-    location: SidePanelLocation
-): View() {
+class SidePanelTabsView: View() {
     companion object {
         private const val TabIconSize = 20.0
     }
 
-    private val contentControllerArgs = "location" to location
-    private val contentController: SidePanelContentController by inject(scope, contentControllerArgs)
+    private val location: SidePanelLocation by param()
+    private val tabs: List<SidePanelTab> by param()
 
-    private val initialTab: SidePanelTab by lazy { tabs.first() }
+    private val contentControllerParams = "location" to location
+    private val contentController: SidePanelContentController by inject(scope, contentControllerParams)
+
+    private val initialTab = tabs.first()
 
     private val tabsVBox = vbox()
     private val tabsToggleGroup = ToggleGroup()
@@ -32,17 +32,9 @@ abstract class SidePanelTabsView(
         it.addStylesheet(SidePanelTabsStyle::class)
     }
 
-    protected fun initializeTabs() {
-        tabs.forEach {
-            addTab(it)
-        }
-
-        initializeTabsToggleGroup()
-    }
-
-    private fun initializeTabsToggleGroup() {
-        onTabSelected(initialTab)
-        tabsToggleGroup.selectToggle(tabsToggleButtonsMap[initialTab])
+    init {
+        addTabs()
+        initializeTabsToggle()
     }
 
     private fun addTab(tab: SidePanelTab) {
@@ -82,6 +74,15 @@ abstract class SidePanelTabsView(
         } else {
             contentController.clearContent()
         }
+    }
+
+    private fun addTabs() {
+        tabs.forEach { addTab(it) }
+    }
+
+    private fun initializeTabsToggle() {
+        tabsToggleGroup.selectToggle(tabsToggleButtonsMap[initialTab])
+        onTabSelected(initialTab)
     }
 }
 
