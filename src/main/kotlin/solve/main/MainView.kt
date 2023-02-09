@@ -1,13 +1,16 @@
 package solve.main
 
+import solve.catalogue.view.CatalogueView
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
 import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
+import solve.settings.visualization.VisualizationSettingsView
+import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentView
-import solve.sidepanel.tabs.LeftSidePanelTabsView
-import solve.sidepanel.tabs.RightSidePanelTabsView
+import solve.sidepanel.tabs.SidePanelTabsView
 import solve.utils.createPxBox
+import solve.utils.loadImage
 import tornadofx.*
 
 class MainView : View() {
@@ -22,11 +25,30 @@ class MainView : View() {
 
     private val leftSidePanelScope = Scope()
     private val rightSidePanelScope = Scope()
-    private val leftSidePanelTabsView: LeftSidePanelTabsView by inject(leftSidePanelScope)
-    private val rightSidePanelTabsView: RightSidePanelTabsView by inject(rightSidePanelScope)
 
     private val leftSidePanelContentView: SidePanelContentView by inject(leftSidePanelScope)
     private val rightSidePanelContentView: SidePanelContentView by inject(rightSidePanelScope)
+
+    private val leftSidePanelTabs = listOf(SidePanelTab(
+        "Catalogue",
+        loadImage("icons/sidepanel_catalogue_icon.png"),
+        find<CatalogueView>().root
+    ))
+    private val rightSidePanelTabs = listOf(SidePanelTab(
+        "Visualization",
+        loadImage("icons/visualization_settings_icon.png"),
+        find<VisualizationSettingsView>().root
+    ))
+    private val tabsViewLocationParamName = "location"
+    private val tabsViewTabsParamName = "tabs"
+
+    private val leftSidePanelTabsViewParams =
+        mapOf(tabsViewLocationParamName to SidePanelLocation.Left, tabsViewTabsParamName to leftSidePanelTabs)
+    private val rightSidePanelTabsViewParams =
+        mapOf(tabsViewLocationParamName to SidePanelLocation.Right, tabsViewTabsParamName to rightSidePanelTabs)
+    private val leftSidePanelTabsView: SidePanelTabsView by inject(leftSidePanelScope, leftSidePanelTabsViewParams)
+    private val rightSidePanelTabsView: SidePanelTabsView by inject(rightSidePanelScope, rightSidePanelTabsViewParams)
+
 
     private val mainViewBorderPane = borderpane {
         top<MenuBarView>()
@@ -46,7 +68,7 @@ class MainView : View() {
             SidePanelLocation.Both
         )
         mainViewSplitPane.addStylesheet(MainSplitPaneStyle::class)
-        center = mainViewSplitPane.also { println(1) }
+        center = mainViewSplitPane
         left = leftSidePanelTabsView.root
         right = rightSidePanelTabsView.root
     }
