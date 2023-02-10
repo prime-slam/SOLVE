@@ -11,8 +11,6 @@ open class FixedSplitPane(
     private val containedNodes: List<Node>
 ): SplitPane() {
     private var isWindowResizing = false
-    private var isWindowResizingDetectionInitialized = false
-
     private val dividersInstalledPositions = mutableMapOf<Int, Double>()
 
     init {
@@ -37,16 +35,14 @@ open class FixedSplitPane(
         dividersInstalledPositions[installedPositionIndex]?.let { divider.position = it }
 
         divider.positionProperty().onChange {
-            if (!isWindowResizingDetectionInitialized) {
-                initializeWindowResizingDetection()
-                isWindowResizingDetectionInitialized = true
-                return@onChange
-            }
-
             if (!isWindowResizing) {
                 dividersInstalledPositions[installedPositionIndex] = divider.position
             }
             dividersInstalledPositions[installedPositionIndex]?.let { divider.position = it }
+        }
+
+        Platform.runLater {
+            initializeWindowResizingDetection()
         }
     }
 

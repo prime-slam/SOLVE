@@ -1,5 +1,8 @@
 package solve.scene.model
 
+import javafx.beans.property.SimpleObjectProperty
+import javafx.scene.paint.Color
+
 // Contains settings that should be reused when scene is recreated
 // Stores common context for landmarks drawing.
 // Layers properties being edited in the settings menu.
@@ -10,17 +13,23 @@ sealed class LayerSettings(val name: String) {
     val colorManager = ColorManager<Long>()
 
     class PointLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
-        var color = layerColorManager.getColor(name)
+        val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
+
+        var color: Color
+            get() = colorProperty.get()
             set(value) {
-                field = value
+                colorProperty.set(value)
                 layerColorManager.setColor(name, value)
             }
     }
 
     class LineLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
-        var color = layerColorManager.getColor(name)
+        val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
+
+        var color: Color
+            get() = colorProperty.get()
             set(value) {
-                field = value
+                colorProperty.set(value)
                 layerColorManager.setColor(name, value)
             }
     }
