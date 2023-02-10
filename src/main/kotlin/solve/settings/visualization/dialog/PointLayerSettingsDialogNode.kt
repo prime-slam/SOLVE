@@ -1,11 +1,6 @@
 package solve.settings.visualization.dialog
 
 import javafx.application.Platform
-import javafx.scene.Node
-import javafx.scene.effect.DropShadow
-import javafx.scene.paint.Color
-import javafx.scene.text.Font
-import solve.scene.controller.SceneController
 import solve.utils.*
 import tornadofx.*
 
