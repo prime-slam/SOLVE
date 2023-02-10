@@ -15,6 +15,7 @@ import solve.catalogue.view.fields.CatalogueFileNamesFieldsView
 import solve.project.model.ProjectFrame
 import solve.catalogue.synchronizeListViewsSelections
 import solve.catalogue.view.fields.CatalogueFieldsView
+import solve.utils.createInsetsWithValue
 import solve.utils.loadImage
 import tornadofx.*
 
@@ -83,7 +84,7 @@ class CatalogueView : View() {
             padding = Insets(5.0, 5.0, 5.0, 10.0)
             hgrow = Priority.ALWAYS
         }
-        padding = Insets(5.0, 5.0, 5.0, 5.0)
+        padding = createInsetsWithValue(5.0)
         vgrow = Priority.ALWAYS
     }
 
