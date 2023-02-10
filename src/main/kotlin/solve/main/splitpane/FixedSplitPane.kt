@@ -11,7 +11,7 @@ open class FixedSplitPane(
     private val containedNodes: List<Node>
 ): SplitPane() {
     private var isWindowResizing = false
-    private val dividersInstalledPositions = mutableMapOf<Int, Double>()
+    protected val dividersInstalledPositions = mutableMapOf<Int, Double>()
 
     init {
         if (dividersInitialPositions.count() != containedNodes.count() - 1) {
@@ -27,13 +27,10 @@ open class FixedSplitPane(
         initializeDividers()
     }
 
-    protected fun initializeDividerPositionControl(divider: Divider, installedPositionIndex: Int) {
-        if (installedPositionIndex !in 0 until dividersInstalledPositions.count()) {
-            println("Installed position index is out of range!")
-            return
-        }
-        dividersInstalledPositions[installedPositionIndex]?.let { divider.position = it }
+    protected fun positionIndexInRange(positionIndex: Int) =
+        positionIndex in 0 until dividersInstalledPositions.count()
 
+    protected fun initializeDividerPositionControl(divider: Divider, installedPositionIndex: Int) {
         divider.positionProperty().onChange {
             if (!isWindowResizing) {
                 dividersInstalledPositions[installedPositionIndex] = divider.position
@@ -44,6 +41,16 @@ open class FixedSplitPane(
         Platform.runLater {
             initializeWindowResizingDetection()
         }
+    }
+
+    private fun initializeDividerPosition(divider: Divider, installedPositionIndex: Int) {
+        if (!positionIndexInRange(installedPositionIndex)) {
+            println("Installed position index is out of range!")
+            return
+        }
+        dividersInstalledPositions[installedPositionIndex]?.let { divider.position = it }
+
+        initializeDividerPositionControl(divider, installedPositionIndex)
     }
 
     private fun initializeContainingNodes() {
@@ -58,7 +65,7 @@ open class FixedSplitPane(
             val initialPosition = dividersInitialPositions[index]
             divider.position = initialPosition
             dividersInstalledPositions[index] = initialPosition
-            initializeDividerPositionControl(divider, index)
+            initializeDividerPosition(divider, index)
         }
     }
 
