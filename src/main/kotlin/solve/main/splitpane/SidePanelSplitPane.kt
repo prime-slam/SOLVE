@@ -1,12 +1,18 @@
 package solve.main.splitpane
 
+import javafx.application.Platform
 import javafx.scene.Node
+import tornadofx.onChange
 
 class SidePanelSplitPane(
     dividersInitialPositions: List<Double>,
     private val containedNodes: List<Node>,
     private val panelsLocation: SidePanelLocation
 ): FixedSplitPane(dividersInitialPositions, containedNodes)  {
+    companion object {
+        private const val MinimalDividersPositionDifference = 0.001
+    }
+
     private var isLeftSidePanelHidden = false
     private var isRightSidePanelHidden = false
 
@@ -33,7 +39,6 @@ class SidePanelSplitPane(
             return
         }
 
-        //val dividersBeforeAdding = dividers.toSet()
         if (location == SidePanelLocation.Left && isLeftSidePanelHidden) {
             items.add(0, containedNodes.first())
             isLeftSidePanelHidden = false
@@ -44,8 +49,6 @@ class SidePanelSplitPane(
             return
         }
 
-        //val addedDivider = dividers.minus(dividersBeforeAdding).first()
-        //initializeDividerPositionControl(addedDivider, installedPositionIndex)
         reinitializeDividersPositions()
     }
 
@@ -53,12 +56,58 @@ class SidePanelSplitPane(
         val indexOffset = if (isLeftSidePanelHidden) 1 else 0
 
         dividers.forEachIndexed { index, divider ->
-            initializeDividerPositionControl(divider, index + indexOffset)
+            reinitializeDividerPositionsControl(divider, index + indexOffset)
         }
+    }
+
+    private fun reinitializeDividerPositionsControl(divider: Divider, installedPositionIndex: Int) {
+        if (!positionIndexInRange(installedPositionIndex)) {
+            println("Installed position index is out of range!")
+            return
+        }
+
+        val installedPosition = dividersInstalledPositions[installedPositionIndex]
+        val notHiddenDividersIndices = getNotHiddenDividersIndices()
+        if (installedPosition != null && notHiddenDividersIndices != null) {
+            val rightDividersWithLessPosition = dividersInstalledPositions.filter { entry ->
+                entry.key in notHiddenDividersIndices &&
+                entry.key > installedPositionIndex &&
+                entry.value <= installedPosition
+            }
+            val leftDividersWithGreaterPosition = dividersInstalledPositions.filter { entry ->
+                entry.key in notHiddenDividersIndices &&
+                entry.key < installedPositionIndex &&
+                entry.value >= installedPosition
+            }
+
+            var setPosition = installedPosition
+            if (leftDividersWithGreaterPosition.isNotEmpty()) {
+                setPosition =
+                    leftDividersWithGreaterPosition.maxOf { entry -> entry.value } - MinimalDividersPositionDifference
+            }
+            if (rightDividersWithLessPosition.isNotEmpty()) {
+                setPosition =
+                    rightDividersWithLessPosition.minOf { entry -> entry.value } + MinimalDividersPositionDifference
+            }
+            divider.position = setPosition
+        }
+
+        initializeDividerPositionControl(divider, installedPositionIndex)
     }
 
     private fun isSidePanelLocation(location: SidePanelLocation) =
         panelsLocation == SidePanelLocation.Both || panelsLocation == location
+
+    private fun getNotHiddenDividersIndices() : IntRange? {
+        val dividersCount = dividersInstalledPositions.count()
+        val firstIndex = if (!isLeftSidePanelHidden) 0 else 1
+        val lastIndex = if (!isRightSidePanelHidden) dividersCount - 1 else dividersCount - 2
+
+        if (firstIndex > lastIndex) {
+            return null
+        }
+        return firstIndex..lastIndex
+    }
 }
 
 enum class SidePanelLocation {
