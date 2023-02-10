@@ -1,6 +1,7 @@
 package solve.scene.model
 
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.paint.Color
 
 // Contains settings that should be reused when scene is recreated
@@ -12,11 +13,15 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     // Is used to set unique colors for all landmarks in the layer
     private val colorManager = ColorManager<Long>()
 
-    var color = layerColorManager.getColor(name)
+    val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
+    var color: Color
+        get() = colorProperty.get()
         set(value) {
-            field = value
+            colorProperty.set(value)
             layerColorManager.setColor(name, value)
         }
+
+    val useOneColor = SimpleBooleanProperty(true)
 
     fun getColor(landmark: Landmark): Color {
         if (useOneColor.value) {
@@ -28,12 +33,10 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     fun getUniqueColor(landmark: Landmark): Color = colorManager.getColor(landmark.uid)
 
     class PointLayerSettings(name: String, layerColorManager: ColorManager<String>) :
-        LayerSettings(name, layerColorManager) {
-    }
+        LayerSettings(name, layerColorManager)
 
     class LineLayerSettings(name: String, layerColorManager: ColorManager<String>) :
-        LayerSettings(name, layerColorManager) {
-    }
+        LayerSettings(name, layerColorManager)
 
     class PlaneLayerSettings(name: String, layerColorManager: ColorManager<String>) :
         LayerSettings(name, layerColorManager) {
@@ -50,6 +53,4 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
         }
 
     var enabled: Boolean = true
-
-    val useOneColor = SimpleBooleanProperty(true)
 }

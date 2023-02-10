@@ -36,7 +36,7 @@ class MainView : View() {
     ))
     private val rightSidePanelTabs = listOf(SidePanelTab(
         "Visualization",
-        loadImage("icons/visualization_settings_icon.png"),
+        loadImage("icons/sidepanel_visualization_settings_icon.png"),
         find<VisualizationSettingsView>().root
     ))
     private val tabsViewLocationParamName = "location"

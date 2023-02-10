@@ -4,6 +4,7 @@ import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import solve.scene.model.Landmark
 import solve.scene.view.utils.*
+import tornadofx.onChange
 
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
@@ -74,6 +75,10 @@ class KeypointView(
         val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
         shape.fill = keypoint.layerSettings.getColor(keypoint)
         shape.opacity = keypoint.layerSettings.opacity
+
+        keypoint.layerSettings.colorProperty.onChange {
+            shape.fill = keypoint.layerSettings.color
+        }
 
         return shape
     }

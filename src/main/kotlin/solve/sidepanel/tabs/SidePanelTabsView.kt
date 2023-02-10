@@ -2,12 +2,12 @@ package solve.sidepanel.tabs
 
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
-import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import solve.main.splitpane.SidePanelLocation
 import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentController
 import solve.utils.DarkLightGrayColor
+import solve.utils.createImageViewIcon
 import solve.utils.createPxBoxWithValue
 import tornadofx.*
 
@@ -42,7 +42,7 @@ class SidePanelTabsView: View() {
             graphic = group {
                 label(tab.name) {
                     tab.icon?.let {
-                        val iconImageView = createTabIconImageView(it)
+                        val iconImageView = createImageViewIcon(it, TabIconSize)
                         graphic = pane {
                             add(iconImageView)
                             paddingLeft = 5
@@ -61,11 +61,6 @@ class SidePanelTabsView: View() {
         }
         tabsVBox.add(tabButton)
         tabsToggleButtonsMap[tab] = tabButton
-    }
-
-    private fun createTabIconImageView(iconImage: Image) = imageview(iconImage) {
-        fitHeight = TabIconSize
-        isPreserveRatio = true
     }
 
     private fun onTabSelected(tab: SidePanelTab) {
@@ -93,7 +88,7 @@ class SidePanelTabsStyle: Stylesheet() {
         private val PressedTabColor = DarkLightGrayColor
     }
     init {
-        Stylesheet.toggleButton {
+        toggleButton {
             backgroundColor += DefaultTabColor
             backgroundInsets += createPxBoxWithValue(0.0)
             backgroundRadius += createPxBoxWithValue(0.0)
