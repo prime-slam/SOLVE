@@ -18,11 +18,13 @@ class SidePanelTabsView: View() {
 
     private val location: SidePanelLocation by param()
     private val tabs: List<SidePanelTab> by param()
+    private val initialTab: SidePanelTab? by param()
 
-    private val contentControllerParams = "location" to location
+    private val haveInitialTab: Boolean
+        get() = initialTab != null
+
+    private val contentControllerParams = mapOf("location" to location, "isContentShowingParam" to haveInitialTab)
     private val contentController: SidePanelContentController by inject(scope, contentControllerParams)
-
-    private val initialTab = tabs.first()
 
     private val tabsVBox = vbox()
     private val tabsToggleGroup = ToggleGroup()
@@ -76,8 +78,14 @@ class SidePanelTabsView: View() {
     }
 
     private fun initializeTabsToggle() {
-        tabsToggleGroup.selectToggle(tabsToggleButtonsMap[initialTab])
-        onTabSelected(initialTab)
+        if (haveInitialTab) {
+            if (tabs.contains(initialTab)) {
+                tabsToggleGroup.selectToggle(tabsToggleButtonsMap[initialTab])
+                onTabSelected(initialTab ?: return)
+            }
+        } else {
+            tabsToggleGroup.selectToggle(null)
+        }
     }
 }
 

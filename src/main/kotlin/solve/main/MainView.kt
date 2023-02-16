@@ -1,5 +1,6 @@
 package solve.main
 
+import javafx.application.Platform
 import solve.catalogue.view.CatalogueView
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
@@ -16,7 +17,7 @@ import tornadofx.*
 class MainView : View() {
     companion object {
         private const val LeftSidePanelAndSceneDividerPosition = 0.25
-        private const val RightSidePanelAndSceneDividerPosition = 0.75
+        private const val RightSidePanelAndSceneDividerPosition = 0.9
     }
 
     private val sceneView: SceneView by inject()
@@ -41,14 +42,18 @@ class MainView : View() {
     ))
     private val tabsViewLocationParamName = "location"
     private val tabsViewTabsParamName = "tabs"
+    private val tabsViewInitialTabParamName = "initialTab"
 
     private val leftSidePanelTabsViewParams =
-        mapOf(tabsViewLocationParamName to SidePanelLocation.Left, tabsViewTabsParamName to leftSidePanelTabs)
+        mapOf(
+            tabsViewLocationParamName to SidePanelLocation.Left,
+            tabsViewTabsParamName to leftSidePanelTabs,
+            tabsViewInitialTabParamName to leftSidePanelTabs.first()
+        )
     private val rightSidePanelTabsViewParams =
         mapOf(tabsViewLocationParamName to SidePanelLocation.Right, tabsViewTabsParamName to rightSidePanelTabs)
     private val leftSidePanelTabsView: SidePanelTabsView by inject(leftSidePanelScope, leftSidePanelTabsViewParams)
     private val rightSidePanelTabsView: SidePanelTabsView by inject(rightSidePanelScope, rightSidePanelTabsViewParams)
-
 
     private val mainViewBorderPane = borderpane {
         top<MenuBarView>()
@@ -65,7 +70,8 @@ class MainView : View() {
         mainViewSplitPane = SidePanelSplitPane(
             splitPaneDividersPositions,
             splitPaneContainedNodes,
-            SidePanelLocation.Both
+            SidePanelLocation.Both,
+            SidePanelLocation.Left
         )
         mainViewSplitPane.addStylesheet(MainSplitPaneStyle::class)
         center = mainViewSplitPane

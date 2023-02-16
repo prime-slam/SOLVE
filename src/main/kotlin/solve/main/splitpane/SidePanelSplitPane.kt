@@ -1,13 +1,12 @@
 package solve.main.splitpane
 
-import javafx.application.Platform
 import javafx.scene.Node
-import tornadofx.onChange
 
 class SidePanelSplitPane(
     dividersInitialPositions: List<Double>,
     private val containedNodes: List<Node>,
-    private val panelsLocation: SidePanelLocation
+    private val panelsLocation: SidePanelLocation,
+    private val initiallyDisplayingLocation: SidePanelLocation
 ): FixedSplitPane(dividersInitialPositions, containedNodes)  {
     companion object {
         private const val MinimalDividersPositionDifference = 0.001
@@ -15,6 +14,10 @@ class SidePanelSplitPane(
 
     private var isLeftSidePanelHidden = false
     private var isRightSidePanelHidden = false
+
+    init {
+        hideInitiallyNonDisplayingNodes()
+    }
 
     fun hideNodeAt(location: SidePanelLocation) {
         if (!isSidePanelLocation(location)) {
@@ -39,11 +42,12 @@ class SidePanelSplitPane(
             return
         }
 
+        val showingNode = getSideNode(location)
         if (location == SidePanelLocation.Left && isLeftSidePanelHidden) {
-            items.add(0, containedNodes.first())
+            items.add(0, showingNode)
             isLeftSidePanelHidden = false
         } else if (location == SidePanelLocation.Right && isRightSidePanelHidden) {
-            items.add(items.lastIndex + 1, containedNodes.last())
+            items.add(items.lastIndex + 1, showingNode)
             isRightSidePanelHidden = false
         } else {
             return
@@ -107,6 +111,20 @@ class SidePanelSplitPane(
             return null
         }
         return firstIndex..lastIndex
+    }
+
+    private fun getSideNode(nodeLocation: SidePanelLocation) = when(nodeLocation) {
+        SidePanelLocation.Left -> containedNodes.first()
+        SidePanelLocation.Right -> containedNodes.last()
+        else -> null
+    }
+
+    private fun hideInitiallyNonDisplayingNodes() {
+        when(initiallyDisplayingLocation) {
+            SidePanelLocation.Left -> hideNodeAt(SidePanelLocation.Right)
+            SidePanelLocation.Right -> hideNodeAt(SidePanelLocation.Left)
+            else -> return
+        }
     }
 }
 
