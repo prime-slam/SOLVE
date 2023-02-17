@@ -6,7 +6,7 @@ import javafx.scene.control.OverrunStyle
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.stage.DirectoryChooser
-import solve.importer.ProjectParser.parseDirectory
+import solve.importer.ProjectParser.partialParseDirectory
 import solve.importer.controller.ImporterController
 import solve.utils.loadImage
 import tornadofx.*
@@ -39,21 +39,21 @@ class DirectoryPathView : View() {
     }
 
     private val countImagesLabel = label {
-        visibleWhen { controller.project.isNotNull }
-        controller.project.onChange {
-            val countFiles = it?.frames?.count()
+        visibleWhen { controller.projectAfterPartialParsing.isNotNull }
+        controller.projectAfterPartialParsing.onChange {
+            val countFiles = it?.value?.count()
             this.text = "$countFiles images found"
             this.graphic = ImageView(filesCountIcon)
         }
     }
 
     private val countErrorsLabel = label {
-        visibleWhen { controller.project.isNotNull }
+        visibleWhen { controller.projectAfterPartialParsing.isNotNull }
         padding = Insets(3.0, 0.0, 5.0, 0.0)
-        controller.project.onChange {
+        controller.projectAfterPartialParsing.onChange {
             var countErrors = 0
-            it?.frames?.forEach { frame ->
-                if (frame.isImageErrored)
+            it?.value?.forEach { frame ->
+                if (frame.image.errors.isNotEmpty())
                     countErrors += 1
             }
             this.text = "$countErrors errors"
@@ -65,11 +65,11 @@ class DirectoryPathView : View() {
         vbox {
             controller.directoryPath.onChange {
                 if (!it.isNullOrEmpty()) {
-                    val tempProject = parseDirectory(it.toString())
-                    if (tempProject == null) {
+                    val projectAfterPartialParsing = partialParseDirectory(it.toString())
+                    if (projectAfterPartialParsing == null) {
                         controller.directoryPath.set(null)
                     }
-                    controller.project.set(tempProject)
+                    controller.projectAfterPartialParsing.set(projectAfterPartialParsing)
                     if (controller.directoryPath.value != null) {
                         directoryChooser.initialDirectory = File(controller.directoryPath.value)
                     }
@@ -85,7 +85,6 @@ class DirectoryPathView : View() {
                         BorderPane.setAlignment(this, Pos.CENTER_RIGHT)
                     })
                 }
-
             }
             add(countImagesLabel)
             add(countErrorsLabel)

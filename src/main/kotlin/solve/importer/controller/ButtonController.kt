@@ -11,7 +11,7 @@ class ButtonController : Controller() {
 
     fun changeDisable(model: ButtonModel) {
         model.disabled.value = true
-        controller.project.onChange {
+        controller.projectAfterPartialParsing.onChange {
             model.disabled.value = it?.hasAnyErrors ?: true
         }
     }

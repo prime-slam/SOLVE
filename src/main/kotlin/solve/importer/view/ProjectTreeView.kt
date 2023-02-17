@@ -20,15 +20,15 @@ open class ProjectTreeView : View() {
         controller.directoryPath.onChange {
             if (!it.isNullOrEmpty()) {
                 rootTree.children.clear()
-                if (controller.project.value != null) {
-                    rootTree = ProjectParser.createTreeWithFiles(controller.project.value, rootTree)
+                if (controller.projectAfterPartialParsing.value != null) {
+                    rootTree = ProjectParser.createTreeWithFiles(controller.projectAfterPartialParsing.value, rootTree)
                 }
             }
         }
     }
 
     override val root = treetableview(rootTree) {
-        visibleWhen { controller.project.isNotNull }
+        visibleWhen { controller.projectAfterPartialParsing.isNotNull }
         this.isShowRoot = false
 
         val filesColumn: TreeTableColumn<FileInTree, FileInfo> = TreeTableColumn<FileInTree, FileInfo>().apply {
