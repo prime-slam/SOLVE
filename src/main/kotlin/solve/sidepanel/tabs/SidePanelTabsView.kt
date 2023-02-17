@@ -14,6 +14,9 @@ import tornadofx.*
 class SidePanelTabsView: View() {
     companion object {
         private const val TabIconSize = 20.0
+        private const val TabWidth = 30.0
+        private const val TabLabelSymbolSize = 4.4
+        private const val TabOffsetSpaceSize = 35.0
     }
 
     private val location: SidePanelLocation by param()
@@ -54,7 +57,7 @@ class SidePanelTabsView: View() {
                 rotate = -90.0
             }
 
-            setPrefSize(30.0, 100.0)
+            setPrefSize(TabWidth, TabOffsetSpaceSize + TabIconSize + TabLabelSymbolSize * tab.name.count())
             usePrefSize = true
 
             action {
