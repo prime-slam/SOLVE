@@ -1,6 +1,5 @@
 package solve.main
 
-import javafx.application.Platform
 import solve.catalogue.view.CatalogueView
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
@@ -17,7 +16,7 @@ import tornadofx.*
 class MainView : View() {
     companion object {
         private const val LeftSidePanelAndSceneDividerPosition = 0.25
-        private const val RightSidePanelAndSceneDividerPosition = 0.9
+        private const val RightSidePanelAndSceneDividerPosition = 0.88
     }
 
     private val sceneView: SceneView by inject()
@@ -36,7 +35,7 @@ class MainView : View() {
         find<CatalogueView>().root
     ))
     private val rightSidePanelTabs = listOf(SidePanelTab(
-        "Visualization",
+        "Layers",
         loadImage("icons/sidepanel_visualization_settings_icon.png"),
         find<VisualizationSettingsView>().root
     ))
