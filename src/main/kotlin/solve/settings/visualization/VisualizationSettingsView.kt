@@ -138,8 +138,8 @@ class VisualizationSettingsView: View() {
         layersSettings.forEach { settings ->
             val layerPanelNode = createLayerSettingsPopOverNode(layersType, settings) ?: return@forEach
             val layerSettingsPopOver =
-                createLayerSettingsPopOver(layerPanelNode, "${layersType.name} - ${settings.name}")
-            val layerField = createLayerField(layersType.name) { label ->
+                createLayerSettingsPopOver(layerPanelNode, "${settings.name} (${layersType.name})")
+            val layerField = createLayerField(settings.name) { label ->
                 layerSettingsPopOver.show(label, LayerSettingsPopOverHorizontalOffset)
             }
             addLayerFieldToPanel(layerField, layersPanel)
