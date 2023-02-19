@@ -2,6 +2,7 @@ package solve.importer.view
 
 import javafx.geometry.Insets
 import javafx.scene.control.Button
+import kotlinx.coroutines.*
 import solve.importer.controller.*
 import solve.importer.model.ButtonModel
 import solve.importer.model.FrameAfterPartialParsing
@@ -11,6 +12,7 @@ import solve.utils.createAlertForError
 import solve.utils.toStringWithoutBrackets
 import tornadofx.*
 import solve.importer.ProjectParser.fullParseDirectory
+import solve.project.model.Project
 
 class ControlPanel : View() {
     private val controller: ImporterController by inject()
@@ -22,6 +24,8 @@ class ControlPanel : View() {
     private val importer = find<DirectoryPathView>()
 
     private val importButtonModel = ButtonModel()
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     companion object {
         private const val ButtonWidth = 180.0
@@ -50,46 +54,44 @@ class ControlPanel : View() {
         }
 
         action {
-            importAction(this)
-//            suspend {
-//                coroutineScope {
-//                    val job = launch {
-//                            val projectVal = fullParseDirectory(controller.projectAfterPartialParsing.value)
-//                        }
-//                    job.start()
-//
-//                    find<ImporterView>().replaceWith(
-//                        LoadingScreen::class,
-//                        transition = ViewTransition.FadeThrough(1.seconds)
-//                    )
-//                }
-//
-//            }
+            coroutineScope.launch {
+                showLoading()
+
+                val projectVal =
+                    withContext(Dispatchers.IO) { fullParseDirectory(controller.projectAfterPartialParsing.value) }
+
+                importAction(this@button, projectVal)
+            }
         }
     }
 
-        private val cancelButton = button("Cancel") {
-            prefWidth = ButtonWidth
-            action {
-                cancelAction()
-            }
+    private val cancelButton = button("Cancel") {
+        prefWidth = ButtonWidth
+        action {
+            cancelAction()
         }
+    }
 
-        override val root = vbox(6) {
-            padding = Insets(10.0, 0.0, 0.0, 0.0)
-            add(algorithmsLabel)
-            hbox(10) {
-                add(cancelButton)
-                add(importButton)
-            }
+    override val root = vbox(6) {
+        padding = Insets(10.0, 0.0, 0.0, 0.0)
+        add(algorithmsLabel)
+        hbox(10) {
+            add(cancelButton)
+            add(importButton)
         }
+    }
 
-        private fun cancelAction() {
-            importer.close()
-        }
+    private fun cancelAction() {
+        importer.close()
+    }
 
-        private fun importAction(button: Button) {
-            val projectVal = fullParseDirectory(controller.projectAfterPartialParsing.value)
+    private fun showLoading() {
+        find<ImporterView>().replaceWith(
+            LoadingScreen::class
+        )
+    }
+
+    private fun importAction(button: Button, projectVal: Project) {
         try {
             mainController.visualizeProject(projectVal.layers, projectVal.frames)
             mainController.displayCatalogueFrames(projectVal.frames)
@@ -100,14 +102,14 @@ class ControlPanel : View() {
         } catch (e: Exception) {
             createAlertForError("Visualization error", find<ImporterView>().root.scene.window)
         }
-        }
+    }
 
-        private fun getListOfAlgorithms(frame: FrameAfterPartialParsing, listOfKind: MutableList<String>) {
-            frame.outputs.forEach { output ->
-                val algName = output.algorithmName.split("_").first()
-                if (!listOfKind.contains(algName)) {
-                    listOfKind.add(algName)
-                }
+    private fun getListOfAlgorithms(frame: FrameAfterPartialParsing, listOfKind: MutableList<String>) {
+        frame.outputs.forEach { output ->
+            val algName = output.algorithmName.split("_").first()
+            if (!listOfKind.contains(algName)) {
+                listOfKind.add(algName)
             }
         }
     }
+}
