@@ -14,8 +14,10 @@ class LineView(
     override val node: Line = createShape()
 
     init {
-        setUpShape(node)
+        setUpShape(node, line.uid)
     }
+
+    override fun drawOnCanvas(canvas: BufferedImageView) { }
 
     private val startCoordinates
         get() = Pair(line.startCoordinate.x.toDouble() * scale, line.finishCoordinate.y.toDouble() * scale)
