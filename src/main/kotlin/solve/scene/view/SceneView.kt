@@ -94,7 +94,6 @@ class SceneView : View() {
         val translatedMouseY = initialMouseY * scaleProperty.value
 
         grid.scrollTo(translatedMouseX - mousePosition.first, translatedMouseY - mousePosition.second)
-        System.gc()
     }
 
     companion object {
