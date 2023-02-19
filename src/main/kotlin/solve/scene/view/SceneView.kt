@@ -1,17 +1,12 @@
 package solve.scene.view
 
-import javafx.beans.property.DoubleProperty
-import javafx.beans.property.SimpleDoubleProperty
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import javafx.beans.property.*
+import kotlinx.coroutines.*
 import solve.scene.controller.SceneController
-import solve.scene.view.association.AssociationsManager
-import solve.scene.view.association.OutOfFramesLayer
+import solve.scene.view.association.*
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
 import tornadofx.*
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.*
 
 class SceneView : View() {
     private val controller: SceneController by inject()
@@ -57,7 +52,6 @@ class SceneView : View() {
 
         val outOfFramesLayer = OutOfFramesLayer()
         val associationsManager = AssociationsManager(width, height, margin, scaleProperty, scene.frames, columnsNumber, outOfFramesLayer)
-
         val grid = VirtualizedFXGridProvider.createGrid(
             frames, columnsNumber, width + margin, height + margin, scaleProperty, outOfFramesLayer
         ) { frame ->
@@ -100,6 +94,7 @@ class SceneView : View() {
         val translatedMouseY = initialMouseY * scaleProperty.value
 
         grid.scrollTo(translatedMouseX - mousePosition.first, translatedMouseY - mousePosition.second)
+        System.gc()
     }
 
     companion object {

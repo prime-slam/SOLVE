@@ -11,7 +11,7 @@ import solve.scene.model.Landmark
 // This has access to landmark data class and its layer
 sealed class LandmarkView(
     scale: Double,
-    val landmark: Landmark,
+    landmark: Landmark,
 ) {
     companion object {
         fun create(landmark: Landmark, scale: Double): LandmarkView {
@@ -25,7 +25,11 @@ sealed class LandmarkView(
 
     // When shape is created in an inheritor
     // setUpShape() should be called to set up common features for all landmarks
-    abstract val node: Node
+    abstract val node: Node?
+
+    abstract fun drawOnCanvas(canvas: BufferedImageView)
+
+    private val layerState = landmark.layerState
 
     private var state: LandmarkState = LandmarkState.Ordinary
 
@@ -71,34 +75,34 @@ sealed class LandmarkView(
     }
 
     fun dispose() {
-        landmark.layerState.selectedLandmarksUids.removeListener(weakSelectedLandmarksChangedEventHandler)
-        landmark.layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
+        layerState.selectedLandmarksUids.removeListener(weakSelectedLandmarksChangedEventHandler)
+        layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
     }
 
     // Set up common shape properties
     // Can not be called during LandmarkView initialization because shape is created by inheritors
-    protected fun setUpShape(shape: Shape) {
-        if (landmark.layerState.selectedLandmarksUids.contains(landmark.uid)) {
+    protected fun setUpShape(shape: Shape, uid: Long) {
+        if (layerState.selectedLandmarksUids.contains(uid)) {
             state = LandmarkState.Selected
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
             when (state) {
                 LandmarkState.Ordinary -> {
-                    landmark.layerState.selectedLandmarksUids.add(landmark.uid)
+                    layerState.selectedLandmarksUids.add(uid)
                 }
                 LandmarkState.Selected -> {
-                    landmark.layerState.selectedLandmarksUids.remove(landmark.uid)
+                    layerState.selectedLandmarksUids.remove(uid)
                 }
             }
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_ENTERED) {
-            landmark.layerState.hoveredLandmarksUids.add(landmark.uid)
+            layerState.hoveredLandmarksUids.add(uid)
         }
 
         shape.addEventHandler(MouseEvent.MOUSE_EXITED) {
-            landmark.layerState.hoveredLandmarksUids.remove(landmark.uid)
+            layerState.hoveredLandmarksUids.remove(uid)
         }
     }
 

@@ -4,12 +4,10 @@ import javafx.beans.InvalidationListener
 import javafx.beans.WeakInvalidationListener
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
-import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
-import javafx.scene.transform.Scale
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
 import solve.scene.model.Landmark
@@ -28,7 +26,7 @@ class FrameView(
     private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
     private var currentFrame: VisualizationFrame? = null
-    private val imageCanvas = Canvas(width, height)
+    private val canvas = BufferedImageView(width, height, scale.value)
     private var currentJob: Job? = null
 
     // Should be stored to avoid weak listener from be collected
@@ -37,7 +35,7 @@ class FrameView(
     init {
         scale.addListener(WeakInvalidationListener(scaleChangedListener))
 
-        add(imageCanvas)
+        add(canvas)
         setFrame(frame)
         scaleImageAndLandmarks(scale.value)
 
@@ -46,6 +44,9 @@ class FrameView(
                 return@setOnMouseClicked
             }
             val clickedFrame = currentFrame ?: return@setOnMouseClicked
+            if (!clickedFrame.hasPoints()) {
+                return@setOnMouseClicked
+            }
             val associationParameters =
                 AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
             associationsManager.chooseFrame(associationParameters)
@@ -54,6 +55,9 @@ class FrameView(
         contextmenu {
             item("Associate keypoints").action {
                 val clickedFrame = currentFrame ?: return@action
+                if (!clickedFrame.hasPoints()) {
+                    return@action
+                }
                 val associationParameters =
                     AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
                 associationsManager.initAssociation(associationParameters)
@@ -74,7 +78,7 @@ class FrameView(
         currentJob?.cancel()
         disposeLandmarkViews()
         clearLandmarks()
-        clearImage()
+        canvas.clear()
 
         if (frame == null) {
             return
@@ -104,65 +108,43 @@ class FrameView(
     }
 
     private fun draw(landmarks: Map<Layer, List<Landmark>>, image: Image) {
-        landmarksViews = landmarks.mapValues {
-            it.value.map { landmark ->
-                LandmarkView.create(landmark, scale.value)
-            }
-        }
-
         drawnImage = image
         if (image.height != height || image.width != width) {
             println("Image size doesn't equal to the frame size") //TODO: warn user
         }
 
-        drawImage(image)
-        doForAllLandmarks { view -> children.add(view.node) }
+        canvas.clear()
+        canvas.drawImage(image)
+
+        landmarksViews = landmarks.mapValues {
+            it.value.map { landmark ->
+                LandmarkView.create(landmark, scale.value)
+            }
+        }
+        doForAllLandmarks { view ->
+            if (view.node != null) {
+                children.add(view.node)
+            }
+            view.drawOnCanvas(canvas)
+        }
     }
 
     private fun disposeLandmarkViews() = doForAllLandmarks { view -> view.dispose() }
 
     private fun scaleImageAndLandmarks(newScale: Double) {
-        imageCanvas.transforms.clear()
-        if (drawnImage != null) {
-            clearImage()
-        }
-
-        if (newScale > 1) {
-            imageCanvas.width = width
-            imageCanvas.height = height
-            val scaleTransform = Scale(newScale, newScale)
-            imageCanvas.transforms.add(scaleTransform)
-        } else {
-            imageCanvas.width = width * newScale
-            imageCanvas.height = height * newScale
-        }
-
-        drawImage(drawnImage)
+        canvas.scale(newScale)
         doForAllLandmarks { view -> view.scale = newScale }
     }
 
-    private fun drawImage(image: Image?) {
-        if (image == null) {
-            return
-        }
-        imageCanvas.graphicsContext2D.drawImage(image, 0.0, 0.0, imageCanvas.width, imageCanvas.height)
-    }
+    private fun clearLandmarks() = children.removeIf { x -> x is Shape }
 
-    private fun clearImage() {
-        imageCanvas.graphicsContext2D.clearRect(0.0, 0.0, Int.MAX_VALUE.toDouble(), Int.MAX_VALUE.toDouble())
-    }
-
-    private fun clearLandmarks() {
-        children.removeIf { x -> x is Shape }
-    }
-
-    private fun drawLoadingIndicator() {
-        imageCanvas.graphicsContext2D.fill = Color.GREY
-        imageCanvas.graphicsContext2D.fillRect(0.0, 0.0, imageCanvas.width, imageCanvas.height)
-    }
+    private fun drawLoadingIndicator() = canvas.fill(Color.GREY)
 
     private fun doForAllLandmarks(delegate: (LandmarkView) -> Unit) =
         landmarksViews?.forEach { (layer, landmarkViews) ->
             landmarkViews.forEach { view -> delegate(view) }
         }
+
+    private fun VisualizationFrame.hasPoints() =
+        this.layers.filterIsInstance<Layer.PointLayer>().isNotEmpty()
 }
