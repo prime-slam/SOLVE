@@ -2,7 +2,6 @@ package solve.importer
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import javafx.collections.ObservableMap
 import javafx.scene.control.TreeItem
 import solve.importer.model.*
 import solve.importer.view.ImporterView
