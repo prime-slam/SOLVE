@@ -8,9 +8,10 @@ class LineView(
     scale: Double,
 ) : LandmarkView(scale, line) {
     companion object {
-        private const val OrdinaryWidth: Double = 5.0
+        private const val OrdinaryWidth: Double = 3.0
     }
 
+    private var width = OrdinaryWidth
     override val node: Line = createShape()
 
     init {
@@ -32,22 +33,18 @@ class LineView(
         node.endY = finishCoordinates.second
     }
 
-    private var width = OrdinaryWidth
-
     private fun createShape(): Line {
         val shape =
             Line(startCoordinates.first, startCoordinates.second, finishCoordinates.first, finishCoordinates.second)
-        shape.fill = line.layerSettings.getColor(line)
+        shape.stroke = line.layerSettings.getColor(line)
         shape.opacity = line.layerSettings.opacity
         shape.strokeWidth = width
         return shape
     }
 
     override fun highlightShape() {
-        TODO("Not yet implemented")
     }
 
     override fun unhighlightShape() {
-        TODO("Not yet implemented")
     }
 }
