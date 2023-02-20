@@ -12,7 +12,6 @@ class MenuBarView : View() {
         button("Import project") {
             action {
                 controller.directoryPath.set(null)
-                controller.project.set(null)
                 controller.projectAfterPartialParsing.set(null)
                 importer.openModal()
             }

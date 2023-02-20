@@ -41,7 +41,7 @@ class DirectoryPathView : View() {
     private val countImagesLabel = label {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
         controller.projectAfterPartialParsing.onChange {
-            val countFiles = it?.value?.count()
+            val countFiles = it?.projectFrames?.count()
             this.text = "$countFiles images found"
             this.graphic = ImageView(filesCountIcon)
         }
@@ -52,7 +52,7 @@ class DirectoryPathView : View() {
         padding = Insets(3.0, 0.0, 5.0, 0.0)
         controller.projectAfterPartialParsing.onChange {
             var countErrors = 0
-            it?.value?.forEach { frame ->
+            it?.projectFrames?.forEach { frame ->
                 if (frame.image.errors.isNotEmpty())
                     countErrors += 1
             }

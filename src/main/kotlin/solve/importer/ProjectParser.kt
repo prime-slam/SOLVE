@@ -47,6 +47,22 @@ object ProjectParser {
         return hasAnyErrors
     }
 
+    private fun incorrectExtensionError(
+        images: ObservableList<ImageAfterPartialParsing>,
+        image: File,
+        imageName: String
+    ) {
+        if (!possibleExtensions.contains(image.extension)) {
+            images.add(
+                ImageAfterPartialParsing(
+                    imageName,
+                    path = image.absolutePath
+                ).apply { errors.add("The image has an incorrect extension") })
+        } else {
+            images.add(ImageAfterPartialParsing(imageName, path = image.absolutePath))
+        }
+    }
+
     private fun partialParseOutputs(
         folder: File,
         outputs: ObservableList<OutputAfterPartialParsing>,
@@ -70,17 +86,17 @@ object ProjectParser {
         val errorOutputs = mutableListOf<String>()
         folder.listFiles()?.forEach {
             val imageName = it.nameWithoutExtension
-            try {
-                imageName.toLong()
+
+            if (imageName.toLongOrNull() != null) {
                 outputs.add(OutputAfterPartialParsing(imageName, it.absolutePath, directoryName, kind))
                 if (!layers.contains(directoryName)) {
                     layers.add(directoryName)
                 }
-
-            } catch (e: Exception) {
+            } else {
                 errorOutputs.add(imageName)
             }
         }
+
         if (errorOutputs.isNotEmpty()) {
             val ownerWindow = importer.root.scene.window
             createAlertForError(
@@ -94,18 +110,10 @@ object ProjectParser {
         val errorImages = mutableListOf<String>()
         folder.listFiles()?.forEach {
             val imageName = it.nameWithoutExtension
-            try {
-                imageName.toLong()
-                if (!possibleExtensions.contains(it.extension)) {
-                    images.add(
-                        ImageAfterPartialParsing(
-                            imageName,
-                            path = it.absolutePath
-                        ).apply { errors.add("The image has an incorrect extension") })
-                } else {
-                    images.add(ImageAfterPartialParsing(imageName, path = it.absolutePath))
-                }
-            } catch (e: Exception) {
+
+            if (imageName.toLongOrNull() != null) {
+                incorrectExtensionError(images, it, imageName)
+            } else {
                 errorImages.add(imageName)
             }
         }
@@ -158,22 +166,25 @@ object ProjectParser {
                 partialParseImages(folder, images)
             }
         }
-        images.forEach { img ->
-            if (img.errors.isNotEmpty()) {
-                hasAnyErrors = true
-            }
-            frames.add(FrameAfterPartialParsing(img, outputs.filter { img.name == it.name }))
-        }
-
-        if (noSomeAlgorithmError(frames, layers)) hasAnyErrors = true
-
-        frames.sortWith(compareBy { it.image.name.toLong() })
 
         if (!isImagesExist) {
             val ownerWindow = importer.root.scene.window
             createAlertForError("The images folder is missing in the directory", ownerWindow)
             return null
         }
+
+        images.map { img ->
+            if (img.errors.isNotEmpty()) {
+                hasAnyErrors = true
+            }
+            frames.add(FrameAfterPartialParsing(img, outputs.filter { img.name == it.name }))
+        }
+
+        if (noSomeAlgorithmError(frames, layers)) {
+            hasAnyErrors = true
+        }
+
+        frames.sortWith(compareBy { it.image.name.toLong() })
 
         if (errorFolders.isNotEmpty()) {
             alertErrorFolderMessage()
@@ -189,11 +200,11 @@ object ProjectParser {
         val frames = FXCollections.observableArrayList<ProjectFrame>()
         val layers = FXCollections.observableArrayList<ProjectLayer>()
 
-        project.value.first().outputs.forEach {
+        project.projectFrames.first().outputs.forEach {
             layers.add(ProjectLayer(it.kind, it.algorithmName))
         }
 
-        project.value.forEach {
+        project.projectFrames.forEach {
             val longName = it.image.name.toLong()
             landmarks[longName] = mutableListOf()
             it.outputs.forEach { output ->
@@ -203,9 +214,8 @@ object ProjectParser {
                 }
                 landmarks[longName]?.add(LandmarkFile(currentLayer, Path(output.path), extractUIDs(output.path)))
             }
-            frames.add(
-                landmarks[longName]?.toList()
-                    ?.let { landmark -> ProjectFrame(longName, Path(it.image.path), landmark) })
+            frames.add(landmarks[longName]?.toList()
+                ?.let { landmark -> ProjectFrame(longName, Path(it.image.path), landmark) })
         }
         return Project(Path(project.currentDirectory), frames, layers)
     }
@@ -215,7 +225,7 @@ object ProjectParser {
         tree: TreeItem<FileInTree>
     ): TreeItem<FileInTree> {
         tree.value = FileInTree(FileInfo())
-        project.value.forEach {
+        project.projectFrames.forEach {
             val image = it.image
             val imageNode: TreeItem<FileInTree> = TreeItem(FileInTree(FileInfo(image.name, false, image.errors)))
             imageNode.children.addAll(it.outputs.map { output ->
