@@ -25,8 +25,6 @@ class ControlPanel : View() {
 
     private val importButtonModel = ButtonModel()
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
-
     companion object {
         private const val ButtonWidth = 180.0
     }
@@ -37,7 +35,7 @@ class ControlPanel : View() {
 
         controller.projectAfterPartialParsing.onChange {
             it?.let {
-                it.value.forEach { frame ->
+                it.projectFrames.forEach { frame ->
                     getListOfAlgorithms(frame, listOfKind)
                 }
                 this.text = "Algorithms: " + listOfKind.toStringWithoutBrackets()
@@ -54,7 +52,7 @@ class ControlPanel : View() {
         }
 
         action {
-            coroutineScope.launch {
+            CoroutineScope(Dispatchers.Main).launch {
                 showLoading()
 
                 val projectVal =
@@ -95,7 +93,6 @@ class ControlPanel : View() {
         try {
             mainController.visualizeProject(projectVal.layers, projectVal.frames)
             mainController.displayCatalogueFrames(projectVal.frames)
-            controller.project.set(null)
             controller.projectAfterPartialParsing.set(null)
             button.isDisable = true
             MenuBarView().importer.close()
