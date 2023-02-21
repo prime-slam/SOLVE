@@ -16,8 +16,6 @@ object ProjectParser {
     private const val JPG_EXTENSION = "jpg"
     private val possibleExtensions = setOf(PNG_EXTENSION, JPG_EXTENSION)
 
-    private val importer = find<ImporterView>()
-
     private fun selectKind(kindString: String): LayerKind? {
         return when (kindString) {
             "keypoint" -> LayerKind.Keypoint
@@ -84,7 +82,7 @@ object ProjectParser {
         }
 
         if (errorOutputs.isNotEmpty()) {
-            val ownerWindow = importer.root.scene.window
+            val ownerWindow = find<ImporterView>().root.scene.window
             createAlertForError(
                 "$errorOutputs are incorrect names of files. They can't be converted to Long",
                 ownerWindow
@@ -108,7 +106,7 @@ object ProjectParser {
 
         fun alertErrorImages() {
             if (errorImages.isNotEmpty()) {
-                val ownerWindow = importer.root.scene.window
+                val ownerWindow = find<ImporterView>().root.scene.window
                 createAlertForError(
                     "Image ${
                         if (errorImages.count() == 1) "${errorImages.toStringWithoutBrackets()} is"
@@ -135,7 +133,7 @@ object ProjectParser {
         var isImagesExist = false
 
         fun alertErrorFolderMessage() {
-            val ownerWindow = importer.root.scene.window
+            val ownerWindow = find<ImporterView>().root.scene.window
             createAlertForError(
                 "The directory ${
                     if (errorFolders.count() == 1) "${errorFolders.toStringWithoutBrackets()} is" else
@@ -156,7 +154,7 @@ object ProjectParser {
         }
 
         if (!isImagesExist) {
-            val ownerWindow = importer.root.scene.window
+            val ownerWindow = find<ImporterView>().root.scene.window
             createAlertForError("The images folder is missing in the directory", ownerWindow)
             return null
         }

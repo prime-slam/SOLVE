@@ -34,10 +34,17 @@ dependencies {
     implementation("io.github.palexdev:virtualizedfx:$virtualizedfxVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:$coroutinesVersion")
+    implementation("junit:junit:4.13.1")
+    implementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation(kotlin("test"))
 }
 
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
