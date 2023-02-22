@@ -11,9 +11,11 @@ sealed class LayerSettings(val name: String) {
     private val colorMap = HashMap<Long, Color>()
     private val usedColors = HashSet<Color>()
 
-    fun getColor(landmark: Landmark) = colorMap[landmark.uid] ?: generateRandomColorUnique(usedColors).also { color ->
-        colorMap[landmark.uid] = color
-        usedColors.add(color)
+    fun getColor(landmark: Landmark): Color {
+        val rgbColor = colorMap[landmark.uid] ?: generateRandomColorUnique(usedColors)
+        colorMap[landmark.uid] = rgbColor
+        usedColors.add(rgbColor)
+        return Color(rgbColor.red, rgbColor.green, rgbColor.blue, opacity)
     }
 
     class PointLayerSettings(name: String) : LayerSettings(name) {
