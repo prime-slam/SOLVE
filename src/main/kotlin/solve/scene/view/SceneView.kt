@@ -56,7 +56,7 @@ class SceneView : View() {
             frames, columnsNumber, width + margin, height + margin, scaleProperty, outOfFramesLayer
         ) { frame ->
             FrameView(
-                width, height, scaleProperty, frameDataLoadingScope, associationsManager, frame
+                width, height, scaleProperty, frameDataLoadingScope, associationsManager, scene, frame
             )
         }
 

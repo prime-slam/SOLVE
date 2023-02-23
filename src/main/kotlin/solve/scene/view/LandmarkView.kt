@@ -106,6 +106,14 @@ sealed class LandmarkView(
         }
     }
 
+    protected fun toFront(node: Node) {
+        node.viewOrder -= HIGHLIGHTING_VIEW_ORDER_GAP
+    }
+
+    protected fun toBack(node: Node) {
+        node.viewOrder += HIGHLIGHTING_VIEW_ORDER_GAP
+    }
+
     protected abstract fun scaleChanged()
 
     protected abstract fun highlightShape()

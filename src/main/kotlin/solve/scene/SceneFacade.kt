@@ -14,6 +14,8 @@ import solve.scene.model.*
 // Should be recreated if new project was imported
 class SceneFacade(private val controller: SceneController) {
     private val visualizationLayers = HashMap<String, LayerSettings>()
+    // Is used to set unique colors for layers where all landmarks have the same color
+    private val layersColorManager = ColorManager<String>()
 
     // Display new frames with landmarks
     fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
@@ -30,7 +32,7 @@ class SceneFacade(private val controller: SceneController) {
 
     private fun ProjectLayer.toLayerSettings(): LayerSettings {
         return when (kind) {
-            LayerKind.Keypoint -> LayerSettings.PointLayerSettings(this.name)
+            LayerKind.Keypoint -> LayerSettings.PointLayerSettings(this.name, layersColorManager)
             LayerKind.Line -> LayerSettings.LineLayerSettings(this.name)
             LayerKind.Plane -> LayerSettings.PlaneLayerSettings(this.name)
         }

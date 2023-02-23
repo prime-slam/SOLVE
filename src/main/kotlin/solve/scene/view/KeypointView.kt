@@ -37,17 +37,19 @@ class KeypointView(
     }
 
     override fun highlightShape() {
-        node.toFront()
-
+        toFront(node)
         val increasedRadiusScale = (radius / node.radiusX) * HighlightingScaleFactor
         val scaleTransition = createScaleAnimation(node, increasedRadiusScale, HighlightingAnimationDuration)
-        val fillTransition = createFillTransition(node, keypoint.layerSettings.getColor(keypoint), HighlightingAnimationDuration)
+        val fillTransition = createFillTransition(
+            node, keypoint.layerSettings.colorManager.getColor(keypoint.uid), HighlightingAnimationDuration
+        )
 
         scaleTransition.play()
         fillTransition.play()
     }
 
     override fun unhighlightShape() {
+        toBack(node)
         val defaultRadiusScale = radius / node.radiusX
         val scaleTransition = createScaleAnimation(node, defaultRadiusScale, HighlightingAnimationDuration)
         val fillTransition = createFillTransition(node, keypoint.layerSettings.color, HighlightingAnimationDuration)
@@ -63,8 +65,9 @@ class KeypointView(
 
         // If landmark is already in the selected state.
         // Animation can not be applied because shape is not in visual tree at the moment.
-        if (keypoint.layerState.selectedLandmarksUids.contains(keypoint.uid)
-            || keypoint.layerState.hoveredLandmarksUids.contains(keypoint.uid)
+        if (keypoint.layerState.selectedLandmarksUids.contains(keypoint.uid) || keypoint.layerState.hoveredLandmarksUids.contains(
+                keypoint.uid
+            )
         ) {
             highlightShapeInstantly(shape)
         }
@@ -73,8 +76,9 @@ class KeypointView(
     }
 
     private fun highlightShapeInstantly(shape: Ellipse) {
+        toFront(shape)
         shape.radiusX = radius * HighlightingScaleFactor
         shape.radiusY = radius * HighlightingScaleFactor
-        shape.fill = keypoint.layerSettings.getColor(keypoint)
+        shape.fill = keypoint.layerSettings.colorManager.getColor(keypoint.uid)
     }
 }

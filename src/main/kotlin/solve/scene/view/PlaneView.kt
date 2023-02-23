@@ -1,5 +1,6 @@
 package solve.scene.view
 
+import javafx.scene.paint.Color
 import solve.scene.model.Landmark
 
 class PlaneView(
@@ -9,8 +10,9 @@ class PlaneView(
     override val node = null
 
     override fun drawOnCanvas(canvas: BufferedImageView) {
-        val color = plane.layerSettings.getColor(plane)
-        canvas.drawPoints(color, plane.points)
+        val color = plane.layerSettings.colorManager.getColor(plane.uid)
+        val colorWithOpacity = Color(color.red, color.green, color.blue, plane.layerSettings.opacity)
+        canvas.drawPoints(colorWithOpacity, plane.points)
     }
 
     override fun scaleChanged() {
