@@ -17,7 +17,13 @@ sealed class LayerSettings(val name: String) {
             }
     }
 
-    class LineLayerSettings(name: String) : LayerSettings(name)
+    class LineLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
+        var color = layerColorManager.getColor(name)
+            set(value) {
+                field = value
+                layerColorManager.setColor(name, value)
+            }
+    }
 
     class PlaneLayerSettings(name: String) : LayerSettings(name)
 

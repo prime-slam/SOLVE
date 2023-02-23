@@ -33,7 +33,7 @@ class SceneFacade(private val controller: SceneController) {
     private fun ProjectLayer.toLayerSettings(): LayerSettings {
         return when (kind) {
             LayerKind.Keypoint -> LayerSettings.PointLayerSettings(this.name, layersColorManager)
-            LayerKind.Line -> LayerSettings.LineLayerSettings(this.name)
+            LayerKind.Line -> LayerSettings.LineLayerSettings(this.name, layersColorManager)
             LayerKind.Plane -> LayerSettings.PlaneLayerSettings(this.name)
         }
     }
