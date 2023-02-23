@@ -21,6 +21,7 @@ class ColorManager<T> {
         }
         return color
     }
+
     private fun generateRandomColor(): Color {
         val red = Random.nextInt(0, 256)
         val green = Random.nextInt(0, 256)
