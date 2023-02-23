@@ -1,25 +1,20 @@
 package solve.scene.model
 
-import javafx.scene.paint.Color
-
 // Contains settings that should be reused when scene is recreated
-//Stores common context for landmarks drawing.
-//Layers properties being edited in the settings menu.
-//Settings menu appearance depends on type of the corresponding layer.
-//Meaningful changes here provokes scene redrawing.
+// Stores common context for landmarks drawing.
+// Layers properties being edited in the settings menu.
+// Settings menu appearance depends on type of the corresponding layer.
+// Meaningful changes here provokes scene redrawing.
 sealed class LayerSettings(val name: String) {
-    private val colorMap = HashMap<Long, Color>()
-    private val usedColors = HashSet<Color>()
+    // Is used to set unique colors for all landmarks in the layer
+    val colorManager = ColorManager<Long>()
 
-    fun getColor(landmark: Landmark): Color {
-        val rgbColor = colorMap[landmark.uid] ?: generateRandomColorUnique(usedColors)
-        colorMap[landmark.uid] = rgbColor
-        usedColors.add(rgbColor)
-        return Color(rgbColor.red, rgbColor.green, rgbColor.blue, opacity)
-    }
-
-    class PointLayerSettings(name: String) : LayerSettings(name) {
-        var color: Color = DEFAULT_COLOR
+    class PointLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
+        var color = layerColorManager.getColor(name)
+            set(value) {
+                field = value
+                layerColorManager.setColor(name, value)
+            }
     }
 
     class LineLayerSettings(name: String) : LayerSettings(name)
@@ -28,8 +23,7 @@ sealed class LayerSettings(val name: String) {
 
     var opacity: Double = DEFAULT_OPACITY
         set(value) {
-            if (value !in 0.0..100.0)
-                throw IllegalArgumentException("Percent value should lie between 0 and 100")
+            if (value !in 0.0..1.0) throw IllegalArgumentException("Percent value should lie between 0 and 100")
             field = value
         }
 

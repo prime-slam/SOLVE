@@ -1,7 +1,6 @@
 package solve.scene.view
 
-import javafx.beans.InvalidationListener
-import javafx.beans.WeakInvalidationListener
+import javafx.beans.*
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.image.Image
@@ -14,6 +13,7 @@ import solve.scene.model.Landmark
 import solve.scene.model.*
 import solve.scene.view.association.AssociationsManager
 import tornadofx.*
+import java.util.*
 
 class FrameView(
     private val width: Double,
@@ -21,9 +21,10 @@ class FrameView(
     private val scale: DoubleProperty,
     private val coroutineScope: CoroutineScope,
     private val associationsManager: AssociationsManager,
+    private val orderManager: OrderManager<LayerSettings>,
     frame: VisualizationFrame?
 ) : Group() {
-    private var landmarksViews: Map<Layer, List<LandmarkView>>? = null
+    private var landmarksViews: SortedMap<Layer, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
     private var currentFrame: VisualizationFrame? = null
     private val canvas = BufferedImageView(width, height, scale.value)
@@ -35,6 +36,7 @@ class FrameView(
     init {
         scale.addListener(WeakInvalidationListener(scaleChangedListener))
 
+        canvas.viewOrder = IMAGE_VIEW_ORDER
         add(canvas)
         setFrame(frame)
         scaleImageAndLandmarks(scale.value)
@@ -120,31 +122,51 @@ class FrameView(
             it.value.map { landmark ->
                 LandmarkView.create(landmark, scale.value)
             }
-        }
-        doForAllLandmarks { view ->
+        }.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
+
+        doForAllLandmarks { view, index ->
             if (view.node != null) {
+                view.node?.viewOrder = LANDMARKS_VIEW_ORDER - index
                 children.add(view.node)
             }
             view.drawOnCanvas(canvas)
         }
     }
 
-    private fun disposeLandmarkViews() = doForAllLandmarks { view -> view.dispose() }
+    private val orderChangedCallback = orderChangedCallback@{
+        val image = drawnImage ?: return@orderChangedCallback
+        landmarksViews = landmarksViews?.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
+
+        canvas.clear()
+        canvas.drawImage(image)
+
+        doForAllLandmarks { view, index ->
+            if (view.node != null) {
+                view.node?.viewOrder = LANDMARKS_VIEW_ORDER - index
+            }
+            view.drawOnCanvas(canvas)
+        }
+    }
+
+    init {
+        orderManager.addOrderChangedListener(orderChangedCallback)
+    }
+
+    private fun disposeLandmarkViews() = doForAllLandmarks { view, _ -> view.dispose() }
 
     private fun scaleImageAndLandmarks(newScale: Double) {
         canvas.scale(newScale)
-        doForAllLandmarks { view -> view.scale = newScale }
+        doForAllLandmarks { view, _ -> view.scale = newScale }
     }
 
     private fun clearLandmarks() = children.removeIf { x -> x is Shape }
 
     private fun drawLoadingIndicator() = canvas.fill(Color.GREY)
 
-    private fun doForAllLandmarks(delegate: (LandmarkView) -> Unit) =
-        landmarksViews?.forEach { (layer, landmarkViews) ->
-            landmarkViews.forEach { view -> delegate(view) }
+    private fun doForAllLandmarks(delegate: (LandmarkView, Int) -> Unit) =
+        landmarksViews?.values?.forEachIndexed { index, landmarkViews ->
+            landmarkViews.forEach { view -> delegate(view, index) }
         }
 
-    private fun VisualizationFrame.hasPoints() =
-        this.layers.filterIsInstance<Layer.PointLayer>().isNotEmpty()
+    private fun VisualizationFrame.hasPoints() = this.layers.filterIsInstance<Layer.PointLayer>().isNotEmpty()
 }
