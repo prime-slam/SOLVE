@@ -11,7 +11,7 @@ import javafx.scene.paint.Color
 // Meaningful changes here provokes scene redrawing.
 sealed class LayerSettings(val name: String, private val layerColorManager: ColorManager<String>) {
     // Is used to set unique colors for all landmarks in the layer
-    private val colorManager = ColorManager<Long>()
+    val colorManager = ColorManager<Long>()
 
     val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
     var color: Color
@@ -32,8 +32,19 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
 
     fun getUniqueColor(landmark: Landmark): Color = colorManager.getColor(landmark.uid)
 
-    class PointLayerSettings(name: String, layerColorManager: ColorManager<String>) :
-        LayerSettings(name, layerColorManager)
+    class PointLayerSettings(
+        name: String,
+        layerColorManager: ColorManager<String>
+    ) : LayerSettings(name, layerColorManager) {
+        companion object {
+            private const val OrdinaryRadius: Double = 5.0
+        }
+
+        val selectedRadiusProperty = SimpleObjectProperty(OrdinaryRadius)
+        var selectedRadius: Double
+            get() = selectedRadiusProperty.get()
+            set(value) = selectedRadiusProperty.set(value)
+    }
 
     class LineLayerSettings(name: String, layerColorManager: ColorManager<String>) :
         LayerSettings(name, layerColorManager)

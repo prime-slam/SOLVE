@@ -9,6 +9,10 @@ import solve.utils.*
 import tornadofx.*
 
 class VisualizationSettingsView: View() {
+    companion object {
+        private const val VisualizationSettingsViewMinWidth = 140.0
+    }
+
     private val sceneController: SceneController by inject()
 
     private val visualizationSettingsLayersView: VisualizationSettingsLayersView by inject()
@@ -19,6 +23,8 @@ class VisualizationSettingsView: View() {
     }
 
     override val root = vbox {
+        minWidth = VisualizationSettingsViewMinWidth
+
         add(visualizationSettingsLayersView)
         vbox {
             vbox(5) {
