@@ -1,5 +1,6 @@
 package solve.settings.visualization.fields.view
 
+import javafx.scene.layout.Priority
 import javafx.util.Callback
 import solve.scene.controller.SceneController
 import solve.settings.visualization.fields.controller.VisualizationSettingsLayersController
@@ -14,6 +15,7 @@ class VisualizationSettingsLayersView: View() {
         cellFactory = Callback {
             VisualizationSettingsLayerCell(sceneController)
         }
+        vgrow = Priority.ALWAYS
     }
 
     override val root = fieldsListView

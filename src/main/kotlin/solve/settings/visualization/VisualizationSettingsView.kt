@@ -10,7 +10,7 @@ import tornadofx.*
 
 class VisualizationSettingsView: View() {
     companion object {
-        private const val VisualizationSettingsViewMinWidth = 200.0
+        private const val VisualizationSettingsViewMinWidth = 205.0
     }
 
     private val sceneController: SceneController by inject()
@@ -27,16 +27,12 @@ class VisualizationSettingsView: View() {
 
         add(visualizationSettingsLayersView)
         vbox {
-            vbox(5) {
-                padding = createInsetsWithValue(5.0)
-                usePrefSize = true
-            }
             border =
                 Border(BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT))
             hgrow = Priority.ALWAYS
-            padding = createInsetsWithValue(3.0)
         }
         padding = createInsetsWithValue(5.0)
+        vgrow = Priority.ALWAYS
     }
 
     private fun initializeLayersUpdating() {
