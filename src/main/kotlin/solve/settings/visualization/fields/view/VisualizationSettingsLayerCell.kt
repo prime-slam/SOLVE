@@ -4,6 +4,9 @@ import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Button
+import javafx.scene.control.Label
+import javafx.scene.image.Image
+import javafx.scene.layout.HBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.util.Duration
@@ -42,57 +45,98 @@ class VisualizationSettingsLayerCell(
         private val layerInvisibleIconImage = loadImage("icons/visualization_settings_layer_invisible.png")
     }
 
+    private var isLayerVisible = true
+    private val layerVisibleImageViewIcon =
+        if (layerVisibleIconImage != null) createImageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
+        else null
+    private val layerInvisibleImageViewIcon =
+        if (layerInvisibleIconImage != null) createImageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
+        else null
+    private val editImageViewIcon =
+        if (editIconImage != null) createImageViewIcon(editIconImage, LayerFieldEditIconSize) else null
+
+
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
         prefHeight = LayerFieldHeight
         addStylesheet(VisualizationSettingsLayerCellStyle::class)
 
-        val layerIcon = getLayerIcon(item.landmarksType)
-        if (layerIcon != null) {
-            // Needed to set the padding and to center the imageview.
-            val imageViewIconRegion = vbox {
-                add(createVGrowBox())
-                add(createImageViewIcon(layerIcon, LayerIconWidth))
-                add(createVGrowBox())
-                paddingRight = LayerTypeIconPaddingRight
-            }
-            add(imageViewIconRegion)
+        val layerIconNode = createLayerIconNode()
+        if (layerIconNode != null) {
+            add(layerIconNode)
         }
-        label(item.name) {
-            font = Font.font(LayerFieldNameFontSize)
-            maxWidth = LayerFieldNameMaxWidth
-        }
+        add(createLayerNameLabel())
         add(createHGrowHBox())
-        button {
-            editIconImage ?: return@button
-            graphic = createImageViewIcon(editIconImage, LayerFieldEditIconSize)
-            isPickOnBounds = false
-
-            initializePopOver(this, this)
-            alignment = Pos.CENTER_RIGHT
-        }
-        // Needed for a correct buttons clicking.
-        hbox {
-            button {
-                layerVisibleIconImage ?: return@button
-                layerInvisibleIconImage ?: return@button
-                var isVisible = true
-                val visibleImageViewIcon = createImageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
-                val invisibleImageViewIcon = createImageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
-
-                graphic = visibleImageViewIcon
-                action {
-                    isVisible = !isVisible
-                    graphic = if (isVisible) visibleImageViewIcon else invisibleImageViewIcon
-                    item.enabled = isVisible
-                }
-            }
-            alignment = Pos.CENTER_RIGHT
-            paddingLeft = LayerVisibilityIconPaddingLeft
-        }
+        add(createLayerEditButton())
+        add(createLayerVisibilityButton())
 
         alignment = Pos.CENTER_LEFT
         paddingRight = LayerFieldHBoxPaddingRight
     }
+
+    override fun createItemDragView(item: LayerSettings): Image {
+        val snapshotFieldNode = HBox()
+
+        snapshotFieldNode.prefHeight = LayerFieldHeight
+        val layerIconNode = createLayerIconNode()
+        if (layerIconNode != null) {
+            snapshotFieldNode.add(layerIconNode)
+        }
+        snapshotFieldNode.add(createLayerNameLabel())
+        snapshotFieldNode.add(createHGrowHBox())
+        if (editImageViewIcon != null) {
+            snapshotFieldNode.add(editImageViewIcon)
+        }
+        val currentLayerVisibilityImageViewIcon = getCurrentLayerVisibilityImageViewIcon()
+        if (currentLayerVisibilityImageViewIcon != null) {
+            snapshotFieldNode.add(currentLayerVisibilityImageViewIcon)
+        }
+
+        return snapshotFieldNode.createSnapshot()
+    }
+
+    private fun createLayerIconNode(): Node? {
+        val layerIcon = getLayerIcon(item.landmarksType)
+        layerIcon ?: return null
+        // Needed to set the padding and to center the imageview.
+        return vbox {
+            add(createVGrowBox())
+            add(createImageViewIcon(layerIcon, LayerIconWidth))
+            add(createVGrowBox())
+            paddingRight = LayerTypeIconPaddingRight
+        }
+    }
+
+    private fun createLayerNameLabel(): Label = label(item.name) {
+        font = Font.font(LayerFieldNameFontSize)
+        maxWidth = LayerFieldNameMaxWidth
+    }
+
+    private fun createLayerEditButton(): Node = button {
+        editImageViewIcon ?: return@button
+        graphic = editImageViewIcon
+        isPickOnBounds = false
+
+        initializePopOver(this, this)
+        alignment = Pos.CENTER_RIGHT
+    }
+
+    private fun createLayerVisibilityButton(): Node = hbox {
+        layerVisibleImageViewIcon ?: return@hbox
+        layerInvisibleImageViewIcon ?: return@hbox
+        button {
+            graphic = layerVisibleImageViewIcon
+            action {
+                isLayerVisible = !isLayerVisible
+                graphic = getCurrentLayerVisibilityImageViewIcon()
+                item.enabled = isLayerVisible
+            }
+        }
+        alignment = Pos.CENTER_RIGHT
+        paddingLeft = LayerVisibilityIconPaddingLeft
+    }
+
+    private fun getCurrentLayerVisibilityImageViewIcon() =
+        if (isLayerVisible) layerVisibleImageViewIcon else layerInvisibleImageViewIcon
 
     private fun initializePopOver(
         layerSettingsButton: Button,
