@@ -2,8 +2,14 @@ package solve.utils
 
 import javafx.geometry.Bounds
 import javafx.scene.Node
+import javafx.scene.Parent
+import javafx.scene.Scene
+import javafx.scene.image.Image
+import javafx.scene.image.WritableImage
+import solve.catalogue.floor
 import solve.utils.structures.Point
 import tornadofx.*
+import kotlin.math.min
 
 fun Node.addAll(nodes: Collection<Node>) {
     nodes.forEach {
@@ -38,4 +44,13 @@ fun Node.getScreenPosition(): Point {
     val bounds = getScreenBounds()
 
     return Point(bounds.minX, bounds.minY)
+}
+
+fun Node.createSnapshot(): Image {
+    val nodeSnapshot = snapshot(null, null)
+    return WritableImage(
+        nodeSnapshot.pixelReader,
+        nodeSnapshot.width.floor(),
+        nodeSnapshot.height.floor()
+    )
 }
