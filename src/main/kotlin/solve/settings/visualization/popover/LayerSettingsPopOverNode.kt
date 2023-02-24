@@ -8,7 +8,9 @@ import solve.utils.createHGrowHBox
 import tornadofx.*
 
 abstract class LayerSettingsPopOverNode {
-    protected val LayerSettingNameFontSize = 16.0
+    companion object {
+        private const val LayerSettingNameFontSize = 16.0
+    }
 
     protected fun createSettingField(name: String, settingNode: Node): HBox {
         val hbox = HBox(3.0)

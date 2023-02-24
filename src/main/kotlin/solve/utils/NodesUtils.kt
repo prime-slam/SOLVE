@@ -1,11 +1,8 @@
 package solve.utils
 
-import javafx.geometry.Insets
+import javafx.geometry.Bounds
 import javafx.scene.Node
-import javafx.scene.image.Image
-import javafx.scene.image.ImageView
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Priority
+import solve.utils.structures.Point
 import tornadofx.*
 
 fun Node.addAll(nodes: Collection<Node>) {
@@ -18,14 +15,31 @@ fun Node.clearChildren() {
     getChildList()?.clear()
 }
 
-fun createImageViewIcon(iconImage: Image, width: Double): ImageView {
-    val imageView = ImageView(iconImage)
-    imageView.fitWidth = width
-    imageView.isPreserveRatio = true
-
-    return imageView
+fun Node.removeSafely(node: Node?) {
+    node.let { getChildList()?.remove(it) }
 }
 
-fun createHGrowHBox() = HBox().also { it.hgrow = Priority.ALWAYS }
+fun Node.addSafely(node: Node?) {
+    node?.let { add(it) }
+}
 
-fun createInsetsWithValue(value: Double) = Insets(value, value, value, value)
+
+fun Node.getSceneBounds(): Bounds = localToScene(boundsInLocal)
+
+fun Node.getScenePosition(): Point {
+    val bounds = getSceneBounds()
+
+    return Point(bounds.minX, bounds.minY)
+}
+
+fun Node.getSceneCenterPosition(): Point {
+    val bounds = getSceneBounds()
+
+    return Point(bounds.centerX, bounds.centerY)
+}
+
+fun Node.getSceneMaxPosition(): Point {
+    val bounds = getSceneBounds()
+
+    return Point(bounds.maxX, bounds.maxY)
+}

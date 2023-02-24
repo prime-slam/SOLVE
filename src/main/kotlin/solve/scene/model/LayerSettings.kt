@@ -52,5 +52,8 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
             field = value
         }
 
-    var enabled: Boolean = true
+    val enabledProperty = SimpleObjectProperty(true)
+    var enabled: Boolean
+        get() = enabledProperty.get()
+        set(value) = enabledProperty.set(value)
 }
