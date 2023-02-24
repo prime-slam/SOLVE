@@ -20,6 +20,7 @@ class PointLayerSettingsPopOverNode(
     private fun buildPointLandmarksColorPicker(): ColorPicker {
         val colorPicker = ColorPicker()
 
+        colorPicker.value = pointLayerSettings.color
         colorPicker.setOnAction {
             pointLayerSettings.color = colorPicker.value
         }

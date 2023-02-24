@@ -1,5 +1,6 @@
 package solve.scene.view
 
+import javafx.scene.paint.Color
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import solve.scene.model.Landmark
@@ -16,6 +17,8 @@ class KeypointView(
     }
 
     override val node: Ellipse = createShape()
+
+    private var lastEnabledColor: Color? = keypoint.layerSettings.color
 
     init {
         setUpShape(node, keypoint.uid)
@@ -76,8 +79,17 @@ class KeypointView(
         shape.fill = keypoint.layerSettings.getColor(keypoint)
         shape.opacity = keypoint.layerSettings.opacity
 
-        keypoint.layerSettings.colorProperty.onChange {
-            shape.fill = keypoint.layerSettings.color
+        keypoint.layerSettings.colorProperty.onChange { newColor ->
+            shape.fill = newColor
+            lastEnabledColor = newColor
+        }
+        keypoint.layerSettings.enabledProperty.onChange { enabled ->
+            enabled ?: return@onChange
+            if (enabled) {
+                shape.fill = lastEnabledColor
+            } else {
+                shape.fill = Color.TRANSPARENT
+            }
         }
 
         return shape

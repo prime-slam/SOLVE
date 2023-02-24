@@ -1,11 +1,13 @@
 package solve.utils
 
+import javafx.geometry.Insets
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import tornadofx.CssBox
-import tornadofx.Dimension
-import tornadofx.PropertyHolder
+import tornadofx.*
 
 val DarkLightGrayColor: Color = Color.web("#AAAAAA")
 
@@ -51,3 +53,13 @@ fun createFakeTransparentImage(width: Int, height: Int): Image? {
 
     return writableImage
 }
+
+fun createHGrowHBox() = HBox().also { it.hgrow = Priority.ALWAYS }
+
+fun createVGrowBox() = VBox().also { it.vgrow = Priority.ALWAYS }
+
+fun createInsetsWithValue(value: Double) = Insets(value, value, value, value)
+
+fun createHorizontalInsets(left: Double, right: Double) = Insets(0.0, right, 0.0, left)
+
+fun createVerticalInsets(top: Double, bottom: Double) = Insets(top, 0.0, bottom, 0.0)

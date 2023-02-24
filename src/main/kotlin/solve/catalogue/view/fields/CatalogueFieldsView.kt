@@ -19,6 +19,7 @@ import solve.project.model.ProjectFrame
 import solve.scene.view.SceneView
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
+import solve.utils.*
 import tornadofx.*
 import kotlin.math.min
 
