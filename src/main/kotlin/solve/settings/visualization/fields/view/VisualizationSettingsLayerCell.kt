@@ -4,7 +4,6 @@ import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Button
-import javafx.scene.control.ListView
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.util.Duration
@@ -19,19 +18,19 @@ import solve.utils.structures.Point
 import tornadofx.*
 
 class VisualizationSettingsLayerCell(
-    private val fieldsListView: ListView<LayerSettings>,
     private val sceneController: SceneController
 ) : DragAndDropListCell<LayerSettings>() {
     companion object {
-        private const val LayerFieldHeight = 20.0
+        private const val LayerFieldHeight = 30.0
         private const val LayerFieldNameMaxWidth = 80.0
-        private const val LayerFieldNameFontSize = 12.0
-        private const val LayerFieldEditIconSize = 16.0
-        private const val LayerVisibilityIconSize = 20.0
-        private const val LayerIconWidth = 16.0
+        private const val LayerFieldNameFontSize = 13.0
+        private const val LayerFieldEditIconSize = 18.0
+        private const val LayerVisibilityIconSize = 22.0
+        private const val LayerIconWidth = 25.0
 
         private const val LayerFieldHBoxPaddingRight = -2.5
         private const val LayerTypeIconPaddingRight = 5.0
+        private const val LayerVisibilityIconPaddingLeft = -5.0
 
         private val LayerSettingsSpawnPositionOffset = Point(-20.0, 30.0)
 
@@ -42,9 +41,6 @@ class VisualizationSettingsLayerCell(
         private val layerVisibleIconImage = loadImage("icons/visualization_settings_layer_visible_icon.png")
         private val layerInvisibleIconImage = loadImage("icons/visualization_settings_layer_invisible.png")
     }
-
-    override fun isListViewCellSource(gestureSource: Any) =
-        gestureSource is VisualizationSettingsLayerCell && fieldsListView.items.contains(item)
 
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
         prefHeight = LayerFieldHeight
@@ -74,20 +70,24 @@ class VisualizationSettingsLayerCell(
             initializePopOver(this, this)
             alignment = Pos.CENTER_RIGHT
         }
-        button {
-            layerVisibleIconImage ?: return@button
-            layerInvisibleIconImage ?: return@button
-            var isVisible = true
-            val visibleImageViewIcon = createImageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
-            val invisibleImageViewIcon = createImageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
+        // Needed for a correct buttons clicking.
+        hbox {
+            button {
+                layerVisibleIconImage ?: return@button
+                layerInvisibleIconImage ?: return@button
+                var isVisible = true
+                val visibleImageViewIcon = createImageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
+                val invisibleImageViewIcon = createImageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
 
-            graphic = visibleImageViewIcon
-            action {
-                isVisible = !isVisible
-                graphic = if (isVisible) visibleImageViewIcon else invisibleImageViewIcon
-                item.enabled = isVisible
+                graphic = visibleImageViewIcon
+                action {
+                    isVisible = !isVisible
+                    graphic = if (isVisible) visibleImageViewIcon else invisibleImageViewIcon
+                    item.enabled = isVisible
+                }
             }
             alignment = Pos.CENTER_RIGHT
+            paddingLeft = LayerVisibilityIconPaddingLeft
         }
 
         alignment = Pos.CENTER_LEFT

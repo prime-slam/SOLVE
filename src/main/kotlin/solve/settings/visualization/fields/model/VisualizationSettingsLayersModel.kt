@@ -5,11 +5,10 @@ import javafx.collections.ObservableList
 import solve.scene.model.LayerSettings
 
 class VisualizationSettingsLayersModel {
-    private val _layers = FXCollections.observableArrayList<LayerSettings>()
-    val layers: ObservableList<LayerSettings> = FXCollections.unmodifiableObservableList(_layers)
+    val layers: ObservableList<LayerSettings> = FXCollections.observableArrayList()
 
     fun reinitializeLayers(newLayers: List<LayerSettings>) {
-        _layers.clear()
-        _layers.addAll(newLayers)
+        layers.clear()
+        layers.addAll(newLayers)
     }
 }
