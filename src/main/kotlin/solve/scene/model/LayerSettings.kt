@@ -11,10 +11,12 @@ import javafx.scene.paint.Color
 sealed class LayerSettings(val name: String) {
     // Is used to set unique colors for all landmarks in the layer
     val colorManager = ColorManager<Long>()
+    abstract val landmarksType: LandmarkType
 
     class PointLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
-        val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
+        override val landmarksType = LandmarkType.Keypoint
 
+        val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
         var color: Color
             get() = colorProperty.get()
             set(value) {
@@ -24,8 +26,9 @@ sealed class LayerSettings(val name: String) {
     }
 
     class LineLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
-        val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
+        override val landmarksType = LandmarkType.Line
 
+        val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
         var color: Color
             get() = colorProperty.get()
             set(value) {
@@ -34,7 +37,9 @@ sealed class LayerSettings(val name: String) {
             }
     }
 
-    class PlaneLayerSettings(name: String) : LayerSettings(name)
+    class PlaneLayerSettings(name: String) : LayerSettings(name) {
+        override val landmarksType = LandmarkType.Plane
+    }
 
     var opacity: Double = DEFAULT_OPACITY
         set(value) {
@@ -42,5 +47,6 @@ sealed class LayerSettings(val name: String) {
             field = value
         }
 
-    var enabled: Boolean = true
+    val enabledProperty = SimpleObjectProperty(true)
+    var enabled: Boolean by enabledProperty
 }

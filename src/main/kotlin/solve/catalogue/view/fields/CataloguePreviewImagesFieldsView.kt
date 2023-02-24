@@ -8,7 +8,7 @@ import tornadofx.*
 
 class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
     companion object {
-        private const val previewImageHeight = 80.0
+        private const val PreviewImageHeight = 80.0
     }
 
     override val dragViewMaxFieldsNumber = 30
@@ -19,9 +19,9 @@ class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
     }
 
     private fun createPreviewImageView(field: CatalogueField): ImageView {
-        val previewImage = field.loadPreviewImage(previewImageHeight)
+        val previewImage = field.loadPreviewImage(PreviewImageHeight)
         return imageview(previewImage) {
-            fitHeight = previewImageHeight
+            fitHeight = PreviewImageHeight
             isPreserveRatio = true
         }
     }
