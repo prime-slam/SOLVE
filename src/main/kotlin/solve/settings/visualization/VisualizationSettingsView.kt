@@ -10,7 +10,7 @@ import tornadofx.*
 
 class VisualizationSettingsView: View() {
     companion object {
-        private const val VisualizationSettingsViewMinWidth = 140.0
+        private const val VisualizationSettingsViewMinWidth = 200.0
     }
 
     private val sceneController: SceneController by inject()
