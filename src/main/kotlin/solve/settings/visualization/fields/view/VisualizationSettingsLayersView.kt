@@ -12,7 +12,7 @@ class VisualizationSettingsLayersView: View() {
 
     private val fieldsListView = listview(controller.model.layers) {
         cellFactory = Callback {
-            VisualizationSettingsLayerCell(this, sceneController)
+            VisualizationSettingsLayerCell(sceneController)
         }
     }
 
