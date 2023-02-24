@@ -14,7 +14,12 @@ sealed class LayerSettings(val name: String) {
     abstract val landmarksType: LandmarkType
 
     class PointLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
-        override val landmarksType = LandmarkType.Keypoint
+        companion object {
+            private const val OrdinaryRadius: Double = 5.0
+        }
+
+        val selectedRadiusProperty = SimpleObjectProperty(OrdinaryRadius)
+        var selectedRadius: Double by selectedRadiusProperty
 
         val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
         var color: Color

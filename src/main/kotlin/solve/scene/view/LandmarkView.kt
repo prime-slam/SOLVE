@@ -4,6 +4,7 @@ import javafx.collections.SetChangeListener
 import javafx.collections.WeakSetChangeListener
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
+import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import solve.scene.model.Landmark
 
@@ -26,12 +27,14 @@ sealed class LandmarkView(
     // When shape is created in an inheritor
     // setUpShape() should be called to set up common features for all landmarks
     abstract val node: Node?
+    protected abstract var lastEnabledColor: Color?
 
     abstract fun drawOnCanvas(canvas: BufferedImageView)
 
     private val layerState = landmark.layerState
 
     private var state: LandmarkState = LandmarkState.Ordinary
+
 
     var scale: Double = scale
         set(value) {
@@ -114,8 +117,22 @@ sealed class LandmarkView(
         node.viewOrder += HIGHLIGHTING_VIEW_ORDER_GAP
     }
 
+    protected fun setShapeColor(shape: Shape, newColor: Color) {
+        shape.fill = newColor
+        lastEnabledColor = newColor
+    }
+
+    protected fun setShapeEnabled(shape: Shape, enabled: Boolean) {
+        if (enabled) {
+            shape.fill = lastEnabledColor
+        } else {
+            shape.fill = Color.TRANSPARENT
+        }
+    }
+
     protected abstract fun scaleChanged()
 
     protected abstract fun highlightShape()
+
     protected abstract fun unhighlightShape()
 }

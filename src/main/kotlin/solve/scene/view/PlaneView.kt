@@ -8,6 +8,7 @@ class PlaneView(
     scale: Double,
 ) : LandmarkView(scale, plane) {
     override val node = null
+    override var lastEnabledColor: Color? = plane.layerSettings.getColor(plane) // TODO: add a line drawing implementation.
 
     override fun drawOnCanvas(canvas: BufferedImageView) {
         val color = plane.layerSettings.colorManager.getColor(plane.uid)

@@ -26,20 +26,16 @@ fun Node.addSafely(node: Node?) {
 
 fun Node.getSceneBounds(): Bounds = localToScene(boundsInLocal)
 
+fun Node.getScreenBounds(): Bounds = localToScreen(boundsInLocal)
+
 fun Node.getScenePosition(): Point {
     val bounds = getSceneBounds()
 
     return Point(bounds.minX, bounds.minY)
 }
 
-fun Node.getSceneCenterPosition(): Point {
-    val bounds = getSceneBounds()
+fun Node.getScreenPosition(): Point {
+    val bounds = getScreenBounds()
 
-    return Point(bounds.centerX, bounds.centerY)
-}
-
-fun Node.getSceneMaxPosition(): Point {
-    val bounds = getSceneBounds()
-
-    return Point(bounds.maxX, bounds.maxY)
+    return Point(bounds.minX, bounds.minY)
 }

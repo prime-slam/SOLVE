@@ -30,8 +30,8 @@ class VisualizationSettingsLayerCell(
         private const val LayerVisibilityIconSize = 20.0
         private const val LayerIconWidth = 16.0
 
+        private const val LayerFieldHBoxPaddingRight = -2.5
         private const val LayerTypeIconPaddingRight = 5.0
-        private const val LayerVisibilityButtonPaddingLeft = -3.0
 
         private val LayerSettingsSpawnPositionOffset = Point(-20.0, 30.0)
 
@@ -48,17 +48,16 @@ class VisualizationSettingsLayerCell(
 
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
         prefHeight = LayerFieldHeight
-        addStylesheet(VisualizationSettingsLayersStyle::class)
-        alignment = Pos.CENTER_LEFT
+        addStylesheet(VisualizationSettingsLayerCellStyle::class)
 
         val layerIcon = getLayerIcon(item.landmarksType)
         if (layerIcon != null) {
             // Needed to set the padding and to center the imageview.
             val imageViewIconRegion = vbox {
-                paddingRight = LayerTypeIconPaddingRight
                 add(createVGrowBox())
                 add(createImageViewIcon(layerIcon, LayerIconWidth))
                 add(createVGrowBox())
+                paddingRight = LayerTypeIconPaddingRight
             }
             add(imageViewIconRegion)
         }
@@ -70,26 +69,29 @@ class VisualizationSettingsLayerCell(
         button {
             editIconImage ?: return@button
             graphic = createImageViewIcon(editIconImage, LayerFieldEditIconSize)
-            alignment = Pos.CENTER_RIGHT
+            isPickOnBounds = false
 
-            initializePopOver( this, this)
+            initializePopOver(this, this)
+            alignment = Pos.CENTER_RIGHT
         }
         button {
             layerVisibleIconImage ?: return@button
             layerInvisibleIconImage ?: return@button
             var isVisible = true
-            paddingLeft = LayerVisibilityButtonPaddingLeft
             val visibleImageViewIcon = createImageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
             val invisibleImageViewIcon = createImageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
-            graphic = visibleImageViewIcon
-            alignment = Pos.CENTER_RIGHT
 
+            graphic = visibleImageViewIcon
             action {
                 isVisible = !isVisible
                 graphic = if (isVisible) visibleImageViewIcon else invisibleImageViewIcon
                 item.enabled = isVisible
             }
+            alignment = Pos.CENTER_RIGHT
         }
+
+        alignment = Pos.CENTER_LEFT
+        paddingRight = LayerFieldHBoxPaddingRight
     }
 
     private fun initializePopOver(
@@ -103,18 +105,36 @@ class VisualizationSettingsLayerCell(
                 popOverNode,
                 popOverTitle
             )
+            var isPopOverShowing = false
 
             // Installing a correct popover position.
-            val labelPosition = spawnNode.getScenePosition()
+            val labelPosition = spawnNode.getScreenPosition()
             val popOverNodeSize = getPopOverNodeSize(item.landmarksType)
 
             if (popOverNodeSize != null) {
                 val popOverNodeSizeOffsetVector = Point(popOverNodeSize.x, 0.0)
                 val showPosition = labelPosition - popOverNodeSizeOffsetVector + LayerSettingsSpawnPositionOffset
 
-                layerSettingsButton.action { popOver.show(spawnNode, showPosition.x, showPosition.y) }
+                popOver.setOnHidden {
+                    isPopOverShowing = false
+                }
+                popOver.setOnShowing {
+                    isPopOverShowing = true
+                }
+                layerSettingsButton.action {
+                    if (!isPopOverShowing) {
+                        showPopOver(popOver, spawnNode, showPosition)
+                    } else {
+                        popOver.hide()
+                    }
+                }
             }
         }
+    }
+
+    private fun showPopOver(popOver: PopOver, spawnNode: Node, showPosition: Point) {
+        popOver.detach()
+        popOver.show(spawnNode, showPosition.x, showPosition.y)
     }
 
     private fun createLayerSettingsPopOverNode(layerSettings: LayerSettings): Node? =
@@ -160,7 +180,7 @@ class VisualizationSettingsLayerCell(
     }
 }
 
-class VisualizationSettingsLayersStyle: Stylesheet() {
+class VisualizationSettingsLayerCellStyle: Stylesheet() {
     companion object {
         private val LayerEditButtonBackgroundColor = Color.TRANSPARENT
         private const val HoveredEditButtonScale = 1.25
@@ -170,7 +190,9 @@ class VisualizationSettingsLayersStyle: Stylesheet() {
             backgroundColor += LayerEditButtonBackgroundColor
 
             and(hover) {
-                scale(HoveredEditButtonScale)
+                imageView {
+                    scale(HoveredEditButtonScale)
+                }
             }
         }
     }
