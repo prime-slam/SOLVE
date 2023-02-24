@@ -12,13 +12,11 @@ class KeypointView(
     scale: Double,
 ) : LandmarkView(scale, keypoint) {
     companion object {
-        private const val OrdinaryRadius: Double = 5.0
         private const val HighlightingScaleFactor: Double = 2.0
     }
 
     override val node: Ellipse = createShape()
-
-    private var lastEnabledColor: Color? = keypoint.layerSettings.color
+    override var lastEnabledColor: Color? = keypoint.layerSettings.color
 
     init {
         setUpShape(node, keypoint.uid)
@@ -29,8 +27,11 @@ class KeypointView(
     private val coordinates
         get() = Pair(keypoint.coordinate.x.toDouble() * scale, keypoint.coordinate.y.toDouble() * scale)
 
-    private val radius
-        get() = if (scale < 1) OrdinaryRadius * scale else OrdinaryRadius
+    private val radius: Double
+        get() {
+            val selectedRadius = keypoint.layerSettings.selectedRadius
+            return if (scale < 1) selectedRadius * scale else selectedRadius
+        }
 
     override fun scaleChanged() {
         node.centerX = coordinates.first
@@ -79,19 +80,35 @@ class KeypointView(
         shape.fill = keypoint.layerSettings.getColor(keypoint)
         shape.opacity = keypoint.layerSettings.opacity
 
+        initializeSettingsBindings(shape)
+
+        return shape
+    }
+
+    private fun initializeSettingsBindings(shape: Ellipse) {
         keypoint.layerSettings.colorProperty.onChange { newColor ->
-            shape.fill = newColor
-            lastEnabledColor = newColor
+            newColor ?: return@onChange
+            setShapeColor(shape, newColor)
         }
         keypoint.layerSettings.enabledProperty.onChange { enabled ->
             enabled ?: return@onChange
-            if (enabled) {
-                shape.fill = lastEnabledColor
-            } else {
-                shape.fill = Color.TRANSPARENT
-            }
+            setShapeEnabled(shape, enabled)
         }
+        keypoint.layerSettings.selectedRadiusProperty.onChange { selectedRadius ->
+            selectedRadius ?: return@onChange
+            updateShapeRadius(shape)
+        }
+    }
 
-        return shape
+    private fun updateShapeRadius(shape: Ellipse) {
+        shape.radiusX = radius
+        shape.radiusY = radius
+    }
+
+    private fun highlightShapeInstantly(shape: Ellipse) {
+        toFront(shape)
+        shape.radiusX = radius * HighlightingScaleFactor
+        shape.radiusY = radius * HighlightingScaleFactor
+        shape.fill = keypoint.layerSettings.colorManager.getColor(keypoint.uid)
     }
 }
