@@ -124,9 +124,9 @@ class FrameView(
 
         drawnLandmarks = drawnLandmarks?.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
 
-        doForAllLandmarks { view, index ->
+        doForAllLandmarks { view, layerIndex ->
             if (view.node != null) {
-                view.node?.viewOrder = LANDMARKS_VIEW_ORDER - index
+                view.node?.viewOrder = LANDMARKS_VIEW_ORDER - layerIndex
             }
             view.drawOnCanvas(canvas)
         }
@@ -164,8 +164,8 @@ class FrameView(
     private fun drawLoadingIndicator() = canvas.fill(Color.GREY)
 
     private fun doForAllLandmarks(delegate: (LandmarkView, Int) -> Unit) =
-        drawnLandmarks?.values?.forEachIndexed { index, landmarkViews ->
-            landmarkViews.forEach { view -> delegate(view, index) }
+        drawnLandmarks?.values?.forEachIndexed { layerIndex, landmarkViews ->
+            landmarkViews.forEach { view -> delegate(view, layerIndex) }
         }
 
     private fun VisualizationFrame.hasPoints() = this.layers.filterIsInstance<Layer.PointLayer>().isNotEmpty()
