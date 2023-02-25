@@ -70,6 +70,8 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
 
                 listView.items[droppedCellIndex] = item
                 listView.items[index] = droppedCellItem
+
+                setOnDragDropped(event, item, droppedCellItem)
             }
 
             event.isDropCompleted = true
@@ -106,5 +108,5 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
 
     protected open fun setOnDragExited(event: DragEvent, item: T) { }
 
-    protected open fun setOnDragDropped(event: DragEvent) { }
+    protected open fun setOnDragDropped(event: DragEvent, thisItem: T, droppedItem: T) { }
 }
