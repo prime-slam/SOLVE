@@ -11,7 +11,7 @@ import solve.menubar.view.MenuBarView
 import solve.utils.createAlertForError
 import solve.utils.toStringWithoutBrackets
 import tornadofx.*
-import solve.importer.ProjectParser.fullParseDirectory
+import solve.importer.FullParserForImport.fullParseDirectory
 import solve.project.model.Project
 
 class ControlPanel : View() {
@@ -24,6 +24,8 @@ class ControlPanel : View() {
     private val importer = find<DirectoryPathView>()
 
     private val importButtonModel = ButtonModel()
+
+    var coroutineScope = CoroutineScope(Dispatchers.Main)
 
     companion object {
         private const val ButtonWidth = 180.0
@@ -52,9 +54,10 @@ class ControlPanel : View() {
         }
 
         action {
-            CoroutineScope(Dispatchers.Main).launch {
-                showLoading()
+            coroutineScope = CoroutineScope(Dispatchers.Main)
 
+            coroutineScope.launch {
+                showLoading()
                 val projectVal =
                     withContext(Dispatchers.IO) { fullParseDirectory(controller.projectAfterPartialParsing.value) }
 
@@ -84,9 +87,9 @@ class ControlPanel : View() {
     }
 
     private fun showLoading() {
-        find<ImporterView>().replaceWith(
-            LoadingScreen::class
-        )
+        val loadingScreen = LoadingScreen()
+
+        find(ImporterView::class).replaceWith(loadingScreen)
     }
 
     private fun importAction(button: Button, projectVal: Project) {
