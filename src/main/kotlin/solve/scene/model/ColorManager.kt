@@ -16,7 +16,7 @@ class ColorManager<T> {
 
     private fun generateRandomColorUnique(existingColors: Collection<Color>): Color {
         var color = generateRandomColor()
-        while(existingColors.contains(color)) {
+        while (existingColors.contains(color)) {
             color = generateRandomColor()
         }
         return color
