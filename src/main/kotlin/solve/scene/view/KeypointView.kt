@@ -42,6 +42,10 @@ class KeypointView(
     }
 
     override fun highlightShape() {
+        if (!keypoint.layerSettings.enabled) {
+            return
+        }
+
         toFront(node)
         val increasedRadiusScale = (radius / node.radiusX) * HighlightingScaleFactor
         val scaleTransition = createScaleAnimation(node, increasedRadiusScale, HighlightingAnimationDuration)
@@ -54,6 +58,10 @@ class KeypointView(
     }
 
     override fun unhighlightShape() {
+        if (!keypoint.layerSettings.enabled) {
+            return
+        }
+
         toBack(node)
         val defaultRadiusScale = radius / node.radiusX
         val scaleTransition = createScaleAnimation(node, defaultRadiusScale, HighlightingAnimationDuration)
