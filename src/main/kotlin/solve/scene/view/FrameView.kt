@@ -13,7 +13,6 @@ import solve.scene.model.Landmark
 import solve.scene.model.*
 import solve.scene.view.association.AssociationsManager
 import tornadofx.*
-import java.util.*
 
 class FrameView(
     private val width: Double,
@@ -24,7 +23,7 @@ class FrameView(
     private val orderManager: OrderManager<LayerSettings>,
     frame: VisualizationFrame?
 ) : Group() {
-    private var landmarksViews: SortedMap<Layer, List<LandmarkView>>? = null
+    private var drawnLandmarks: Map<Layer, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
     private var currentFrame: VisualizationFrame? = null
     private val canvas = BufferedImageView(width, height, scale.value)
@@ -79,7 +78,7 @@ class FrameView(
     fun setFrame(frame: VisualizationFrame?) {
         currentJob?.cancel()
         disposeLandmarkViews()
-        clearLandmarks()
+        removeLandmarksNodes()
         canvas.clear()
 
         if (frame == null) {
@@ -98,7 +97,16 @@ class FrameView(
 
             withContext(Dispatchers.JavaFx) {
                 if (!this@launch.isActive) return@withContext
-                draw(landmarkData, image)
+                val landmarkViews = landmarkData.mapValues {
+                    it.value.map { landmark ->
+                        LandmarkView.create(landmark, scale.value)
+                    }
+                }
+                validateImage(image)
+                drawnImage = image
+                drawnLandmarks = landmarkViews
+                draw()
+                addLandmarksNodes()
             }
         }
 
@@ -109,43 +117,23 @@ class FrameView(
         disposeLandmarkViews()
     }
 
-    private fun draw(landmarks: Map<Layer, List<Landmark>>, image: Image) {
-        drawnImage = image
-        if (image.height != height || image.width != width) {
-            println("Image size doesn't equal to the frame size") //TODO: warn user
-        }
-
+    private fun draw() {
+        val image = drawnImage ?: return
         canvas.clear()
         canvas.drawImage(image)
 
-        landmarksViews = landmarks.mapValues {
-            it.value.map { landmark ->
-                LandmarkView.create(landmark, scale.value)
-            }
-        }.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
+        drawnLandmarks = drawnLandmarks?.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
 
         doForAllLandmarks { view, index ->
             if (view.node != null) {
                 view.node?.viewOrder = LANDMARKS_VIEW_ORDER - index
-                children.add(view.node)
             }
             view.drawOnCanvas(canvas)
         }
     }
 
-    private val orderChangedCallback = orderChangedCallback@{
-        val image = drawnImage ?: return@orderChangedCallback
-        landmarksViews = landmarksViews?.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
-
-        canvas.clear()
-        canvas.drawImage(image)
-
-        doForAllLandmarks { view, index ->
-            if (view.node != null) {
-                view.node?.viewOrder = LANDMARKS_VIEW_ORDER - index
-            }
-            view.drawOnCanvas(canvas)
-        }
+    private val orderChangedCallback = {
+        draw()
     }
 
     init {
@@ -159,12 +147,24 @@ class FrameView(
         doForAllLandmarks { view, _ -> view.scale = newScale }
     }
 
-    private fun clearLandmarks() = children.removeIf { x -> x is Shape }
+    private fun validateImage(image: Image) {
+        if (image.height != height || image.width != width) {
+            println("Image size doesn't equal to the frame size") //TODO: warn user
+        }
+    }
+
+    private fun removeLandmarksNodes() = children.removeIf { x -> x is Shape }
+
+    private fun addLandmarksNodes() = doForAllLandmarks { view, _ ->
+        if (view.node != null) {
+            children.add(view.node)
+        }
+    }
 
     private fun drawLoadingIndicator() = canvas.fill(Color.GREY)
 
     private fun doForAllLandmarks(delegate: (LandmarkView, Int) -> Unit) =
-        landmarksViews?.values?.forEachIndexed { index, landmarkViews ->
+        drawnLandmarks?.values?.forEachIndexed { index, landmarkViews ->
             landmarkViews.forEach { view -> delegate(view, index) }
         }
 
