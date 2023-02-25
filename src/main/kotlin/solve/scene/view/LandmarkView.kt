@@ -154,7 +154,9 @@ sealed class LandmarkView(
     protected abstract fun unhighlightShape(duration: Duration)
 
     protected fun setShapeColor(shape: Shape, newColor: Color) {
-        shape.fill = newColor
+        if (landmark.layerSettings.enabled) {
+            shape.fill = newColor
+        }
         lastEnabledColor = newColor
     }
 
