@@ -1,5 +1,6 @@
 package solve.utils
 
+import javafx.application.Platform
 import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.Parent

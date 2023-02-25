@@ -3,10 +3,11 @@ package solve.settings.visualization.fields.view
 import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.Node
+import javafx.scene.Parent
+import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.image.Image
-import javafx.scene.layout.HBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.util.Duration
@@ -45,17 +46,6 @@ class VisualizationSettingsLayerCell(
         private val layerInvisibleIconImage = loadImage("icons/visualization_settings_layer_invisible.png")
     }
 
-    private var isLayerVisible = true
-    private val layerVisibleImageViewIcon =
-        if (layerVisibleIconImage != null) createImageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
-        else null
-    private val layerInvisibleImageViewIcon =
-        if (layerInvisibleIconImage != null) createImageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
-        else null
-    private val editImageViewIcon =
-        if (editIconImage != null) createImageViewIcon(editIconImage, LayerFieldEditIconSize) else null
-
-
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
         prefHeight = LayerFieldHeight
         addStylesheet(VisualizationSettingsLayerCellStyle::class)
@@ -74,24 +64,11 @@ class VisualizationSettingsLayerCell(
     }
 
     override fun createItemDragView(item: LayerSettings): Image {
-        val snapshotFieldNode = HBox()
+        val snapshotNode = createItemCellGraphic(item)
 
-        snapshotFieldNode.prefHeight = LayerFieldHeight
-        val layerIconNode = createLayerIconNode()
-        if (layerIconNode != null) {
-            snapshotFieldNode.add(layerIconNode)
-        }
-        snapshotFieldNode.add(createLayerNameLabel())
-        snapshotFieldNode.add(createHGrowHBox())
-        if (editImageViewIcon != null) {
-            snapshotFieldNode.add(editImageViewIcon)
-        }
-        val currentLayerVisibilityImageViewIcon = getCurrentLayerVisibilityImageViewIcon()
-        if (currentLayerVisibilityImageViewIcon != null) {
-            snapshotFieldNode.add(currentLayerVisibilityImageViewIcon)
-        }
-
-        return snapshotFieldNode.createSnapshot()
+        children.remove(snapshotNode)
+        val scene = Scene(snapshotNode as Parent)
+        return snapshotNode.createSnapshot()
     }
 
     private fun createLayerIconNode(): Node? {
@@ -112,7 +89,8 @@ class VisualizationSettingsLayerCell(
     }
 
     private fun createLayerEditButton(): Node = button {
-        editImageViewIcon ?: return@button
+        editIconImage ?: return@button
+        val editImageViewIcon = createImageViewIcon(editIconImage, LayerFieldEditIconSize)
         graphic = editImageViewIcon
         isPickOnBounds = false
 
@@ -121,22 +99,26 @@ class VisualizationSettingsLayerCell(
     }
 
     private fun createLayerVisibilityButton(): Node = hbox {
-        layerVisibleImageViewIcon ?: return@hbox
-        layerInvisibleImageViewIcon ?: return@hbox
+        layerVisibleIconImage ?: return@hbox
+        layerInvisibleIconImage ?: return@hbox
+        val layerVisibleImageViewIcon = createImageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
+        val layerInvisibleImageViewIcon =
+            createImageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
+
+        fun getCurrentVisibilityImageViewIcon() =
+            if (item.enabled) layerVisibleImageViewIcon else layerInvisibleImageViewIcon
+
         button {
-            graphic = layerVisibleImageViewIcon
+            graphic = getCurrentVisibilityImageViewIcon()
             action {
-                isLayerVisible = !isLayerVisible
-                graphic = getCurrentLayerVisibilityImageViewIcon()
-                item.enabled = isLayerVisible
+                item.enabled = !item.enabled
+                graphic = getCurrentVisibilityImageViewIcon()
+                item.enabled = item.enabled
             }
         }
         alignment = Pos.CENTER_RIGHT
         paddingLeft = LayerVisibilityIconPaddingLeft
     }
-
-    private fun getCurrentLayerVisibilityImageViewIcon() =
-        if (isLayerVisible) layerVisibleImageViewIcon else layerInvisibleImageViewIcon
 
     private fun initializePopOver(
         layerSettingsButton: Button,
