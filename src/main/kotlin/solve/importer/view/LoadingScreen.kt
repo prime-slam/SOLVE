@@ -1,6 +1,5 @@
 package solve.importer.view
 
-
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.ContentDisplay
@@ -8,6 +7,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.scene.text.Font
 import javafx.stage.Stage
+import kotlinx.coroutines.cancel
 import solve.utils.loadImage
 import tornadofx.*
 
@@ -37,6 +37,7 @@ class LoadingScreen : View("Loading") {
                     BorderPane.setAlignment(this, Pos.BOTTOM_CENTER)
                     maxWidth = 130.0
                     action {
+                        find<ControlPanel>().coroutineScope.cancel()
                         close()
                     }
                 }
