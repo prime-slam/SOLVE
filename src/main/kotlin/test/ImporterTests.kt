@@ -45,14 +45,16 @@ class ImporterTests {
         val frame1 = FrameAfterPartialParsing(
             ImageAfterPartialParsing(
                 image1,
-                pathImage1
+                pathImage1,
+                mutableListOf()
             ),
             listOf(
                 OutputAfterPartialParsing(
                     image1,
                     pathOutput1,
                     layer,
-                    LayerKind.Keypoint
+                    LayerKind.Keypoint,
+                    mutableListOf()
                 )
             )
         )
@@ -60,14 +62,16 @@ class ImporterTests {
         val frame2 = FrameAfterPartialParsing(
             ImageAfterPartialParsing(
                 image2,
-                pathImage2
+                pathImage2,
+                mutableListOf()
             ),
             listOf(
                 OutputAfterPartialParsing(
                     image2,
                     pathOutput2,
                     layer,
-                    LayerKind.Keypoint
+                    LayerKind.Keypoint,
+                    mutableListOf()
                 )
             )
         )
