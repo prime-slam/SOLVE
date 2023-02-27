@@ -72,7 +72,7 @@ object ProjectParser {
             val imageName = it.nameWithoutExtension
 
             if (imageName.toLongOrNull() != null) {
-                outputs.add(OutputAfterPartialParsing(imageName, it.absolutePath, directoryName, kind, mutableListOf()))
+                outputs.add(OutputAfterPartialParsing(imageName, it.invariantSeparatorsPath, directoryName, kind, mutableListOf()))
                 if (!layers.contains(directoryName)) {
                     layers.add(directoryName)
                 }
@@ -96,7 +96,7 @@ object ProjectParser {
             val imageName = it.nameWithoutExtension
 
             if (imageName.toLongOrNull() != null) {
-                images.add(ImageAfterPartialParsing(imageName, it.absolutePath, mutableListOf()).apply {
+                images.add(ImageAfterPartialParsing(imageName, it.invariantSeparatorsPath, mutableListOf()).apply {
                     incorrectExtensionError(it, errors)
                 })
             } else {

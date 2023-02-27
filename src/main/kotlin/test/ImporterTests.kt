@@ -35,7 +35,7 @@ class ImporterTests {
 
         initTree.children.addAll(image1, image2)
 
-        result?.let { assert(it == initTree) }
+        Assert.assertEquals(initTree, result)
     }
 
     @Test
