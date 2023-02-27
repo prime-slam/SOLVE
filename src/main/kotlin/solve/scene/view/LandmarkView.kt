@@ -12,7 +12,7 @@ import solve.scene.model.Landmark
 // This has access to landmark data class and its layer
 sealed class LandmarkView(
     scale: Double,
-    landmark: Landmark,
+    private val landmark: Landmark,
 ) {
     companion object {
         fun create(landmark: Landmark, scale: Double): LandmarkView {

@@ -1,5 +1,7 @@
 package solve.scene.view
 
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import solve.scene.model.Landmark

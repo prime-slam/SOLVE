@@ -18,8 +18,12 @@ sealed class LayerSettings(val name: String) {
             private const val OrdinaryRadius: Double = 5.0
         }
 
+        override val landmarksType = LandmarkType.Keypoint
+
         val selectedRadiusProperty = SimpleObjectProperty(OrdinaryRadius)
-        var selectedRadius: Double by selectedRadiusProperty
+        var selectedRadius: Double
+            get() = selectedRadiusProperty.get()
+            set(value) = selectedRadiusProperty.set(value)
 
         val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
         var color: Color
@@ -53,5 +57,7 @@ sealed class LayerSettings(val name: String) {
         }
 
     val enabledProperty = SimpleObjectProperty(true)
-    var enabled: Boolean by enabledProperty
+    var enabled: Boolean
+        get() = enabledProperty.get()
+        set(value) = enabledProperty.set(value)
 }
