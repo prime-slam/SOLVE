@@ -5,14 +5,19 @@ import solve.scene.model.Landmark
 
 class PlaneView(
     private val plane: Landmark.Plane,
+    private val canvas: BufferedImageView,
     scale: Double,
 ) : LandmarkView(scale, plane) {
     override val node = null
 
-    override fun drawOnCanvas(canvas: BufferedImageView) {
-        val color = plane.layerSettings.colorManager.getColor(plane.uid)
+    override fun drawOnCanvas() {
+        val color = plane.layerSettings.getColor(plane)
         val colorWithOpacity = Color(color.red, color.green, color.blue, plane.layerSettings.opacity)
         canvas.drawPoints(colorWithOpacity, plane.points)
+    }
+
+    override fun useOneColorChanged() {
+        drawOnCanvas()
     }
 
     override fun scaleChanged() {
