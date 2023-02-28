@@ -18,7 +18,7 @@ class LineView(
         setUpShape(node, line.uid)
     }
 
-    override fun drawOnCanvas(canvas: BufferedImageView) { }
+    override fun drawOnCanvas() { }
 
     private val startCoordinates
         get() = Pair(line.startCoordinate.x.toDouble() * scale, line.finishCoordinate.y.toDouble() * scale)
@@ -33,10 +33,14 @@ class LineView(
         node.endY = finishCoordinates.second
     }
 
+    override fun useOneColorChanged() {
+        node.fill = line.layerSettings.getColor(line)
+    }
+
     private fun createShape(): Line {
         val shape =
             Line(startCoordinates.first, startCoordinates.second, finishCoordinates.first, finishCoordinates.second)
-        shape.stroke = line.layerSettings.color
+        shape.stroke = line.layerSettings.getColor(line)
         shape.opacity = line.layerSettings.opacity
         shape.strokeWidth = width
         return shape
