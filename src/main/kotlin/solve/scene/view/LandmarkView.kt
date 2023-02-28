@@ -1,5 +1,7 @@
 package solve.scene.view
 
+import javafx.beans.InvalidationListener
+import javafx.beans.WeakInvalidationListener
 import javafx.collections.SetChangeListener
 import javafx.collections.WeakSetChangeListener
 import javafx.scene.Node
@@ -14,11 +16,11 @@ sealed class LandmarkView(
     landmark: Landmark,
 ) {
     companion object {
-        fun create(landmark: Landmark, scale: Double): LandmarkView {
+        fun create(landmark: Landmark, scale: Double, canvas: BufferedImageView): LandmarkView {
             return when (landmark) {
                 is Landmark.Keypoint -> KeypointView(landmark, scale)
                 is Landmark.Line -> LineView(landmark, scale)
-                is Landmark.Plane -> PlaneView(landmark, scale)
+                is Landmark.Plane -> PlaneView(landmark, canvas, scale)
             }
         }
     }
@@ -27,9 +29,10 @@ sealed class LandmarkView(
     // setUpShape() should be called to set up common features for all landmarks
     abstract val node: Node?
 
-    abstract fun drawOnCanvas(canvas: BufferedImageView)
+    abstract fun drawOnCanvas()
 
     private val layerState = landmark.layerState
+    private val layerSettings = landmark.layerSettings
 
     private var state: LandmarkState = LandmarkState.Ordinary
 
@@ -69,14 +72,21 @@ sealed class LandmarkView(
     }
     private val weakHoveredLandmarksChangedEventHandler = WeakSetChangeListener(hoveredLandmarksChangedEventHandler)
 
+    private val useOneColorChangedListener = InvalidationListener { _ -> useOneColorChanged() }
+    private val weakUseOneColorChangedListener = WeakInvalidationListener(useOneColorChangedListener)
+
     init {
         landmark.layerState.selectedLandmarksUids.addListener(weakSelectedLandmarksChangedEventHandler)
         landmark.layerState.hoveredLandmarksUids.addListener(weakHoveredLandmarksChangedEventHandler)
+
+        landmark.layerSettings.useOneColor.addListener(weakUseOneColorChangedListener)
     }
 
     fun dispose() {
         layerState.selectedLandmarksUids.removeListener(weakSelectedLandmarksChangedEventHandler)
         layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
+
+        layerSettings.useOneColor.removeListener(weakUseOneColorChangedListener)
     }
 
     // Set up common shape properties
@@ -115,6 +125,8 @@ sealed class LandmarkView(
     }
 
     protected abstract fun scaleChanged()
+
+    protected abstract fun useOneColorChanged()
 
     protected abstract fun highlightShape()
     protected abstract fun unhighlightShape()

@@ -99,7 +99,7 @@ class FrameView(
                 if (!this@launch.isActive) return@withContext
                 val landmarkViews = landmarkData.mapValues {
                     it.value.map { landmark ->
-                        LandmarkView.create(landmark, scale.value)
+                        LandmarkView.create(landmark, scale.value, canvas)
                     }
                 }
                 validateImage(image)
@@ -128,7 +128,7 @@ class FrameView(
             if (view.node != null) {
                 view.node?.viewOrder = LANDMARKS_VIEW_ORDER - layerIndex
             }
-            view.drawOnCanvas(canvas)
+            view.drawOnCanvas()
         }
     }
 
