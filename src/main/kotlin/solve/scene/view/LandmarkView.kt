@@ -124,6 +124,10 @@ sealed class LandmarkView(
         node.viewOrder += HIGHLIGHTING_VIEW_ORDER_GAP
     }
 
+    protected fun isHighlighted(landmark: Landmark) =
+        layerState.selectedLandmarksUids.contains(landmark.uid)
+                || layerState.hoveredLandmarksUids.contains(landmark.uid)
+
     protected abstract fun scaleChanged()
 
     protected abstract fun useOneColorChanged()
