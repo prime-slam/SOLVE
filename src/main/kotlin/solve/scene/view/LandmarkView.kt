@@ -7,13 +7,14 @@ import javafx.collections.WeakSetChangeListener
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Shape
+import javafx.util.Duration
 import solve.scene.model.Landmark
 
 // Responsive for creating and setting visual effects for landmarks presenting controls
 // This has access to landmark data class and its layer
 sealed class LandmarkView(
     scale: Double,
-    landmark: Landmark,
+    private val landmark: Landmark,
 ) {
     companion object {
         fun create(landmark: Landmark, scale: Double, canvas: BufferedImageView): LandmarkView {
@@ -23,6 +24,9 @@ sealed class LandmarkView(
                 is Landmark.Plane -> PlaneView(landmark, canvas, scale)
             }
         }
+
+        val HighlightingAnimationDuration: Duration = Duration.millis(500.0)
+        val InstantAnimationDuration: Duration = Duration.millis(0.1)
     }
 
     // When shape is created in an inheritor
@@ -42,16 +46,25 @@ sealed class LandmarkView(
             scaleChanged()
         }
 
+    private val parentChangedListener: InvalidationListener = InvalidationListener { newValue ->
+        if (newValue != null && isHighlighted(landmark)) {
+            highlightShape(InstantAnimationDuration)
+        }
+        removeParentChangedListener()
+    }
+
+    private fun removeParentChangedListener() = node?.parentProperty()?.removeListener(parentChangedListener)
+
     // Should be stored to avoid weak listener from be collected
     private val selectedLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
         if (e.wasAdded() && e.elementAdded == landmark.uid) {
             state = LandmarkState.Selected
-            highlightShape()
+            highlightShape(HighlightingAnimationDuration)
         }
 
         if (e.wasRemoved() && e.elementRemoved == landmark.uid) {
             state = LandmarkState.Ordinary
-            unhighlightShape()
+            unhighlightShape(HighlightingAnimationDuration)
         }
     }
     private val weakSelectedLandmarksChangedEventHandler = WeakSetChangeListener(selectedLandmarksChangedEventHandler)
@@ -63,16 +76,16 @@ sealed class LandmarkView(
         }
 
         if (e.wasAdded() && e.elementAdded == landmark.uid) {
-            highlightShape()
+            highlightShape(HighlightingAnimationDuration)
         }
 
         if (e.wasRemoved() && e.elementRemoved == landmark.uid) {
-            unhighlightShape()
+            unhighlightShape(HighlightingAnimationDuration)
         }
     }
     private val weakHoveredLandmarksChangedEventHandler = WeakSetChangeListener(hoveredLandmarksChangedEventHandler)
 
-    private val useOneColorChangedListener = InvalidationListener { _ -> useOneColorChanged() }
+    private val useOneColorChangedListener = InvalidationListener { useOneColorChanged() }
     private val weakUseOneColorChangedListener = WeakInvalidationListener(useOneColorChangedListener)
 
     init {
@@ -92,6 +105,8 @@ sealed class LandmarkView(
     // Set up common shape properties
     // Can not be called during LandmarkView initialization because shape is created by inheritors
     protected fun setUpShape(shape: Shape, uid: Long) {
+        shape.parentProperty().addListener(parentChangedListener)
+
         if (layerState.selectedLandmarksUids.contains(uid)) {
             state = LandmarkState.Selected
         }
@@ -132,6 +147,6 @@ sealed class LandmarkView(
 
     protected abstract fun useOneColorChanged()
 
-    protected abstract fun highlightShape()
-    protected abstract fun unhighlightShape()
+    protected abstract fun highlightShape(duration: Duration)
+    protected abstract fun unhighlightShape(duration: Duration)
 }
