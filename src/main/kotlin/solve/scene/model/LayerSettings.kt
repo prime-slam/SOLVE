@@ -37,6 +37,7 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
 
     class PlaneLayerSettings(name: String, layerColorManager: ColorManager<String>) :
         LayerSettings(name, layerColorManager) {
+
         init {
             useOneColor.value = false
         }
@@ -50,5 +51,5 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
 
     var enabled: Boolean = true
 
-    var useOneColor = SimpleBooleanProperty(true)
+    val useOneColor = SimpleBooleanProperty(true)
 }
