@@ -1,6 +1,7 @@
 package solve.scene.view
 
 import javafx.scene.paint.Color
+import javafx.util.Duration
 import solve.scene.model.Landmark
 
 class PlaneView(
@@ -23,9 +24,9 @@ class PlaneView(
     override fun scaleChanged() {
     }
 
-    override fun highlightShape() {
+    override fun highlightShape(duration: Duration) {
     }
 
-    override fun unhighlightShape() {
+    override fun unhighlightShape(duration: Duration) {
     }
 }
