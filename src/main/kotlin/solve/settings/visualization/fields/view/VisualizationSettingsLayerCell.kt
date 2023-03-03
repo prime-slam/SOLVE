@@ -1,15 +1,20 @@
 package solve.settings.visualization.fields.view
 
+import com.sun.javafx.stage.FocusUngrabEvent
 import javafx.application.Platform
+import javafx.event.ActionEvent
+import javafx.event.EventType
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
+import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import javafx.stage.Stage
 import javafx.util.Duration
 import org.controlsfx.control.PopOver
 import solve.scene.controller.SceneController
@@ -20,6 +25,9 @@ import solve.utils.*
 import solve.utils.nodes.DragAndDropListCell
 import solve.utils.structures.Point
 import tornadofx.*
+import java.awt.Event
+import java.awt.event.MouseEvent
+import java.awt.event.WindowEvent
 
 class VisualizationSettingsLayerCell(
     private val sceneController: SceneController
@@ -146,6 +154,11 @@ class VisualizationSettingsLayerCell(
                 }
                 popOver.setOnShowing {
                     isPopOverShowing = true
+                }
+                // Needed in order not to lose the focus of the main window when opening a modal window.
+                popOver.addEventFilter(ComboBoxBase.ON_HIDDEN) { event ->
+                    event.consume()
+                    scene.window.requestFocus()
                 }
                 layerSettingsButton.action {
                     if (!isPopOverShowing) {
