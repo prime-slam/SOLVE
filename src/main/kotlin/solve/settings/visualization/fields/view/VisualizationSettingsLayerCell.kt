@@ -1,9 +1,6 @@
 package solve.settings.visualization.fields.view
 
-import com.sun.javafx.stage.FocusUngrabEvent
 import javafx.application.Platform
-import javafx.event.ActionEvent
-import javafx.event.EventType
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -14,7 +11,6 @@ import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
-import javafx.stage.Stage
 import javafx.util.Duration
 import org.controlsfx.control.PopOver
 import solve.scene.controller.SceneController
@@ -25,9 +21,6 @@ import solve.utils.*
 import solve.utils.nodes.DragAndDropListCell
 import solve.utils.structures.Point
 import tornadofx.*
-import java.awt.Event
-import java.awt.event.MouseEvent
-import java.awt.event.WindowEvent
 
 class VisualizationSettingsLayerCell(
     private val sceneController: SceneController
@@ -55,16 +48,18 @@ class VisualizationSettingsLayerCell(
     }
 
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
+        val layerType = getLayerSettingsType(item)
+
         prefHeight = LayerFieldHeight
         addStylesheet(VisualizationSettingsLayerCellStyle::class)
 
-        val layerIconNode = createLayerIconNode()
+        val layerIconNode = createLayerIconNode(layerType)
         if (layerIconNode != null) {
             add(layerIconNode)
         }
         add(createLayerNameLabel())
         add(createHGrowHBox())
-        add(createLayerEditButton())
+        add(createLayerEditButton(layerType))
         add(createLayerVisibilityButton())
 
         alignment = Pos.CENTER_LEFT
@@ -79,8 +74,8 @@ class VisualizationSettingsLayerCell(
         return snapshotNode.createSnapshot()
     }
 
-    private fun createLayerIconNode(): Node? {
-        val layerIcon = getLayerIcon(item.landmarksType)
+    private fun createLayerIconNode(layerType: LandmarkType): Node? {
+        val layerIcon = getLayerIcon(layerType)
         layerIcon ?: return null
         // Needed to set the padding and to center the imageview.
         return vbox {
@@ -96,13 +91,13 @@ class VisualizationSettingsLayerCell(
         maxWidth = LayerFieldNameMaxWidth
     }
 
-    private fun createLayerEditButton(): Node = button {
+    private fun createLayerEditButton(layerType: LandmarkType): Node = button {
         editIconImage ?: return@button
         val editImageViewIcon = createImageViewIcon(editIconImage, LayerFieldEditIconSize)
         graphic = editImageViewIcon
         isPickOnBounds = false
 
-        initializePopOver(this, this)
+        initializePopOver(this, this, layerType)
         alignment = Pos.CENTER_RIGHT
     }
 
@@ -130,9 +125,10 @@ class VisualizationSettingsLayerCell(
 
     private fun initializePopOver(
         layerSettingsButton: Button,
-        spawnNode: Node
+        spawnNode: Node,
+        layerType: LandmarkType
     ) {
-        val popOverTitle = "${item.name} (${item.landmarksType.name})"
+        val popOverTitle = "${item.name} (${layerType.name})"
         val popOverNode = createLayerSettingsPopOverNode(item)
         if (popOverNode != null) {
             val popOver = createLayerSettingsPopOver(
@@ -143,7 +139,7 @@ class VisualizationSettingsLayerCell(
 
             // Installing a correct popover position.
             val labelPosition = spawnNode.getScreenPosition()
-            val popOverNodeSize = getPopOverNodeSize(item.landmarksType)
+            val popOverNodeSize = getPopOverNodeSize(layerType)
 
             if (popOverNodeSize != null) {
                 val popOverNodeSizeOffsetVector = Point(popOverNodeSize.x, 0.0)
@@ -177,7 +173,7 @@ class VisualizationSettingsLayerCell(
     }
 
     private fun createLayerSettingsPopOverNode(layerSettings: LayerSettings): Node? =
-        when (layerSettings.landmarksType) {
+        when (getLayerSettingsType(layerSettings)) {
             LandmarkType.Keypoint ->
                 PointLayerSettingsPopOverNode(
                     layerSettings as LayerSettings.PointLayerSettings,
@@ -216,6 +212,12 @@ class VisualizationSettingsLayerCell(
         )
         LandmarkType.Line -> null // TODO: add a line layers panel realization.
         LandmarkType.Plane -> null // TODO: add a plane layers panel realization.
+    }
+
+    private fun getLayerSettingsType(layerSettings: LayerSettings) = when (layerSettings) {
+        is LayerSettings.PointLayerSettings -> LandmarkType.Keypoint
+        is LayerSettings.LineLayerSettings -> LandmarkType.Line
+        is LayerSettings.PlaneLayerSettings -> LandmarkType.Plane
     }
 }
 

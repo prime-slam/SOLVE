@@ -1,6 +1,5 @@
 package solve.main
 
-import javafx.beans.property.SimpleStringProperty
 import solve.catalogue.controller.CatalogueController
 import solve.main.splitpane.SidePanelLocation
 import solve.project.model.ProjectFrame
