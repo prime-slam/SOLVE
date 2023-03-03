@@ -3,6 +3,7 @@ package solve.scene.view
 import javafx.beans.*
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
+import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
@@ -153,7 +154,7 @@ class FrameView(
         }
     }
 
-    private fun removeLandmarksNodes() = children.removeIf { x -> x is Shape }
+    private fun removeLandmarksNodes() = children.removeIf { x -> x is Shape || x is Label }
 
     private fun addLandmarksNodes() = doForAllLandmarks { view, _ ->
         if (view.node != null) {

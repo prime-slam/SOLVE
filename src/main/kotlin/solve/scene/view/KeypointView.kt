@@ -5,6 +5,7 @@ import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import solve.scene.model.Landmark
 import solve.scene.view.utils.*
+import solve.utils.structures.Point
 import tornadofx.onChange
 
 class KeypointView(
@@ -16,6 +17,10 @@ class KeypointView(
         private val HighlightingAnimationDuration = Duration.millis(500.0)
     }
 
+    private val keypointCoordinates = Point(keypoint.coordinate.x.toDouble(), keypoint.coordinate.y.toDouble())
+    private val coordinates: Point
+        get() = keypointCoordinates * scale
+
     override val node: Ellipse = createShape()
     override var lastEnabledColor: Color? = keypoint.layerSettings.color
 
@@ -25,9 +30,6 @@ class KeypointView(
 
     override fun drawOnCanvas(canvas: BufferedImageView) { }
 
-    private val coordinates
-        get() = Pair(keypoint.coordinate.x.toDouble() * scale, keypoint.coordinate.y.toDouble() * scale)
-
     private val radius: Double
         get() {
             val selectedRadius = keypoint.layerSettings.selectedRadius
@@ -35,10 +37,7 @@ class KeypointView(
         }
 
     override fun scaleChanged() {
-        node.centerX = coordinates.first
-        node.centerY = coordinates.second
-        node.radiusX = radius
-        node.radiusY = radius
+        updateKeypointTransform()
     }
 
     override fun highlightShape() {
@@ -72,7 +71,7 @@ class KeypointView(
     }
 
     private fun createShape(): Ellipse {
-        val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
+        val shape = Ellipse(coordinates.x, coordinates.y, radius, radius)
         shape.fill = keypoint.layerSettings.color
         shape.opacity = keypoint.layerSettings.opacity
 
@@ -115,5 +114,12 @@ class KeypointView(
         shape.radiusX = radius * HighlightingScaleFactor
         shape.radiusY = radius * HighlightingScaleFactor
         shape.fill = keypoint.layerSettings.colorManager.getColor(keypoint.uid)
+    }
+
+    private fun updateKeypointTransform() {
+        node.centerX = coordinates.x
+        node.centerY = coordinates.y
+        node.radiusX = radius
+        node.radiusY = radius
     }
 }
