@@ -66,6 +66,10 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
             if (isListViewCellSource(event.gestureSource)) {
                 val droppedCellItem =
                     (event.gestureSource as DragAndDropListCell<*>).item as? T ?: return@setOnDragDropped
+                if (!isAbleToDropItem(item, droppedCellItem)) {
+                    return@setOnDragDropped
+                }
+
                 val droppedCellIndex = listView.items.indexOf(droppedCellItem)
 
                 listView.items[droppedCellIndex] = item
@@ -94,9 +98,7 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
         }
     }
 
-
-    private fun isListViewCellSource(gestureSource: Any): Boolean =
-        gestureSource is DragAndDropListCell<*> && listView.items.contains(gestureSource.item)
+    protected open fun isAbleToDropItem(thisItem: T, droppedItem: T): Boolean = true
 
     protected open fun createItemCellGraphic(item: T): Node? = null
 
@@ -109,4 +111,7 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
     protected open fun setOnDragExited(event: DragEvent, item: T) { }
 
     protected open fun setOnDragDropped(event: DragEvent, thisItem: T, droppedItem: T) { }
+
+    private fun isListViewCellSource(gestureSource: Any): Boolean =
+        gestureSource is DragAndDropListCell<*> && listView.items.contains(gestureSource.item)
 }

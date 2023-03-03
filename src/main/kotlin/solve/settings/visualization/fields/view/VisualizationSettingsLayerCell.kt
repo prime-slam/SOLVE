@@ -9,6 +9,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Label
 import javafx.scene.image.Image
+import javafx.scene.input.DragEvent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.util.Duration
@@ -72,6 +73,23 @@ class VisualizationSettingsLayerCell(
         children.remove(snapshotNode)
         val scene = Scene(snapshotNode as Parent)
         return snapshotNode.createSnapshot()
+    }
+
+    override fun isAbleToDropItem(thisItem: LayerSettings, droppedItem: LayerSettings): Boolean {
+        val bothArePlanes =
+            thisItem is LayerSettings.PlaneLayerSettings && droppedItem is LayerSettings.PlaneLayerSettings
+        val bothAreNotPlanes =
+            thisItem !is LayerSettings.PlaneLayerSettings && droppedItem !is LayerSettings.PlaneLayerSettings
+
+        if (bothArePlanes || bothAreNotPlanes) {
+            return true
+        }
+
+        return false
+    }
+
+    override fun setOnDragDropped(event: DragEvent, thisItem: LayerSettings, droppedItem: LayerSettings) {
+        // TODO: add reordering logic for a layers drawing.
     }
 
     private fun createLayerIconNode(layerType: LandmarkType): Node? {
