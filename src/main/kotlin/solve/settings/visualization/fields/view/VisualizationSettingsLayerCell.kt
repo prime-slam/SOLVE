@@ -16,6 +16,7 @@ import org.controlsfx.control.PopOver
 import solve.scene.controller.SceneController
 import solve.scene.model.LandmarkType
 import solve.scene.model.LayerSettings
+import solve.settings.visualization.popover.LineLayerSettingsPopOverNode
 import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
 import solve.utils.*
 import solve.utils.nodes.DragAndDropListCell
@@ -179,7 +180,11 @@ class VisualizationSettingsLayerCell(
                     layerSettings as LayerSettings.PointLayerSettings,
                     sceneController
                 ).getPopOverNode()
-            LandmarkType.Line -> null // TODO: add a line layers panel realization.
+            LandmarkType.Line ->
+                LineLayerSettingsPopOverNode(
+                    layerSettings as LayerSettings.LineLayerSettings,
+                    sceneController
+                ).getPopOverNode()
             LandmarkType.Plane -> null // TODO: add a plane layers panel realization.
         }
 

@@ -8,11 +8,6 @@ class LineView(
     private val line: Landmark.Line,
     scale: Double,
 ) : LandmarkView(scale, line) {
-    companion object {
-        private const val OrdinaryWidth: Double = 3.0
-    }
-
-    private var width = OrdinaryWidth
     override val node: Line = createShape()
     override var lastEnabledColor: Color? = Color.RED // TODO: add a line drawing implementation.
 
@@ -40,7 +35,7 @@ class LineView(
             Line(startCoordinates.first, startCoordinates.second, finishCoordinates.first, finishCoordinates.second)
         shape.stroke = line.layerSettings.color
         shape.opacity = line.layerSettings.opacity
-        shape.strokeWidth = width
+        shape.strokeWidth = line.layerSettings.selectedWidth
         return shape
     }
 

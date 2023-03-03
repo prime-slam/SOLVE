@@ -40,7 +40,7 @@ class PointLayerSettingsPopOverNode(
 
         val initialSelectedRadius = pointLayerSettings.selectedRadius
         if (initialSelectedRadius !in PointSizeSliderMinValue..PointSizeSliderMaxValue) {
-            throw IllegalArgumentException("The initial selected radius is out of selection range!")
+            throw IllegalArgumentException("The initial selected point radius is out of selection range!")
         }
         slider.min = PointSizeSliderMinValue
         slider.max = PointSizeSliderMaxValue

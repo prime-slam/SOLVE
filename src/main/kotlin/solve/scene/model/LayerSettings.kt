@@ -32,6 +32,15 @@ sealed class LayerSettings(val name: String) {
     }
 
     class LineLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
+        companion object {
+            private const val OrdinaryWidth: Double = 3.0
+        }
+
+        val selectedWidthProperty = SimpleObjectProperty(OrdinaryWidth)
+        var selectedWidth: Double
+            get() = selectedWidthProperty.get()
+            set(value) = selectedWidthProperty.set(value)
+
         val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
         var color: Color
             get() = colorProperty.get()
