@@ -1,13 +1,15 @@
 package solve.scene.view
 
+import javafx.scene.control.Label
 import javafx.scene.paint.Color
 import solve.scene.model.Landmark
+import solve.utils.structures.Point
 
 class PlaneView(
     private val plane: Landmark.Plane,
     scale: Double,
 ) : LandmarkView(scale, plane) {
-    override val node = null
+    override val node = createUIDLabel()
     // TODO: add a line drawing implementation.
     override var lastEnabledColor: Color? = plane.layerSettings.colorManager.getColor(plane.uid)
 
@@ -18,6 +20,7 @@ class PlaneView(
     }
 
     override fun scaleChanged() {
+        updateLabelPosition(node)
     }
 
     override fun highlightShape() {
@@ -25,4 +28,21 @@ class PlaneView(
 
     override fun unhighlightShape() {
     }
+
+    private fun createUIDLabel(): Label {
+        val label = Label(plane.uid.toString())
+        updateLabelPosition(label)
+
+        return label
+    }
+
+    private fun updateLabelPosition(label: Label) {
+        val labelPosition = calculatePlaneCenterPoint() * scale
+
+        label.layoutX = labelPosition.x
+        label.layoutY = labelPosition.y
+    }
+
+    private fun calculatePlaneCenterPoint(): Point =
+        Point(plane.points.map { it.x }.average(), plane.points.map { it.y }.average())
 }
