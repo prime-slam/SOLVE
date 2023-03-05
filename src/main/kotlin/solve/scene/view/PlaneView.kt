@@ -1,5 +1,6 @@
 package solve.scene.view
 
+import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import solve.scene.model.Landmark
@@ -25,8 +26,31 @@ class PlaneView(
     }
 
     override fun highlightShape(duration: Duration) {
+        println("highlight plane")
     }
 
     override fun unhighlightShape(duration: Duration) {
+        println("unhighlight plane")
+    }
+
+    private fun setUpCanvas() {
+//        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED) {
+//            when (state) {
+//                LandmarkState.Ordinary -> {
+//                    layerState.selectedLandmarksUids.add(uid)
+//                }
+//                LandmarkState.Selected -> {
+//                    layerState.selectedLandmarksUids.remove(uid)
+//                }
+//            }
+//        }
+//
+//        canvas.addEventHandler(MouseEvent.MOUSE_ENTERED) {
+//            layerState.hoveredLandmarksUids.add(uid)
+//        }
+//
+//        canvas.addEventHandler(MouseEvent.MOUSE_EXITED) {
+//            layerState.hoveredLandmarksUids.remove(uid)
+//        }
     }
 }
