@@ -39,6 +39,7 @@ sealed class LandmarkView(
     private val layerSettings = landmark.layerSettings
 
     private var state: LandmarkState = LandmarkState.Ordinary
+    private var isHighlighted = false
 
     var scale: Double = scale
         set(value) {
@@ -47,8 +48,8 @@ sealed class LandmarkView(
         }
 
     private val parentChangedListener: InvalidationListener = InvalidationListener { newValue ->
-        if (newValue != null && isHighlighted(landmark)) {
-            highlightShape(InstantAnimationDuration)
+        if (newValue != null && shouldHighlight(landmark)) {
+            highlightShapeIfNeeded(InstantAnimationDuration)
         }
         removeParentChangedListener()
     }
@@ -59,12 +60,12 @@ sealed class LandmarkView(
     private val selectedLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
         if (e.wasAdded() && e.elementAdded == landmark.uid) {
             state = LandmarkState.Selected
-            highlightShape(HighlightingAnimationDuration)
+            highlightShapeIfNeeded(HighlightingAnimationDuration)
         }
 
         if (e.wasRemoved() && e.elementRemoved == landmark.uid) {
             state = LandmarkState.Ordinary
-            unhighlightShape(HighlightingAnimationDuration)
+            unhighlightShapeIfNeeded(HighlightingAnimationDuration)
         }
     }
     private val weakSelectedLandmarksChangedEventHandler = WeakSetChangeListener(selectedLandmarksChangedEventHandler)
@@ -76,11 +77,11 @@ sealed class LandmarkView(
         }
 
         if (e.wasAdded() && e.elementAdded == landmark.uid) {
-            highlightShape(HighlightingAnimationDuration)
+            highlightShapeIfNeeded(HighlightingAnimationDuration)
         }
 
         if (e.wasRemoved() && e.elementRemoved == landmark.uid) {
-            unhighlightShape(HighlightingAnimationDuration)
+            unhighlightShapeIfNeeded(HighlightingAnimationDuration)
         }
     }
     private val weakHoveredLandmarksChangedEventHandler = WeakSetChangeListener(hoveredLandmarksChangedEventHandler)
@@ -139,7 +140,7 @@ sealed class LandmarkView(
         node.viewOrder += HIGHLIGHTING_VIEW_ORDER_GAP
     }
 
-    protected fun isHighlighted(landmark: Landmark) =
+    protected fun shouldHighlight(landmark: Landmark) =
         layerState.selectedLandmarksUids.contains(landmark.uid)
                 || layerState.hoveredLandmarksUids.contains(landmark.uid)
 
@@ -149,4 +150,20 @@ sealed class LandmarkView(
 
     protected abstract fun highlightShape(duration: Duration)
     protected abstract fun unhighlightShape(duration: Duration)
+
+    private fun highlightShapeIfNeeded(duration: Duration) {
+        if (isHighlighted) {
+            return
+        }
+        highlightShape(duration)
+        isHighlighted = true
+    }
+
+    private fun unhighlightShapeIfNeeded(duration: Duration) {
+        if (!isHighlighted) {
+            return
+        }
+        unhighlightShape(duration)
+        isHighlighted = false
+    }
 }
