@@ -94,6 +94,10 @@ sealed class LandmarkView(
         landmark.layerState.hoveredLandmarksUids.addListener(weakHoveredLandmarksChangedEventHandler)
 
         landmark.layerSettings.useOneColor.addListener(weakUseOneColorChangedListener)
+
+        if (layerState.selectedLandmarksUids.contains(landmark.uid)) {
+            state = LandmarkState.Selected
+        }
     }
 
     fun dispose() {
@@ -107,10 +111,6 @@ sealed class LandmarkView(
     // Can not be called during LandmarkView initialization because shape is created by inheritors
     protected fun setUpShape(shape: Shape, uid: Long) {
         shape.parentProperty().addListener(parentChangedListener)
-
-        if (layerState.selectedLandmarksUids.contains(uid)) {
-            state = LandmarkState.Selected
-        }
 
         shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
             when (state) {
