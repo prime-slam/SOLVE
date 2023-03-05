@@ -38,8 +38,8 @@ sealed class LandmarkView(
     private val layerState = landmark.layerState
     private val layerSettings = landmark.layerSettings
 
-    private val isSelected get() = layerState.selectedLandmarksUids.contains(landmark.uid)
-    private val isHovered get() = layerState.hoveredLandmarksUids.contains(landmark.uid)
+    protected val isSelected get() = layerState.selectedLandmarksUids.contains(landmark.uid)
+    protected val isHovered get() = layerState.hoveredLandmarksUids.contains(landmark.uid)
     protected val shouldHighlight get() = isSelected || isHovered
 
     private var isHighlighted = false
@@ -97,7 +97,7 @@ sealed class LandmarkView(
         landmark.layerSettings.useOneColor.addListener(weakUseOneColorChangedListener)
     }
 
-    fun dispose() {
+    open fun dispose() {
         layerState.selectedLandmarksUids.removeListener(weakSelectedLandmarksChangedEventHandler)
         layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
 
