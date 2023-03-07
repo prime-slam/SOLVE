@@ -1,8 +1,6 @@
-package test
-
 import javafx.scene.control.TreeItem
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import solve.importer.ProjectParser.createTreeWithFiles
 import solve.importer.ProjectParser.partialParseDirectory
 import solve.importer.model.*
@@ -35,7 +33,7 @@ class ImporterTests {
 
         initTree.children.addAll(image1, image2)
 
-        Assert.assertEquals(initTree, result)
+        Assertions.assertEquals(initTree, result)
     }
 
     @Test
@@ -78,6 +76,6 @@ class ImporterTests {
 
         val expected = ProjectAfterPartialParsing(pathTestProject, listOf(frame1, frame2))
 
-        Assert.assertEquals(expected, result)
+        Assertions.assertEquals(expected, result)
     }
 }
