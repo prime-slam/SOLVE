@@ -13,7 +13,7 @@ val jacksonCSVVersion: String by rootProject
 val jacksonModuleKotlinVersion: String by rootProject
 val virtualizedfxVersion: String by rootProject
 val coroutinesVersion: String by rootProject
-val controlsfxVersion: String by rootProject
+val junitVersion: String by rootProject
 
 repositories {
     mavenCentral()
@@ -41,7 +41,7 @@ dependencies {
     implementation("io.github.palexdev:virtualizedfx:$virtualizedfxVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:$coroutinesVersion")
-    implementation("junit:junit:4.13.1")
+    implementation("junit:junit:$junitVersion")
     implementation("org.junit.jupiter:junit-jupiter:5.8.1")
 }
 
