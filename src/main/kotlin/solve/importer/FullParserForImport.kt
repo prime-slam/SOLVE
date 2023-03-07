@@ -1,21 +1,17 @@
 package solve.importer
 
-import javafx.collections.FXCollections
 import solve.importer.model.ProjectAfterPartialParsing
 import solve.parsers.planes.ImagePlanesParser
-import solve.project.model.LandmarkFile
-import solve.project.model.Project
-import solve.project.model.ProjectFrame
-import solve.project.model.ProjectLayer
+import solve.project.model.*
 import kotlin.io.path.Path
 
 object FullParserForImport {
     fun fullParseDirectory(
         project: ProjectAfterPartialParsing
     ): Project {
-        val landmarks = FXCollections.observableHashMap<Long, MutableList<LandmarkFile>>()
-        val frames = FXCollections.observableArrayList<ProjectFrame>()
-        val layers = FXCollections.observableArrayList<ProjectLayer>()
+        val landmarks = HashMap<Long, MutableList<LandmarkFile>>()
+        val frames = ArrayList<ProjectFrame>()
+        val layers = ArrayList<ProjectLayer>()
 
         project.projectFrames.first().outputs.forEach {
             layers.add(ProjectLayer(it.kind, it.algorithmName))
@@ -31,8 +27,9 @@ object FullParserForImport {
                 }
                 landmarks[longName]?.add(LandmarkFile(currentLayer, Path(output.path), ImagePlanesParser.extractUIDs(output.path)))
             }
-            frames.add(landmarks[longName]?.toList()
-                ?.let { landmark -> ProjectFrame(longName, Path(it.image.path), landmark) })
+            landmarks[longName]?.toList()
+                ?.let { landmark -> ProjectFrame(longName, Path(it.image.path), landmark) }
+                ?.let { it1 -> frames.add(it1) }
         }
         return Project(Path(project.currentDirectory), frames, layers)
     }

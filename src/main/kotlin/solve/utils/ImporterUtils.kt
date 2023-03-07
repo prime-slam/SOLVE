@@ -13,11 +13,6 @@ fun createAlertForError(content: String, owner: Window) {
     alert.show()
 }
 
-@JvmName("toStringForMutable")
-fun MutableList<String>.toStringWithoutBrackets(): String {
-    return this.toString().replace("[", "").replace("]", "")
-}
-
 fun List<String>.toStringWithoutBrackets(): String {
     return this.toString().replace("[", "").replace("]", "")
 }

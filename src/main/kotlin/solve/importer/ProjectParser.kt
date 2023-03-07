@@ -1,7 +1,5 @@
 package solve.importer
 
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.scene.control.TreeItem
 import solve.importer.model.*
 import solve.importer.view.ImporterView
@@ -30,7 +28,7 @@ object ProjectParser {
     }
 
     private fun noSomeAlgorithmError(
-        frames: ObservableList<FrameAfterPartialParsing>,
+        frames: ArrayList<FrameAfterPartialParsing>,
         layers: MutableList<String>
     ): Boolean {
         var hasAnyErrors = false
@@ -53,7 +51,7 @@ object ProjectParser {
 
     private fun partialParseOutputs(
         folder: File,
-        outputs: ObservableList<OutputAfterPartialParsing>,
+        outputs: ArrayList<OutputAfterPartialParsing>,
         errorFolders: MutableList<String>,
         algorithmsList: MutableList<String>,
         layers: MutableList<String>
@@ -94,7 +92,7 @@ object ProjectParser {
         }
     }
 
-    private fun partialParseImages(folder: File, images: ObservableList<ImageAfterPartialParsing>) {
+    private fun partialParseImages(folder: File, images: ArrayList<ImageAfterPartialParsing>) {
         val errorImages = mutableListOf<String>()
         folder.listFiles()?.forEach {
             val imageName = it.nameWithoutExtension
@@ -126,12 +124,12 @@ object ProjectParser {
 
     fun partialParseDirectory(path: String): ProjectAfterPartialParsing? {
         val directory = File(path)
-        val images = FXCollections.observableArrayList<ImageAfterPartialParsing>()
-        val outputs = FXCollections.observableArrayList<OutputAfterPartialParsing>()
+        val images = ArrayList<ImageAfterPartialParsing>()
+        val outputs = ArrayList<OutputAfterPartialParsing>()
         val algorithms = mutableListOf<String>()
-        val frames = FXCollections.observableArrayList<FrameAfterPartialParsing>()
+        val frames = ArrayList<FrameAfterPartialParsing>()
         val layers = mutableListOf<String>()
-        var hasAnyErrors: Boolean
+        var hasAnyErrors = false
 
         val errorFolders = mutableListOf<String>()
         var isImagesExist = false
@@ -164,12 +162,12 @@ object ProjectParser {
         }
 
         images.map { img ->
-            hasAnyErrors = img.errors.isNotEmpty()
+            hasAnyErrors = hasAnyErrors || img.errors.isNotEmpty()
 
             frames.add(FrameAfterPartialParsing(img, outputs.filter { img.name == it.name }))
         }
 
-        hasAnyErrors = noSomeAlgorithmError(frames, layers)
+        hasAnyErrors = hasAnyErrors || noSomeAlgorithmError(frames, layers)
 
         frames.sortWith(compareBy { it.image.name.toLong() })
 
