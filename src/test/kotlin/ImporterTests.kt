@@ -8,14 +8,14 @@ import solve.project.model.*
 
 class ImporterTests {
     companion object {
-        const val pathTestProject = "test/TestProject1"
+        const val pathTestProject = "testData/TestProject1"
         const val image1 = "123456789"
         const val image2 = "987654321"
         const val layer = "alg1_keypoint"
-        const val pathImage1 = "test/TestProject1/images/123456789.jpg"
-        const val pathImage2 = "test/TestProject1/images/987654321.jpg"
-        const val pathOutput1 = "test/TestProject1/alg1_keypoint/123456789.csv"
-        const val pathOutput2 = "test/TestProject1/alg1_keypoint/987654321.csv"
+        const val pathImage1 = "testData/TestProject1/images/123456789.jpg"
+        const val pathImage2 = "testData/TestProject1/images/987654321.jpg"
+        const val pathOutput1 = "testData/TestProject1/alg1_keypoint/123456789.csv"
+        const val pathOutput2 = "testData/TestProject1/alg1_keypoint/987654321.csv"
     }
 
     @Test
