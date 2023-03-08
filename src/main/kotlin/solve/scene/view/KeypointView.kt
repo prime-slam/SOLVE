@@ -17,7 +17,7 @@ class KeypointView(
     }
 
     override val node: Ellipse = createShape()
-    override var lastEnabledColor: Color? = keypoint.layerSettings.color
+    override var lastEnabledColor: Color? = keypoint.layerSettings.commonColor
 
     init {
         setUpShape(node, keypoint.uid)
@@ -65,7 +65,11 @@ class KeypointView(
         toBack(node)
         val defaultRadiusScale = radius / node.radiusX
         val scaleTransition = createScaleAnimation(node, defaultRadiusScale, HighlightingAnimationDuration)
-        val fillTransition = createFillTransition(node, keypoint.layerSettings.color, HighlightingAnimationDuration)
+        val fillTransition = createFillTransition(
+            node,
+            keypoint.layerSettings.commonColor,
+            HighlightingAnimationDuration
+        )
 
         scaleTransition.play()
         fillTransition.play()
@@ -73,7 +77,7 @@ class KeypointView(
 
     private fun createShape(): Ellipse {
         val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
-        shape.fill = keypoint.layerSettings.color
+        shape.fill = keypoint.layerSettings.commonColor
         shape.opacity = keypoint.layerSettings.opacity
 
         initializeSettingsBindings(shape)
@@ -91,7 +95,7 @@ class KeypointView(
     }
 
     private fun initializeSettingsBindings(shape: Ellipse) {
-        keypoint.layerSettings.colorProperty.onChange { newColor ->
+        keypoint.layerSettings.commonColorProperty.onChange { newColor ->
             newColor ?: return@onChange
             setShapeColor(shape, newColor)
         }

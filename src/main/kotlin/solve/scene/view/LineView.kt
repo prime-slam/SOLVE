@@ -33,7 +33,7 @@ class LineView(
     private fun createShape(): Line {
         val shape =
             Line(startCoordinates.first, startCoordinates.second, finishCoordinates.first, finishCoordinates.second)
-        shape.stroke = line.layerSettings.color
+        shape.stroke = line.layerSettings.commonColor
         shape.opacity = line.layerSettings.opacity
         shape.strokeWidth = line.layerSettings.selectedWidth
         return shape

@@ -25,12 +25,12 @@ class LineLayerSettingsPopOverNode(
         private fun buildLineLandmarksColorPicker(): ColorPicker {
             val colorPicker = ColorPicker()
 
-            colorPicker.value = lineLayerSettings.color
+            colorPicker.value = lineLayerSettings.commonColor
             colorPicker.setOnAction {
-                lineLayerSettings.color = colorPicker.value
+                lineLayerSettings.commonColor = colorPicker.value
             }
             sceneController.scene.onChange {
-                colorPicker.value = lineLayerSettings.color
+                colorPicker.value = lineLayerSettings.commonColor
             }
 
             return colorPicker

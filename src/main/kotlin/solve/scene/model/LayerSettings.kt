@@ -8,11 +8,22 @@ import javafx.scene.paint.Color
 // Layers properties being edited in the settings menu.
 // Settings menu appearance depends on type of the corresponding layer.
 // Meaningful changes here provokes scene redrawing.
-sealed class LayerSettings(val name: String) {
+sealed class LayerSettings(val name: String, private val layerColorManager: ColorManager<String>) {
     // Is used to set unique colors for all landmarks in the layer
     val colorManager = ColorManager<Long>()
 
-    class PointLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
+    val commonColorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
+    var commonColor: Color
+        get() = commonColorProperty.get()
+        set(value) {
+            commonColorProperty.set(value)
+            layerColorManager.setColor(name, value)
+        }
+
+    class PointLayerSettings(
+        name: String,
+        layerColorManager: ColorManager<String>
+    ) : LayerSettings(name, layerColorManager) {
         companion object {
             private const val OrdinaryRadius: Double = 5.0
         }
@@ -21,17 +32,12 @@ sealed class LayerSettings(val name: String) {
         var selectedRadius: Double
             get() = selectedRadiusProperty.get()
             set(value) = selectedRadiusProperty.set(value)
-
-        val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
-        var color: Color
-            get() = colorProperty.get()
-            set(value) {
-                colorProperty.set(value)
-                layerColorManager.setColor(name, value)
-            }
     }
 
-    class LineLayerSettings(name: String, private val layerColorManager: ColorManager<String>) : LayerSettings(name) {
+    class LineLayerSettings(
+        name: String,
+        layerColorManager: ColorManager<String>
+    ) : LayerSettings(name, layerColorManager) {
         companion object {
             private const val OrdinaryWidth: Double = 3.0
         }
@@ -40,17 +46,12 @@ sealed class LayerSettings(val name: String) {
         var selectedWidth: Double
             get() = selectedWidthProperty.get()
             set(value) = selectedWidthProperty.set(value)
-
-        val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
-        var color: Color
-            get() = colorProperty.get()
-            set(value) {
-                colorProperty.set(value)
-                layerColorManager.setColor(name, value)
-            }
     }
 
-    class PlaneLayerSettings(name: String) : LayerSettings(name)
+    class PlaneLayerSettings(
+        name: String,
+        layerColorManager: ColorManager<String>
+    ) : LayerSettings(name, layerColorManager)
 
     var opacity: Double = DEFAULT_OPACITY
         set(value) {
