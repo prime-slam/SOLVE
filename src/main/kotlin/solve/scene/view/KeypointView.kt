@@ -16,7 +16,7 @@ class KeypointView(
     }
 
     override val node: Ellipse = createShape()
-    override var lastEnabledColor: Color? = keypoint.layerSettings.color
+    override var lastEnabledColor: Color? = keypoint.layerSettings.commonColor
 
     init {
         setUpShape(node, keypoint.uid)
@@ -87,7 +87,7 @@ class KeypointView(
     }
 
     private fun initializeSettingsBindings(shape: Ellipse) {
-        keypoint.layerSettings.colorProperty.onChange { newColor ->
+        keypoint.layerSettings.commonColorProperty.onChange { newColor ->
             newColor ?: return@onChange
             setShapeColor(shape, newColor)
         }
