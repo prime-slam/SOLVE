@@ -19,17 +19,15 @@ class MainView : View() {
     companion object {
         private const val LeftSidePanelAndSceneDividerPosition = 0.25
         private const val RightSidePanelAndSceneDividerPosition = 0.88
+
+        private const val TabsViewLocationParamName = "location"
+        private const val TabsViewTabsParamName = "tabs"
+        private const val TabsViewInitialTabParamName = "initialTab"
     }
 
     private val sceneView: SceneView by inject()
 
     private lateinit var mainViewSplitPane: SidePanelSplitPane
-
-    private val leftSidePanelScope = Scope()
-    private val rightSidePanelScope = Scope()
-
-    private val leftSidePanelContentView: SidePanelContentView by inject(leftSidePanelScope)
-    private val rightSidePanelContentView: SidePanelContentView by inject(rightSidePanelScope)
 
     private val leftSidePanelTabs = listOf(SidePanelTab(
         "Catalogue",
@@ -41,20 +39,12 @@ class MainView : View() {
         loadResourcesImage(IconsSidePanelVisualizationSettingsPath),
         find<VisualizationSettingsView>().root
     ))
-    private val tabsViewLocationParamName = "location"
-    private val tabsViewTabsParamName = "tabs"
-    private val tabsViewInitialTabParamName = "initialTab"
 
-    private val leftSidePanelTabsViewParams =
-        mapOf(
-            tabsViewLocationParamName to SidePanelLocation.Left,
-            tabsViewTabsParamName to leftSidePanelTabs,
-            tabsViewInitialTabParamName to leftSidePanelTabs.first()
-        )
-    private val rightSidePanelTabsViewParams =
-        mapOf(tabsViewLocationParamName to SidePanelLocation.Right, tabsViewTabsParamName to rightSidePanelTabs)
-    private val leftSidePanelTabsView: SidePanelTabsView by inject(leftSidePanelScope, leftSidePanelTabsViewParams)
-    private val rightSidePanelTabsView: SidePanelTabsView by inject(rightSidePanelScope, rightSidePanelTabsViewParams)
+    private val leftSidePanelViews =
+        createSidePanelsViews(leftSidePanelTabs, SidePanelLocation.Left, leftSidePanelTabs.first())
+    private val rightSidePanelViews =
+        createSidePanelsViews(rightSidePanelTabs, SidePanelLocation.Right)
+
 
     private val mainViewBorderPane = borderpane {
         top<MenuBarView>()
@@ -63,9 +53,9 @@ class MainView : View() {
             RightSidePanelAndSceneDividerPosition
         )
         val splitPaneContainedNodes = listOf(
-            leftSidePanelContentView.root,
+            leftSidePanelViews.contentView.root,
             sceneView.root,
-            rightSidePanelContentView.root
+            rightSidePanelViews.contentView.root
         )
 
         mainViewSplitPane = SidePanelSplitPane(
@@ -76,8 +66,8 @@ class MainView : View() {
         )
         mainViewSplitPane.addStylesheet(MainSplitPaneStyle::class)
         center = mainViewSplitPane
-        left = leftSidePanelTabsView.root
-        right = rightSidePanelTabsView.root
+        left = leftSidePanelViews.tabsView.root
+        right = rightSidePanelViews.tabsView.root
     }
 
     override val root = mainViewBorderPane
@@ -89,6 +79,27 @@ class MainView : View() {
     fun showSidePanelContent(location: SidePanelLocation) {
         mainViewSplitPane.showNodeAt(location)
     }
+
+    private fun createSidePanelsViews(
+        tabs: List<SidePanelTab>,
+        location: SidePanelLocation,
+        initialTab: SidePanelTab? = null
+    ): SidePanelViews {
+        val scope = Scope()
+
+        val contentView = find<SidePanelContentView>(scope)
+
+        val tabsViewParams = mapOf(
+            TabsViewLocationParamName to location,
+            TabsViewTabsParamName to tabs,
+            TabsViewInitialTabParamName to initialTab
+        )
+        val tabsView = find<SidePanelTabsView>(scope, tabsViewParams)
+
+        return SidePanelViews(tabsView, contentView)
+    }
+
+    private data class SidePanelViews(val tabsView: SidePanelTabsView, val contentView: SidePanelContentView)
 }
 
 class MainSplitPaneStyle: Stylesheet() {
