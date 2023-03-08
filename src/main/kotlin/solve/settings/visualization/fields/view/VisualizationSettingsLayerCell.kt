@@ -13,6 +13,7 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.util.Duration
 import org.controlsfx.control.PopOver
+import solve.constants.*
 import solve.scene.controller.SceneController
 import solve.scene.model.LandmarkType
 import solve.scene.model.LayerSettings
@@ -40,12 +41,12 @@ class VisualizationSettingsLayerCell(
 
         private val LayerSettingsSpawnPositionOffset = Point(-20.0, 30.0)
 
-        private val pointLayerIconImage = loadResourcesImage("icons/visualization_settings/point_layer.png")
-        private val lineLayerIconImage = loadResourcesImage("icons/visualization_settings/line_layer.png")
-        private val planeLayerIconImage = loadResourcesImage("icons/visualization_settings/plane_layer.png")
-        private val editIconImage = loadResourcesImage("icons/visualization_settings/edit.png")
-        private val layerVisibleIconImage = loadResourcesImage("icons/visualization_settings/layer_visible.png")
-        private val layerInvisibleIconImage = loadResourcesImage("icons/visualization_settings/layer_invisible.png")
+        private val pointLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPointLayerPath)
+        private val lineLayerIconImage = loadResourcesImage(IconsVisualizationSettingsLineLayerPath)
+        private val planeLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPlaneLayerPath)
+        private val editIconImage = loadResourcesImage(IconsVisualizationSettingsEditPath)
+        private val layerVisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerVisiblePath)
+        private val layerInvisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerInvisiblePath)
     }
 
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {

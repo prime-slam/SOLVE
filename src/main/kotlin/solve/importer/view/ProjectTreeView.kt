@@ -3,6 +3,10 @@ package solve.importer.view
 import javafx.scene.control.*
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
 import javafx.scene.image.ImageView
+import solve.constants.IconsImporterDescriptionPath
+import solve.constants.IconsImporterErrorFilePath
+import solve.constants.IconsImporterErrorFolderPath
+import solve.constants.IconsImporterPhotoPath
 import solve.importer.ProjectParser
 import solve.importer.controller.ImporterController
 import solve.importer.model.FileInfo
@@ -45,10 +49,10 @@ open class ProjectTreeView : View() {
 
         filesColumn.setCellFactory { _ ->
             object : TreeTableCell<FileInTree, FileInfo?>() {
-                private val imageIcon = loadResourcesImage("icons/importer/photo.png")
-                private val fileIcon = loadResourcesImage("icons/importer/description.png")
-                private val errorFolderIcon = loadResourcesImage("icons/importer/error_folder.png")
-                private val errorFileIcon = loadResourcesImage("icons/importer/error_file.png")
+                private val imageIcon = loadResourcesImage(IconsImporterPhotoPath)
+                private val fileIcon = loadResourcesImage(IconsImporterDescriptionPath)
+                private val errorFolderIcon = loadResourcesImage(IconsImporterErrorFolderPath)
+                private val errorFileIcon = loadResourcesImage(IconsImporterErrorFilePath)
 
                 override fun updateItem(item: FileInfo?, empty: Boolean) {
                     super.updateItem(item, empty)

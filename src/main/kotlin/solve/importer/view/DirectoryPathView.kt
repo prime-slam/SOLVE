@@ -6,6 +6,8 @@ import javafx.scene.control.OverrunStyle
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.stage.DirectoryChooser
+import solve.constants.IconsImporterCheckCirclePath
+import solve.constants.IconsImporterWarningPath
 import solve.importer.ProjectParser.parseDirectory
 import solve.importer.controller.ImporterController
 import solve.utils.loadResourcesImage
@@ -17,8 +19,8 @@ class DirectoryPathView : View() {
 
     private val directoryChooser = DirectoryChooser().apply { title = "Choose working directory" }
 
-    private val filesCountIcon = loadResourcesImage("icons/importer/check_circle.png")
-    private val errorsCountIcon = loadResourcesImage("icons/importer/warning.png")
+    private val filesCountIcon = loadResourcesImage(IconsImporterCheckCirclePath)
+    private val errorsCountIcon = loadResourcesImage(IconsImporterWarningPath)
 
     private val directoryLabel = label("Project directory") {
         maxWidth = 300.0

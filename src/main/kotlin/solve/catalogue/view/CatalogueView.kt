@@ -13,6 +13,7 @@ import solve.catalogue.view.fields.CatalogueFileNamesFieldsView
 import solve.project.model.ProjectFrame
 import solve.catalogue.synchronizeListViewsSelections
 import solve.catalogue.view.fields.CatalogueFieldsView
+import solve.constants.IconsCatalogueApplyPath
 import solve.utils.addSafely
 import solve.utils.createInsetsWithValue
 import solve.utils.loadResourcesImage
@@ -62,7 +63,7 @@ class CatalogueView : View() {
                 }
                 button {
                     setPrefSize(ApplyButtonSize, ApplyButtonSize)
-                    val buttonImage = loadResourcesImage("icons/catalogue/apply.png")
+                    val buttonImage = loadResourcesImage(IconsCatalogueApplyPath)
                     if (buttonImage != null) {
                         graphic = imageview(buttonImage) {
                             fitHeight = ApplyButtonSize
