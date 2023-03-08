@@ -1,10 +1,13 @@
 package solve.scene.view
 
+import javafx.beans.InvalidationListener
+import javafx.beans.WeakInvalidationListener
+import javafx.beans.value.WeakChangeListener
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import solve.scene.model.Landmark
 import solve.scene.view.utils.*
-import tornadofx.onChange
+import tornadofx.ChangeListener
 
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
@@ -16,8 +19,19 @@ class KeypointView(
 
     override val node: Ellipse = createShape()
 
+    private val commonColorChangedEventHandler = ChangeListener { _, _, newColor ->
+        setShapeColor(node, newColor)
+    }
+    private val weakCommonColorChangedEventHandler = WeakChangeListener(commonColorChangedEventHandler)
+
+    private val selectedRadiusChangedEventHandler = InvalidationListener {
+        updateShapeRadius(node)
+    }
+    private val weakSelectedRadiusChangedEventHandler = WeakInvalidationListener(selectedRadiusChangedEventHandler)
+
     init {
         setUpShape(node, keypoint.uid)
+        addListeners()
     }
 
     override fun drawOnCanvas() {}
@@ -74,26 +88,29 @@ class KeypointView(
         fillTransition.play()
     }
 
+    override fun dispose() {
+        super.dispose()
+        removeListeners()
+    }
+
     private fun createShape(): Ellipse {
         val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
         shape.fill = keypoint.layerSettings.getColor(keypoint)
         shape.opacity = keypoint.layerSettings.opacity
 
         initializeCommonSettingsBindings(shape)
-        initializeSettingsBindings(shape)
 
         return shape
     }
 
-    private fun initializeSettingsBindings(shape: Ellipse) {
-        keypoint.layerSettings.commonColorProperty.onChange { newColor ->
-            newColor ?: return@onChange
-            setShapeColor(shape, newColor)
-        }
-        keypoint.layerSettings.selectedRadiusProperty.onChange { selectedRadius ->
-            selectedRadius ?: return@onChange
-            updateShapeRadius(shape)
-        }
+    private fun addListeners() {
+        keypoint.layerSettings.commonColorProperty.addListener(weakCommonColorChangedEventHandler)
+        keypoint.layerSettings.selectedRadiusProperty.addListener(weakSelectedRadiusChangedEventHandler)
+    }
+
+    private fun removeListeners() {
+        keypoint.layerSettings.commonColorProperty.removeListener(weakCommonColorChangedEventHandler)
+        keypoint.layerSettings.selectedRadiusProperty.removeListener(weakSelectedRadiusChangedEventHandler)
     }
 
     private fun updateShapeRadius(shape: Ellipse) {
