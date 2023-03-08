@@ -12,7 +12,7 @@ import tornadofx.*
 class PointLayerSettingsPopOverNode(
     private val pointLayerSettings: LayerSettings.PointLayerSettings,
     private val sceneController: SceneController
-): LayerSettingsPopOverNode() {
+): LayerSettingsPopOverNode {
     companion object {
         const val LayerSettingsNodePrefWidth = 220.0
         const val LayerSettingsNodePrefHeight = 50.0
@@ -54,7 +54,7 @@ class PointLayerSettingsPopOverNode(
         return slider
     }
 
-    fun getPopOverNode(): Node {
+    override fun getPopOverNode(): Node {
         val vbox = VBox()
         vbox.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
