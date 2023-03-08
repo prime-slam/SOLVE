@@ -39,7 +39,7 @@ class VisualizationSettingsLayerCell(
         private const val LayerTypeIconPaddingRight = 5.0
         private const val LayerVisibilityIconPaddingLeft = -5.0
 
-        private val LayerSettingsSpawnPositionOffset = Point(-20.0, 30.0)
+        private val LayerSettingsSpawnPositionOffset = Point(-135.0, 25.0)
 
         private val pointLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPointLayerPath)
         private val lineLayerIconImage = loadResourcesImage(IconsVisualizationSettingsLineLayerPath)
@@ -125,6 +125,14 @@ class VisualizationSettingsLayerCell(
         paddingLeft = LayerVisibilityIconPaddingLeft
     }
 
+    private fun calculatePopOverShowPosition(spawnNode: Node, layerType: LandmarkType): Point {
+        val labelPosition = spawnNode.getScreenPosition()
+        val popOverNodeSize = getPopOverNodeSize(layerType)
+        val popOverNodeSizeOffsetVector = Point(popOverNodeSize?.x ?: 0.0, 0.0)
+
+        return labelPosition - popOverNodeSizeOffsetVector + LayerSettingsSpawnPositionOffset
+    }
+
     private fun initializePopOver(
         layerSettingsButton: Button,
         spawnNode: Node,
@@ -139,31 +147,23 @@ class VisualizationSettingsLayerCell(
             )
             var isPopOverShowing = false
 
-            // Installing a correct popover position.
-            val labelPosition = spawnNode.getScreenPosition()
-            val popOverNodeSize = getPopOverNodeSize(layerType)
-
-            if (popOverNodeSize != null) {
-                val popOverNodeSizeOffsetVector = Point(popOverNodeSize.x, 0.0)
-                val showPosition = labelPosition - popOverNodeSizeOffsetVector + LayerSettingsSpawnPositionOffset
-
-                popOver.setOnHidden {
-                    isPopOverShowing = false
-                }
-                popOver.setOnShowing {
-                    isPopOverShowing = true
-                }
-                // Needed in order not to lose the focus of the main window when opening a modal window.
-                popOver.addEventFilter(ComboBoxBase.ON_HIDDEN) { event ->
-                    event.consume()
-                    scene.window.requestFocus()
-                }
-                layerSettingsButton.action {
-                    if (!isPopOverShowing) {
-                        showPopOver(popOver, spawnNode, showPosition)
-                    } else {
-                        popOver.hide()
-                    }
+            popOver.setOnHidden {
+                isPopOverShowing = false
+            }
+            popOver.setOnShowing {
+                isPopOverShowing = true
+            }
+            // Needed in order not to lose the focus of the main window when opening a modal window.
+            popOver.addEventFilter(ComboBoxBase.ON_HIDDEN) { event ->
+                event.consume()
+                scene.window.requestFocus()
+            }
+            layerSettingsButton.action {
+                if (!isPopOverShowing) {
+                    val showPosition = calculatePopOverShowPosition(spawnNode, layerType)
+                    showPopOver(popOver, spawnNode, showPosition)
+                } else {
+                    popOver.hide()
                 }
             }
         }
