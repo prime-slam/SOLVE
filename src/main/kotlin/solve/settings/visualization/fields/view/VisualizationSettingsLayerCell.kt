@@ -9,6 +9,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Label
 import javafx.scene.image.Image
+import javafx.scene.input.DragEvent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.util.Duration
@@ -20,6 +21,7 @@ import solve.scene.model.LayerSettings
 import solve.settings.visualization.popover.LineLayerSettingsPopOverNode
 import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
 import solve.utils.*
+import solve.utils.nodes.DragAndDropCellItemInfo
 import solve.utils.nodes.DragAndDropListCell
 import solve.utils.structures.Point
 import tornadofx.*
@@ -47,6 +49,16 @@ class VisualizationSettingsLayerCell(
         private val editIconImage = loadResourcesImage(IconsVisualizationSettingsEditPath)
         private val layerVisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerVisiblePath)
         private val layerInvisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerInvisiblePath)
+    }
+
+    override fun setOnDragDropped(
+        event: DragEvent,
+        thisItemInfo: DragAndDropCellItemInfo<LayerSettings>,
+        droppedItemInfo: DragAndDropCellItemInfo<LayerSettings>
+    ) {
+        val scene = sceneController.scene.value
+        scene.changeLayerIndex(thisItemInfo.item, droppedItemInfo.index)
+        scene.changeLayerIndex(droppedItemInfo.item, thisItemInfo.index)
     }
 
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
