@@ -1,0 +1,18 @@
+package solve.constants
+
+const val IconsCatalogueApplyPath = "icons/catalogue/apply.png"
+const val IconsCatalogueImagePath = "icons/catalogue/image.png"
+const val IconsImporterCheckCirclePath = "icons/importer/check_circle.png"
+const val IconsImporterDescriptionPath = "icons/importer/description.png"
+const val IconsImporterErrorFilePath = "icons/importer/error_file.png"
+const val IconsImporterErrorFolderPath = "icons/importer/error_folder.png"
+const val IconsImporterPhotoPath = "icons/importer/photo.png"
+const val IconsImporterWarningPath = "icons/importer/warning.png"
+const val IconsSidePanelCataloguePath = "icons/sidepanel/catalogue.png"
+const val IconsSidePanelVisualizationSettingsPath = "icons/sidepanel/visualization_settings.png"
+const val IconsVisualizationSettingsEditPath = "icons/visualization_settings/edit.png"
+const val IconsVisualizationSettingsLayerInvisiblePath = "icons/visualization_settings/layer_invisible.png"
+const val IconsVisualizationSettingsLayerVisiblePath = "icons/visualization_settings/layer_visible.png"
+const val IconsVisualizationSettingsLineLayerPath = "icons/visualization_settings/line_layer.png"
+const val IconsVisualizationSettingsPlaneLayerPath = "icons/visualization_settings/plane_layer.png"
+const val IconsVisualizationSettingsPointLayerPath = "icons/visualization_settings/point_layer.png"

@@ -1,6 +1,8 @@
 package solve.main
 
 import solve.catalogue.view.CatalogueView
+import solve.constants.IconsSidePanelCataloguePath
+import solve.constants.IconsSidePanelVisualizationSettingsPath
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
 import solve.menubar.view.MenuBarView
@@ -31,12 +33,12 @@ class MainView : View() {
 
     private val leftSidePanelTabs = listOf(SidePanelTab(
         "Catalogue",
-        loadResourcesImage("icons/sidepanel/catalogue.png"),
+        loadResourcesImage(IconsSidePanelCataloguePath),
         find<CatalogueView>().root
     ))
     private val rightSidePanelTabs = listOf(SidePanelTab(
         "Layers",
-        loadResourcesImage("icons/sidepanel/visualization_settings.png"),
+        loadResourcesImage(IconsSidePanelVisualizationSettingsPath),
         find<VisualizationSettingsView>().root
     ))
     private val tabsViewLocationParamName = "location"
