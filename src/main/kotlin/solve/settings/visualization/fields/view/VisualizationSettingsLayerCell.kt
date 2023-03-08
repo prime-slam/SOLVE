@@ -72,7 +72,7 @@ class VisualizationSettingsLayerCell(
         val snapshotNode = createItemCellGraphic(item)
 
         children.remove(snapshotNode)
-        val scene = Scene(snapshotNode as Parent)
+        Scene(snapshotNode as Parent)
         return snapshotNode.createSnapshot()
     }
 
