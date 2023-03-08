@@ -75,7 +75,7 @@ sealed class LandmarkView(
         addListeners()
     }
 
-    fun dispose() {
+    open fun dispose() {
         removeListeners()
     }
 
@@ -119,6 +119,7 @@ sealed class LandmarkView(
     }
 
     protected fun initializeCommonSettingsBindings(landmarkNode: Node) {
+        // Does not cause memory leaks, as it uses a weak listener internally.
         landmarkNode.visibleWhen(landmark.layerSettings.enabledProperty)
     }
 
