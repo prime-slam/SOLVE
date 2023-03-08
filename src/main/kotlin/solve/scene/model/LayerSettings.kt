@@ -13,19 +13,17 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     // Is used to set unique colors for all landmarks in the layer
     val colorManager = ColorManager<Long>()
 
-    val colorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
-    var color: Color
-        get() = colorProperty.get()
+    val commonColorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
+    var commonColor: Color
+        get() = commonColorProperty.get()
         set(value) {
-            colorProperty.set(value)
+            commonColorProperty.set(value)
             layerColorManager.setColor(name, value)
         }
 
-    val useOneColor = SimpleBooleanProperty(true)
-
     fun getColor(landmark: Landmark): Color {
         if (useOneColor.value) {
-            return color
+            return commonColor
         }
         return getUniqueColor(landmark)
     }
@@ -46,17 +44,24 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
             set(value) = selectedRadiusProperty.set(value)
     }
 
-    class LineLayerSettings(name: String, layerColorManager: ColorManager<String>) :
-        LayerSettings(name, layerColorManager)
-
-    class PlaneLayerSettings(name: String, layerColorManager: ColorManager<String>) :
-        LayerSettings(name, layerColorManager) {
-
-        init {
-            useOneColor.value = false
+    class LineLayerSettings(
+        name: String,
+        layerColorManager: ColorManager<String>
+    ) : LayerSettings(name, layerColorManager) {
+        companion object {
+            private const val OrdinaryWidth: Double = 3.0
         }
+
+        val selectedWidthProperty = SimpleObjectProperty(OrdinaryWidth)
+        var selectedWidth: Double
+            get() = selectedWidthProperty.get()
+            set(value) = selectedWidthProperty.set(value)
     }
 
+    class PlaneLayerSettings(
+        name: String,
+        layerColorManager: ColorManager<String>
+    ) : LayerSettings(name, layerColorManager)
     var opacity: Double = DEFAULT_OPACITY
         set(value) {
             if (value !in 0.0..1.0) throw IllegalArgumentException("Percent value should lie between 0 and 100")
