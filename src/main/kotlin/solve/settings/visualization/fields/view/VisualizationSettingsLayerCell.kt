@@ -40,12 +40,12 @@ class VisualizationSettingsLayerCell(
 
         private val LayerSettingsSpawnPositionOffset = Point(-20.0, 30.0)
 
-        private val pointLayerIconImage = loadImage("icons/visualization_settings_point_icon.png")
-        private val lineLayerIconImage = loadImage("icons/visualization_settings_line_icon.png")
-        private val planeLayerIconImage = loadImage("icons/visualization_settings_plane_icon.png")
-        private val editIconImage = loadImage("icons/visualization_settings_edit_icon.png")
-        private val layerVisibleIconImage = loadImage("icons/visualization_settings_layer_visible_icon.png")
-        private val layerInvisibleIconImage = loadImage("icons/visualization_settings_layer_invisible.png")
+        private val pointLayerIconImage = loadResourcesImage("icons/visualization_settings/point_layer.png")
+        private val lineLayerIconImage = loadResourcesImage("icons/visualization_settings/line_layer.png")
+        private val planeLayerIconImage = loadResourcesImage("icons/visualization_settings/plane_layer.png")
+        private val editIconImage = loadResourcesImage("icons/visualization_settings/edit.png")
+        private val layerVisibleIconImage = loadResourcesImage("icons/visualization_settings/layer_visible.png")
+        private val layerInvisibleIconImage = loadResourcesImage("icons/visualization_settings/layer_invisible.png")
     }
 
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
