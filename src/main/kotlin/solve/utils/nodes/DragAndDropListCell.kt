@@ -45,7 +45,8 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
 
         setOnDragEntered { event ->
             if (isListViewCellSource(event.gestureSource)) {
-                setOnDragEntered(event, item)
+                val itemInfo = createItemInfo(item)
+                setOnDragEntered(event, itemInfo)
             }
 
             event.consume()
@@ -53,7 +54,8 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
 
         setOnDragExited { event ->
             if (isListViewCellSource(event.gestureSource)) {
-                setOnDragExited(event, item)
+                val itemInfo = createItemInfo(item)
+                setOnDragExited(event, itemInfo)
             }
 
             event.consume()
@@ -65,13 +67,15 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
             }
             if (isListViewCellSource(event.gestureSource)) {
                 val droppedCellItem =
-                    (event.gestureSource as DragAndDropListCell<*>).item as? T ?: return@setOnDragDropped
+                    (event.gestureSource as? DragAndDropListCell<Any>)?.item as? T ?: return@setOnDragDropped
                 val droppedCellIndex = listView.items.indexOf(droppedCellItem)
 
                 listView.items[droppedCellIndex] = item
                 listView.items[index] = droppedCellItem
 
-                setOnDragDropped(event, item, droppedCellItem)
+                val thisItemInfo = createItemInfo(item)
+                val droppedItemInfo = createItemInfo(droppedCellItem)
+                setOnDragDropped(event, thisItemInfo, droppedItemInfo)
             }
 
             event.isDropCompleted = true
@@ -94,19 +98,28 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
         }
     }
 
-
-    private fun isListViewCellSource(gestureSource: Any): Boolean =
-        gestureSource is DragAndDropListCell<*> && listView.items.contains(gestureSource.item)
-
     protected open fun createItemCellGraphic(item: T): Node? = null
 
     protected open fun createItemDragView(item: T): Image? = null
 
     protected open fun createItemDragAndDropContent(item: T): Pair<DataFormat, Any>? = null
 
-    protected open fun setOnDragEntered(event: DragEvent, item: T) { }
+    protected open fun setOnDragEntered(event: DragEvent, itemInfo: DragAndDropCellItemInfo<T>) { }
 
-    protected open fun setOnDragExited(event: DragEvent, item: T) { }
+    protected open fun setOnDragExited(event: DragEvent, itemInfo: DragAndDropCellItemInfo<T>) { }
 
-    protected open fun setOnDragDropped(event: DragEvent, thisItem: T, droppedItem: T) { }
+    protected open fun setOnDragDropped(
+        event: DragEvent,
+        thisItemInfo: DragAndDropCellItemInfo<T>,
+        droppedItemInfo: DragAndDropCellItemInfo<T>
+    ) { }
+
+    private fun isListViewCellSource(gestureSource: Any): Boolean =
+        gestureSource is DragAndDropListCell<*> && listView.items.contains(gestureSource.item)
+
+    private fun createItemInfo(item: T) = DragAndDropCellItemInfo(item, getItemIndex(item))
+
+    private fun getItemIndex(item: T) = listView.items.indexOf(item)
 }
+
+data class DragAndDropCellItemInfo<T>(val item: T, val index: Int)
