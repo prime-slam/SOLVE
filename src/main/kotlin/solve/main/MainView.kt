@@ -1,14 +1,16 @@
 package solve.main
 
 import solve.catalogue.view.CatalogueView
-import solve.main.splitpane.*
+import solve.main.splitpane.SidePanelLocation
+import solve.main.splitpane.SidePanelSplitPane
 import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
 import solve.settings.visualization.VisualizationSettingsView
 import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentView
 import solve.sidepanel.tabs.SidePanelTabsView
-import solve.utils.*
+import solve.utils.createPxBox
+import solve.utils.loadImage
 import tornadofx.*
 
 class MainView : View() {

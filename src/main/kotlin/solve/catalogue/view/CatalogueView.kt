@@ -1,16 +1,22 @@
 package solve.catalogue.view
 
 import javafx.collections.FXCollections
-import javafx.geometry.*
+import javafx.geometry.Insets
+import javafx.geometry.Pos
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
 import solve.catalogue.controller.CatalogueController
-import solve.catalogue.model.*
-import solve.catalogue.synchronizeListViewsSelections
-import solve.catalogue.view.fields.*
+import solve.catalogue.model.CatalogueField
+import solve.catalogue.model.ViewFormat
+import solve.catalogue.view.fields.CatalogueFileNamesFieldsView
 import solve.project.model.ProjectFrame
-import solve.utils.*
-
+import solve.catalogue.synchronizeListViewsSelections
+import solve.catalogue.view.fields.CatalogueFieldsView
+import solve.utils.addSafely
+import solve.utils.createInsetsWithValue
+import solve.utils.loadImage
+import solve.utils.removeSafely
 import tornadofx.*
 
 class CatalogueView : View() {
