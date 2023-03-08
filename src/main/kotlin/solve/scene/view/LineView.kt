@@ -1,6 +1,5 @@
 package solve.scene.view
 
-import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.util.Duration
 import solve.scene.model.Landmark
@@ -19,7 +18,6 @@ class LineView(
         get() = if (scale < 1) OrdinaryWidth * scale else OrdinaryWidth
 
     override val node: Line = createShape()
-    override var lastEnabledColor: Color? = Color.RED // TODO: add a line drawing implementation.
 
     init {
         setUpShape(node, line.uid)

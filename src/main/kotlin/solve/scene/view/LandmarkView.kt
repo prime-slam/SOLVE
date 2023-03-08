@@ -10,6 +10,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import javafx.util.Duration
 import solve.scene.model.Landmark
+import tornadofx.visibleWhen
 
 // Responsive for creating and setting visual effects for landmarks presenting controls
 // This has access to landmark data class and its layer
@@ -33,7 +34,6 @@ sealed class LandmarkView(
     // When shape is created in an inheritor
     // setUpShape() should be called to set up common features for all landmarks
     abstract val node: Node?
-    protected abstract var lastEnabledColor: Color?
 
     abstract fun drawOnCanvas()
 
@@ -41,7 +41,6 @@ sealed class LandmarkView(
     private val layerSettings = landmark.layerSettings
 
     private var state: LandmarkState = LandmarkState.Ordinary
-
 
     var scale: Double = scale
         set(value) {
@@ -92,17 +91,11 @@ sealed class LandmarkView(
     private val weakUseOneColorChangedListener = WeakInvalidationListener(useOneColorChangedListener)
 
     init {
-        landmark.layerState.selectedLandmarksUids.addListener(weakSelectedLandmarksChangedEventHandler)
-        landmark.layerState.hoveredLandmarksUids.addListener(weakHoveredLandmarksChangedEventHandler)
-
-        landmark.layerSettings.useOneColor.addListener(weakUseOneColorChangedListener)
+        addListeners()
     }
 
     fun dispose() {
-        layerState.selectedLandmarksUids.removeListener(weakSelectedLandmarksChangedEventHandler)
-        layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
-
-        layerSettings.useOneColor.removeListener(weakUseOneColorChangedListener)
+        removeListeners()
     }
 
     // Set up common shape properties
@@ -146,25 +139,36 @@ sealed class LandmarkView(
         layerState.selectedLandmarksUids.contains(landmark.uid)
                 || layerState.hoveredLandmarksUids.contains(landmark.uid)
 
-    protected abstract fun scaleChanged()
-
     protected abstract fun useOneColorChanged()
 
     protected abstract fun highlightShape(duration: Duration)
     protected abstract fun unhighlightShape(duration: Duration)
 
     protected fun setShapeColor(shape: Shape, newColor: Color) {
-        if (landmark.layerSettings.enabled) {
-            shape.fill = newColor
-        }
-        lastEnabledColor = newColor
+        shape.fill = newColor
     }
 
-    protected fun setShapeEnabled(shape: Shape, enabled: Boolean) {
-        if (enabled) {
-            shape.fill = lastEnabledColor
-        } else {
-            shape.fill = Color.TRANSPARENT
-        }
+    protected fun initializeCommonSettingsBindings(landmarkNode: Node) {
+        landmarkNode.visibleWhen(landmark.layerSettings.enabledProperty)
+    }
+
+    protected abstract fun scaleChanged()
+
+    protected abstract fun highlightShape()
+
+    protected abstract fun unhighlightShape()
+
+    private fun addListeners() {
+        landmark.layerState.selectedLandmarksUids.addListener(weakSelectedLandmarksChangedEventHandler)
+        landmark.layerState.hoveredLandmarksUids.addListener(weakHoveredLandmarksChangedEventHandler)
+
+        landmark.layerSettings.useOneColor.addListener(weakUseOneColorChangedListener)
+    }
+
+    private fun removeListeners() {
+        layerState.selectedLandmarksUids.removeListener(weakSelectedLandmarksChangedEventHandler)
+        layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
+
+        layerSettings.useOneColor.removeListener(weakUseOneColorChangedListener)
     }
 }
