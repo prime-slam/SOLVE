@@ -7,7 +7,7 @@ import solve.importer.ProjectParser
 import solve.importer.controller.ImporterController
 import solve.importer.model.FileInfo
 import solve.importer.model.FileInTree
-import solve.utils.loadImage
+import solve.utils.loadResourcesImage
 import solve.utils.toStringWithoutBrackets
 import tornadofx.*
 
@@ -45,10 +45,10 @@ open class ProjectTreeView : View() {
 
         filesColumn.setCellFactory { _ ->
             object : TreeTableCell<FileInTree, FileInfo?>() {
-                private val imageIcon = loadImage("icons/importer/photo.png")
-                private val fileIcon = loadImage("icons/importer/description.png")
-                private val errorFolderIcon = loadImage("icons/importer/error_folder.png")
-                private val errorFileIcon = loadImage("icons/importer/error_file.png")
+                private val imageIcon = loadResourcesImage("icons/importer/photo.png")
+                private val fileIcon = loadResourcesImage("icons/importer/description.png")
+                private val errorFolderIcon = loadResourcesImage("icons/importer/error_folder.png")
+                private val errorFileIcon = loadResourcesImage("icons/importer/error_file.png")
 
                 override fun updateItem(item: FileInfo?, empty: Boolean) {
                     super.updateItem(item, empty)

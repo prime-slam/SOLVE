@@ -15,7 +15,7 @@ import solve.catalogue.synchronizeListViewsSelections
 import solve.catalogue.view.fields.CatalogueFieldsView
 import solve.utils.addSafely
 import solve.utils.createInsetsWithValue
-import solve.utils.loadImage
+import solve.utils.loadResourcesImage
 import solve.utils.removeSafely
 import tornadofx.*
 
@@ -62,7 +62,7 @@ class CatalogueView : View() {
                 }
                 button {
                     setPrefSize(ApplyButtonSize, ApplyButtonSize)
-                    val buttonImage = loadImage("icons/catalogue/catalogue_apply_icon.png")
+                    val buttonImage = loadResourcesImage("icons/catalogue/apply.png")
                     if (buttonImage != null) {
                         graphic = imageview(buttonImage) {
                             fitHeight = ApplyButtonSize

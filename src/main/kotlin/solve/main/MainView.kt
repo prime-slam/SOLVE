@@ -10,7 +10,7 @@ import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentView
 import solve.sidepanel.tabs.SidePanelTabsView
 import solve.utils.createPxBox
-import solve.utils.loadImage
+import solve.utils.loadResourcesImage
 import tornadofx.*
 
 class MainView : View() {
@@ -31,12 +31,12 @@ class MainView : View() {
 
     private val leftSidePanelTabs = listOf(SidePanelTab(
         "Catalogue",
-        loadImage("icons/sidepanel_catalogue_icon.png"),
+        loadResourcesImage("icons/sidepanel/catalogue.png"),
         find<CatalogueView>().root
     ))
     private val rightSidePanelTabs = listOf(SidePanelTab(
         "Layers",
-        loadImage("icons/sidepanel_visualization_settings_icon.png"),
+        loadResourcesImage("icons/sidepanel/visualization_settings.png"),
         find<VisualizationSettingsView>().root
     ))
     private val tabsViewLocationParamName = "location"
