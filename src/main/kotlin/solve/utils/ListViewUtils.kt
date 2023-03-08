@@ -13,15 +13,8 @@ val <T> ListView<T>.selectedItems: List<T>
 val <T> ListView<T>.selectedItemsCount: Int
     get() = selectedItems.count()
 
-val <T> ListView<T>.selectedIndices: List<Int>
-    get() = selectionModel.selectedIndices
-
-fun <T> ListView<T>.selectItem(item: T) = selectionModel.select(item)
-
 inline fun <T> ListView<T>.onSelectionChanged(crossinline action: () -> Unit) {
     selectionModel.selectedItemProperty().onChange {
         action()
     }
 }
-
-
