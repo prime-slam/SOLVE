@@ -39,6 +39,8 @@ class Scene(
         }
     }
 
+    fun getFramesLayerSettings() = frames.flatMap { it.layers.map { layer -> layer.settings } }.distinct()
+
     private fun<T> MutableList<T>.changeLayerIndex(element: T, index: Int) {
         remove(element)
         add(index, element)

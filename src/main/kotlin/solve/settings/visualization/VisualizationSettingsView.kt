@@ -38,7 +38,8 @@ class VisualizationSettingsView: View() {
     private fun initializeLayersUpdating() {
         sceneController.scene.onChange { scene ->
             scene ?: return@onChange
-            visualizationSettingsLayersController.setLayerFields(scene.layerSettings)
+            val newLayers = scene.getFramesLayerSettings()
+            visualizationSettingsLayersController.setLayerFields(newLayers)
         }
     }
 }
