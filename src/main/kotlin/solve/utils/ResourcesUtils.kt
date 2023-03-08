@@ -6,24 +6,14 @@ import java.io.File
 import java.io.IOException
 import javax.imageio.ImageIO
 
-fun loadImage(path: String): Image? {
-    val file = File(path)
+// Loads image from the resources folder.
+fun loadResourcesImage(resourcesPath: String): Image? {
+    val imageFileStream = getResource(resourcesPath)?.openStream() ?: return null
 
-    if (!file.canRead()) {
-        println("The image file cannot be read!")
-        return null
-    }
-
-    var image: Image? = null
-    try {
-        image = Image(file.inputStream())
-    } catch (exception: IOException) {
-        println("Input error while loading the image!\n${exception.message}")
-    }
-
-    return image
+    return Image(imageFileStream)
 }
 
+// Reads a text of the file at the given path.
 fun readFileText(filePath: String): String? {
     val file = File(filePath)
 
@@ -42,6 +32,7 @@ fun readFileText(filePath: String): String? {
     return text
 }
 
+// Loads a buffered image at the given path.
 fun loadBufferedImage(filePath: String): BufferedImage? {
     val file = File(filePath)
 
@@ -59,3 +50,5 @@ fun loadBufferedImage(filePath: String): BufferedImage? {
 
     return image
 }
+
+private fun getResource(resourcesPath: String) = Any::class::class.java.getResource("/$resourcesPath")

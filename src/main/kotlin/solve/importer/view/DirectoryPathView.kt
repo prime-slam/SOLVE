@@ -8,7 +8,7 @@ import javafx.scene.layout.BorderPane
 import javafx.stage.DirectoryChooser
 import solve.importer.ProjectParser.partialParseDirectory
 import solve.importer.controller.ImporterController
-import solve.utils.loadImage
+import solve.utils.loadResourcesImage
 import tornadofx.*
 import java.io.File
 
@@ -17,8 +17,8 @@ class DirectoryPathView : View() {
 
     private val directoryChooser = DirectoryChooser().apply { title = "Choose working directory" }
 
-    private val filesCountIcon = loadImage("icons/importer/check_circle.png")
-    private val errorsCountIcon = loadImage("icons/importer/warning.png")
+    private val filesCountIcon = loadResourcesImage("icons/importer/check_circle.png")
+    private val errorsCountIcon = loadResourcesImage("icons/importer/warning.png")
 
     private val directoryLabel = label("Project directory") {
         maxWidth = 300.0
