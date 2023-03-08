@@ -1,6 +1,5 @@
 package solve.scene.view
 
-import javafx.scene.paint.Color
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import solve.scene.model.Landmark
@@ -16,7 +15,6 @@ class KeypointView(
     }
 
     override val node: Ellipse = createShape()
-    override var lastEnabledColor: Color? = keypoint.layerSettings.commonColor
 
     init {
         setUpShape(node, keypoint.uid)
@@ -62,7 +60,7 @@ class KeypointView(
         scaleTransition.play()
         fillTransition.play()
     }
-
+    
     override fun unhighlightShape(duration: Duration) {
         val scaleTransition = createScaleTransition(node, 1.0, 1.0, duration)
         val fillTransition =
@@ -81,6 +79,7 @@ class KeypointView(
         shape.fill = keypoint.layerSettings.getColor(keypoint)
         shape.opacity = keypoint.layerSettings.opacity
 
+        initializeCommonSettingsBindings(shape)
         initializeSettingsBindings(shape)
 
         return shape
@@ -90,10 +89,6 @@ class KeypointView(
         keypoint.layerSettings.commonColorProperty.onChange { newColor ->
             newColor ?: return@onChange
             setShapeColor(shape, newColor)
-        }
-        keypoint.layerSettings.enabledProperty.onChange { enabled ->
-            enabled ?: return@onChange
-            setShapeEnabled(shape, enabled)
         }
         keypoint.layerSettings.selectedRadiusProperty.onChange { selectedRadius ->
             selectedRadius ?: return@onChange
