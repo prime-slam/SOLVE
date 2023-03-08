@@ -2,7 +2,10 @@ package solve.scene.model
 
 import java.lang.ref.WeakReference
 
-class Scene(val frames: List<VisualizationFrame>, val layerSettings: List<LayerSettings>) : OrderManager<LayerSettings> {
+class Scene(
+    val frames: List<VisualizationFrame>,
+    val layerSettings: List<LayerSettings>
+) : OrderManager<LayerSettings> {
     private val planeLayerSettingsStorage =
         layerSettings.filterIsInstance<LayerSettings.PlaneLayerSettings>().toMutableList()
     private val layerSettingsStorage =
@@ -35,6 +38,8 @@ class Scene(val frames: List<VisualizationFrame>, val layerSettings: List<LayerS
             callback()
         }
     }
+
+    fun getFramesLayerSettings() = frames.flatMap { it.layers.map { layer -> layer.settings } }.distinct()
 
     private fun<T> MutableList<T>.changeLayerIndex(element: T, index: Int) {
         remove(element)
