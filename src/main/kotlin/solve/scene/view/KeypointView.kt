@@ -117,11 +117,4 @@ class KeypointView(
         shape.radiusX = radius
         shape.radiusY = radius
     }
-
-    private fun highlightShapeInstantly(shape: Ellipse) {
-        toFront(shape)
-        shape.radiusX = radius * HighlightingScaleFactor
-        shape.radiusY = radius * HighlightingScaleFactor
-        shape.fill = keypoint.layerSettings.colorManager.getColor(keypoint.uid)
-    }
 }
