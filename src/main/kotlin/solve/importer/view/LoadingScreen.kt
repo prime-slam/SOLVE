@@ -8,11 +8,12 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.text.Font
 import javafx.stage.Stage
 import kotlinx.coroutines.cancel
-import solve.utils.loadImage
+import solve.constants.IconsImporterLoadingPath
+import solve.utils.loadResourcesImage
 import tornadofx.*
 
 class LoadingScreen : View("Loading") {
-    private val loading = loadImage("icons/importer/loading.gif")
+    private val loading = loadResourcesImage(IconsImporterLoadingPath)
 
     override fun onDock() {
         (root.scene.window as Stage).minWidth = 390.0
