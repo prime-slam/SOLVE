@@ -155,10 +155,6 @@ sealed class LandmarkView(
 
     protected abstract fun scaleChanged()
 
-    protected abstract fun highlightShape()
-
-    protected abstract fun unhighlightShape()
-
     private fun addListeners() {
         landmark.layerState.selectedLandmarksUids.addListener(weakSelectedLandmarksChangedEventHandler)
         landmark.layerState.hoveredLandmarksUids.addListener(weakHoveredLandmarksChangedEventHandler)

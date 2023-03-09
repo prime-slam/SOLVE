@@ -13,6 +13,8 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     // Is used to set unique colors for all landmarks in the layer
     val colorManager = ColorManager<Long>()
 
+    val useOneColor = SimpleBooleanProperty(true)
+
     val commonColorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
     var commonColor: Color
         get() = commonColorProperty.get()

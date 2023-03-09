@@ -4,7 +4,7 @@ import java.lang.ref.WeakReference
 
 class Scene(
     val frames: List<VisualizationFrame>,
-    val layerSettings: List<LayerSettings>
+    layerSettings: List<LayerSettings>
 ) : OrderManager<LayerSettings> {
     private val planeLayerSettingsStorage =
         layerSettings.filterIsInstance<LayerSettings.PlaneLayerSettings>().toMutableList()
