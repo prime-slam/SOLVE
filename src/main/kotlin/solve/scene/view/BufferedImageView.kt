@@ -14,6 +14,7 @@ class BufferedImageView(
     private val pixelBuffer = PixelBuffer(initialWidth.ceilToInt(), initialHeight.ceilToInt(), buffer, pixelFormat)
     private val pixels = buffer.array()
     private val writableImage = WritableImage(pixelBuffer)
+    private var drawnImage: Image? = null
 
     init {
         this.image = writableImage
@@ -29,6 +30,7 @@ class BufferedImageView(
     private val roundedHeight: Int get() = writableImage.height.ceilToInt()
 
     fun drawImage(image: Image) {
+        drawnImage = image
         val imagePixelReader = image.pixelReader
         imagePixelReader.getPixels(0, 0, roundedWidth, roundedHeight, pixelFormat, pixels, 0, roundedWidth)
         updateCanvas()
@@ -60,8 +62,10 @@ class BufferedImageView(
     }
 
     private fun overlayPixel(i: Int, color: Color) {
-        val pixelColor = pixels[i].toColor()
-        val overlayColor = overlayColors(color, pixelColor)
+        val x = i % roundedWidth
+        val y = i / roundedWidth
+        val pixelColor = drawnImage?.pixelReader?.getColor(x, y)
+        val overlayColor = if (pixelColor != null) overlayColors(color, pixelColor) else color
         pixels[i] = overlayColor.toArgb()
     }
 
