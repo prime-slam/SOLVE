@@ -16,3 +16,4 @@ const val IconsVisualizationSettingsLayerVisiblePath = "icons/visualization_sett
 const val IconsVisualizationSettingsLineLayerPath = "icons/visualization_settings/line_layer.png"
 const val IconsVisualizationSettingsPlaneLayerPath = "icons/visualization_settings/plane_layer.png"
 const val IconsVisualizationSettingsPointLayerPath = "icons/visualization_settings/point_layer.png"
+const val IconsImporterLoadingPath = "icons/importer/loading.gif"
