@@ -39,7 +39,7 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
         LayerSettings(name, layerColorManager) {
 
         init {
-            useOneColor.value = true
+            useOneColor.value = false
         }
     }
 
