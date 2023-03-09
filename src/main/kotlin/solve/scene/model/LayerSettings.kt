@@ -11,21 +11,27 @@ import javafx.scene.paint.Color
 // Meaningful changes here provokes scene redrawing.
 sealed class LayerSettings(val name: String, private val layerColorManager: ColorManager<String>) {
     // Is used to set unique colors for all landmarks in the layer
-    val colorManager = ColorManager<Long>()
+    private val colorManager = ColorManager<Long>()
 
-    val useOneColor = SimpleBooleanProperty(true)
+    var color = layerColorManager.getColor(name)
+        set(value) {
+            field = value
+            layerColorManager.setColor(name, value)
+        }
+
+    val useOneColorProperty = SimpleBooleanProperty(true)
+    var useOneColor: Boolean
+        get() = useOneColorProperty.value
+        set(value) = useOneColorProperty.set(value)
 
     val commonColorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
     var commonColor: Color
         get() = commonColorProperty.get()
-        set(value) {
-            commonColorProperty.set(value)
-            layerColorManager.setColor(name, value)
-        }
+        set(value) = commonColorProperty.set(value)
 
     fun getColor(landmark: Landmark): Color {
-        if (useOneColor.value) {
-            return commonColor
+        if (useOneColor) {
+            return color
         }
         return getUniqueColor(landmark)
     }
@@ -64,6 +70,10 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
         name: String,
         layerColorManager: ColorManager<String>
     ) : LayerSettings(name, layerColorManager)
+    init {
+        useOneColor = false
+    }
+
     var opacity: Double = DEFAULT_OPACITY
         set(value) {
             if (value !in 0.0..1.0) throw IllegalArgumentException("Percent value should lie between 0 and 100")

@@ -159,13 +159,13 @@ sealed class LandmarkView(
         landmark.layerState.selectedLandmarksUids.addListener(weakSelectedLandmarksChangedEventHandler)
         landmark.layerState.hoveredLandmarksUids.addListener(weakHoveredLandmarksChangedEventHandler)
 
-        landmark.layerSettings.useOneColor.addListener(weakUseOneColorChangedListener)
+        landmark.layerSettings.useOneColorProperty.addListener(weakUseOneColorChangedListener)
     }
 
     private fun removeListeners() {
         layerState.selectedLandmarksUids.removeListener(weakSelectedLandmarksChangedEventHandler)
         layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
 
-        layerSettings.useOneColor.removeListener(weakUseOneColorChangedListener)
+        layerSettings.useOneColorProperty.removeListener(weakUseOneColorChangedListener)
     }
 }
