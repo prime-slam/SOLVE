@@ -21,6 +21,10 @@ class PlaneView(
         drawOnCanvas()
     }
 
+    override fun useCommonColorChanged(newCommonColor: Color) {
+        TODO("Not yet implemented")
+    }
+
     override fun scaleChanged() {
     }
 

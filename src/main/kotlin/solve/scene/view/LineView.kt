@@ -1,5 +1,6 @@
 package solve.scene.view
 
+import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.util.Duration
 import solve.scene.model.Landmark
@@ -40,7 +41,13 @@ class LineView(
     }
 
     override fun useOneColorChanged() {
-        node.fill = line.layerSettings.getColor(line)
+        setShapeColor(node, line.layerSettings.getColor(line))
+    }
+
+    override fun useCommonColorChanged(newCommonColor: Color) {
+        setShapeColor(node, newCommonColor)
+
+        line.layerSettings.commonColor = newCommonColor
     }
 
     override fun highlightShape(duration: Duration) {
