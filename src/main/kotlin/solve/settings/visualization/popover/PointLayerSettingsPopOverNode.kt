@@ -1,12 +1,12 @@
 package solve.settings.visualization.popover
 
 import javafx.scene.Node
+import javafx.scene.control.CheckBox
 import javafx.scene.control.ColorPicker
 import javafx.scene.control.Slider
-import javafx.scene.layout.VBox
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
-import solve.utils.*
+import solve.utils.structures.Alignment
 import tornadofx.*
 
 class PointLayerSettingsPopOverNode(
@@ -14,8 +14,8 @@ class PointLayerSettingsPopOverNode(
     private val sceneController: SceneController
 ): LayerSettingsPopOverNode() {
     companion object {
-        const val LayerSettingsNodePrefWidth = 220.0
-        const val LayerSettingsNodePrefHeight = 50.0
+        const val LayerSettingsNodePrefWidth = 260.0
+        const val LayerSettingsNodePrefHeight = 90.0
 
         const val PointSizeSliderMinValue = 1.0
         const val PointSizeSliderMaxValue = 20.0
@@ -54,15 +54,23 @@ class PointLayerSettingsPopOverNode(
         return slider
     }
 
+    private fun buildPointUseOneColorCheckBox(): CheckBox {
+        val checkBox = CheckBox()
+
+        checkBox.selectedProperty().onChange { useOneColor ->
+            pointLayerSettings.useOneColor = useOneColor
+        }
+
+        return checkBox
+    }
+
     override fun getPopOverNode(): Node {
-        val vbox = VBox()
-        vbox.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
+        popOver.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
-        vbox.add(createSettingField("Color", buildPointLandmarksColorPicker()))
-        vbox.add(createSettingField("Size", buildPointSizeSlider()))
+        addSettingField("Color", buildPointLandmarksColorPicker())
+        addSettingField("Size", buildPointSizeSlider())
+        addSettingField("One color", buildPointUseOneColorCheckBox(), Alignment.Left)
 
-        vbox.padding = createInsetsWithValue(10.0)
-
-        return vbox
+        return popOver
     }
 }
