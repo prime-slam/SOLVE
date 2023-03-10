@@ -7,7 +7,7 @@ import javafx.scene.text.Font
 import solve.utils.createHGrowHBox
 import tornadofx.*
 
-interface LayerSettingsPopOverNode {
+abstract class LayerSettingsPopOverNode {
     companion object {
         private const val LayerSettingNameFontSize = 16.0
     }
@@ -25,5 +25,5 @@ interface LayerSettingsPopOverNode {
         return hbox
     }
 
-    fun getPopOverNode(): Node
+    abstract fun getPopOverNode(): Node
 }
