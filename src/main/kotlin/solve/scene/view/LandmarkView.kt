@@ -2,6 +2,7 @@ package solve.scene.view
 
 import javafx.beans.InvalidationListener
 import javafx.beans.WeakInvalidationListener
+import javafx.beans.value.WeakChangeListener
 import javafx.collections.SetChangeListener
 import javafx.collections.WeakSetChangeListener
 import javafx.scene.Node
@@ -10,6 +11,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import javafx.util.Duration
 import solve.scene.model.Landmark
+import tornadofx.ChangeListener
 import tornadofx.visibleWhen
 
 // Responsive for creating and setting visual effects for landmarks presenting controls
@@ -90,6 +92,12 @@ sealed class LandmarkView(
     private val useOneColorChangedListener = InvalidationListener { useOneColorChanged() }
     private val weakUseOneColorChangedListener = WeakInvalidationListener(useOneColorChangedListener)
 
+    private val commonUseCommonColorChangedEventHandler = ChangeListener { _, _, newCommonColor ->
+        useCommonColorChanged(newCommonColor)
+    }
+    private val weakUseCommonColorChangedEventHandler = WeakChangeListener(commonUseCommonColorChangedEventHandler)
+
+
     init {
         addListeners()
     }
@@ -141,6 +149,8 @@ sealed class LandmarkView(
 
     protected abstract fun useOneColorChanged()
 
+    protected abstract fun useCommonColorChanged(newCommonColor: Color)
+
     protected abstract fun highlightShape(duration: Duration)
     protected abstract fun unhighlightShape(duration: Duration)
 
@@ -160,6 +170,7 @@ sealed class LandmarkView(
         landmark.layerState.hoveredLandmarksUids.addListener(weakHoveredLandmarksChangedEventHandler)
 
         landmark.layerSettings.useOneColorProperty.addListener(weakUseOneColorChangedListener)
+        layerSettings.commonColorProperty.addListener(weakUseCommonColorChangedEventHandler)
     }
 
     private fun removeListeners() {
@@ -167,5 +178,6 @@ sealed class LandmarkView(
         layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
 
         layerSettings.useOneColorProperty.removeListener(weakUseOneColorChangedListener)
+        layerSettings.commonColorProperty.removeListener(weakUseCommonColorChangedEventHandler)
     }
 }

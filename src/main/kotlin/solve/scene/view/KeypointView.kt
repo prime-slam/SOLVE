@@ -2,12 +2,11 @@ package solve.scene.view
 
 import javafx.beans.InvalidationListener
 import javafx.beans.WeakInvalidationListener
-import javafx.beans.value.WeakChangeListener
+import javafx.scene.paint.Color
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import solve.scene.model.Landmark
 import solve.scene.view.utils.*
-import tornadofx.ChangeListener
 
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
@@ -18,11 +17,6 @@ class KeypointView(
     }
 
     override val node: Ellipse = createShape()
-
-    private val commonColorChangedEventHandler = ChangeListener { _, _, newColor ->
-        setShapeColor(node, newColor)
-    }
-    private val weakCommonColorChangedEventHandler = WeakChangeListener(commonColorChangedEventHandler)
 
     private val selectedRadiusChangedEventHandler = InvalidationListener {
         updateShapeRadius(node)
@@ -53,13 +47,13 @@ class KeypointView(
     }
 
     override fun useOneColorChanged() {
-        node.fill = keypoint.layerSettings.getColor(keypoint)
-        if (isHighlighted(keypoint)) {
-            val fillTransition = createFillTransition(
-                node, keypoint.layerSettings.getUniqueColor(keypoint), InstantAnimationDuration
-            )
-            fillTransition.play()
-        }
+        onColorChangedFillTransition(keypoint.layerSettings.getUniqueColor(keypoint))
+    }
+
+    override fun useCommonColorChanged(newCommonColor: Color) {
+        onColorChangedFillTransition(newCommonColor)
+
+        keypoint.layerSettings.commonColor = newCommonColor
     }
 
     override fun highlightShape(duration: Duration) {
@@ -104,17 +98,25 @@ class KeypointView(
     }
 
     private fun addListeners() {
-        keypoint.layerSettings.commonColorProperty.addListener(weakCommonColorChangedEventHandler)
         keypoint.layerSettings.selectedRadiusProperty.addListener(weakSelectedRadiusChangedEventHandler)
     }
 
     private fun removeListeners() {
-        keypoint.layerSettings.commonColorProperty.removeListener(weakCommonColorChangedEventHandler)
         keypoint.layerSettings.selectedRadiusProperty.removeListener(weakSelectedRadiusChangedEventHandler)
     }
 
     private fun updateShapeRadius(shape: Ellipse) {
         shape.radiusX = radius
         shape.radiusY = radius
+    }
+
+    private fun onColorChangedFillTransition(newColor: Color) {
+        setShapeColor(node, keypoint.layerSettings.getColor(keypoint))
+        if (isHighlighted(keypoint)) {
+            val fillTransition = createFillTransition(
+                node, newColor, InstantAnimationDuration
+            )
+            fillTransition.play()
+        }
     }
 }
