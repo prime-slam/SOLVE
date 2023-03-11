@@ -13,9 +13,7 @@ class DarkTheme: Stylesheet() {
         val backgroundBase by cssclass()
         val backgroundElement by cssclass()
         val scene by cssclass()
-        val settingsPanelButton by cssclass()
         val fxTreeTableCellBorderColor by cssproperty<MultiValue<Paint>> ("-fx-table-cell-border-color")
-//        val fxBoxBorder by cssproperty<MultiValue<Paint>> ("-fx-box-border")
 
         const val mainFont = "roboto"
         val mainColor = valueOf("272727")
@@ -23,19 +21,14 @@ class DarkTheme: Stylesheet() {
         val elementColor = valueOf("393d3f")
         val selectedCellColor = valueOf("ababab")
         val hoverCellColor = LIGHTGRAY
-
     }
 
     init {
-
-
-
         s(label, button, checkBox, radioButton) {
             fontFamily = mainFont
             textFill = mainTextColor
             fontSize = 15.px
         }
-
 
         button{
             backgroundColor += GRAY
@@ -48,7 +41,6 @@ class DarkTheme: Stylesheet() {
         title {
             fontFamily = mainFont
         }
-
 
         listCell {
             textFill = mainTextColor
@@ -88,7 +80,6 @@ class DarkTheme: Stylesheet() {
             borderColor += box(mainColor)
 
         }
-
 
         backgroundElement {
             backgroundColor += elementColor
