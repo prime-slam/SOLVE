@@ -4,6 +4,8 @@ import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
+import solve.DarkTheme
+import solve.LightTheme
 import solve.catalogue.view.CatalogueView
 import solve.sidepanel.content.SidePanelContentController
 import solve.utils.*
@@ -24,19 +26,26 @@ class SidePanelTabsView: View() {
     private val catalogueTabIconImage = loadImage("icons/sidepanel_catalogue_icon.png")
     private val filterTabIconImage = loadImage("icons/sidepanel_filter_icon.png")
 
+    private val catalogueTabIconImageDark = loadImage("icons/sidepanel_catalogue_icon_dark_theme.png")
+    private val filterTabIconImageDark = loadImage("icons/sidepanel_filter_icon_dark_theme.png")
+
+
+
+
     private val tabsVBox = vbox()
     private val tabsToggleGroup = ToggleGroup()
     private val tabsToggleButtonsMap = mutableMapOf<SidePanelTab, ToggleButton>()
 
     override val root = tabsVBox.also {
+        it.addClass(DarkTheme.backgroundElement)
         initializeTabs()
         initializeTabsToggleGroup()
         it.addStylesheet(SidePanelTabsStyle::class)
     }
 
     private fun initializeTabs() {
-        catalogueTab = SidePanelTab("Catalogue", catalogueTabIconImage, catalogueView.root)
-        filterTab = SidePanelTab("Filter", filterTabIconImage, pane()) // TODO: add a filter panel.
+        catalogueTab = SidePanelTab("Catalogue", catalogueTabIconImageDark, catalogueView.root)
+        filterTab = SidePanelTab("Filter", filterTabIconImageDark, pane().apply { addClass(DarkTheme.backgroundBase) }) // TODO: add a filter panel.
 
         addTab(catalogueTab)
         addTab(filterTab)
@@ -49,6 +58,7 @@ class SidePanelTabsView: View() {
 
     private fun addTab(tab: SidePanelTab) {
         val tabButton = togglebutton(tabsToggleGroup) {
+
             graphic = group {
                 label(tab.name) {
                     tab.icon?.let {
@@ -100,16 +110,16 @@ class SidePanelTabsStyle: Stylesheet() {
             backgroundRadius += createPxBoxWithValue(0.0)
 
             and(hover) {
-                backgroundColor += HoveredTabColor
+                backgroundColor += DarkTheme.mainColor
                 focusColor = Color.TRANSPARENT
             }
 
             and(pressed) {
-                backgroundColor += PressedTabColor
+                backgroundColor += DarkTheme.mainColor
             }
 
             and(selected) {
-                backgroundColor += PressedTabColor
+                backgroundColor += DarkTheme.mainColor
             }
         }
     }

@@ -6,6 +6,8 @@ import javafx.scene.control.OverrunStyle
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.stage.DirectoryChooser
+import solve.DarkTheme
+//import solve.LightTheme
 import solve.importer.ProjectParser.partialParseDirectory
 import solve.importer.controller.ImporterController
 import solve.utils.loadImage
@@ -15,7 +17,9 @@ import java.io.File
 class DirectoryPathView : View() {
     private val controller: ImporterController by inject()
 
-    private val directoryChooser = DirectoryChooser().apply { title = "Choose working directory" }
+    private val directoryChooser = DirectoryChooser().apply {
+        title = "Choose working directory"
+    }
 
     private val filesCountIcon = loadImage("icons/importer/check_circle.png")
     private val errorsCountIcon = loadImage("icons/importer/warning.png")
@@ -32,6 +36,7 @@ class DirectoryPathView : View() {
     }
 
     private val changeButton = button("Change") {
+        addClass(DarkTheme.changeButton)
         action {
             val dir = directoryChooser.showDialog(currentStage)
             controller.directoryPath.set(dir?.absolutePath)
@@ -63,6 +68,7 @@ class DirectoryPathView : View() {
 
     override val root =
         vbox {
+            padding = Insets(8.0, 10.0, 8.0, 10.0)
             controller.directoryPath.onChange {
                 if (!it.isNullOrEmpty()) {
                     val projectAfterPartialParsing = partialParseDirectory(it.toString())
@@ -77,6 +83,7 @@ class DirectoryPathView : View() {
             }
 
             borderpane {
+
                 left {
                     add(directoryLabel)
                 }
@@ -88,5 +95,9 @@ class DirectoryPathView : View() {
             }
             add(countImagesLabel)
             add(countErrorsLabel)
+            separator{
+                visibleWhen { controller.directoryPath.isNotNull }
+            }
+
         }
 }

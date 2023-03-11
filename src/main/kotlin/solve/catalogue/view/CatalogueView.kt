@@ -5,6 +5,7 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import solve.DarkTheme
 import solve.catalogue.addSafely
 import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
 import solve.catalogue.controller.CatalogueController
@@ -87,7 +88,10 @@ class CatalogueView : View() {
         vgrow = Priority.ALWAYS
     }
 
-    override val root = catalogueNode.also { initializeNodes() }
+    override val root = catalogueNode.also {
+        initializeNodes()
+        it.addClass(DarkTheme.backgroundElement)
+    }
 
     fun reinitializeView() {
         reinitializeFields()

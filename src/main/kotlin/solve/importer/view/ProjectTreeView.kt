@@ -1,5 +1,6 @@
 package solve.importer.view
 
+import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
 import javafx.scene.image.ImageView
@@ -28,6 +29,7 @@ open class ProjectTreeView : View() {
     }
 
     override val root = treetableview(rootTree) {
+        padding = Insets(0.0, 7.0, 0.0, 0.0)
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
         this.isShowRoot = false
 
@@ -50,6 +52,10 @@ open class ProjectTreeView : View() {
                 private val errorFolderIcon = loadImage("icons/importer/error_folder.png")
                 private val errorFileIcon = loadImage("icons/importer/error_file.png")
 
+                private val imageIconDark = loadImage("icons/importer/photo_dark_theme.png")
+                private val fileIconDark = loadImage("icons/importer/description_dark_theme.png")
+
+
                 override fun updateItem(item: FileInfo?, empty: Boolean) {
                     super.updateItem(item, empty)
                     text = if (empty) null else item?.name
@@ -59,13 +65,13 @@ open class ProjectTreeView : View() {
                         if (item != null) {
                             if (item.isLeaf) {
                                 if (item.errors.isEmpty()) {
-                                    ImageView(fileIcon)
+                                    ImageView(fileIconDark)
                                 } else {
                                     ImageView(errorFileIcon)
                                 }
                             } else {
                                 if (item.errors.isEmpty()) {
-                                    ImageView(imageIcon)
+                                    ImageView(imageIconDark)
                                 } else {
                                     ImageView(errorFolderIcon)
                                 }

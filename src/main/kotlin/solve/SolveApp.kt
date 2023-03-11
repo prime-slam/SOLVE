@@ -4,7 +4,8 @@ import solve.main.MainView
 import javafx.stage.Stage
 import tornadofx.*
 
-class SolveApp : App(MainView::class) {
+class SolveApp : App(MainView::class, DarkTheme::class) {
+
     override fun start(stage: Stage) {
         with(stage) {
             width = 1000.0

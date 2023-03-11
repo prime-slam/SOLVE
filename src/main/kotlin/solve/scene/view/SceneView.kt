@@ -1,10 +1,13 @@
 package solve.scene.view
 
 import javafx.beans.property.*
+import javafx.geometry.Pos
 import kotlinx.coroutines.*
+import solve.DarkTheme
 import solve.scene.controller.SceneController
 import solve.scene.view.association.*
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
+import solve.utils.loadImage
 import tornadofx.*
 import kotlin.math.*
 
@@ -12,6 +15,7 @@ class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
     private var currentGrid: Grid? = null
+    private val noProjectIcon = loadImage("icons/scene/no_project_icon.png")
 
     init {
         controller.scene.onChange { scene ->
@@ -24,7 +28,12 @@ class SceneView : View() {
     }
 
     override val root = vbox {
-        label("Empty scene placeholder")
+        addClass(DarkTheme.scene)
+        label(graphic = imageview(noProjectIcon!!).apply {
+            fitHeight = 150.0
+            fitWidth = 150.0
+        })
+        alignment = Pos.CENTER
     }
 
     private fun draw() {

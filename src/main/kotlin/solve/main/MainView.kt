@@ -1,5 +1,6 @@
 package solve.main
 
+import solve.DarkTheme
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
 import solve.menubar.view.MenuBarView
@@ -10,6 +11,7 @@ import solve.utils.createPxBox
 import tornadofx.*
 
 class MainView : View() {
+
     companion object {
         private const val SideAndSceneDividerRatio = 0.25
     }
@@ -17,9 +19,12 @@ class MainView : View() {
     private val sceneView: SceneView by inject()
     private val sidePanelContentView: SidePanelContentView by inject()
 
+
+
     private lateinit var mainViewSplitPane: SidePanelSplitPane
 
     private val mainViewBorderPane = borderpane {
+        addClass(DarkTheme.scene)
         top<MenuBarView>()
         val splitPaneDividersPositions = listOf(SideAndSceneDividerRatio)
         val splitPaneContainedNodes = listOf(sidePanelContentView.root, sceneView.root)

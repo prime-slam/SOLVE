@@ -18,14 +18,21 @@ import solve.catalogue.model.CatalogueField
 import solve.project.model.ProjectFrame
 import solve.scene.view.SceneView
 import javafx.scene.layout.Priority
-import javafx.scene.paint.Color
+import solve.utils.loadImage
 import tornadofx.*
 import kotlin.math.min
 
 abstract class CatalogueFieldsView: View() {
     private val fields: ObservableList<CatalogueField> by param()
+    private val noFilesIcon = loadImage("icons/catalogue/no_files_icon.png")
     val fieldsListView: ListView<CatalogueField> = listview(fields) {
-        addStylesheet(CatalogueFieldsStyle::class)
+        if (noFilesIcon!=null){
+            placeholder = label (graphic = imageview(noFilesIcon).apply {
+                fitWidth = 64.0
+                fitHeight = 80.0
+            })
+        }
+//        addStylesheet(CatalogueFieldsStyle::class)
         selectionModel.selectionMode = SelectionMode.MULTIPLE
         cellFormat {
             setListViewCellFormat(this, it)
@@ -124,19 +131,18 @@ abstract class CatalogueFieldsView: View() {
         )
     }
 }
-
-class CatalogueFieldsStyle : Stylesheet() {
-    companion object {
-        private val SelectedFieldColor = Color.valueOf("#0096c9")
-    }
-
-    init {
-        listView {
-            cell {
-                and(selected) {
-                    backgroundColor += SelectedFieldColor
-                }
-            }
-        }
-    }
-}
+//class CatalogueFieldsStyle : Stylesheet() {
+//    companion object {
+//        private val SelectedFieldColor = Color.valueOf("ababab")
+//    }
+//
+//    init {
+//        listView {
+//            cell {
+//                and(selected) {
+//                    backgroundColor += SelectedFieldColor
+//                }
+//            }
+//        }
+//    }
+//}

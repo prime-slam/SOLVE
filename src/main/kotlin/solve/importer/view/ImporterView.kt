@@ -1,9 +1,11 @@
 package solve.importer.view
 
-import javafx.geometry.Insets
 import javafx.stage.Stage
+import solve.DarkTheme
+import solve.LightTheme
 import tornadofx.borderpane
 import tornadofx.View
+import tornadofx.addClass
 
 class ImporterView : View("Choose working directory") {
     override fun onDock() {
@@ -11,7 +13,7 @@ class ImporterView : View("Choose working directory") {
     }
 
     override val root = borderpane {
-        padding = Insets(8.0, 10.0, 8.0, 10.0)
+        addClass(DarkTheme.backgroundElement)
         top<DirectoryPathView>()
         center<ProjectTreeView>()
         bottom<ControlPanel>()
