@@ -21,6 +21,8 @@ class FrameDrawer(private val canvas: BufferedImageView, private val layersCount
         }
     }
 
+    // Updates colors of the points at the element layer
+    // Previous values will be overwritten
     fun addOrUpdateElement(element: FrameElement) {
         element.points.parallelStream().forEach { point ->
             buffer[point.x + width * point.y][element.viewOrder] = element.getColor(point).toArgb()

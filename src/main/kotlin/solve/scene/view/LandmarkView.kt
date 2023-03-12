@@ -35,6 +35,9 @@ sealed class LandmarkView(
     // setUpShape() should be called to set up common features for all landmarks
     abstract val node: Node?
 
+    // Ensures right z-order between landmarks from different layers
+    // Landmark with greater viewOrder will be drawn above
+    // Node.viewOrder is double, and node with less viewOrder will be drawn above
     var viewOrder: Int = viewOrder.also { node?.viewOrder = LANDMARKS_VIEW_ORDER - viewOrder }
         set(value) {
             node?.viewOrder = LANDMARKS_VIEW_ORDER - viewOrder
@@ -150,7 +153,10 @@ sealed class LandmarkView(
 
     protected abstract fun viewOrderChanged()
 
+    // Should be called only from highlightShapeIfNeeded
     protected abstract fun highlightShape(duration: Duration)
+
+    // Should be called only from unhighlightShapeIfNeeded
     protected abstract fun unhighlightShape(duration: Duration)
 
     protected fun highlightShapeIfNeeded(duration: Duration) {

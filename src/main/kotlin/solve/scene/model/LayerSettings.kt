@@ -11,7 +11,7 @@ import javafx.scene.paint.Color
 sealed class LayerSettings(val name: String, private val layerColorManager: ColorManager<String>) {
     // Is used to set unique colors for all landmarks in the layer
     private val colorManager = ColorManager<Long>()
-    abstract val usesCanvas: Boolean
+    abstract val usesCanvas: Boolean // True for layers, which draws anything with FrameDrawer
 
     var color = layerColorManager.getColor(name)
         set(value) {

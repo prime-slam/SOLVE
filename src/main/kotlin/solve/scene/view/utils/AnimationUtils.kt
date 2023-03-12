@@ -51,6 +51,8 @@ fun createColorTimeline(
     colorChangedCallback(color)
 }
 
+// Creates a timeline animation, which transforms percent value from 0 to 100
+// and calls given callback with percent values
 fun createProgressTimeline(duration: Duration, callback: (Int) -> Unit): Timeline {
     val percentProperty = SimpleIntegerProperty(0)
     percentProperty.onChange {

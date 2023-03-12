@@ -8,6 +8,7 @@ import solve.scene.model.Point
 import solve.utils.ceilToInt
 import java.nio.IntBuffer
 
+// Encapsulates pixel drawing
 class BufferedImageView(
     private val width: Double, private val height: Double, initialScale: Double
 ) : ImageView() {
@@ -30,6 +31,7 @@ class BufferedImageView(
     val roundedWidth: Int get() = writableImage.width.ceilToInt()
     val roundedHeight: Int get() = writableImage.height.ceilToInt()
 
+    // Color should be given in argb format
     fun setPixelValue(point: Point, color: Int) {
         this.pixels[point.x + roundedWidth * point.y] = color
     }
