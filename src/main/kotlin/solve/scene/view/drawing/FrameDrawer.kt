@@ -2,7 +2,8 @@ package solve.scene.view.drawing
 
 import javafx.scene.paint.Color
 import solve.scene.model.Point
-import solve.scene.model.createPairs
+import solve.scene.model.PointPairs
+import solve.scene.model.Size
 import solve.scene.view.NULL_COLOR
 import java.util.SortedSet
 
@@ -11,6 +12,7 @@ class FrameDrawer(private val canvas: BufferedImageView) {
     val height = canvas.roundedHeight
 
     private val buffer = Array<SortedSet<FrameElement>>(width * height) { sortedSetOf() }
+    private val allPairs = PointPairs.getPairs(Size(width, height))
 
     fun clear() {
         buffer.forEach {
@@ -38,7 +40,7 @@ class FrameDrawer(private val canvas: BufferedImageView) {
     }
 
     private fun fullRedraw() {
-        redrawPoints(createPairs(width.toShort(), height.toShort()))
+        redrawPoints(allPairs)
     }
 
     private fun redrawPoints(points: Iterable<Point>) {
