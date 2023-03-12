@@ -37,13 +37,14 @@ class FrameView(
     private val coroutineScope: CoroutineScope,
     private val associationsManager: AssociationsManager,
     private val orderManager: OrderManager<LayerSettings>,
+    canvasLayersCount: Int,
     frame: VisualizationFrame?
 ) : Group() {
     private var drawnLandmarks: Map<Layer, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
     private var currentFrame: VisualizationFrame? = null
     private val canvas = BufferedImageView(width, height, scale.value)
-    private val frameDrawer = FrameDrawer(canvas)
+    private val frameDrawer = FrameDrawer(canvas, canvasLayersCount + 1)
     private var currentJob: Job? = null
 
     // Should be stored to avoid weak listener from be collected
@@ -140,7 +141,7 @@ class FrameView(
     private fun draw() {
         val image = drawnImage ?: return
         frameDrawer.clear()
-        frameDrawer.addElement(ImageFrameElement(FrameDrawer.IMAGE_VIEW_ORDER, image))
+        frameDrawer.addOrUpdateElement(ImageFrameElement(FrameDrawer.IMAGE_VIEW_ORDER, image))
 
         drawnLandmarks = drawnLandmarks?.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
 
@@ -182,7 +183,7 @@ class FrameView(
     }
 
     private fun drawLoadingIndicator() {
-        frameDrawer.addElement(
+        frameDrawer.addOrUpdateElement(
             RectangleFrameElement(
                 FrameDrawer.IMAGE_VIEW_ORDER, Color.GREY, frameDrawer.width, frameDrawer.height
             )

@@ -20,7 +20,7 @@ class PlaneView(
 ) : LandmarkView(scale, viewOrder, plane) {
     override val node = null
 
-    private class PlaneFrameElement(viewOrder: Int, points: Iterable<Point>, initialColor: Color) :
+    private class PlaneFrameElement(viewOrder: Int, override val points: List<Point>, initialColor: Color) :
         FrameElement(viewOrder) {
         var color: Color = initialColor
 
@@ -28,7 +28,6 @@ class PlaneView(
             viewOrder = FrameDrawer.LANDMARKS_VIEW_ORDER + value
         }
 
-        override val points = points.asIterable()
         override fun getColor(point: Point) = color
     }
 
@@ -58,7 +57,7 @@ class PlaneView(
     }
 
     override fun addToFrameDrawer() {
-        frameDrawer.addElement(planeElement)
+        frameDrawer.addOrUpdateElement(planeElement)
     }
 
     override fun useOneColorChanged() {
@@ -81,6 +80,7 @@ class PlaneView(
 
         val timeline = createColorTimeline(duration, initialColor, targetColor) { color ->
             planeElement.color = color
+            frameDrawer.addOrUpdateElement(planeElement)
             frameDrawer.redrawPoints(planeElement.points)
         }
 
@@ -95,6 +95,7 @@ class PlaneView(
 
         val timeline = createColorTimeline(duration, initialColor, targetColor) { color ->
             planeElement.color = color
+            frameDrawer.addOrUpdateElement(planeElement)
             frameDrawer.redrawPoints(planeElement.points)
         }
 

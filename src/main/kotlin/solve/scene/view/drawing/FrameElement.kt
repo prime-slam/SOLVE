@@ -7,7 +7,7 @@ abstract class FrameElement(initialViewOrder: Int) : Comparable<FrameElement> {
     var viewOrder = initialViewOrder
         protected set
 
-    abstract val points: Iterable<Point>
+    abstract val points: List<Point>
 
     abstract fun getColor(point: Point): Color
 

@@ -11,6 +11,7 @@ import javafx.scene.paint.Color
 sealed class LayerSettings(val name: String, private val layerColorManager: ColorManager<String>) {
     // Is used to set unique colors for all landmarks in the layer
     private val colorManager = ColorManager<Long>()
+    abstract val usesCanvas: Boolean
 
     var color = layerColorManager.getColor(name)
         set(value) {
@@ -29,14 +30,17 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
 
     class PointLayerSettings(name: String, layerColorManager: ColorManager<String>) :
         LayerSettings(name, layerColorManager) {
+        override val usesCanvas = false
     }
 
     class LineLayerSettings(name: String, layerColorManager: ColorManager<String>) :
         LayerSettings(name, layerColorManager) {
+        override val usesCanvas = false
     }
 
     class PlaneLayerSettings(name: String, layerColorManager: ColorManager<String>) :
         LayerSettings(name, layerColorManager) {
+        override val usesCanvas = true
 
         init {
             useOneColor.value = false
