@@ -1,5 +1,6 @@
 package solve.scene.view
 
+import RectangleFrameElement
 import javafx.beans.InvalidationListener
 import javafx.beans.WeakInvalidationListener
 import javafx.beans.property.DoubleProperty
@@ -23,8 +24,7 @@ import solve.scene.model.Layer
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.drawing.BufferedImageView
 import solve.scene.view.drawing.FrameDrawer
-import solve.scene.view.drawing.RectangleFrameElement as RectangleElement
-import solve.scene.view.drawing.ImageFrameElement as ImageElement
+import solve.scene.view.drawing.ImageFrameElement
 import tornadofx.action
 import tornadofx.add
 import tornadofx.contextmenu
@@ -137,7 +137,7 @@ class FrameView(
     private fun draw() {
         val image = drawnImage ?: return
         frameDrawer.clear()
-        frameDrawer.addElement(ImageElement(IMAGE_VIEW_ORDER.toInt().toShort(), image))
+        frameDrawer.addElement(ImageFrameElement(IMAGE_VIEW_ORDER.toInt().toShort(), image))
 
         drawnLandmarks = drawnLandmarks?.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
 
@@ -177,8 +177,8 @@ class FrameView(
     }
 
     private fun drawLoadingIndicator() = frameDrawer.addElement(
-        RectangleElement(
-            IMAGE_VIEW_ORDER.toInt().toShort(), Color.GREY, frameDrawer.width.toShort(), frameDrawer.height.toShort()
+        RectangleFrameElement(
+            IMAGE_VIEW_ORDER.toInt().toShort(), Color.GREY, frameDrawer.width, frameDrawer.height
         )
     )
 
