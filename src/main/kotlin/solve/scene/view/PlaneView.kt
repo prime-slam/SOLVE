@@ -57,12 +57,12 @@ class PlaneView(
         removeListeners()
     }
 
-    override fun drawOnCanvas() {
+    override fun addToFrameDrawer() {
         frameDrawer.addElement(planeElement)
     }
 
     override fun useOneColorChanged() {
-        drawOnCanvas()
+        addToFrameDrawer()
     }
 
     override fun viewOrderChanged() {

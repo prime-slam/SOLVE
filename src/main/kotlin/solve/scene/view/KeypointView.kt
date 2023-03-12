@@ -22,7 +22,7 @@ class KeypointView(
         setUpShape(node, keypoint.uid)
     }
 
-    override fun drawOnCanvas() {}
+    override fun addToFrameDrawer() {}
 
     private val coordinates
         get() = Pair(keypoint.coordinate.x.toDouble() * scale, keypoint.coordinate.y.toDouble() * scale)

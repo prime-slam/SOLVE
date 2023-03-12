@@ -146,7 +146,7 @@ class FrameView(
 
         doForAllLandmarks { view, layerIndex ->
             view.viewOrder = layerIndex
-            view.drawOnCanvas()
+            view.addToFrameDrawer()
         }
 
         frameDrawer.fullRedraw()

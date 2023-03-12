@@ -42,7 +42,7 @@ sealed class LandmarkView(
             viewOrderChanged()
         }
 
-    abstract fun drawOnCanvas()
+    abstract fun addToFrameDrawer()
 
     private val layerState = landmark.layerState
     private val layerSettings = landmark.layerSettings

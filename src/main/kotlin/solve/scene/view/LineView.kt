@@ -25,7 +25,7 @@ class LineView(
         setUpShape(node, line.uid)
     }
 
-    override fun drawOnCanvas() {}
+    override fun addToFrameDrawer() {}
 
     private val startCoordinates
         get() = Pair(line.startCoordinate.x.toDouble() * scale, line.finishCoordinate.y.toDouble() * scale)
