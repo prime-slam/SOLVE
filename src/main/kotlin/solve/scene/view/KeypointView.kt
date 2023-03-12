@@ -3,7 +3,8 @@ package solve.scene.view
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import solve.scene.model.Landmark
-import solve.scene.view.utils.*
+import solve.scene.view.utils.createFillTransition
+import solve.scene.view.utils.createScaleTransition
 
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
@@ -45,6 +46,8 @@ class KeypointView(
         }
     }
 
+    override fun viewOrderChanged() {}
+
     override fun highlightShape(duration: Duration) {
         val scaleTransition = createScaleTransition(node, HighlightingScaleFactor, HighlightingScaleFactor, duration)
         val fillTransition = createFillTransition(
@@ -59,8 +62,7 @@ class KeypointView(
 
     override fun unhighlightShape(duration: Duration) {
         val scaleTransition = createScaleTransition(node, 1.0, 1.0, duration)
-        val fillTransition =
-            createFillTransition(node, keypoint.layerSettings.getColor(keypoint), duration)
+        val fillTransition = createFillTransition(node, keypoint.layerSettings.getColor(keypoint), duration)
 
         scaleTransition.setOnFinished {
             toBack(node)

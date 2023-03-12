@@ -9,6 +9,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Shape
 import javafx.util.Duration
 import solve.scene.model.Landmark
+import solve.scene.view.drawing.FrameDrawer
 
 // Responsive for creating and setting visual effects for landmarks presenting controls
 // This has access to landmark data class and its layer
@@ -17,11 +18,11 @@ sealed class LandmarkView(
     private val landmark: Landmark,
 ) {
     companion object {
-        fun create(landmark: Landmark, scale: Double, canvas: BufferedImageView): LandmarkView {
+        fun create(landmark: Landmark, scale: Double, frameDrawer: FrameDrawer, canvasNode: Node): LandmarkView {
             return when (landmark) {
                 is Landmark.Keypoint -> KeypointView(landmark, scale)
                 is Landmark.Line -> LineView(landmark, scale)
-                is Landmark.Plane -> PlaneView(landmark, canvas, scale)
+                is Landmark.Plane -> PlaneView(landmark, frameDrawer, canvasNode, scale)
             }
         }
 
@@ -32,6 +33,13 @@ sealed class LandmarkView(
     // When shape is created in an inheritor
     // setUpShape() should be called to set up common features for all landmarks
     abstract val node: Node?
+
+    var viewOrder: Double = 0.0
+        set(value) {
+            node?.viewOrder = value
+            field = value
+            viewOrderChanged()
+        }
 
     abstract fun drawOnCanvas()
 
@@ -138,6 +146,8 @@ sealed class LandmarkView(
     protected abstract fun scaleChanged()
 
     protected abstract fun useOneColorChanged()
+
+    protected abstract fun viewOrderChanged()
 
     protected abstract fun highlightShape(duration: Duration)
     protected abstract fun unhighlightShape(duration: Duration)

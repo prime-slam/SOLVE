@@ -43,6 +43,8 @@ class LineView(
         node.fill = line.layerSettings.getColor(line)
     }
 
+    override fun viewOrderChanged() {}
+
     override fun highlightShape(duration: Duration) {
         val scaleTransition = createScaleTransition(node, 1.0, HighlightingScaleFactor, duration)
         val strokeTransition = createStrokeTransition(

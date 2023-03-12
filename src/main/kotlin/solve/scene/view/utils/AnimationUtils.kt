@@ -1,6 +1,12 @@
 package solve.scene.view.utils
 
-import javafx.animation.*
+import javafx.animation.FillTransition
+import javafx.animation.KeyFrame
+import javafx.animation.KeyValue
+import javafx.animation.ScaleTransition
+import javafx.animation.StrokeTransition
+import javafx.animation.Timeline
+import javafx.animation.Transition
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.scene.Node
 import javafx.scene.paint.Color
@@ -35,16 +41,14 @@ fun createStrokeTransition(shape: Shape, color: Color, duration: Duration): Tran
 
 fun createColorTimeline(
     duration: Duration, initialColor: Color, targetColor: Color, colorChangedCallback: (Color) -> Unit
-): Timeline {
-    return createProgressTimeline(duration) { percent ->
-        val red = initialColor.red + (targetColor.red - initialColor.red) * (percent / 100.0)
-        val green = initialColor.green + (targetColor.green - initialColor.green) * (percent / 100.0)
-        val blue = initialColor.blue + (targetColor.blue - initialColor.blue) * (percent / 100.0)
-        val opacity = initialColor.opacity + (targetColor.opacity - initialColor.opacity) * (percent / 100.0)
+) = createProgressTimeline(duration) { percent ->
+    val red = initialColor.red + (targetColor.red - initialColor.red) * (percent / 100.0)
+    val green = initialColor.green + (targetColor.green - initialColor.green) * (percent / 100.0)
+    val blue = initialColor.blue + (targetColor.blue - initialColor.blue) * (percent / 100.0)
+    val opacity = initialColor.opacity + (targetColor.opacity - initialColor.opacity) * (percent / 100.0)
 
-        val color = Color(red, green, blue, opacity)
-        colorChangedCallback(color)
-    }
+    val color = Color(red, green, blue, opacity)
+    colorChangedCallback(color)
 }
 
 fun createProgressTimeline(duration: Duration, callback: (Int) -> Unit): Timeline {
