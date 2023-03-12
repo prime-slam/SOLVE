@@ -8,8 +8,9 @@ import solve.scene.view.utils.createScaleTransition
 
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
+    viewOrder: Int,
     scale: Double,
-) : LandmarkView(scale, keypoint) {
+) : LandmarkView(scale, viewOrder, keypoint) {
     companion object {
         private const val OrdinaryRadius: Double = 5.0
         private const val HighlightingScaleFactor: Double = 2.0

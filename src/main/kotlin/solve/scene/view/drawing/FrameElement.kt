@@ -3,7 +3,7 @@ package solve.scene.view.drawing
 import javafx.scene.paint.Color
 import solve.scene.model.Point
 
-abstract class FrameElement(initialViewOrder: Short) : Comparable<FrameElement> {
+abstract class FrameElement(initialViewOrder: Int) : Comparable<FrameElement> {
     var viewOrder = initialViewOrder
         protected set
 

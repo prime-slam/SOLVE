@@ -116,7 +116,9 @@ class FrameView(
                 if (!this@launch.isActive) return@withContext
                 val landmarkViews = landmarkData.mapValues {
                     it.value.map { landmark ->
-                        LandmarkView.create(landmark, scale.value, frameDrawer, canvas)
+                        LandmarkView.create(
+                            landmark, orderManager.indexOf(it.key.settings), scale.value, frameDrawer, canvas
+                        )
                     }
                 }
                 validateImage(image)
@@ -137,12 +139,12 @@ class FrameView(
     private fun draw() {
         val image = drawnImage ?: return
         frameDrawer.clear()
-        frameDrawer.addElement(ImageFrameElement(IMAGE_VIEW_ORDER.toInt().toShort(), image))
+        frameDrawer.addElement(ImageFrameElement(FrameDrawer.IMAGE_VIEW_ORDER, image))
 
         drawnLandmarks = drawnLandmarks?.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
 
         doForAllLandmarks { view, layerIndex ->
-            view.viewOrder = LANDMARKS_VIEW_ORDER - layerIndex
+            view.viewOrder = layerIndex
             view.drawOnCanvas()
         }
     }
@@ -178,7 +180,7 @@ class FrameView(
 
     private fun drawLoadingIndicator() = frameDrawer.addElement(
         RectangleFrameElement(
-            IMAGE_VIEW_ORDER.toInt().toShort(), Color.GREY, frameDrawer.width, frameDrawer.height
+            FrameDrawer.IMAGE_VIEW_ORDER, Color.GREY, frameDrawer.width, frameDrawer.height
         )
     )
 

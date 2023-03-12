@@ -3,12 +3,14 @@ package solve.scene.view
 import javafx.scene.shape.Line
 import javafx.util.Duration
 import solve.scene.model.Landmark
-import solve.scene.view.utils.*
+import solve.scene.view.utils.createScaleTransition
+import solve.scene.view.utils.createStrokeTransition
 
 class LineView(
     private val line: Landmark.Line,
+    viewOrder: Int,
     scale: Double,
-) : LandmarkView(scale, line) {
+) : LandmarkView(scale, viewOrder, line) {
     companion object {
         private const val OrdinaryWidth: Double = 3.0
         private const val HighlightingScaleFactor: Double = 2.0

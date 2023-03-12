@@ -67,4 +67,8 @@ class FrameDrawer(private val canvas: BufferedImageView) {
     private fun overlayComponents(
         component1: Double, component2: Double, opacity1: Double, opacity2: Double, opacity: Double
     ) = (component1 * opacity1 + (1 - opacity1) * component2 * opacity2) / opacity
+
+    companion object {
+        const val IMAGE_VIEW_ORDER = 0
+    }
 }

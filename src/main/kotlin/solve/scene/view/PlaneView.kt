@@ -15,15 +15,16 @@ class PlaneView(
     private val plane: Landmark.Plane,
     private val frameDrawer: FrameDrawer,
     private val canvasNode: Node,
+    viewOrder: Int,
     scale: Double,
-) : LandmarkView(scale, plane) {
+) : LandmarkView(scale, viewOrder, plane) {
     override val node = null
 
-    private class PlaneElement(viewOrder: Short, points: Iterable<Point>, initialColor: Color) :
+    private class PlaneElement(viewOrder: Int, points: Iterable<Point>, initialColor: Color) :
         FrameElement(viewOrder) {
         var color: Color = initialColor
 
-        fun changeViewOrder(value: Short) {
+        fun changeViewOrder(value: Int) {
             viewOrder = value
         }
 
@@ -31,7 +32,7 @@ class PlaneView(
         override fun getColor(point: Point) = color
     }
 
-    private val planeElement = PlaneElement(viewOrder.toInt().toShort(), plane.points, getColorWithOpacity())
+    private val planeElement = PlaneElement(viewOrder, plane.points, getColorWithOpacity())
 
     private val mouseClickedHandler = EventHandler<MouseEvent> { mouse ->
         if (!isMouseOver(mouse)) {
@@ -65,7 +66,7 @@ class PlaneView(
     }
 
     override fun viewOrderChanged() {
-        planeElement.changeViewOrder(viewOrder.toInt().toShort())
+        planeElement.changeViewOrder(viewOrder)
         frameDrawer.elementUpdated(planeElement)
     }
 

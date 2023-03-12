@@ -15,14 +15,15 @@ import solve.scene.view.drawing.FrameDrawer
 // This has access to landmark data class and its layer
 sealed class LandmarkView(
     scale: Double,
+    viewOrder: Int,
     private val landmark: Landmark,
 ) {
     companion object {
-        fun create(landmark: Landmark, scale: Double, frameDrawer: FrameDrawer, canvasNode: Node): LandmarkView {
+        fun create(landmark: Landmark, viewOrder: Int, scale: Double, frameDrawer: FrameDrawer, canvasNode: Node): LandmarkView {
             return when (landmark) {
-                is Landmark.Keypoint -> KeypointView(landmark, scale)
-                is Landmark.Line -> LineView(landmark, scale)
-                is Landmark.Plane -> PlaneView(landmark, frameDrawer, canvasNode, scale)
+                is Landmark.Keypoint -> KeypointView(landmark, viewOrder, scale)
+                is Landmark.Line -> LineView(landmark, viewOrder, scale)
+                is Landmark.Plane -> PlaneView(landmark, frameDrawer, canvasNode, viewOrder, scale)
             }
         }
 
@@ -34,9 +35,9 @@ sealed class LandmarkView(
     // setUpShape() should be called to set up common features for all landmarks
     abstract val node: Node?
 
-    var viewOrder: Double = 0.0
+    var viewOrder: Int = viewOrder.also { node?.viewOrder = LANDMARKS_VIEW_ORDER - viewOrder }
         set(value) {
-            node?.viewOrder = value
+            node?.viewOrder = LANDMARKS_VIEW_ORDER - viewOrder
             field = value
             viewOrderChanged()
         }
