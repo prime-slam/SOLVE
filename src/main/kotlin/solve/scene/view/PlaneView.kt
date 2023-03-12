@@ -25,7 +25,7 @@ class PlaneView(
         var color: Color = initialColor
 
         fun changeViewOrder(value: Int) {
-            viewOrder = value
+            viewOrder = FrameDrawer.LANDMARKS_VIEW_ORDER + value
         }
 
         override val points = points.asIterable()
@@ -67,7 +67,7 @@ class PlaneView(
 
     override fun viewOrderChanged() {
         planeElement.changeViewOrder(viewOrder)
-        frameDrawer.elementUpdated(planeElement)
+        frameDrawer.redrawPoints(planeElement.points)
     }
 
     override fun scaleChanged() {
@@ -81,7 +81,7 @@ class PlaneView(
 
         val timeline = createColorTimeline(duration, initialColor, targetColor) { color ->
             planeElement.color = color
-            frameDrawer.elementUpdated(planeElement)
+            frameDrawer.redrawPoints(planeElement.points)
         }
 
         timeline.play()
@@ -95,7 +95,7 @@ class PlaneView(
 
         val timeline = createColorTimeline(duration, initialColor, targetColor) { color ->
             planeElement.color = color
-            frameDrawer.elementUpdated(planeElement)
+            frameDrawer.redrawPoints(planeElement.points)
         }
 
         timeline.play()

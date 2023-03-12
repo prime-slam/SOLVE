@@ -13,10 +13,10 @@ abstract class FrameElement(initialViewOrder: Int) : Comparable<FrameElement> {
 
     override fun compareTo(other: FrameElement): Int {
         if (other.viewOrder < viewOrder) {
-            return -1
+            return 1
         }
         if (other.viewOrder > viewOrder) {
-            return 1
+            return -1
         }
         return 0
     }

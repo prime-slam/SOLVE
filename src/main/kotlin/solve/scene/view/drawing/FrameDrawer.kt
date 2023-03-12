@@ -18,32 +18,25 @@ class FrameDrawer(private val canvas: BufferedImageView) {
         buffer.forEach {
             it.clear()
         }
-        fullRedraw()
     }
 
     fun addElement(element: FrameElement) {
         element.points.forEach {
             buffer[it.x + width * it.y].add(element)
         }
-        redrawPoints(element.points)
     }
 
     fun removeElement(element: FrameElement) {
         element.points.forEach { point ->
             buffer[point.x + width * point.y].remove(element)
         }
-        redrawPoints(element.points)
     }
 
-    fun elementUpdated(element: FrameElement) {
-        redrawPoints(element.points)
-    }
-
-    private fun fullRedraw() {
+    fun fullRedraw() {
         redrawPoints(allPairs)
     }
 
-    private fun redrawPoints(points: Iterable<Point>) {
+    fun redrawPoints(points: Iterable<Point>) {
         val pixels = points.map { point -> BufferedImageView.Pixel(getPixelColor(point), point) }
         canvas.drawPixels(pixels)
     }
@@ -70,5 +63,6 @@ class FrameDrawer(private val canvas: BufferedImageView) {
 
     companion object {
         const val IMAGE_VIEW_ORDER = 0
+        const val LANDMARKS_VIEW_ORDER = 1
     }
 }

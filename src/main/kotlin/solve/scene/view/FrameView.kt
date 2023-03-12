@@ -97,6 +97,7 @@ class FrameView(
         disposeLandmarkViews()
         removeLandmarksNodes()
         frameDrawer.clear()
+        frameDrawer.fullRedraw()
 
         if (frame == null) {
             return
@@ -147,6 +148,8 @@ class FrameView(
             view.viewOrder = layerIndex
             view.drawOnCanvas()
         }
+
+        frameDrawer.fullRedraw()
     }
 
     private val orderChangedCallback = {
@@ -178,11 +181,14 @@ class FrameView(
         }
     }
 
-    private fun drawLoadingIndicator() = frameDrawer.addElement(
-        RectangleFrameElement(
-            FrameDrawer.IMAGE_VIEW_ORDER, Color.GREY, frameDrawer.width, frameDrawer.height
+    private fun drawLoadingIndicator() {
+        frameDrawer.addElement(
+            RectangleFrameElement(
+                FrameDrawer.IMAGE_VIEW_ORDER, Color.GREY, frameDrawer.width, frameDrawer.height
+            )
         )
-    )
+        frameDrawer.fullRedraw()
+    }
 
     private fun doForAllLandmarks(delegate: (LandmarkView, Int) -> Unit) =
         drawnLandmarks?.values?.forEachIndexed { layerIndex, landmarkViews ->
