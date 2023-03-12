@@ -20,7 +20,7 @@ class PlaneView(
 ) : LandmarkView(scale, viewOrder, plane) {
     override val node = null
 
-    private class PlaneElement(viewOrder: Int, points: Iterable<Point>, initialColor: Color) :
+    private class PlaneFrameElement(viewOrder: Int, points: Iterable<Point>, initialColor: Color) :
         FrameElement(viewOrder) {
         var color: Color = initialColor
 
@@ -32,7 +32,7 @@ class PlaneView(
         override fun getColor(point: Point) = color
     }
 
-    private val planeElement = PlaneElement(viewOrder, plane.points, getColorWithOpacity())
+    private val planeElement = PlaneFrameElement(viewOrder, plane.points, getColorWithOpacity())
 
     private val mouseClickedHandler = EventHandler<MouseEvent> { mouse ->
         if (!isMouseOver(mouse)) {
