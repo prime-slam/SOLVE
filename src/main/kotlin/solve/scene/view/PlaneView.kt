@@ -66,7 +66,6 @@ class PlaneView(
 
     override fun viewOrderChanged() {
         planeElement.changeViewOrder(viewOrder)
-        frameDrawer.redrawPoints(planeElement.points)
     }
 
     override fun scaleChanged() {
