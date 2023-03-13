@@ -66,9 +66,10 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     class PlaneLayerSettings(
         name: String,
         layerColorManager: ColorManager<String>
-    ) : LayerSettings(name, layerColorManager)
-    init {
-        useOneColor = false
+    ) : LayerSettings(name, layerColorManager) {
+        init {
+            useOneColor = false
+        }
     }
 
     var opacity: Double = DEFAULT_OPACITY
