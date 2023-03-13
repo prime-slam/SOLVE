@@ -92,8 +92,6 @@ class KeypointView(
         shape.fill = keypoint.layerSettings.getColor(keypoint)
         shape.opacity = keypoint.layerSettings.opacity
 
-        initializeCommonSettingsBindings(shape)
-
         return shape
     }
 

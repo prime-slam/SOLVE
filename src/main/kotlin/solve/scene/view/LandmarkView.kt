@@ -106,6 +106,8 @@ sealed class LandmarkView(
     protected fun setUpShape(shape: Shape, uid: Long) {
         addListeners()
 
+        initializeCommonSettingsBindings(shape)
+
         shape.parentProperty().addListener(parentChangedListener)
 
         if (layerState.selectedLandmarksUids.contains(uid)) {
@@ -155,7 +157,7 @@ sealed class LandmarkView(
         shape.fill = newColor
     }
 
-    protected fun initializeCommonSettingsBindings(landmarkNode: Node) {
+    private fun initializeCommonSettingsBindings(landmarkNode: Node) {
         // Does not cause memory leaks, as it uses a weak listener internally.
         landmarkNode.visibleWhen(landmark.layerSettings.enabledProperty)
     }
