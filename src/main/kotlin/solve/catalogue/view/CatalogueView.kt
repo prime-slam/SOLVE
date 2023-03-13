@@ -5,7 +5,7 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import solve.DarkTheme
+import solve.styles.DarkTheme
 import solve.catalogue.addSafely
 import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
 import solve.catalogue.controller.CatalogueController

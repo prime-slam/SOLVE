@@ -3,11 +3,14 @@ package solve.importer.view
 import javafx.geometry.Insets
 import javafx.scene.control.*
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
+import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import solve.importer.ProjectParser
 import solve.importer.controller.ImporterController
 import solve.importer.model.FileInfo
 import solve.importer.model.FileInTree
+import solve.styles.LightTheme
+import solve.styles.ThemeController
 import solve.utils.loadImage
 import solve.utils.toStringWithoutBrackets
 import tornadofx.*
@@ -16,6 +19,8 @@ open class ProjectTreeView : View() {
     private var rootTree = TreeItem(FileInTree(FileInfo("", false)))
 
     private val controller: ImporterController by inject()
+
+    private val themeController: ThemeController by inject()
 
     private fun updateTree() {
         controller.directoryPath.onChange {
@@ -55,8 +60,16 @@ open class ProjectTreeView : View() {
                 private val imageIconDark = loadImage("icons/importer/photo_dark_theme.png")
                 private val fileIconDark = loadImage("icons/importer/description_dark_theme.png")
 
+                private fun chooseIcons(): Pair<Image?, Image?> {
+                    return if (themeController.activeTheme == LightTheme::class){
+                        Pair(imageIcon, fileIcon)
+                    } else{
+                        Pair(imageIconDark, fileIconDark)
+                    }
+                }
 
                 override fun updateItem(item: FileInfo?, empty: Boolean) {
+                    val icons = chooseIcons()
                     super.updateItem(item, empty)
                     text = if (empty) null else item?.name
                     graphic = if (empty) {
@@ -65,13 +78,13 @@ open class ProjectTreeView : View() {
                         if (item != null) {
                             if (item.isLeaf) {
                                 if (item.errors.isEmpty()) {
-                                    ImageView(fileIconDark)
+                                    ImageView(icons.first)
                                 } else {
                                     ImageView(errorFileIcon)
                                 }
                             } else {
                                 if (item.errors.isEmpty()) {
-                                    ImageView(imageIconDark)
+                                    ImageView(icons.second)
                                 } else {
                                     ImageView(errorFolderIcon)
                                 }

@@ -1,6 +1,6 @@
 package solve.main
 
-import solve.DarkTheme
+import solve.styles.DarkTheme
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
 import solve.menubar.view.MenuBarView
@@ -18,8 +18,6 @@ class MainView : View() {
 
     private val sceneView: SceneView by inject()
     private val sidePanelContentView: SidePanelContentView by inject()
-
-
 
     private lateinit var mainViewSplitPane: SidePanelSplitPane
 

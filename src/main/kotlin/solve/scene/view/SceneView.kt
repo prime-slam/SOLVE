@@ -3,7 +3,7 @@ package solve.scene.view
 import javafx.beans.property.*
 import javafx.geometry.Pos
 import kotlinx.coroutines.*
-import solve.DarkTheme
+import solve.styles.DarkTheme
 import solve.scene.controller.SceneController
 import solve.scene.view.association.*
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider

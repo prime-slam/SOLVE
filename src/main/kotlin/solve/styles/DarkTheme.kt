@@ -1,9 +1,10 @@
-package solve
+package solve.styles
 
 import javafx.scene.control.ScrollPane
 import javafx.scene.paint.Paint
 import tornadofx.*
 import javafx.scene.paint.Color.*
+import solve.utils.createPxBoxWithValue
 
 class DarkTheme: Stylesheet() {
 
@@ -19,8 +20,6 @@ class DarkTheme: Stylesheet() {
         val mainColor = valueOf("272727")
         val mainTextColor = valueOf("e8e4d9")
         val elementColor = valueOf("393d3f")
-        val selectedCellColor = valueOf("ababab")
-        val hoverCellColor = LIGHTGRAY
     }
 
     init {
@@ -42,17 +41,7 @@ class DarkTheme: Stylesheet() {
             fontFamily = mainFont
         }
 
-        listCell {
-            textFill = mainTextColor
-            and(hover) {
-                backgroundColor += elementColor
-            }
-            and(selected) {
-               backgroundColor += BLACK
-            }
 
-            backgroundColor += mainColor
-        }
 
         listView {
             backgroundColor += mainColor
@@ -69,10 +58,14 @@ class DarkTheme: Stylesheet() {
 
             }
         }
+
+
+
         changeButton {
             backgroundRadius += box(7.px)
 
         }
+
 
         backgroundBase {
             backgroundColor += mainColor
@@ -87,10 +80,30 @@ class DarkTheme: Stylesheet() {
             borderColor += box(mainColor)
         }
 
+
+
         treeTableCell {
             textFill = mainTextColor
         }
 
+        toggleButton {
+            backgroundColor += elementColor
+            backgroundInsets += createPxBoxWithValue(0.0)
+            backgroundRadius += createPxBoxWithValue(0.0)
+
+            and(hover) {
+                backgroundColor += mainColor
+                focusColor = TRANSPARENT
+            }
+
+            and(pressed) {
+                backgroundColor += mainColor
+            }
+
+            and(selected) {
+                backgroundColor += mainColor
+            }
+        }
 
         treeTableRowCell {
             arrow {
@@ -151,5 +164,18 @@ class DarkTheme: Stylesheet() {
         alert{
             backgroundColor += mainColor
         }
+
+        listCell {
+            textFill = mainTextColor
+            and(hover) {
+                backgroundColor += elementColor
+            }
+            and(selected) {
+                backgroundColor += BLACK
+            }
+
+            backgroundColor += mainColor
+        }
+
     }
 }

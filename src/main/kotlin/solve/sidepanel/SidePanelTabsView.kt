@@ -3,9 +3,7 @@ package solve.sidepanel
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.image.Image
-import javafx.scene.paint.Color
-import solve.DarkTheme
-import solve.LightTheme
+import solve.styles.DarkTheme
 import solve.catalogue.view.CatalogueView
 import solve.sidepanel.content.SidePanelContentController
 import solve.utils.*
@@ -26,12 +24,6 @@ class SidePanelTabsView: View() {
     private val catalogueTabIconImage = loadImage("icons/sidepanel_catalogue_icon.png")
     private val filterTabIconImage = loadImage("icons/sidepanel_filter_icon.png")
 
-    private val catalogueTabIconImageDark = loadImage("icons/sidepanel_catalogue_icon_dark_theme.png")
-    private val filterTabIconImageDark = loadImage("icons/sidepanel_filter_icon_dark_theme.png")
-
-
-
-
     private val tabsVBox = vbox()
     private val tabsToggleGroup = ToggleGroup()
     private val tabsToggleButtonsMap = mutableMapOf<SidePanelTab, ToggleButton>()
@@ -40,12 +32,11 @@ class SidePanelTabsView: View() {
         it.addClass(DarkTheme.backgroundElement)
         initializeTabs()
         initializeTabsToggleGroup()
-        it.addStylesheet(SidePanelTabsStyle::class)
     }
 
     private fun initializeTabs() {
-        catalogueTab = SidePanelTab("Catalogue", catalogueTabIconImageDark, catalogueView.root)
-        filterTab = SidePanelTab("Filter", filterTabIconImageDark, pane().apply { addClass(DarkTheme.backgroundBase) }) // TODO: add a filter panel.
+        catalogueTab = SidePanelTab("Catalogue", catalogueTabIconImage, catalogueView.root)
+        filterTab = SidePanelTab("Filter", filterTabIconImage, pane()) // TODO: add a filter panel.
 
         addTab(catalogueTab)
         addTab(filterTab)
@@ -97,30 +88,30 @@ class SidePanelTabsView: View() {
     }
 }
 
-class SidePanelTabsStyle: Stylesheet() {
-    companion object {
-        private val DefaultTabColor = Color.TRANSPARENT
-        private val HoveredTabColor = Color.LIGHTGRAY
-        private val PressedTabColor = DarkLightGrayColor
-    }
-    init {
-        toggleButton {
-            backgroundColor += DefaultTabColor
-            backgroundInsets += createPxBoxWithValue(0.0)
-            backgroundRadius += createPxBoxWithValue(0.0)
-
-            and(hover) {
-                backgroundColor += DarkTheme.mainColor
-                focusColor = Color.TRANSPARENT
-            }
-
-            and(pressed) {
-                backgroundColor += DarkTheme.mainColor
-            }
-
-            and(selected) {
-                backgroundColor += DarkTheme.mainColor
-            }
-        }
-    }
-}
+//class SidePanelTabsStyle: Stylesheet() {
+//    companion object {
+//        private val DefaultTabColor = Color.TRANSPARENT
+//        private val HoveredTabColor = Color.LIGHTGRAY
+//        private val PressedTabColor = DarkLightGrayColor
+//    }
+//    init {
+//        toggleButton {
+//            backgroundColor += DefaultTabColor
+//            backgroundInsets += createPxBoxWithValue(0.0)
+//            backgroundRadius += createPxBoxWithValue(0.0)
+//
+//            and(hover) {
+//                backgroundColor += DarkTheme.mainColor
+//                focusColor = Color.TRANSPARENT
+//            }
+//
+//            and(pressed) {
+//                backgroundColor += DarkTheme.mainColor
+//            }
+//
+//            and(selected) {
+//                backgroundColor += DarkTheme.mainColor
+//            }
+//        }
+//    }
+//}

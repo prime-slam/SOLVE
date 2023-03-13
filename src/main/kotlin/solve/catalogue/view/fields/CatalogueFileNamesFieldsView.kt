@@ -13,7 +13,6 @@ class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
     }
 
     private val fileNamesFieldIconImage = loadImage("icons/catalogue/catalogue_image_icon.png")
-    private val fileNamesFieldIconImageDark = loadImage("icons/catalogue/catalogue_image_icon_dark_theme.png")
 
     override val dragViewMaxFieldsNumber = 100
     override val listViewCellHeight = 25.0
@@ -23,8 +22,8 @@ class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
     }
 
     private fun createFieldIconImageView(): ImageView? {
-        if (fileNamesFieldIconImageDark != null) {
-           return imageview(fileNamesFieldIconImageDark) {
+        if (fileNamesFieldIconImage != null) {
+           return imageview(fileNamesFieldIconImage) {
                 fitHeight = ListViewFieldIconSize
                 isPreserveRatio = true
             }

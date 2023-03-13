@@ -8,7 +8,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.text.Font
 import javafx.stage.Stage
 import kotlinx.coroutines.cancel
-import solve.DarkTheme
+import solve.styles.DarkTheme
 import solve.utils.loadImage
 import tornadofx.*
 

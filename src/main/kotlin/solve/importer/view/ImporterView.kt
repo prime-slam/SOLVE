@@ -1,11 +1,9 @@
 package solve.importer.view
 
 import javafx.stage.Stage
-import solve.DarkTheme
-import solve.LightTheme
-import tornadofx.borderpane
-import tornadofx.View
-import tornadofx.addClass
+import solve.styles.DarkTheme
+import solve.styles.LightTheme
+import tornadofx.*
 
 class ImporterView : View("Choose working directory") {
     override fun onDock() {
@@ -14,6 +12,7 @@ class ImporterView : View("Choose working directory") {
 
     override val root = borderpane {
         addClass(DarkTheme.backgroundElement)
+        addClass(LightTheme.importerBackground)
         top<DirectoryPathView>()
         center<ProjectTreeView>()
         bottom<ControlPanel>()

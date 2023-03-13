@@ -6,8 +6,7 @@ import javafx.scene.control.OverrunStyle
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.stage.DirectoryChooser
-import solve.DarkTheme
-//import solve.LightTheme
+import solve.styles.DarkTheme
 import solve.importer.ProjectParser.partialParseDirectory
 import solve.importer.controller.ImporterController
 import solve.utils.loadImage
@@ -83,7 +82,6 @@ class DirectoryPathView : View() {
             }
 
             borderpane {
-
                 left {
                     add(directoryLabel)
                 }
