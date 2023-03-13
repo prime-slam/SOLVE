@@ -11,7 +11,6 @@ import solve.utils.createPxBox
 import tornadofx.*
 
 class MainView : View() {
-
     companion object {
         private const val SideAndSceneDividerRatio = 0.25
     }

@@ -32,7 +32,6 @@ class ControlPanel : View() {
     }
 
     private val algorithmsLabel = label {
-
         val listOfKind = mutableListOf<String>()
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
 
@@ -76,7 +75,6 @@ class ControlPanel : View() {
 
     override val root = vbox(6) {
         padding = Insets(8.0, 10.0, 8.0, 10.0)
-//        padding = Insets(10.0, 0.0, 0.0, 0.0)
         separator { visibleWhen { controller.projectAfterPartialParsing.isNotNull } }
         add(algorithmsLabel)
         hbox(10) {

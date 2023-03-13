@@ -96,6 +96,5 @@ class DirectoryPathView : View() {
             separator{
                 visibleWhen { controller.directoryPath.isNotNull }
             }
-
         }
 }

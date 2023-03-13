@@ -32,7 +32,6 @@ abstract class CatalogueFieldsView: View() {
                 fitHeight = 80.0
             })
         }
-//        addStylesheet(CatalogueFieldsStyle::class)
         selectionModel.selectionMode = SelectionMode.MULTIPLE
         cellFormat {
             setListViewCellFormat(this, it)
@@ -131,18 +130,3 @@ abstract class CatalogueFieldsView: View() {
         )
     }
 }
-//class CatalogueFieldsStyle : Stylesheet() {
-//    companion object {
-//        private val SelectedFieldColor = Color.valueOf("ababab")
-//    }
-//
-//    init {
-//        listView {
-//            cell {
-//                and(selected) {
-//                    backgroundColor += SelectedFieldColor
-//                }
-//            }
-//        }
-//    }
-//}

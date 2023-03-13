@@ -36,12 +36,9 @@ class DarkTheme: Stylesheet() {
             }
         }
 
-
         title {
             fontFamily = mainFont
         }
-
-
 
         listView {
             backgroundColor += mainColor
@@ -55,23 +52,18 @@ class DarkTheme: Stylesheet() {
             backgroundColor += elementColor
             and(hover) {
                 backgroundColor += mainColor
-
             }
         }
-
-
 
         changeButton {
             backgroundRadius += box(7.px)
 
         }
 
-
         backgroundBase {
             backgroundColor += mainColor
             borderWidth += box(5.px)
             borderColor += box(mainColor)
-
         }
 
         backgroundElement {
@@ -79,8 +71,6 @@ class DarkTheme: Stylesheet() {
             borderWidth += box(0.px)
             borderColor += box(mainColor)
         }
-
-
 
         treeTableCell {
             textFill = mainTextColor
@@ -158,7 +148,6 @@ class DarkTheme: Stylesheet() {
                 insets(0.0, 0.0)
                 borderWidth += box(1.px)
                 backgroundColor += mainColor
-
         }
 
         alert{
@@ -171,11 +160,9 @@ class DarkTheme: Stylesheet() {
                 backgroundColor += elementColor
             }
             and(selected) {
-                backgroundColor += BLACK
+                backgroundColor += GREY
             }
-
             backgroundColor += mainColor
         }
-
     }
 }
