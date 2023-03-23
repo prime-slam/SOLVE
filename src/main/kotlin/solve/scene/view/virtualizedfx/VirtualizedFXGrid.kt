@@ -26,17 +26,19 @@ class VirtualizedFXGrid(
 
     init {
         virtualGrid.positionProperty().onChange { position ->
-            xProperty.value = position?.x ?: 0.0
-            yProperty.value = position?.y ?: 0.0
+            xProperty.set(position?.x ?: 0.0)
+            yProperty.set(position?.y ?: 0.0)
         }
+    }
 
-        xProperty.onChange { newX ->
-            virtualGrid.scrollTo(newX, Orientation.HORIZONTAL)
-        }
+    override fun scrollX(newX: Double): Double {
+        virtualGrid.scrollTo(newX, Orientation.HORIZONTAL)
+        return virtualGrid.position.x
+    }
 
-        yProperty.onChange { newY ->
-            virtualGrid.scrollTo(newY, Orientation.VERTICAL)
-        }
+    override fun scrollY(newY: Double): Double {
+        virtualGrid.scrollTo(newY, Orientation.VERTICAL)
+        return virtualGrid.position.y
     }
 
     override fun setUpPanning() {
@@ -53,7 +55,7 @@ class VirtualizedFXGrid(
         }
     }
 
-    override fun setOnScroll(handler: EventHandler<ScrollEvent>) {
+    override fun setOnMouseWheel(handler: EventHandler<ScrollEvent>) {
         virtualGrid.addEventHandler(ScrollEvent.SCROLL, handler)
     }
 

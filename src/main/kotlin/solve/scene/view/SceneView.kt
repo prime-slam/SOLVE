@@ -7,10 +7,7 @@ import solve.scene.controller.SceneController
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
-import tornadofx.View
-import tornadofx.label
-import tornadofx.onChange
-import tornadofx.vbox
+import tornadofx.*
 import kotlin.math.min
 
 class SceneView : View() {
@@ -34,7 +31,10 @@ class SceneView : View() {
 
     private fun draw() {
         currentGrid?.xProperty?.unbindBidirectional(controller.xProperty)
+        controller.scrollX = null
         currentGrid?.yProperty?.unbindBidirectional(controller.yProperty)
+        controller.scrollY = null
+
         currentGrid?.dispose()
         root.children.clear()
 
@@ -67,15 +67,20 @@ class SceneView : View() {
 
         grid.setUpPanning()
 
-        grid.xProperty.bindBidirectional(controller.xProperty)
-        grid.yProperty.bindBidirectional(controller.yProperty)
+        grid.xProperty.onChange {
 
-        grid.setOnScroll { event ->
+        }
+        grid.xProperty.bindBidirectional(controller.xProperty)
+        controller.scrollX = { newX -> grid.scrollX(newX) }
+        grid.yProperty.bindBidirectional(controller.yProperty)
+        controller.scrollY = { newY -> grid.scrollY(newY) }
+
+        grid.setOnMouseWheel { event ->
             if (event.isConsumed) { // If event is consumed by vsp
-                return@setOnScroll
+                return@setOnMouseWheel
             }
             if (event.deltaY == 0.0) {
-                return@setOnScroll
+                return@setOnMouseWheel
             }
 
             val mousePosition = event.x to event.y

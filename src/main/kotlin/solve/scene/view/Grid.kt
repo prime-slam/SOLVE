@@ -13,7 +13,10 @@ interface Grid {
     val xProperty: DoubleProperty
     val yProperty: DoubleProperty
 
-    fun setOnScroll(handler: EventHandler<ScrollEvent>)
+    fun scrollX(newX: Double): Double
+    fun scrollY(newY: Double): Double
+
+    fun setOnMouseWheel(handler: EventHandler<ScrollEvent>)
 
     fun dispose()
 }
