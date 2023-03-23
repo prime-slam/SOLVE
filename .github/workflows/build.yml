@@ -16,6 +16,6 @@ jobs:
       - name: Build
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: test
+          arguments: build
       - name: Execute Gradle run
         run: ./gradlew run
