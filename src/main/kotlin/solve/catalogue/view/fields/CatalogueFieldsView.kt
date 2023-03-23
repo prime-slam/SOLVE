@@ -117,7 +117,6 @@ abstract class CatalogueFieldsView: View() {
 
         val fieldsSnapshotNode = createFieldsSnapshotNode(snapshotFields)
         fieldsListView.getChildList()?.remove(fieldsSnapshotNode)
-        val snapshotScene = Scene(fieldsSnapshotNode as Parent)
 
         val nodeSnapshot = fieldsSnapshotNode.snapshot(null, null)
         return WritableImage(

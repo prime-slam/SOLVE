@@ -30,11 +30,11 @@ fun <T, C : GridCell<T>?> wrapGridWithVsp(
             val helper = grid.gridHelper
             val max = helper.maxVScroll()
             if (max != 0.0) `val`.y / max else 0
-        }) { o: Number?, n: Number -> vsp.vVal = n.toDouble() }.setSourceUpdater(Mapper.of { `val`: Number ->
+        }) { _: Number?, n: Number -> vsp.vVal = n.toDouble() }.setSourceUpdater(Mapper.of { `val`: Number ->
             val helper = grid.gridHelper
             val currPos = grid.position
             Position.of(currPos.x, `val`.toDouble() * helper.maxVScroll())
-        }) { o: Position?, n: Position? ->
+        }) { _: Position?, n: Position? ->
             grid.setPosition(
                 n
             )
@@ -46,11 +46,11 @@ fun <T, C : GridCell<T>?> wrapGridWithVsp(
             val helper = grid.gridHelper
             val max = helper.maxHScroll()
             if (max != 0.0) `val`.x / max else 0
-        }) { o: Number?, n: Number -> vsp.hVal = n.toDouble() }.setSourceUpdater(Mapper.of { `val`: Number ->
+        }) { _: Number?, n: Number -> vsp.hVal = n.toDouble() }.setSourceUpdater(Mapper.of { `val`: Number ->
             val helper = grid.gridHelper
             val currPos = grid.position
             Position.of(`val`.toDouble() * helper.maxHScroll(), currPos.y)
-        }) { o: Position?, n: Position? ->
+        }) { _: Position?, n: Position? ->
             grid.setPosition(
                 n
             )
