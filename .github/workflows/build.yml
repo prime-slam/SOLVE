@@ -18,4 +18,5 @@ jobs:
         with:
           arguments: build
       - name: Execute Gradle run
-        run: ./gradlew run
+        run: ./gradlew assemble
+             ./gradlew run
