@@ -34,25 +34,20 @@ class SceneController : Controller() {
             scrollY(value)
         }
 
-    fun zoomIn(mousePosition: Pair<Double, Double>) {
+    fun zoomIn(mousePosition: Pair<Double, Double>) = zoom(min(scaleProperty.value * scaleFactor, maxScale), mousePosition)
+
+    fun zoomOut(mousePosition: Pair<Double, Double>) = zoom(max(scaleProperty.value / scaleFactor, minScale), mousePosition)
+
+    private fun zoom(newScale: Double, mousePosition: Pair<Double, Double>) {
         val initialMouseX = (xProperty.value + mousePosition.first) / scaleProperty.value
         val initialMouseY = (yProperty.value + mousePosition.second) / scaleProperty.value
 
-        scaleProperty.value = min(scaleProperty.value * scaleFactor, maxScale)
+        scaleProperty.value = newScale
 
         x = initialMouseX * scaleProperty.value - mousePosition.first
         y = initialMouseY * scaleProperty.value - mousePosition.second
     }
 
-    fun zoomOut(mousePosition: Pair<Double, Double>) {
-        val initialMouseX = (xProperty.value + mousePosition.first) / scaleProperty.value
-        val initialMouseY = (yProperty.value + mousePosition.second) / scaleProperty.value
-
-        scaleProperty.value = max(scaleProperty.value / scaleFactor, minScale)
-
-        x = initialMouseX * scaleProperty.value - mousePosition.first
-        y = initialMouseY * scaleProperty.value - mousePosition.second
-    }
 
     companion object {
         private const val defaultX = 0.0
