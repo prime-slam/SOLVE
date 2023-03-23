@@ -1,5 +1,6 @@
 package solve.scene.view
 
+import javafx.beans.property.DoubleProperty
 import javafx.event.EventHandler
 import javafx.scene.Node
 import javafx.scene.input.ScrollEvent
@@ -9,11 +10,10 @@ interface Grid {
 
     val node: Node
 
-    val currentPosition: Pair<Double, Double>
+    val xProperty: DoubleProperty
+    val yProperty: DoubleProperty
 
     fun setOnScroll(handler: EventHandler<ScrollEvent>)
-
-    fun scrollTo(x: Double, y: Double)
 
     fun dispose()
 }
