@@ -20,6 +20,7 @@ repositories {
 
 application {
     mainClass.set("solve.SolveApp")
+    applicationDefaultJvmArgs = listOf("--add-opens", "javafx.graphics/javafx.scene=ALL-UNNAMED")
 }
 
 javafx {
