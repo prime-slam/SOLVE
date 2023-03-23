@@ -17,5 +17,3 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
-      - name: Run
-        run: ./gradlew run
