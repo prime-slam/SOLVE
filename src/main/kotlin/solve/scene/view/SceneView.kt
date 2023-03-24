@@ -102,6 +102,6 @@ class SceneView : View() {
         private const val maxScale = 20.0
         private const val minScale = 0.2
 
-        private const val defaultNumberOfColumns = 15
+        private const val defaultNumberOfColumns = 5
     }
 }
