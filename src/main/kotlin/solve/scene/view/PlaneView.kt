@@ -33,4 +33,8 @@ class PlaneView(
 
     override fun unhighlightShape(duration: Duration) {
     }
+
+    private fun setUpCanvas() {
+
+    }
 }
