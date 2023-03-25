@@ -57,9 +57,9 @@ class PointLayerSettingsPopOverNode(
     private fun buildPointUseOneColorCheckBox(): CheckBox {
         val checkBox = CheckBox()
 
-        checkBox.isSelected = pointLayerSettings.useOneColor
+        checkBox.isSelected = pointLayerSettings.useCommonColor
         checkBox.selectedProperty().onChange { useOneColor ->
-            pointLayerSettings.useOneColor = useOneColor
+            pointLayerSettings.useCommonColor = useOneColor
         }
 
         return checkBox

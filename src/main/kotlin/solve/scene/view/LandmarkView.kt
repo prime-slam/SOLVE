@@ -91,13 +91,13 @@ sealed class LandmarkView(
     }
     private val weakHoveredLandmarksChangedEventHandler = WeakSetChangeListener(hoveredLandmarksChangedEventHandler)
 
-    private val useOneColorChangedListener = InvalidationListener { useOneColorChanged() }
-    private val weakUseOneColorChangedListener = WeakInvalidationListener(useOneColorChangedListener)
+    private val useCommonColorChangedListener = InvalidationListener { useCommonColorChanged() }
+    private val weakUseCommonColorChangedListener = WeakInvalidationListener(useCommonColorChangedListener)
 
-    private val commonUseCommonColorChangedEventHandler = ChangeListener { _, _, newCommonColor ->
-        useCommonColorChanged(newCommonColor)
+    private val commonColorChangedEventHandler = ChangeListener { _, _, newCommonColor ->
+        commonColorChanged(newCommonColor)
     }
-    private val weakUseCommonColorChangedEventHandler = WeakChangeListener(commonUseCommonColorChangedEventHandler)
+    private val weakCommonColorChangedEventHandler = WeakChangeListener(commonColorChangedEventHandler)
 
     init {
         addListeners()
@@ -138,9 +138,9 @@ sealed class LandmarkView(
         node.viewOrder += HIGHLIGHTING_VIEW_ORDER_GAP
     }
 
-    protected abstract fun useOneColorChanged()
+    protected abstract fun useCommonColorChanged()
 
-    protected abstract fun useCommonColorChanged(newCommonColor: Color)
+    protected abstract fun commonColorChanged(newCommonColor: Color)
 
     protected abstract fun highlightShape(duration: Duration)
     protected abstract fun unhighlightShape(duration: Duration)
@@ -160,16 +160,16 @@ sealed class LandmarkView(
         landmark.layerState.selectedLandmarksUids.addListener(weakSelectedLandmarksChangedEventHandler)
         landmark.layerState.hoveredLandmarksUids.addListener(weakHoveredLandmarksChangedEventHandler)
 
-        landmark.layerSettings.useOneColorProperty.addListener(weakUseOneColorChangedListener)
-        layerSettings.commonColorProperty.addListener(weakUseCommonColorChangedEventHandler)
+        landmark.layerSettings.useCommonColorProperty.addListener(weakUseCommonColorChangedListener)
+        layerSettings.commonColorProperty.addListener(weakCommonColorChangedEventHandler)
     }
 
     private fun removeListeners() {
         layerState.selectedLandmarksUids.removeListener(weakSelectedLandmarksChangedEventHandler)
         layerState.hoveredLandmarksUids.removeListener(weakHoveredLandmarksChangedEventHandler)
 
-        layerSettings.useOneColorProperty.removeListener(weakUseOneColorChangedListener)
-        layerSettings.commonColorProperty.removeListener(weakUseCommonColorChangedEventHandler)
+        layerSettings.useCommonColorProperty.removeListener(weakUseCommonColorChangedListener)
+        layerSettings.commonColorProperty.removeListener(weakCommonColorChangedEventHandler)
     }
 
     private fun highlightShapeIfNeeded(duration: Duration) {
