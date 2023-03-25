@@ -110,7 +110,7 @@ class KeypointView(
 
     private fun onColorChangedFillTransition(newColor: Color) {
         setShapeColor(node, keypoint.layerSettings.getColor(keypoint))
-        if (shouldHighlight(keypoint)) {
+        if (shouldHighlight) {
             val fillTransition = createFillTransition(
                 node, newColor, InstantAnimationDuration
             )
