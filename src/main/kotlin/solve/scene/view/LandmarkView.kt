@@ -11,6 +11,7 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import javafx.util.Duration
 import solve.scene.model.Landmark
+import solve.scene.view.drawing.FrameDrawer
 import tornadofx.ChangeListener
 import tornadofx.visibleWhen
 
@@ -18,14 +19,15 @@ import tornadofx.visibleWhen
 // This has access to landmark data class and its layer
 sealed class LandmarkView(
     scale: Double,
+    viewOrder: Int,
     private val landmark: Landmark,
 ) {
     companion object {
-        fun create(landmark: Landmark, scale: Double, canvas: BufferedImageView): LandmarkView {
+        fun create(landmark: Landmark, viewOrder: Int, scale: Double, frameDrawer: FrameDrawer, canvasNode: Node): LandmarkView {
             return when (landmark) {
-                is Landmark.Keypoint -> KeypointView(landmark, scale)
-                is Landmark.Line -> LineView(landmark, scale)
-                is Landmark.Plane -> PlaneView(landmark, canvas, scale)
+                is Landmark.Keypoint -> KeypointView(landmark, viewOrder, scale)
+                is Landmark.Line -> LineView(landmark, viewOrder, scale)
+                is Landmark.Plane -> PlaneView(landmark, frameDrawer, canvasNode, viewOrder, scale)
             }
         }
 
@@ -37,7 +39,17 @@ sealed class LandmarkView(
     // setUpShape() should be called to set up common features for all landmarks
     abstract val node: Node?
 
-    abstract fun drawOnCanvas()
+    // Ensures right z-order between landmarks from different layers
+    // Landmark with greater viewOrder will be drawn above
+    // Node.viewOrder is double, and node with less viewOrder will be drawn above
+    var viewOrder: Int = viewOrder.also { node?.viewOrder = LANDMARKS_VIEW_ORDER - viewOrder }
+        set(value) {
+            node?.viewOrder = LANDMARKS_VIEW_ORDER - viewOrder
+            field = value
+            viewOrderChanged()
+        }
+
+    abstract fun addToFrameDrawer()
 
     private val layerState = landmark.layerState
     private val layerSettings = landmark.layerSettings
@@ -143,7 +155,12 @@ sealed class LandmarkView(
 
     protected abstract fun commonColorChanged(newCommonColor: Color)
 
+    protected abstract fun viewOrderChanged()
+
+    // Should be called only from highlightShapeIfNeeded
     protected abstract fun highlightShape(duration: Duration)
+
+    // Should be called only from unhighlightShapeIfNeeded
     protected abstract fun unhighlightShape(duration: Duration)
 
     protected abstract fun scaleChanged()
@@ -173,7 +190,7 @@ sealed class LandmarkView(
         layerSettings.commonColorProperty.removeListener(weakCommonColorChangedEventHandler)
     }
 
-    private fun highlightShapeIfNeeded(duration: Duration) {
+    protected fun highlightShapeIfNeeded(duration: Duration) {
         if (isHighlighted) {
             return
         }
@@ -181,7 +198,7 @@ sealed class LandmarkView(
         isHighlighted = true
     }
 
-    private fun unhighlightShapeIfNeeded(duration: Duration) {
+    protected fun unhighlightShapeIfNeeded(duration: Duration) {
         if (!isHighlighted) {
             return
         }

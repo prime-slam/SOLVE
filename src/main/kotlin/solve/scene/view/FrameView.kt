@@ -1,18 +1,34 @@
 package solve.scene.view
 
-import javafx.beans.*
+import RectangleFrameElement
+import javafx.beans.InvalidationListener
+import javafx.beans.WeakInvalidationListener
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.image.Image
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 import solve.scene.model.Landmark
-import solve.scene.model.*
+import solve.scene.model.Layer
+import solve.scene.model.LayerSettings
+import solve.scene.model.OrderManager
+import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationsManager
-import tornadofx.*
+import solve.scene.view.drawing.BufferedImageView
+import solve.scene.view.drawing.FrameDrawer
+import solve.scene.view.drawing.ImageFrameElement
+import tornadofx.action
+import tornadofx.add
+import tornadofx.contextmenu
+import tornadofx.item
 
 class FrameView(
     private val width: Double,
@@ -21,12 +37,14 @@ class FrameView(
     private val coroutineScope: CoroutineScope,
     private val associationsManager: AssociationsManager,
     private val orderManager: OrderManager<LayerSettings>,
+    canvasLayersCount: Int,
     frame: VisualizationFrame?
 ) : Group() {
     private var drawnLandmarks: Map<Layer, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
     private var currentFrame: VisualizationFrame? = null
     private val canvas = BufferedImageView(width, height, scale.value)
+    private val frameDrawer = FrameDrawer(canvas, canvasLayersCount + 1)
     private var currentJob: Job? = null
 
     // Should be stored to avoid weak listener from be collected
@@ -79,7 +97,8 @@ class FrameView(
         currentJob?.cancel()
         disposeLandmarkViews()
         removeLandmarksNodes()
-        canvas.clear()
+        frameDrawer.clear()
+        frameDrawer.fullRedraw()
 
         if (frame == null) {
             return
@@ -99,7 +118,9 @@ class FrameView(
                 if (!this@launch.isActive) return@withContext
                 val landmarkViews = landmarkData.mapValues {
                     it.value.map { landmark ->
-                        LandmarkView.create(landmark, scale.value, canvas)
+                        LandmarkView.create(
+                            landmark, orderManager.indexOf(it.key.settings), scale.value, frameDrawer, canvas
+                        )
                     }
                 }
                 validateImage(image)
@@ -119,17 +140,17 @@ class FrameView(
 
     private fun draw() {
         val image = drawnImage ?: return
-        canvas.clear()
-        canvas.drawImage(image)
+        frameDrawer.clear()
+        frameDrawer.addOrUpdateElement(ImageFrameElement(FrameDrawer.IMAGE_VIEW_ORDER, image))
 
         drawnLandmarks = drawnLandmarks?.toSortedMap(compareBy { layer -> orderManager.indexOf(layer.settings) })
 
         doForAllLandmarks { view, layerIndex ->
-            if (view.node != null) {
-                view.node?.viewOrder = LANDMARKS_VIEW_ORDER - layerIndex
-            }
-            view.drawOnCanvas()
+            view.viewOrder = layerIndex
+            view.addToFrameDrawer()
         }
+
+        frameDrawer.fullRedraw()
     }
 
     private val orderChangedCallback = {
@@ -161,7 +182,14 @@ class FrameView(
         }
     }
 
-    private fun drawLoadingIndicator() = canvas.fill(Color.GREY)
+    private fun drawLoadingIndicator() {
+        frameDrawer.addOrUpdateElement(
+            RectangleFrameElement(
+                FrameDrawer.IMAGE_VIEW_ORDER, Color.GREY, frameDrawer.width, frameDrawer.height
+            )
+        )
+        frameDrawer.fullRedraw()
+    }
 
     private fun doForAllLandmarks(delegate: (LandmarkView, Int) -> Unit) =
         drawnLandmarks?.values?.forEachIndexed { layerIndex, landmarkViews ->
