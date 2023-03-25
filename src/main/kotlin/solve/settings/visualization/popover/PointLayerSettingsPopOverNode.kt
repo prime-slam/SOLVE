@@ -1,8 +1,6 @@
 package solve.settings.visualization.popover
 
 import javafx.scene.Node
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ColorPicker
 import javafx.scene.control.Slider
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
@@ -21,18 +19,14 @@ class PointLayerSettingsPopOverNode(
         const val PointSizeSliderMaxValue = 20.0
     }
 
-    private fun buildPointLandmarksColorPicker(): ColorPicker {
-        val colorPicker = ColorPicker()
+    override fun getPopOverNode(): Node {
+        popOver.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
-        colorPicker.value = pointLayerSettings.commonColor
-        colorPicker.setOnAction {
-            pointLayerSettings.commonColor = colorPicker.value
-        }
-        sceneController.sceneProperty.onChange {
-            colorPicker.value = pointLayerSettings.commonColor
-        }
+        addSettingField("Color", buildLandmarkColorPicker(pointLayerSettings, sceneController))
+        addSettingField("Size", buildPointSizeSlider())
+        addSettingField("One color", buildLandmarkUseOneColorCheckBox(pointLayerSettings), Alignment.Left)
 
-        return colorPicker
+        return popOver
     }
 
     private fun buildPointSizeSlider(): Slider {
@@ -52,26 +46,5 @@ class PointLayerSettingsPopOverNode(
         }
 
         return slider
-    }
-
-    private fun buildPointUseOneColorCheckBox(): CheckBox {
-        val checkBox = CheckBox()
-
-        checkBox.isSelected = pointLayerSettings.useCommonColor
-        checkBox.selectedProperty().onChange { useOneColor ->
-            pointLayerSettings.useCommonColor = useOneColor
-        }
-
-        return checkBox
-    }
-
-    override fun getPopOverNode(): Node {
-        popOver.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
-
-        addSettingField("Color", buildPointLandmarksColorPicker())
-        addSettingField("Size", buildPointSizeSlider())
-        addSettingField("One color", buildPointUseOneColorCheckBox(), Alignment.Left)
-
-        return popOver
     }
 }

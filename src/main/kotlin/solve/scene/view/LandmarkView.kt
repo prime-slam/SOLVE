@@ -58,7 +58,7 @@ sealed class LandmarkView(
     private val isHovered get() = layerState.hoveredLandmarksUids.contains(landmark.uid)
     protected val shouldHighlight get() = isSelected || isHovered
 
-    private var isHighlighted = false
+    protected var isHighlighted = false
 
     var scale: Double = scale
         set(value) {
@@ -164,10 +164,6 @@ sealed class LandmarkView(
     protected abstract fun unhighlightShape(duration: Duration)
 
     protected abstract fun scaleChanged()
-
-    protected fun setShapeColor(shape: Shape, newColor: Color) {
-        shape.fill = newColor
-    }
 
     private fun initializeCommonSettingsBindings(landmarkNode: Node) {
         // Does not cause memory leaks, as it uses a weak listener internally.
