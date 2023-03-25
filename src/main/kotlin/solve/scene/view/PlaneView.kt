@@ -17,11 +17,11 @@ class PlaneView(
         canvas.drawPoints(colorWithOpacity, plane.points)
     }
 
-    override fun useOneColorChanged() {
+    override fun useCommonColorChanged() {
         drawOnCanvas()
     }
 
-    override fun useCommonColorChanged(newCommonColor: Color) {
+    override fun commonColorChanged(newCommonColor: Color) {
         TODO("Not yet implemented")
     }
 

@@ -46,14 +46,16 @@ class KeypointView(
         node.radiusY = radius
     }
 
-    override fun useOneColorChanged() {
-        onColorChangedFillTransition(keypoint.layerSettings.getUniqueColor(keypoint))
+    override fun useCommonColorChanged() {
+        if (!shouldHighlight) {
+            setShapeColor(node, keypoint.layerSettings.getColor(keypoint))
+        }
     }
 
-    override fun useCommonColorChanged(newCommonColor: Color) {
-        onColorChangedFillTransition(newCommonColor)
-
-        keypoint.layerSettings.commonColor = newCommonColor
+    override fun commonColorChanged(newCommonColor: Color) {
+        if (keypoint.layerSettings.useCommonColor && !shouldHighlight) {
+            setShapeColor(node, newCommonColor)
+        }
     }
 
     override fun highlightShape(duration: Duration) {
@@ -106,15 +108,5 @@ class KeypointView(
     private fun updateShapeRadius(shape: Ellipse) {
         shape.radiusX = radius
         shape.radiusY = radius
-    }
-
-    private fun onColorChangedFillTransition(newColor: Color) {
-        setShapeColor(node, keypoint.layerSettings.getColor(keypoint))
-        if (shouldHighlight) {
-            val fillTransition = createFillTransition(
-                node, newColor, InstantAnimationDuration
-            )
-            fillTransition.play()
-        }
     }
 }

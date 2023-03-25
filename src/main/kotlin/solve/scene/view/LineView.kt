@@ -40,11 +40,11 @@ class LineView(
         node.strokeWidth = width
     }
 
-    override fun useOneColorChanged() {
+    override fun useCommonColorChanged() {
         setShapeColor(node, line.layerSettings.getColor(line))
     }
 
-    override fun useCommonColorChanged(newCommonColor: Color) {
+    override fun commonColorChanged(newCommonColor: Color) {
         setShapeColor(node, newCommonColor)
 
         line.layerSettings.commonColor = newCommonColor

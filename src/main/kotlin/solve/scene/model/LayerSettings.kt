@@ -13,10 +13,10 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     // Is used to set unique colors for all landmarks in the layer
     private val colorManager = ColorManager<Long>()
 
-    val useOneColorProperty = SimpleBooleanProperty(true)
-    var useOneColor: Boolean
-        get() = useOneColorProperty.value
-        set(value) = useOneColorProperty.set(value)
+    val useCommonColorProperty = SimpleBooleanProperty(true)
+    var useCommonColor: Boolean
+        get() = useCommonColorProperty.value
+        set(value) = useCommonColorProperty.set(value)
 
     val commonColorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
     var commonColor: Color
@@ -27,7 +27,7 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
         }
 
     fun getColor(landmark: Landmark): Color {
-        if (useOneColor) {
+        if (useCommonColor) {
             return commonColor
         }
         return getUniqueColor(landmark)
@@ -68,7 +68,7 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
         layerColorManager: ColorManager<String>
     ) : LayerSettings(name, layerColorManager) {
         init {
-            useOneColor = false
+            useCommonColor = false
         }
     }
 
