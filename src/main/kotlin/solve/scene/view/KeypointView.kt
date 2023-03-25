@@ -50,13 +50,13 @@ class KeypointView(
 
     override fun useCommonColorChanged() {
         if (!shouldHighlight) {
-            setShapeColor(node, keypoint.layerSettings.getColor(keypoint))
+            setKeypointColor(node, keypoint.layerSettings.getColor(keypoint))
         }
     }
 
     override fun commonColorChanged(newCommonColor: Color) {
         if (keypoint.layerSettings.useCommonColor && !shouldHighlight) {
-            setShapeColor(node, newCommonColor)
+            setKeypointColor(node, newCommonColor)
         }
     }
 
@@ -93,7 +93,7 @@ class KeypointView(
 
     private fun createShape(): Ellipse {
         val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
-        shape.fill = keypoint.layerSettings.getColor(keypoint)
+        setKeypointColor(shape, keypoint.layerSettings.getColor(keypoint))
         shape.opacity = keypoint.layerSettings.opacity
 
         return shape
@@ -110,5 +110,9 @@ class KeypointView(
     private fun updateShapeRadius(shape: Ellipse) {
         shape.radiusX = radius
         shape.radiusY = radius
+    }
+
+    private fun setKeypointColor(shape: Ellipse, newColor: Color) {
+        shape.fill = newColor
     }
 }

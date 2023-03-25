@@ -3,6 +3,8 @@ package solve.scene.view
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
+import javafx.beans.InvalidationListener
+import javafx.beans.WeakInvalidationListener
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.util.Duration
@@ -16,7 +18,6 @@ class LineView(
     scale: Double,
 ) : LandmarkView(scale, viewOrder, line) {
     companion object {
-        private const val OrdinaryWidth: Double = 3.0
         private const val HighlightingScaleFactor: Double = 2.0
     }
 
@@ -24,13 +25,21 @@ class LineView(
         get() {
             val scaleFactor = if (scale < 1) scale else 1.0
             val highlightingFactor = if (shouldHighlight) HighlightingScaleFactor else 1.0
-            return OrdinaryWidth * scaleFactor * highlightingFactor
+            val selectedWidth = line.layerSettings.selectedWidth
+
+            return selectedWidth * scaleFactor * highlightingFactor
         }
 
     override val node: Line = createShape()
 
+    private val selectedWidthChangedEventHandler = InvalidationListener {
+        updateLineWidth(node)
+    }
+    private val weakSelectedWidthChangedEventHandler = WeakInvalidationListener(selectedWidthChangedEventHandler)
+
     init {
         setUpShape(node, line.uid)
+        addListeners()
     }
 
     override fun addToFrameDrawer() {}
@@ -50,13 +59,15 @@ class LineView(
     }
 
     override fun useCommonColorChanged() {
-        setShapeColor(node, line.layerSettings.getColor(line))
+        if (!shouldHighlight) {
+            setLineColor(node, line.layerSettings.getColor(line))
+        }
     }
 
     override fun commonColorChanged(newCommonColor: Color) {
-        setShapeColor(node, newCommonColor)
-
-        line.layerSettings.commonColor = newCommonColor
+        if (line.layerSettings.useCommonColor && !shouldHighlight) {
+            setLineColor(node, newCommonColor)
+        }
     }
 
     override fun viewOrderChanged() {}
@@ -74,7 +85,7 @@ class LineView(
     }
 
     override fun unhighlightShape(duration: Duration) {
-        val targetWidth = OrdinaryWidth * (if (scale < 1) scale else 1.0)
+        val targetWidth = line.layerSettings.selectedWidth * (if (scale < 1) scale else 1.0)
         val scaleTransition = Timeline(KeyFrame(duration, KeyValue(node.strokeWidthProperty(), targetWidth)))
         val strokeTransition = createStrokeTransition(
             node, line.layerSettings.getColor(line), duration
@@ -88,11 +99,33 @@ class LineView(
         strokeTransition.play()
     }
 
+    override fun dispose() {
+        super.dispose()
+        removeListeners()
+    }
+
+    private fun addListeners() {
+        line.layerSettings.selectedWidthProperty.addListener(weakSelectedWidthChangedEventHandler)
+    }
+
+    private fun removeListeners() {
+        line.layerSettings.selectedWidthProperty.removeListener(weakSelectedWidthChangedEventHandler)
+    }
+
     private fun createShape(): Line {
         val shape = Line(startCoordinates.x, startCoordinates.y, finishCoordinates.x, finishCoordinates.y)
-        shape.stroke = line.layerSettings.getColor(line)
+        setLineColor(shape, line.layerSettings.getColor(line))
         shape.opacity = line.layerSettings.opacity
         shape.strokeWidth = width
+
         return shape
+    }
+
+    private fun setLineColor(shape: Line, newColor: Color) {
+        shape.stroke = newColor
+    }
+
+    private fun updateLineWidth(shape: Line) {
+        shape.strokeWidth = width
     }
 }
