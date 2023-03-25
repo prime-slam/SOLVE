@@ -42,7 +42,7 @@ sealed class LandmarkView(
     private val layerState = landmark.layerState
     private val layerSettings = landmark.layerSettings
 
-    private val isSelected get() = layerState.selectedLandmarksUids.contains(landmark.uid)
+    protected val isSelected get() = layerState.selectedLandmarksUids.contains(landmark.uid)
     private val isHovered get() = layerState.hoveredLandmarksUids.contains(landmark.uid)
     protected val shouldHighlight get() = isSelected || isHovered
 
