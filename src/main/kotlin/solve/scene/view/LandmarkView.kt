@@ -60,8 +60,9 @@ sealed class LandmarkView(
         }
         removeParentChangedListener()
     }
+    private val weakParentChangedListener = WeakInvalidationListener(parentChangedListener)
 
-    private fun removeParentChangedListener() = node?.parentProperty()?.removeListener(parentChangedListener)
+    private fun removeParentChangedListener() = node?.parentProperty()?.removeListener(weakParentChangedListener)
 
     // Should be stored to avoid weak listener from be collected
     private val selectedLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
@@ -111,7 +112,7 @@ sealed class LandmarkView(
     // Can not be called during LandmarkView initialization because shape is created by inheritors
     protected fun setUpShape(shape: Shape, uid: Long) {
         initializeCommonSettingsBindings(shape)
-        shape.parentProperty().addListener(parentChangedListener)
+        shape.parentProperty().addListener(weakParentChangedListener)
 
         shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
             if (isSelected) {
