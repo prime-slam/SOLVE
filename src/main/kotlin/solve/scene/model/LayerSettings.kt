@@ -13,6 +13,8 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     // Is used to set unique colors for all landmarks in the layer
     private val colorManager = ColorManager<Long>()
 
+    abstract val usesCanvas: Boolean // True for layers, which draws anything with FrameDrawer
+
     val useCommonColorProperty = SimpleBooleanProperty(true)
     var useCommonColor: Boolean
         get() = useCommonColorProperty.value
@@ -43,6 +45,8 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
             private const val OrdinaryRadius: Double = 5.0
         }
 
+        override val usesCanvas = false
+
         val selectedRadiusProperty = SimpleObjectProperty(OrdinaryRadius)
         var selectedRadius: Double
             get() = selectedRadiusProperty.get()
@@ -57,6 +61,8 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
             private const val OrdinaryWidth: Double = 3.0
         }
 
+        override val usesCanvas = false
+
         val selectedWidthProperty = SimpleObjectProperty(OrdinaryWidth)
         var selectedWidth: Double
             get() = selectedWidthProperty.get()
@@ -67,6 +73,8 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
         name: String,
         layerColorManager: ColorManager<String>
     ) : LayerSettings(name, layerColorManager) {
+        override val usesCanvas = true
+
         init {
             useCommonColor = false
         }

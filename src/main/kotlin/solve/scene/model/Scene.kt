@@ -6,6 +6,8 @@ class Scene(
     val frames: List<VisualizationFrame>,
     layerSettings: List<LayerSettings>
 ) : OrderManager<LayerSettings> {
+    val canvasLayersCount = layerSettings.count { it.usesCanvas }
+
     private val planeLayerSettingsStorage =
         layerSettings.filterIsInstance<LayerSettings.PlaneLayerSettings>().toMutableList()
     private val layerSettingsStorage =
