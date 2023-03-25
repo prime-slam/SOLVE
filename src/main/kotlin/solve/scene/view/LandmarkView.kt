@@ -98,6 +98,13 @@ sealed class LandmarkView(
     }
     private val weakUseCommonColorChangedEventHandler = WeakChangeListener(commonUseCommonColorChangedEventHandler)
 
+    init {
+        addListeners()
+        if (layerState.selectedLandmarksUids.contains(landmark.uid)) {
+            state = LandmarkState.Selected
+        }
+    }
+
     open fun dispose() {
         removeListeners()
     }
@@ -105,15 +112,8 @@ sealed class LandmarkView(
     // Set up common shape properties
     // Can not be called during LandmarkView initialization because shape is created by inheritors
     protected fun setUpShape(shape: Shape, uid: Long) {
-        addListeners()
-
         initializeCommonSettingsBindings(shape)
-
         shape.parentProperty().addListener(parentChangedListener)
-
-        if (layerState.selectedLandmarksUids.contains(uid)) {
-            state = LandmarkState.Selected
-        }
 
         shape.addEventHandler(MouseEvent.MOUSE_CLICKED) {
             when (state) {
