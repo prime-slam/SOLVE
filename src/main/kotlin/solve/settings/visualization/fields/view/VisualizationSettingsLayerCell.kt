@@ -97,11 +97,6 @@ class VisualizationSettingsLayerCell(
         return bothArePlanes || bothAreNotPlanes
     }
 
-    override fun setOnDragDropped(event: DragEvent, thisItem: LayerSettings, droppedItem: LayerSettings) {
-        // TODO: add reordering logic for a layers drawing.
-    }
-
-
     private fun createLayerIconNode(layerType: LandmarkType): Node? {
         val layerIcon = getLayerIcon(layerType)
         layerIcon ?: return null
