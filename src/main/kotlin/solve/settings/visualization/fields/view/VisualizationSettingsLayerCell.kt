@@ -88,6 +88,20 @@ class VisualizationSettingsLayerCell(
         return snapshotNode.createSnapshot()
     }
 
+    override fun isAbleToDropItem(thisItem: LayerSettings, droppedItem: LayerSettings): Boolean {
+        val bothArePlanes =
+            thisItem is LayerSettings.PlaneLayerSettings && droppedItem is LayerSettings.PlaneLayerSettings
+        val bothAreNotPlanes =
+            thisItem !is LayerSettings.PlaneLayerSettings && droppedItem !is LayerSettings.PlaneLayerSettings
+
+        return bothArePlanes || bothAreNotPlanes
+    }
+
+    override fun setOnDragDropped(event: DragEvent, thisItem: LayerSettings, droppedItem: LayerSettings) {
+        // TODO: add reordering logic for a layers drawing.
+    }
+
+
     private fun createLayerIconNode(layerType: LandmarkType): Node? {
         val layerIcon = getLayerIcon(layerType)
         layerIcon ?: return null
