@@ -1,5 +1,6 @@
 package solve.scene.view
 
+import javafx.animation.Timeline
 import javafx.event.EventHandler
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
@@ -10,6 +11,8 @@ import solve.scene.model.Point
 import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameElement
 import solve.scene.view.utils.createColorTimeline
+import solve.utils.getScreenPosition
+import solve.utils.structures.Point as DoublePoint
 
 class PlaneView(
     private val plane: Landmark.Plane,
@@ -33,8 +36,23 @@ class PlaneView(
 
     private val planeElement = PlaneFrameElement(viewOrder, plane.points, getColorWithOpacity())
 
-    private val mouseClickedHandler = EventHandler<MouseEvent> { mouse ->
+    private var mousePressedFramePosition: DoublePoint? = null
+
+    private val mousePressedHandler = EventHandler<MouseEvent> { mouse ->
         if (!isMouseOver(mouse)) {
+            return@EventHandler
+        }
+        mousePressedFramePosition = canvasNode.getScreenPosition()
+    }
+
+    private val mouseReleasedHandler = EventHandler<MouseEvent> { mouse ->
+        if (!isMouseOver(mouse)) {
+            mousePressedFramePosition = null
+            return@EventHandler
+        }
+        val mousePressedCanvasPosition = mousePressedFramePosition ?: return@EventHandler
+        val maxDistance = 2.0
+        if (mousePressedCanvasPosition.distanceTo(canvasNode.getScreenPosition()) > maxDistance) {
             return@EventHandler
         }
         if (isSelected) {
@@ -79,6 +97,8 @@ class PlaneView(
     override fun scaleChanged() {
     }
 
+    private var highlightingAnimation: Timeline? = null
+
     override fun highlightShape(duration: Duration) {
         val initialRgb = plane.layerSettings.getColor(plane)
         val targetRgb = plane.layerSettings.getUniqueColor(plane)
@@ -91,13 +111,16 @@ class PlaneView(
             frameDrawer.redrawPoints(planeElement.points)
         }
 
+        highlightingAnimation = timeline
         timeline.play()
     }
 
     override fun unhighlightShape(duration: Duration) {
-        val initialRgb = plane.layerSettings.getUniqueColor(plane)
+        highlightingAnimation?.stop()
+        highlightingAnimation = null
+
         val targetRgb = plane.layerSettings.getColor(plane)
-        val initialColor = Color(initialRgb.red, initialRgb.green, initialRgb.blue, plane.layerSettings.opacity / 2)
+        val initialColor = planeElement.color
         val targetColor = Color(targetRgb.red, targetRgb.green, targetRgb.blue, plane.layerSettings.opacity)
 
         val timeline = createColorTimeline(duration, initialColor, targetColor) { color ->
@@ -116,11 +139,13 @@ class PlaneView(
     }
 
     private fun addListeners() {
-        canvasNode.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedHandler)
+        canvasNode.addEventFilter(MouseEvent.MOUSE_PRESSED, mousePressedHandler)
+        canvasNode.addEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleasedHandler)
     }
 
     private fun removeListeners() {
-        canvasNode.removeEventHandler(MouseEvent.MOUSE_CLICKED, mouseClickedHandler)
+        canvasNode.removeEventHandler(MouseEvent.MOUSE_PRESSED, mousePressedHandler)
+        canvasNode.removeEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleasedHandler)
     }
 
     private fun getColorWithOpacity(): Color {
