@@ -99,7 +99,7 @@ class VisualizationSettingsLayerCell(
         }
     }
 
-    private fun createLayerNameLabel(): Label = label(item.name) {
+    private fun createLayerNameLabel(): Label = label(item.layerName) {
         font = Font.font(LayerFieldNameFontSize)
         maxWidth = LayerFieldNameMaxWidth
     }
@@ -149,7 +149,7 @@ class VisualizationSettingsLayerCell(
         spawnNode: Node,
         layerType: LandmarkType
     ) {
-        val popOverTitle = "${item.name} (${layerType.name})"
+        val popOverTitle = "${item.layerName} (${layerType.name})"
         val popOverNode = createLayerSettingsPopOverNode(item)
         if (popOverNode != null) {
             val popOver = createLayerSettingsPopOver(

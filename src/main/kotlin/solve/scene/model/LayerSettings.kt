@@ -9,7 +9,9 @@ import javafx.scene.paint.Color
 // Layers properties being edited in the settings menu.
 // Settings menu appearance depends on type of the corresponding layer.
 // Meaningful changes here provokes scene redrawing.
-sealed class LayerSettings(val name: String, private val layerColorManager: ColorManager<String>) {
+// layerName is unique only in the project, layerKey is unique between layers from other projects too,
+// so it can be used as a key in color manager
+sealed class LayerSettings(val layerName: String, private val layerKey: String, private val layerColorManager: ColorManager<String>) {
     // Is used to set unique colors for all landmarks in the layer
     private val colorManager = ColorManager<Long>()
 
@@ -20,11 +22,11 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
         get() = useCommonColorProperty.value
         set(value) = useCommonColorProperty.set(value)
 
-    val commonColorProperty = SimpleObjectProperty(layerColorManager.getColor(name))
+    val commonColorProperty = SimpleObjectProperty(layerColorManager.getColor(layerKey))
     var commonColor: Color
-        get() = layerColorManager.getColor(name)
+        get() = layerColorManager.getColor(layerKey)
         set(value) {
-            layerColorManager.setColor(name, value)
+            layerColorManager.setColor(layerKey, value)
             commonColorProperty.set(value)
         }
 
@@ -38,9 +40,10 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     fun getUniqueColor(landmark: Landmark): Color = colorManager.getColor(landmark.uid)
 
     class PointLayerSettings(
-        name: String,
+        layerName: String,
+        layerKey: String,
         layerColorManager: ColorManager<String>
-    ) : LayerSettings(name, layerColorManager) {
+    ) : LayerSettings(layerName, layerKey, layerColorManager) {
         companion object {
             private const val OrdinaryRadius: Double = 5.0
         }
@@ -54,9 +57,10 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     }
 
     class LineLayerSettings(
-        name: String,
+        layerName: String,
+        layerKey: String,
         layerColorManager: ColorManager<String>
-    ) : LayerSettings(name, layerColorManager) {
+    ) : LayerSettings(layerName, layerKey, layerColorManager) {
         companion object {
             private const val OrdinaryWidth: Double = 3.0
         }
@@ -70,9 +74,10 @@ sealed class LayerSettings(val name: String, private val layerColorManager: Colo
     }
 
     class PlaneLayerSettings(
-        name: String,
+        layerName: String,
+        layerKey: String,
         layerColorManager: ColorManager<String>
-    ) : LayerSettings(name, layerColorManager) {
+    ) : LayerSettings(layerName, layerKey, layerColorManager) {
         override val usesCanvas = true
 
         init {
