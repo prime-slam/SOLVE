@@ -28,7 +28,7 @@ class PointLayerSettingsPopOverNode(
         colorPicker.setOnAction {
             pointLayerSettings.commonColor = colorPicker.value
         }
-        sceneController.scene.onChange {
+        sceneController.sceneProperty.onChange {
             colorPicker.value = pointLayerSettings.commonColor
         }
 

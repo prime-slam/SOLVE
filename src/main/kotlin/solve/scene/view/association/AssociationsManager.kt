@@ -1,12 +1,13 @@
 package solve.scene.view.association
 
 import javafx.beans.property.DoubleProperty
-import solve.scene.model.*
-import tornadofx.*
+import solve.scene.model.Landmark
+import solve.scene.model.VisualizationFrame
+import tornadofx.add
+import solve.utils.structures.Size as DoubleSize
 
 class AssociationsManager(
-    private val frameWidth: Double,
-    private val frameHeight: Double,
+    private val frameSize: DoubleSize,
     private val framesIndent: Double,
     private val scale: DoubleProperty,
     private val frames: List<VisualizationFrame>,
@@ -55,7 +56,7 @@ class AssociationsManager(
 
     private fun drawAdorner(frame: VisualizationFrame) {
         val framePosition = getFramePosition(frame)
-        val adorner = AssociationAdorner(frameWidth, frameHeight, framePosition, scale)
+        val adorner = AssociationAdorner(frameSize.width, frameSize.height, framePosition, scale)
         drawnAdorners[frame] = adorner
         outOfFramesLayer.add(adorner.node)
     }
@@ -96,7 +97,7 @@ class AssociationsManager(
         val indexOfFrame = frames.indexOf(frame)
         val firstFrameRow = indexOfFrame / columnsNumber
         val firstFrameColumn = indexOfFrame % columnsNumber
-        return Pair(firstFrameColumn * (frameWidth + framesIndent), firstFrameRow * (frameHeight + framesIndent))
+        return Pair(firstFrameColumn * (frameSize.width + framesIndent), firstFrameRow * (frameSize.height + framesIndent))
     }
 
     fun clearAssociation(frame: VisualizationFrame) {

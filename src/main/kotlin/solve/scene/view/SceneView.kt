@@ -8,11 +8,11 @@ import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
 import solve.utils.structures.Point as DoublePoint
+import solve.utils.structures.Size as DoubleSize
 import tornadofx.View
 import tornadofx.label
 import tornadofx.onChange
 import tornadofx.vbox
-import kotlin.math.min
 
 class SceneView : View() {
     private val controller: SceneController by inject()
@@ -20,7 +20,7 @@ class SceneView : View() {
     private var currentGrid: Grid? = null
 
     init {
-        controller.scene.onChange { scene ->
+        controller.sceneProperty.onChange { scene ->
             if (scene != null) {
                 frameDataLoadingScope.cancel()
                 frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
@@ -38,30 +38,37 @@ class SceneView : View() {
         currentGrid?.dispose()
         root.children.clear()
 
-        val scene = controller.scene.value
+        val scene = controller.sceneProperty.value
 
         if (scene.frames.isEmpty()) {
             label("No frames was provided")
             return
         }
 
-        val firstImage = scene.frames.first().getImage()
-        val width = firstImage.width
-        val height = firstImage.height
-        val margin = 10.0
+        val margin = framesMargin
+        val frameSize = controller.frameSize
+        val gridCellSize = DoubleSize(frameSize.width + margin, frameSize.height + margin)
 
-        val columnsNumber = min(scene.frames.size, defaultNumberOfColumns) //TODO: should be set from the UI
+        val columnsNumber = controller.columnsCount
         // VirtualizedFX Grid assumes that frames count is a divider for the columns number
         val emptyFrames = (0 until (columnsNumber - scene.frames.count() % columnsNumber) % columnsNumber).map { null }
         val frames = scene.frames + emptyFrames
 
         val outOfFramesLayer = OutOfFramesLayer()
-        val associationsManager = AssociationsManager(width, height, margin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer)
+        val associationsManager = AssociationsManager(
+            frameSize, margin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer
+        )
         val grid = VirtualizedFXGridProvider.createGrid(
-            frames, columnsNumber, width + margin, height + margin, controller.scaleProperty, outOfFramesLayer
+            frames, columnsNumber, gridCellSize, controller.scaleProperty, outOfFramesLayer
         ) { frame ->
             FrameView(
-                width, height, controller.scaleProperty, frameDataLoadingScope, associationsManager, scene, scene.canvasLayersCount, frame
+                frameSize,
+                controller.scaleProperty,
+                frameDataLoadingScope,
+                associationsManager,
+                scene,
+                scene.canvasLayersCount,
+                frame
             )
         }
 
@@ -103,6 +110,6 @@ class SceneView : View() {
     }
 
     companion object {
-        private const val defaultNumberOfColumns = 15
+        private const val framesMargin = 10.0
     }
 }

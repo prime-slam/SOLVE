@@ -25,14 +25,14 @@ import solve.scene.view.association.AssociationsManager
 import solve.scene.view.drawing.BufferedImageView
 import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.ImageFrameElement
+import solve.utils.structures.Size as DoubleSize
 import tornadofx.action
 import tornadofx.add
 import tornadofx.contextmenu
 import tornadofx.item
 
 class FrameView(
-    private val width: Double,
-    private val height: Double,
+    private val size: DoubleSize,
     private val scale: DoubleProperty,
     private val coroutineScope: CoroutineScope,
     private val associationsManager: AssociationsManager,
@@ -43,7 +43,7 @@ class FrameView(
     private var drawnLandmarks: Map<Layer, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
     private var currentFrame: VisualizationFrame? = null
-    private val canvas = BufferedImageView(width, height, scale.value)
+    private val canvas = BufferedImageView(size.width, size.height, scale.value)
     private val frameDrawer = FrameDrawer(canvas, canvasLayersCount + 1)
     private var currentJob: Job? = null
 
@@ -169,7 +169,7 @@ class FrameView(
     }
 
     private fun validateImage(image: Image) {
-        if (image.height != height || image.width != width) {
+        if (image.height != size.height || image.width != size.width) {
             println("Image size doesn't equal to the frame size") //TODO: warn user
         }
     }

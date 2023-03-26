@@ -6,8 +6,8 @@ import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
 import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
-import solve.utils.*
-import tornadofx.*
+import solve.utils.ServiceLocator
+import tornadofx.Controller
 
 class MainController : Controller() {
     private val view: MainView by inject()
@@ -26,7 +26,6 @@ class MainController : Controller() {
     }
 
     fun visualizeProject(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
-        sceneFacade.dropSceneSettings()
-        sceneFacade.visualize(layers, frames)
+        sceneFacade.visualize(layers, frames, false)
     }
 }

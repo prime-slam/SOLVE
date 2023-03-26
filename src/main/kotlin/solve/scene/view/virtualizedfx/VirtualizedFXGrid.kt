@@ -14,14 +14,14 @@ import javafx.scene.Node
 import javafx.scene.input.ScrollEvent
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.Grid
+import solve.utils.structures.Size as DoubleSize
 import tornadofx.onChange
 
 class VirtualizedFXGrid(
     private val virtualGrid: VirtualGrid<VisualizationFrame?, FrameViewAdapter>,
     private val vsp: VirtualScrollPane,
     private val scaleProperty: DoubleProperty,
-    private val cellWidth: Double,
-    private val cellHeight: Double
+    private val cellSize: DoubleSize
 ) : Grid {
     private var dragStartMousePosition = Position.of(-1.0, -1.0)
     private var dragStartGridPosition = Position.of(0.0, 0.0)
@@ -37,7 +37,7 @@ class VirtualizedFXGrid(
         scrollX(0.0)
         scrollY(0.0)
         val newScale = scaleProperty.value
-        virtualGrid.cellSize = Size(cellWidth * newScale, cellHeight * newScale)
+        virtualGrid.cellSize = Size(cellSize.width * newScale, cellSize.height * newScale)
     }
 
     init {
