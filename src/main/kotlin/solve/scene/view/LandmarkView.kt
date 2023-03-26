@@ -198,7 +198,7 @@ sealed class LandmarkView(
         isHighlighted = true
     }
 
-    protected fun unhighlightShapeIfNeeded(duration: Duration) {
+    private fun unhighlightShapeIfNeeded(duration: Duration) {
         if (!isHighlighted) {
             return
         }
