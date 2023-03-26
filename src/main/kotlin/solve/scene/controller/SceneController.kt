@@ -20,7 +20,7 @@ class SceneController : Controller() {
     var columnsCount = calculateColumnsCount(scene)
         private set
 
-    val scaleProperty = SimpleDoubleProperty(calculateInitialScale())
+    val scaleProperty = SimpleDoubleProperty(defaultScale)
 
     private val minScale
         get() = max(
@@ -50,11 +50,11 @@ class SceneController : Controller() {
         }
 
     fun setScene(newScene: Scene, keepSettings: Boolean) {
-        if (!keepSettings) {
-            scaleProperty.value = calculateInitialScale()
-        }
         columnsCount = calculateColumnsCount(newScene)
         sceneProperty.value = newScene
+        if (!keepSettings) {
+            scaleProperty.value = minScale
+        }
     }
 
     fun zoomIn(mousePosition: DoublePoint) = zoom(min(scaleProperty.value * scaleFactor, maxScale), mousePosition)
@@ -84,10 +84,6 @@ class SceneController : Controller() {
 
         private fun calculateColumnsCount(scene: Scene): Int {
             return min(sqrt(scene.frames.size.toDouble()).ceilToInt(), maxColumnsCount)
-        }
-
-        private fun calculateInitialScale(): Double {
-            return defaultScale
         }
     }
 }
