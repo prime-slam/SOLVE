@@ -35,6 +35,10 @@ class SceneController : Controller() {
             scrollY(value)
         }
 
+    fun dropScale() {
+        scaleProperty.value = defaultScale
+    }
+
     fun zoomIn(mousePosition: DoublePoint) = zoom(min(scaleProperty.value * scaleFactor, maxScale), mousePosition)
 
     fun zoomOut(mousePosition: DoublePoint) = zoom(max(scaleProperty.value / scaleFactor, minScale), mousePosition)
