@@ -14,14 +14,14 @@ object FullParserForImport {
         val layers = ArrayList<ProjectLayer>()
 
         project.projectFrames.first().outputs.forEach {
-            layers.add(ProjectLayer(it.kind, it.algorithmName))
+            layers.add(ProjectLayer(it.kind, it.algorithmName, project.currentDirectory))
         }
 
         project.projectFrames.forEach {
             val longName = it.image.name.toLong()
             landmarks[longName] = mutableListOf()
             it.outputs.map { output ->
-                val currentLayer = ProjectLayer(output.kind, output.algorithmName)
+                val currentLayer = ProjectLayer(output.kind, output.algorithmName, project.currentDirectory)
                 if (!layers.contains(currentLayer)) {
                     layers.add((currentLayer))
                 }

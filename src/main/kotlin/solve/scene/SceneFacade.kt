@@ -31,8 +31,8 @@ class SceneFacade(private val controller: SceneController) {
     // Display new frames with landmarks
     fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>, keepSettings: Boolean) {
         val layersSettings = layers.map { projectLayer ->
-            visualizationLayers[projectLayer.name] ?: projectLayer.toLayerSettings()
-                .also { visualizationLayers[projectLayer.name] = it }
+            visualizationLayers[projectLayer.key] ?: projectLayer.toLayerSettings()
+                .also { visualizationLayers[projectLayer.key] = it }
         }
         val layerStates = layers.map { projectLayer -> LayerState(projectLayer.name) }
         val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame(layerStates) }
@@ -42,9 +42,9 @@ class SceneFacade(private val controller: SceneController) {
 
     private fun ProjectLayer.toLayerSettings(): LayerSettings {
         return when (kind) {
-            LayerKind.Keypoint -> LayerSettings.PointLayerSettings(this.name, layersColorManager)
-            LayerKind.Line -> LayerSettings.LineLayerSettings(this.name, layersColorManager)
-            LayerKind.Plane -> LayerSettings.PlaneLayerSettings(this.name, layersColorManager)
+            LayerKind.Keypoint -> LayerSettings.PointLayerSettings(this.name, this.key, layersColorManager)
+            LayerKind.Line -> LayerSettings.LineLayerSettings(this.name, this.key, layersColorManager)
+            LayerKind.Plane -> LayerSettings.PlaneLayerSettings(this.name, this.key, layersColorManager)
         }
     }
 
@@ -52,8 +52,8 @@ class SceneFacade(private val controller: SceneController) {
         val getImage = { Image(FileInputStream(imagePath.toFile())) }
 
         val layers = landmarkFiles.map { file ->
-            val layerSettings = visualizationLayers[file.projectLayer.name]
-                ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.name}")
+            val layerSettings = visualizationLayers[file.projectLayer.key]
+                ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.key}")
             val layerState = layerStates.single { x -> x.name == file.projectLayer.name }
             createLayer(file, layerSettings, layerState)
         }
