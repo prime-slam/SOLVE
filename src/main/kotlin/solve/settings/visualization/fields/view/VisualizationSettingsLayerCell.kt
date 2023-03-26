@@ -55,7 +55,7 @@ class VisualizationSettingsLayerCell(
         thisItemInfo: DragAndDropCellItemInfo<LayerSettings>,
         droppedItemInfo: DragAndDropCellItemInfo<LayerSettings>
     ) {
-        val scene = sceneController.scene.value
+        val scene = sceneController.sceneProperty.value
         scene.changeLayerIndex(thisItemInfo.item, droppedItemInfo.index)
         scene.changeLayerIndex(droppedItemInfo.item, thisItemInfo.index)
     }

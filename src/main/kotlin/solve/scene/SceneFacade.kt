@@ -2,13 +2,23 @@ package solve.scene
 
 import java.io.FileInputStream
 import javafx.scene.image.Image
-import solve.parsers.factories.*
+import solve.parsers.factories.LineFactory
+import solve.parsers.factories.PlaneFactory
+import solve.parsers.factories.PointFactory
 import solve.parsers.lines.CSVLinesParser
 import solve.parsers.planes.ImagePlanesParser
 import solve.parsers.points.CSVPointsParser
-import solve.project.model.*
+import solve.project.model.LandmarkFile
+import solve.project.model.LayerKind
+import solve.project.model.ProjectFrame
+import solve.project.model.ProjectLayer
 import solve.scene.controller.SceneController
-import solve.scene.model.*
+import solve.scene.model.ColorManager
+import solve.scene.model.Layer
+import solve.scene.model.LayerSettings
+import solve.scene.model.LayerState
+import solve.scene.model.Scene
+import solve.scene.model.VisualizationFrame
 
 // Interaction interface of the scene for main controller
 // Should be recreated if new project was imported
@@ -19,7 +29,7 @@ class SceneFacade(private val controller: SceneController) {
     private val layersColorManager = ColorManager<String>()
 
     // Display new frames with landmarks
-    fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
+    fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>, keepSettings: Boolean) {
         val layersSettings = layers.map { projectLayer ->
             visualizationLayers[projectLayer.name] ?: projectLayer.toLayerSettings()
                 .also { visualizationLayers[projectLayer.name] = it }
@@ -27,11 +37,7 @@ class SceneFacade(private val controller: SceneController) {
         val layerStates = layers.map { projectLayer -> LayerState(projectLayer.name) }
         val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame(layerStates) }
         val scene = Scene(visualizationFrames, layersSettings)
-        controller.scene.value = scene
-    }
-
-    fun dropSceneSettings() {
-        controller.dropScale()
+        controller.setScene(scene, keepSettings)
     }
 
     private fun ProjectLayer.toLayerSettings(): LayerSettings {

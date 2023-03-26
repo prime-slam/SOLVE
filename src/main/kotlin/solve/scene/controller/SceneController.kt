@@ -4,14 +4,26 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
 import solve.scene.model.Scene
 import solve.utils.structures.Point as DoublePoint
+import solve.utils.structures.Size as DoubleSize
 import tornadofx.Controller
 import kotlin.math.max
 import kotlin.math.min
 
 class SceneController : Controller() {
-    val scene = SimpleObjectProperty(Scene(emptyList(), emptyList()))
+    val sceneProperty = SimpleObjectProperty(Scene(emptyList(), emptyList()))
+    val scene: Scene
+        get() = sceneProperty.value
 
-    val scaleProperty = SimpleDoubleProperty(defaultScale)
+    val frameSize: DoubleSize
+        get() {
+            val firstImage = scene.frames.first().getImage()
+            return DoubleSize(firstImage.width, firstImage.height)
+        }
+
+    var columnsCount = calculateColumnsCount(scene)
+        private set
+
+    val scaleProperty = SimpleDoubleProperty(calculateInitialScale())
 
     val xProperty = SimpleDoubleProperty(defaultX)
     val yProperty = SimpleDoubleProperty(defaultY)
@@ -35,8 +47,12 @@ class SceneController : Controller() {
             scrollY(value)
         }
 
-    fun dropScale() {
-        scaleProperty.value = defaultScale
+    fun setScene(newScene: Scene, keepSettings: Boolean) {
+        if (!keepSettings) {
+            scaleProperty.value = calculateInitialScale()
+        }
+        columnsCount = calculateColumnsCount(newScene)
+        sceneProperty.value = newScene
     }
 
     fun zoomIn(mousePosition: DoublePoint) = zoom(min(scaleProperty.value * scaleFactor, maxScale), mousePosition)
@@ -56,9 +72,20 @@ class SceneController : Controller() {
     companion object {
         private const val defaultX = 0.0
         private const val defaultY = 0.0
+
         private const val defaultScale = 1.0
         private const val scaleFactor = 1.15
         private const val maxScale = 20.0
         private const val minScale = 0.2
+
+        private const val maxColumnsCount = 5
+
+        private fun calculateColumnsCount(scene: Scene): Int {
+            return min(scene.frames.size, maxColumnsCount)
+        }
+
+        private fun calculateInitialScale(): Double {
+            return defaultScale
+        }
     }
 }

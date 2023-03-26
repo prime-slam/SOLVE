@@ -30,7 +30,7 @@ class CatalogueController: Controller() {
         val sceneFacade = ServiceLocator.getService<SceneFacade>() ?: return
 
         val layers = frames.flatMap { it.layers }.distinct()
-        sceneFacade.visualize(layers, frames)
+        sceneFacade.visualize(layers, frames, true)
     }
 
     fun selectAllFields() = view.selectAllFields()
