@@ -1,12 +1,18 @@
 package solve.scene.view
 
-import javafx.beans.property.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import solve.scene.controller.SceneController
-import solve.scene.view.association.*
+import solve.scene.view.association.AssociationsManager
+import solve.scene.view.association.OutOfFramesLayer
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
-import tornadofx.*
-import kotlin.math.*
+import solve.utils.structures.Point as DoublePoint
+import tornadofx.View
+import tornadofx.label
+import tornadofx.onChange
+import tornadofx.vbox
+import kotlin.math.min
 
 class SceneView : View() {
     private val controller: SceneController by inject()
@@ -28,6 +34,7 @@ class SceneView : View() {
     }
 
     private fun draw() {
+        unbindPositionProperties()
         currentGrid?.dispose()
         root.children.clear()
 
@@ -43,65 +50,59 @@ class SceneView : View() {
         val height = firstImage.height
         val margin = 10.0
 
-        val scaleProperty = SimpleDoubleProperty(1.0)
-
         val columnsNumber = min(scene.frames.size, defaultNumberOfColumns) //TODO: should be set from the UI
         // VirtualizedFX Grid assumes that frames count is a divider for the columns number
         val emptyFrames = (0 until (columnsNumber - scene.frames.count() % columnsNumber) % columnsNumber).map { null }
         val frames = scene.frames + emptyFrames
 
         val outOfFramesLayer = OutOfFramesLayer()
-        val associationsManager = AssociationsManager(width, height, margin, scaleProperty, scene.frames, columnsNumber, outOfFramesLayer)
+        val associationsManager = AssociationsManager(width, height, margin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer)
         val grid = VirtualizedFXGridProvider.createGrid(
-            frames, columnsNumber, width + margin, height + margin, scaleProperty, outOfFramesLayer
+            frames, columnsNumber, width + margin, height + margin, controller.scaleProperty, outOfFramesLayer
         ) { frame ->
             FrameView(
-                width, height, scaleProperty, frameDataLoadingScope, associationsManager, scene, scene.canvasLayersCount, frame
+                width, height, controller.scaleProperty, frameDataLoadingScope, associationsManager, scene, scene.canvasLayersCount, frame
             )
         }
 
+        bindPositionProperties(grid)
+
         grid.setUpPanning()
 
-        grid.setOnScroll { event ->
+        grid.setOnMouseWheel { event ->
             if (event.isConsumed) { // If event is consumed by vsp
-                return@setOnScroll
+                return@setOnMouseWheel
             }
             if (event.deltaY == 0.0) {
-                return@setOnScroll
+                return@setOnMouseWheel
             }
-            zoomGrid(scaleProperty, grid, event.x to event.y, event.deltaY > 0)
+            val mousePosition = DoublePoint(event.x, event.y)
+            if (event.deltaY > 0) {
+                controller.zoomIn(mousePosition)
+            } else {
+                controller.zoomOut(mousePosition)
+            }
         }
 
         currentGrid = grid
         add(grid.node)
     }
 
-    private fun zoomGrid(
-        scaleProperty: DoubleProperty, grid: Grid, mousePosition: Pair<Double, Double>, isPositive: Boolean
-    ) {
-        val initialPos = grid.currentPosition
+    private fun bindPositionProperties(grid: Grid) {
+        controller.xProperty.bind(grid.xProperty)
+        controller.yProperty.bind(grid.yProperty)
+        controller.scrollX = { newX -> grid.scrollX(newX) }
+        controller.scrollY = { newY -> grid.scrollY(newY) }
+    }
 
-        val initialMouseX = (initialPos.first + mousePosition.first) / scaleProperty.value
-        val initialMouseY = (initialPos.second + mousePosition.second) / scaleProperty.value
-
-        if (isPositive) {
-            scaleProperty.value = min(scaleProperty.value * scaleFactor, maxScale)
-        } else {
-            scaleProperty.value = max(scaleProperty.value / scaleFactor, minScale)
-        }
-
-        val translatedMouseX = initialMouseX * scaleProperty.value
-        val translatedMouseY = initialMouseY * scaleProperty.value
-
-        grid.scrollTo(translatedMouseX - mousePosition.first, translatedMouseY - mousePosition.second)
+    private fun unbindPositionProperties() {
+        controller.xProperty.unbind()
+        controller.yProperty.unbind()
+        controller.scrollX = null
+        controller.scrollY = null
     }
 
     companion object {
-        private const val scaleFactor = 1.15
-
-        private const val maxScale = 20.0
-        private const val minScale = 0.2
-
         private const val defaultNumberOfColumns = 15
     }
 }
