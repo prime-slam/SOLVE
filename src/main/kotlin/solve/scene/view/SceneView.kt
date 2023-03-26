@@ -19,7 +19,12 @@ class SceneView : View() {
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
     private var currentGrid: Grid? = null
 
+    override val root = vbox {
+        label("Empty scene placeholder")
+    }
+
     init {
+        controller.sceneWidthProperty.bind(root.widthProperty())
         controller.sceneProperty.onChange { scene ->
             if (scene != null) {
                 frameDataLoadingScope.cancel()
@@ -27,10 +32,6 @@ class SceneView : View() {
                 draw()
             }
         }
-    }
-
-    override val root = vbox {
-        label("Empty scene placeholder")
     }
 
     private fun draw() {
@@ -45,9 +46,8 @@ class SceneView : View() {
             return
         }
 
-        val margin = framesMargin
-        val frameSize = controller.frameSize
-        val gridCellSize = DoubleSize(frameSize.width + margin, frameSize.height + margin)
+        val frameSize = scene.frameSize
+        val gridCellSize = DoubleSize(frameSize.width + framesMargin, frameSize.height + framesMargin)
 
         val columnsNumber = controller.columnsCount
         // VirtualizedFX Grid assumes that frames count is a divider for the columns number
@@ -56,7 +56,7 @@ class SceneView : View() {
 
         val outOfFramesLayer = OutOfFramesLayer()
         val associationsManager = AssociationsManager(
-            frameSize, margin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer
+            frameSize, framesMargin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer
         )
         val grid = VirtualizedFXGridProvider.createGrid(
             frames, columnsNumber, gridCellSize, controller.scaleProperty, outOfFramesLayer
@@ -110,6 +110,6 @@ class SceneView : View() {
     }
 
     companion object {
-        private const val framesMargin = 10.0
+        const val framesMargin = 10.0
     }
 }

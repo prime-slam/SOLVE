@@ -1,11 +1,17 @@
 package solve.scene.model
 
 import java.lang.ref.WeakReference
+import solve.utils.structures.Size as DoubleSize
 
 class Scene(
     val frames: List<VisualizationFrame>,
     layerSettings: List<LayerSettings>
 ) : OrderManager<LayerSettings> {
+    val frameSize = frames.firstOrNull()?.let {
+        val image = it.getImage()
+        DoubleSize(image.width, image.height)
+    } ?: DoubleSize(0.0, 0.0)
+
     val canvasLayersCount = layerSettings.count { it.usesCanvas }
 
     private val planeLayerSettingsStorage =

@@ -3,29 +3,29 @@ package solve.scene.controller
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
 import solve.scene.model.Scene
+import solve.scene.view.SceneView
 import solve.utils.ceilToInt
 import solve.utils.structures.Point as DoublePoint
-import solve.utils.structures.Size as DoubleSize
 import tornadofx.Controller
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
 class SceneController : Controller() {
+    val sceneWidthProperty = SimpleDoubleProperty()
     val sceneProperty = SimpleObjectProperty(Scene(emptyList(), emptyList()))
     val scene: Scene
         get() = sceneProperty.value
-
-    val frameSize: DoubleSize
-        get() {
-            val firstImage = scene.frames.first().getImage()
-            return DoubleSize(firstImage.width, firstImage.height)
-        }
 
     var columnsCount = calculateColumnsCount(scene)
         private set
 
     val scaleProperty = SimpleDoubleProperty(calculateInitialScale())
+
+    private val minScale
+        get() = max(
+            defaultMinScale, sceneWidthProperty.value / ((scene.frameSize.width + SceneView.framesMargin) * columnsCount)
+        )
 
     val xProperty = SimpleDoubleProperty(defaultX)
     val yProperty = SimpleDoubleProperty(defaultY)
@@ -59,7 +59,7 @@ class SceneController : Controller() {
 
     fun zoomIn(mousePosition: DoublePoint) = zoom(min(scaleProperty.value * scaleFactor, maxScale), mousePosition)
 
-    fun zoomOut(mousePosition: DoublePoint) = zoom(max(scaleProperty.value / scaleFactor, minScale), mousePosition)
+    fun zoomOut(mousePosition: DoublePoint) = zoom(max(scaleProperty.value / scaleFactor, min(minScale, scaleProperty.value)), mousePosition)
 
     private fun zoom(newScale: Double, mousePosition: DoublePoint) {
         val initialMouseX = (xProperty.value + mousePosition.x) / scaleProperty.value
@@ -78,7 +78,7 @@ class SceneController : Controller() {
         private const val defaultScale = 1.0
         private const val scaleFactor = 1.15
         private const val maxScale = 20.0
-        private const val minScale = 0.2
+        private const val defaultMinScale = 0.2
 
         private const val maxColumnsCount = 5
 
