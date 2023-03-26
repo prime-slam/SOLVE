@@ -3,11 +3,13 @@ package solve.scene.controller
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
 import solve.scene.model.Scene
+import solve.utils.ceilToInt
 import solve.utils.structures.Point as DoublePoint
 import solve.utils.structures.Size as DoubleSize
 import tornadofx.Controller
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sqrt
 
 class SceneController : Controller() {
     val sceneProperty = SimpleObjectProperty(Scene(emptyList(), emptyList()))
@@ -81,7 +83,7 @@ class SceneController : Controller() {
         private const val maxColumnsCount = 5
 
         private fun calculateColumnsCount(scene: Scene): Int {
-            return min(scene.frames.size, maxColumnsCount)
+            return min(sqrt(scene.frames.size.toDouble()).ceilToInt(), maxColumnsCount)
         }
 
         private fun calculateInitialScale(): Double {
