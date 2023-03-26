@@ -81,8 +81,6 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
             event.isDropCompleted = true
             event.consume()
         }
-
-        setOnDragDone(DragEvent::consume)
     }
 
     override fun updateItem(item: T, empty: Boolean) {
