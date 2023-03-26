@@ -204,7 +204,7 @@ class VisualizationSettingsLayerCell(
 
         Platform.runLater {
             // Needed for the safe window closing.
-            listView.scene.window?.setOnCloseRequest {
+            listView.scene?.window?.setOnCloseRequest {
                 popOver.hide(Duration.ZERO)
             }
         }
