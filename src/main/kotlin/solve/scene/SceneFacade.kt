@@ -30,6 +30,10 @@ class SceneFacade(private val controller: SceneController) {
         controller.scene.value = scene
     }
 
+    fun dropSceneSettings() {
+        controller.dropScale()
+    }
+
     private fun ProjectLayer.toLayerSettings(): LayerSettings {
         return when (kind) {
             LayerKind.Keypoint -> LayerSettings.PointLayerSettings(this.name, layersColorManager)

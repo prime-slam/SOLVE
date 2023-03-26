@@ -25,5 +25,8 @@ class MainController : Controller() {
         view.showSidePanelContent(location)
     }
 
-    fun visualizeProject(layers: List<ProjectLayer>, frames: List<ProjectFrame>) = sceneFacade.visualize(layers, frames)
+    fun visualizeProject(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
+        sceneFacade.dropSceneSettings()
+        sceneFacade.visualize(layers, frames)
+    }
 }
