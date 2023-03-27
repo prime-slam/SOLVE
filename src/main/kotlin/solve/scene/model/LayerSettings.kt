@@ -12,6 +12,11 @@ import javafx.scene.paint.Color
 // layerName is unique only in the project, layerKey is unique between layers from other projects too,
 // so it can be used as a key in color manager
 sealed class LayerSettings(val layerName: String, private val layerKey: String, private val layerColorManager: ColorManager<String>) {
+    companion object {
+        const val MinOpacity = 0.0
+        const val MaxOpacity = 1.0
+    }
+
     // Is used to set unique colors for all landmarks in the layer
     private val colorManager = ColorManager<Long>()
 
@@ -35,6 +40,12 @@ sealed class LayerSettings(val layerName: String, private val layerKey: String, 
             return commonColor
         }
         return getUniqueColor(landmark)
+    }
+
+    fun getColorWithOpacity(landmark: Landmark): Color {
+        val rgbColor = getColor(landmark)
+
+        return Color(rgbColor.red, rgbColor.green, rgbColor.blue, opacity)
     }
 
     fun getUniqueColor(landmark: Landmark): Color = colorManager.getColor(landmark.uid)
@@ -85,9 +96,9 @@ sealed class LayerSettings(val layerName: String, private val layerKey: String, 
         }
     }
 
-    var opacity: Double = DEFAULT_OPACITY
+    var opacity: Double = DefaultOpacity
         set(value) {
-            if (value !in 0.0..1.0) throw IllegalArgumentException("Percent value should lie between 0 and 100")
+            if (value !in MinOpacity..MaxOpacity) throw IllegalArgumentException("Percent value should lie between 0 and 100")
             field = value
         }
 

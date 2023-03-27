@@ -73,7 +73,9 @@ class VisualizationSettingsLayerCell(
         }
         add(createLayerNameLabel())
         add(createHGrowHBox())
-        add(createLayerEditButton(layerType))
+        if (layerType != LandmarkType.Plane) {
+            add(createLayerEditButton(layerType))
+        }
         add(createLayerVisibilityButton())
 
         alignment = Pos.CENTER_LEFT
@@ -139,7 +141,6 @@ class VisualizationSettingsLayerCell(
             action {
                 item.enabled = !item.enabled
                 graphic = getCurrentVisibilityImageViewIcon()
-                item.enabled = item.enabled
             }
         }
         alignment = Pos.CENTER_RIGHT
@@ -207,7 +208,7 @@ class VisualizationSettingsLayerCell(
                     layerSettings as LayerSettings.LineLayerSettings,
                     sceneController
                 ).getPopOverNode()
-            LandmarkType.Plane -> null // TODO: add a plane layers panel realization.
+            LandmarkType.Plane -> null
         }
 
     private fun createLayerSettingsPopOver(contentNode: Node, titleLabel: String): PopOver

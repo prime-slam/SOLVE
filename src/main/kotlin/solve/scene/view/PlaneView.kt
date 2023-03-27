@@ -1,12 +1,16 @@
 package solve.scene.view
 
 import javafx.animation.Timeline
+import javafx.beans.InvalidationListener
+import javafx.beans.WeakInvalidationListener
 import javafx.event.EventHandler
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.util.Duration
+import solve.scene.model.DefaultOpacity
 import solve.scene.model.Landmark
+import solve.scene.model.LayerSettings
 import solve.scene.model.Point
 import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameElement
@@ -62,6 +66,11 @@ class PlaneView(
         plane.layerState.selectedLandmarksUids.add(plane.uid)
     }
 
+    private val enabledChangedEventHandler = InvalidationListener {
+        onEnabledChanged()
+    }
+    private val weakEnabledChangedEventHandler = WeakInvalidationListener(enabledChangedEventHandler)
+
     init {
         addListeners()
         if (isSelected) {
@@ -79,8 +88,7 @@ class PlaneView(
     }
 
     override fun useCommonColorChanged() {
-        planeElement.color = plane.layerSettings.getColor(plane)
-        addToFrameDrawer()
+        setPlaneColor(plane.layerSettings.getColor(plane))
     }
 
     override fun viewOrderChanged() {
@@ -89,8 +97,7 @@ class PlaneView(
 
     override fun commonColorChanged(newCommonColor: Color) {
         if (plane.layerSettings.useCommonColor) {
-            planeElement.color = plane.layerSettings.getColor(plane)
-            addToFrameDrawer()
+            setPlaneColor(plane.layerSettings.getColor(plane))
         }
     }
 
@@ -100,15 +107,12 @@ class PlaneView(
     private var highlightingAnimation: Timeline? = null
 
     override fun highlightShape(duration: Duration) {
-        val initialRgb = plane.layerSettings.getColor(plane)
-        val targetRgb = plane.layerSettings.getUniqueColor(plane)
-        val initialColor = Color(initialRgb.red, initialRgb.green, initialRgb.blue, plane.layerSettings.opacity)
-        val targetColor = Color(targetRgb.red, targetRgb.green, targetRgb.blue, plane.layerSettings.opacity / 2)
+        val initialColor = getColorWithOpacity()
+        val targetColor =
+            Color(initialColor.red, initialColor.green, initialColor.blue, initialColor.opacity / 2)
 
         val timeline = createColorTimeline(duration, initialColor, targetColor) { color ->
-            planeElement.color = color
-            frameDrawer.addOrUpdateElement(planeElement)
-            frameDrawer.redrawPoints(planeElement.points)
+            redrawPlaneWithColor(color)
         }
 
         highlightingAnimation = timeline
@@ -119,14 +123,11 @@ class PlaneView(
         highlightingAnimation?.stop()
         highlightingAnimation = null
 
-        val targetRgb = plane.layerSettings.getColor(plane)
         val initialColor = planeElement.color
-        val targetColor = Color(targetRgb.red, targetRgb.green, targetRgb.blue, plane.layerSettings.opacity)
+        val targetColor = getColorWithOpacity()
 
         val timeline = createColorTimeline(duration, initialColor, targetColor) { color ->
-            planeElement.color = color
-            frameDrawer.addOrUpdateElement(planeElement)
-            frameDrawer.redrawPoints(planeElement.points)
+            redrawPlaneWithColor(color)
         }
 
         timeline.play()
@@ -141,15 +142,35 @@ class PlaneView(
     private fun addListeners() {
         canvasNode.addEventFilter(MouseEvent.MOUSE_PRESSED, mousePressedHandler)
         canvasNode.addEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleasedHandler)
+
+        plane.layerSettings.enabledProperty.addListener(weakEnabledChangedEventHandler)
     }
 
     private fun removeListeners() {
         canvasNode.removeEventHandler(MouseEvent.MOUSE_PRESSED, mousePressedHandler)
         canvasNode.removeEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleasedHandler)
+
+        plane.layerSettings.enabledProperty.removeListener(weakEnabledChangedEventHandler)
     }
 
-    private fun getColorWithOpacity(): Color {
-        val rgb = plane.layerSettings.getColor(plane)
-        return Color(rgb.red, rgb.green, rgb.blue, plane.layerSettings.opacity)
+    private fun getColorWithOpacity() = plane.layerSettings.getColorWithOpacity(plane)
+
+    private fun setPlaneColor(newColor: Color) {
+        planeElement.color = newColor
+        addToFrameDrawer()
+    }
+
+    private fun redrawPlaneWithColor(newColor: Color) {
+        setPlaneColor(newColor)
+        frameDrawer.redrawPoints(planeElement.points)
+    }
+
+    private fun onEnabledChanged() {
+        if (plane.layerSettings.enabled) {
+            plane.layerSettings.opacity = DefaultOpacity
+        } else {
+            plane.layerSettings.opacity = LayerSettings.MinOpacity
+        }
+        redrawPlaneWithColor(getColorWithOpacity())
     }
 }
