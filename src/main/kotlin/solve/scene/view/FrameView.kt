@@ -8,7 +8,6 @@ import javafx.scene.Group
 import javafx.scene.image.Image
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
-import javafx.scene.shape.Shape
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
