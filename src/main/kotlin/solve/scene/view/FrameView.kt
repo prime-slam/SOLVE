@@ -174,7 +174,9 @@ class FrameView(
         }
     }
 
-    private fun removeLandmarksNodes() = children.removeIf { x -> x is Shape }
+    private fun removeLandmarksNodes() {
+        doForAllLandmarks { view, _ -> if (view.node != null) { children.remove(view.node) } }
+    }
 
     private fun addLandmarksNodes() = doForAllLandmarks { view, _ ->
         if (view.node != null) {

@@ -8,6 +8,7 @@ import javafx.util.Duration
 import solve.scene.model.Landmark
 import solve.scene.view.utils.createFillTransition
 import solve.scene.view.utils.createScaleTransition
+import solve.utils.structures.DoublePoint
 
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
@@ -17,6 +18,10 @@ class KeypointView(
     companion object {
         private const val HighlightingScaleFactor: Double = 2.0
     }
+
+    private val keypointCoordinates = DoublePoint(keypoint.coordinate.x.toDouble(), keypoint.coordinate.y.toDouble())
+    private val coordinates: DoublePoint
+        get() = keypointCoordinates * scale
 
     override val node: Ellipse = createShape()
 
@@ -32,9 +37,6 @@ class KeypointView(
 
     override fun addToFrameDrawer() {}
 
-    private val coordinates
-        get() = Pair(keypoint.coordinate.x.toDouble() * scale, keypoint.coordinate.y.toDouble() * scale)
-
     private val radius: Double
         get() {
             val selectedRadius = keypoint.layerSettings.selectedRadius
@@ -42,10 +44,7 @@ class KeypointView(
         }
 
     override fun scaleChanged() {
-        node.centerX = coordinates.first
-        node.centerY = coordinates.second
-        node.radiusX = radius
-        node.radiusY = radius
+        updateKeypointTransform()
     }
 
     override fun useCommonColorChanged() {
@@ -92,7 +91,7 @@ class KeypointView(
     }
 
     private fun createShape(): Ellipse {
-        val shape = Ellipse(coordinates.first, coordinates.second, radius, radius)
+        val shape = Ellipse(coordinates.x, coordinates.y, radius, radius)
         setKeypointColor(shape, keypoint.layerSettings.getColor(keypoint))
         shape.opacity = keypoint.layerSettings.opacity
 
@@ -114,5 +113,12 @@ class KeypointView(
 
     private fun setKeypointColor(shape: Ellipse, newColor: Color) {
         shape.fill = newColor
+    }
+
+    private fun updateKeypointTransform() {
+        node.centerX = coordinates.x
+        node.centerY = coordinates.y
+        node.radiusX = radius
+        node.radiusY = radius
     }
 }

@@ -1,11 +1,14 @@
 package solve.scene.view
 
 import javafx.animation.Timeline
+import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.beans.WeakInvalidationListener
 import javafx.event.EventHandler
 import javafx.scene.Node
+import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.HBox
 import javafx.scene.paint.Color
 import javafx.util.Duration
 import solve.scene.model.DefaultOpacity
@@ -15,8 +18,11 @@ import solve.scene.model.Point
 import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameElement
 import solve.scene.view.utils.createColorTimeline
+import solve.utils.clearChildren
+import solve.utils.getBlackOrWhiteContrastingTo
 import solve.utils.getScreenPosition
-import solve.utils.structures.Point as DoublePoint
+import tornadofx.*
+import solve.utils.structures.DoublePoint as DoublePoint
 
 class PlaneView(
     private val plane: Landmark.Plane,
@@ -25,7 +31,13 @@ class PlaneView(
     viewOrder: Int,
     scale: Double
 ) : LandmarkView(scale, viewOrder, plane) {
-    override val node = null
+    private var uidLabel: Label? = null
+    override val node = HBox()
+
+    private var planeCenterPoint: DoublePoint? = null
+    private val uidLabelCoordinates: DoublePoint
+        get() = (planeCenterPoint ?: DoublePoint(0.0, 0.0)) * scale
+    private var isShowingUIDLabel = false
 
     private class PlaneFrameElement(viewOrder: Int, override val points: List<Point>, initialColor: Color) :
         FrameElement(viewOrder) {
@@ -102,11 +114,16 @@ class PlaneView(
     }
 
     override fun scaleChanged() {
+        if (isShowingUIDLabel) {
+            updateUIDLabelPosition()
+        }
     }
 
     private var highlightingAnimation: Timeline? = null
 
     override fun highlightShape(duration: Duration) {
+        showUIDLabel()
+
         val initialColor = getColorWithOpacity()
         val targetColor =
             Color(initialColor.red, initialColor.green, initialColor.blue, initialColor.opacity / 2)
@@ -120,6 +137,8 @@ class PlaneView(
     }
 
     override fun unhighlightShape(duration: Duration) {
+        hideUIDLabel()
+
         highlightingAnimation?.stop()
         highlightingAnimation = null
 
@@ -172,5 +191,59 @@ class PlaneView(
             plane.layerSettings.opacity = LayerSettings.MinOpacity
         }
         redrawPlaneWithColor(getColorWithOpacity())
+    }
+
+    private fun createUIDLabel(): Label {
+        val uidLabel = Label(plane.uid.toString())
+        uidLabel.textFill = getBlackOrWhiteContrastingTo(plane.layerSettings.getColor(plane))
+
+        return uidLabel
+    }
+
+    private fun calculatePlaneCenterPoint(): DoublePoint {
+        val centroidPoint = DoublePoint(plane.points.map { it.x }.average(), plane.points.map { it.y }.average())
+        val nearestToCentroid = plane.points.minBy { point ->
+            DoublePoint(point.x.toDouble(), point.y.toDouble()).distanceTo(centroidPoint)
+        }
+
+        return DoublePoint(nearestToCentroid.x.toDouble(), nearestToCentroid.y.toDouble())
+    }
+
+    private fun updateUIDLabelPosition() {
+        node.layoutX = uidLabelCoordinates.x - (uidLabel?.width ?: 0.0) / 2.0
+        node.layoutY = uidLabelCoordinates.y - (uidLabel?.height ?: 0.0) / 2.0
+    }
+
+    private fun hideUIDLabel() {
+        if (!isShowingUIDLabel) {
+            return
+        }
+
+        node.clearChildren()
+        isShowingUIDLabel = false
+    }
+
+    private fun showUIDLabel() {
+        if (isShowingUIDLabel) {
+            return
+        }
+
+        if (planeCenterPoint == null) {
+            planeCenterPoint = calculatePlaneCenterPoint()
+        }
+        if (uidLabel == null) {
+            uidLabel = createUIDLabel()
+        }
+        node.add(uidLabel ?: return)
+        uidLabel?.isVisible = false
+
+        Platform.runLater {
+            updateUIDLabelPosition()
+            Platform.runLater {
+                updateUIDLabelPosition()
+            }
+            uidLabel?.isVisible = true
+            isShowingUIDLabel = true
+        }
     }
 }

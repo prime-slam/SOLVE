@@ -23,7 +23,7 @@ import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
 import solve.utils.*
 import solve.utils.nodes.DragAndDropCellItemInfo
 import solve.utils.nodes.DragAndDropListCell
-import solve.utils.structures.Point
+import solve.utils.structures.DoublePoint
 import tornadofx.*
 
 class VisualizationSettingsLayerCell(
@@ -41,7 +41,7 @@ class VisualizationSettingsLayerCell(
         private const val LayerTypeIconPaddingRight = 5.0
         private const val LayerVisibilityIconPaddingLeft = -5.0
 
-        private val LayerSettingsSpawnPositionOffset = Point(-135.0, 25.0)
+        private val LayerSettingsSpawnPositionOffset = DoublePoint(-135.0, 25.0)
 
         private val pointLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPointLayerPath)
         private val lineLayerIconImage = loadResourcesImage(IconsVisualizationSettingsLineLayerPath)
@@ -147,10 +147,10 @@ class VisualizationSettingsLayerCell(
         paddingLeft = LayerVisibilityIconPaddingLeft
     }
 
-    private fun calculatePopOverShowPosition(spawnNode: Node, layerType: LandmarkType): Point {
+    private fun calculatePopOverShowPosition(spawnNode: Node, layerType: LandmarkType): DoublePoint {
         val labelPosition = spawnNode.getScreenPosition()
         val popOverNodeSize = getPopOverNodeSize(layerType)
-        val popOverNodeSizeOffsetVector = Point(popOverNodeSize?.x ?: 0.0, 0.0)
+        val popOverNodeSizeOffsetVector = DoublePoint(popOverNodeSize?.x ?: 0.0, 0.0)
 
         return labelPosition - popOverNodeSizeOffsetVector + LayerSettingsSpawnPositionOffset
     }
@@ -191,7 +191,7 @@ class VisualizationSettingsLayerCell(
         }
     }
 
-    private fun showPopOver(popOver: PopOver, spawnNode: Node, showPosition: Point) {
+    private fun showPopOver(popOver: PopOver, spawnNode: Node, showPosition: DoublePoint) {
         popOver.detach()
         popOver.show(spawnNode, showPosition.x, showPosition.y)
     }
@@ -234,11 +234,11 @@ class VisualizationSettingsLayerCell(
     }
 
     private fun getPopOverNodeSize(layerType: LandmarkType) = when(layerType) {
-        LandmarkType.Keypoint -> Point(
+        LandmarkType.Keypoint -> DoublePoint(
             PointLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
             PointLayerSettingsPopOverNode.LayerSettingsNodePrefHeight
         )
-        LandmarkType.Line -> Point(
+        LandmarkType.Line -> DoublePoint(
             LineLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
             LineLayerSettingsPopOverNode.LayerSettingsNodePrefHeight
         )

@@ -6,6 +6,7 @@ import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import tornadofx.*
+import kotlin.math.pow
 
 val DarkLightGrayColor: Color = Color.web("#AAAAAA")
 
@@ -29,3 +30,23 @@ fun createHGrowHBox() = HBox().also { it.hgrow = Priority.ALWAYS }
 fun createVGrowBox() = VBox().also { it.vgrow = Priority.ALWAYS }
 
 fun createInsetsWithValue(value: Double) = Insets(value, value, value, value)
+
+// Returns black or white color according to which one is more contrasting with given color.
+fun getBlackOrWhiteContrastingTo(color: Color): Color {
+    val gamma = 2.2
+    val redCoefficient = 0.2126
+    val greenCoefficient = 0.7152
+    val blueCoefficient = 0.0722
+    val boundaryCoefficient = 0.5
+
+    val contrastValue = redCoefficient * color.red.pow(gamma) +
+            greenCoefficient * color.green.pow(gamma)
+    blueCoefficient * color.blue.pow(gamma)
+
+    val boundaryValue = boundaryCoefficient.pow(gamma)
+
+    if (contrastValue <= boundaryValue) {
+        return Color.WHITE
+    }
+    return Color.BLACK
+}
