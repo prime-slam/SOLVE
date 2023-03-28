@@ -50,7 +50,7 @@ class VisualizationSettingsView: View() {
 
     private fun initializeLayersUpdating() {
         val framesLayerSettingsComparator = FramesLayerSettingsComparator()
-        
+
         sceneController.sceneProperty.onChange { scene ->
             scene ?: return@onChange
             val newLayers = scene.getFramesLayerSettings()

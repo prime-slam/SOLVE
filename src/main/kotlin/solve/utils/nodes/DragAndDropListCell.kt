@@ -72,12 +72,12 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
                     return@setOnDragDropped
                 }
                 val droppedCellIndex = listView.items.indexOf(droppedCellItem)
+                val thisItemInfo = createItemInfo(item)
+                val droppedItemInfo = createItemInfo(droppedCellItem)
 
                 listView.items[droppedCellIndex] = item
                 listView.items[index] = droppedCellItem
 
-                val thisItemInfo = createItemInfo(item)
-                val droppedItemInfo = createItemInfo(droppedCellItem)
                 setOnDragDropped(event, thisItemInfo, droppedItemInfo)
             }
 

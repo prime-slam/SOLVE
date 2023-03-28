@@ -57,8 +57,11 @@ class VisualizationSettingsLayerCell(
         droppedItemInfo: DragAndDropCellItemInfo<LayerSettings>
     ) {
         val scene = sceneController.sceneProperty.value
-        scene.changeLayerIndex(thisItemInfo.item, droppedItemInfo.index)
-        scene.changeLayerIndex(droppedItemInfo.item, thisItemInfo.index)
+        val thisItemGroupInfo = getItemInfoWithGroupIndex(thisItemInfo)
+        val droppedItemGroupInfo = getItemInfoWithGroupIndex(droppedItemInfo)
+
+        scene.changeLayerIndex(thisItemGroupInfo.item, droppedItemGroupInfo.index)
+        scene.changeLayerIndex(droppedItemGroupInfo.item, thisItemGroupInfo.index)
     }
 
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
@@ -96,6 +99,7 @@ class VisualizationSettingsLayerCell(
         val bothAreNotPlanes =
             thisItem !is LayerSettings.PlaneLayerSettings && droppedItem !is LayerSettings.PlaneLayerSettings
 
+        println(bothAreNotPlanes || bothArePlanes)
         return bothArePlanes || bothAreNotPlanes
     }
 
@@ -242,13 +246,28 @@ class VisualizationSettingsLayerCell(
             LineLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
             LineLayerSettingsPopOverNode.LayerSettingsNodePrefHeight
         )
-        LandmarkType.Plane -> null // TODO: add a plane layers panel realization.
+        LandmarkType.Plane -> null
     }
 
     private fun getLayerSettingsType(layerSettings: LayerSettings) = when (layerSettings) {
         is LayerSettings.PointLayerSettings -> LandmarkType.Keypoint
         is LayerSettings.LineLayerSettings -> LandmarkType.Line
         is LayerSettings.PlaneLayerSettings -> LandmarkType.Plane
+    }
+
+    // Returns an item into with an index depending on its belonging to the planes group.
+    // Planes group has indices separate from the other types of the landmarks.
+    private fun getItemInfoWithGroupIndex(
+        itemInfo: DragAndDropCellItemInfo<LayerSettings>
+    ): DragAndDropCellItemInfo<LayerSettings> {
+        val groupItems = if (itemInfo.item is LayerSettings.PlaneLayerSettings) {
+            listView.items.filtered { it is LayerSettings.PlaneLayerSettings }
+        } else {
+            listView.items.filtered { it !is LayerSettings.PlaneLayerSettings }
+        }
+        val groupIndex = groupItems.indexOf(itemInfo.item)
+
+        return DragAndDropCellItemInfo(item, groupIndex)
     }
 }
 

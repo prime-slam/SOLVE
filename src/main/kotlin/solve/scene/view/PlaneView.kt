@@ -248,7 +248,6 @@ class PlaneView(
         isShowingUIDLabel = false
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private fun showUIDLabel() {
         if (isShowingUIDLabel) {
             return
