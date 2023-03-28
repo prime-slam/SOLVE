@@ -21,8 +21,8 @@ import solve.scene.model.LayerSettings
 import solve.settings.visualization.popover.LineLayerSettingsPopOverNode
 import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
 import solve.utils.*
-import solve.utils.nodes.DragAndDropCellItemInfo
-import solve.utils.nodes.DragAndDropListCell
+import solve.utils.nodes.listcell.dragdrop.DragAndDropCellItemInfo
+import solve.utils.nodes.listcell.dragdrop.DragAndDropListCell
 import solve.utils.structures.DoublePoint
 import tornadofx.*
 
