@@ -50,3 +50,5 @@ fun getBlackOrWhiteContrastingTo(color: Color): Color {
     }
     return Color.BLACK
 }
+
+fun Color.withReplacedOpacity(opacity: Double): Color = Color(red, green, blue, opacity)
