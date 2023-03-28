@@ -5,7 +5,7 @@ import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import solve.catalogue.floor
-import solve.utils.structures.Point
+import solve.utils.structures.DoublePoint
 import tornadofx.*
 
 fun Node.addAll(nodes: Collection<Node>) {
@@ -28,10 +28,10 @@ fun Node.addSafely(node: Node?) {
 
 fun Node.getScreenBounds(): Bounds = localToScreen(boundsInLocal)
 
-fun Node.getScreenPosition(): Point {
+fun Node.getScreenPosition(): DoublePoint {
     val bounds = getScreenBounds()
 
-    return Point(bounds.minX, bounds.minY)
+    return DoublePoint(bounds.minX, bounds.minY)
 }
 
 fun Node.createSnapshot(): Image {
