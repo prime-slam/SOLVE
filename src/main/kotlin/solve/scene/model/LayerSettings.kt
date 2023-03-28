@@ -11,7 +11,11 @@ import javafx.scene.paint.Color
 // Meaningful changes here provokes scene redrawing.
 // layerName is unique only in the project, layerKey is unique between layers from other projects too,
 // so it can be used as a key in color manager
-sealed class LayerSettings(val layerName: String, private val layerKey: String, private val layerColorManager: ColorManager<String>) {
+sealed class LayerSettings(
+    val layerName: String,
+    private val layerKey: String,
+    private val layerColorManager: ColorManager<String>
+) {
     companion object {
         const val MinOpacity = 0.0
         const val MaxOpacity = 1.0
