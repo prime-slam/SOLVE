@@ -1,6 +1,5 @@
 package solve.settings.visualization.fields.controller
 
-import kotlinx.coroutines.GlobalScope
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.settings.visualization.fields.model.VisualizationSettingsLayersModel
