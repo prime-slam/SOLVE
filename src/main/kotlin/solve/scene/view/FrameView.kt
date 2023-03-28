@@ -104,6 +104,9 @@ class FrameView(
     }
 
     fun setFrame(frame: VisualizationFrame?) {
+        if (frame?.timestamp == currentFrame?.timestamp) {
+            return
+        }
         currentJob?.cancel()
         disposeLandmarkViews()
         removeLandmarksNodes()

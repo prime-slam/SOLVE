@@ -32,10 +32,6 @@ class VirtualizedFXGrid(
     override val yProperty = SimpleDoubleProperty(virtualGrid.position.y)
 
     private val scaleChangedListener = InvalidationListener {
-        // Virtual grid breaks if cell size changes when x position differs from 0.0
-        // Virtual grid always drops position to (0, 0) when cell size changes, so this solution is ok
-        scrollX(0.0)
-        scrollY(0.0)
         val newScale = scaleProperty.value
         virtualGrid.cellSize = Size(cellSize.width * newScale, cellSize.height * newScale)
     }
