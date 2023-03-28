@@ -51,17 +51,17 @@ class VisualizationSettingsLayerCell(
         private val layerInvisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerInvisiblePath)
     }
 
-    override fun setOnDragDropped(
+    override fun setAfterDragDropped(
         event: DragEvent,
         thisItemInfo: DragAndDropCellItemInfo<LayerSettings>,
         droppedItemInfo: DragAndDropCellItemInfo<LayerSettings>
     ) {
-        val scene = sceneController.sceneProperty.value
-        val thisItemGroupInfo = getItemInfoWithGroupIndex(thisItemInfo)
-        val droppedItemGroupInfo = getItemInfoWithGroupIndex(droppedItemInfo)
+        val scene = sceneController.scene
+        val thisItemGroupRenderIndex = getItemRenderIndex(thisItemInfo)
+        val droppedItemGroupRenderIndex = getItemRenderIndex(droppedItemInfo)
 
-        scene.changeLayerIndex(thisItemGroupInfo.item, droppedItemGroupInfo.index)
-        scene.changeLayerIndex(droppedItemGroupInfo.item, thisItemGroupInfo.index)
+        scene.changeLayerIndex(thisItemInfo.item, thisItemGroupRenderIndex)
+        scene.changeLayerIndex(droppedItemInfo.item, droppedItemGroupRenderIndex)
     }
 
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
@@ -99,7 +99,6 @@ class VisualizationSettingsLayerCell(
         val bothAreNotPlanes =
             thisItem !is LayerSettings.PlaneLayerSettings && droppedItem !is LayerSettings.PlaneLayerSettings
 
-        println(bothAreNotPlanes || bothArePlanes)
         return bothArePlanes || bothAreNotPlanes
     }
 
@@ -255,11 +254,12 @@ class VisualizationSettingsLayerCell(
         is LayerSettings.PlaneLayerSettings -> LandmarkType.Plane
     }
 
-    // Returns an item into with an index depending on its belonging to the planes group.
+    // Returns an item index depending on its belonging to the planes group and a render layer.
     // Planes group has indices separate from the other types of the landmarks.
-    private fun getItemInfoWithGroupIndex(
+    // Render index has a reverse order to the layer cell index.
+    private fun getItemRenderIndex(
         itemInfo: DragAndDropCellItemInfo<LayerSettings>
-    ): DragAndDropCellItemInfo<LayerSettings> {
+    ): Int {
         val groupItems = if (itemInfo.item is LayerSettings.PlaneLayerSettings) {
             listView.items.filtered { it is LayerSettings.PlaneLayerSettings }
         } else {
@@ -267,7 +267,7 @@ class VisualizationSettingsLayerCell(
         }
         val groupIndex = groupItems.indexOf(itemInfo.item)
 
-        return DragAndDropCellItemInfo(item, groupIndex)
+        return groupItems.lastIndex - groupIndex
     }
 }
 

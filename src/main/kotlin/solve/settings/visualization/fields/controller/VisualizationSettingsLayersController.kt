@@ -1,5 +1,6 @@
 package solve.settings.visualization.fields.controller
 
+import kotlinx.coroutines.GlobalScope
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.settings.visualization.fields.model.VisualizationSettingsLayersModel
@@ -22,10 +23,10 @@ class VisualizationSettingsLayersController : Controller() {
         val planeLayers = layers.subList(firstPlaneLayerSettingsIndex, layers.count())
         val notPlaneLayers = layers.subList(0, firstPlaneLayerSettingsIndex)
 
-        notPlaneLayers.forEachIndexed { index, notPlane ->
+        notPlaneLayers.reversed().forEachIndexed { index, notPlane ->
             sceneController.scene.changeLayerIndex(notPlane, index)
         }
-        planeLayers.forEachIndexed { index, plane ->
+        planeLayers.reversed().forEachIndexed { index, plane ->
             sceneController.scene.changeLayerIndex(plane, index)
         }
     }

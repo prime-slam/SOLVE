@@ -72,13 +72,15 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
                     return@setOnDragDropped
                 }
                 val droppedCellIndex = listView.items.indexOf(droppedCellItem)
-                val thisItemInfo = createItemInfo(item)
-                val droppedItemInfo = createItemInfo(droppedCellItem)
+                val thisItem = item
 
                 listView.items[droppedCellIndex] = item
                 listView.items[index] = droppedCellItem
 
-                setOnDragDropped(event, thisItemInfo, droppedItemInfo)
+                val thisItemInfo = createItemInfo(thisItem)
+                val droppedItemInfo = createItemInfo(droppedCellItem)
+
+                setAfterDragDropped(event, thisItemInfo, droppedItemInfo)
             }
 
             event.isDropCompleted = true
@@ -109,7 +111,7 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
 
     protected open fun setOnDragExited(event: DragEvent, itemInfo: DragAndDropCellItemInfo<T>) { }
 
-    protected open fun setOnDragDropped(
+    protected open fun setAfterDragDropped(
         event: DragEvent,
         thisItemInfo: DragAndDropCellItemInfo<T>,
         droppedItemInfo: DragAndDropCellItemInfo<T>

@@ -1,5 +1,6 @@
 package solve.settings.visualization.fields.view
 
+import javafx.application.Platform
 import javafx.scene.layout.Priority
 import javafx.util.Callback
 import solve.scene.controller.SceneController
