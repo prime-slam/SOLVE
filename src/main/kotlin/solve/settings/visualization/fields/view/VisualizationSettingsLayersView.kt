@@ -1,12 +1,9 @@
 package solve.settings.visualization.fields.view
 
-import javafx.scene.control.ListCell
-import javafx.scene.control.ListView
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.Priority
 import javafx.util.Callback
 import solve.scene.controller.SceneController
-import solve.scene.model.LayerSettings
 import solve.settings.visualization.fields.controller.VisualizationSettingsLayersController
 import solve.utils.nodes.listcell.dragdrop.isListViewCellSource
 import tornadofx.*
