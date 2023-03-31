@@ -36,6 +36,7 @@ class FrameView(
     private val coroutineScope: CoroutineScope,
     private val associationsManager: AssociationsManager,
     private val orderManager: OrderManager<LayerSettings>,
+    private val frameViewStorage: FrameViewStorage,
     canvasLayersCount: Int,
     frame: VisualizationFrame?
 ) : Group() {
@@ -50,8 +51,7 @@ class FrameView(
     private val scaleChangedListener = InvalidationListener { scaleImageAndLandmarks(scale.value) }
 
     init {
-        scale.addListener(scaleChangedListener)
-
+        init()
         canvas.viewOrder = IMAGE_VIEW_ORDER
         add(canvas)
         setFrame(frame)
@@ -85,6 +85,10 @@ class FrameView(
                 associationsManager.clearAssociation(clickedFrame)
             }
         }
+    }
+
+    fun init() {
+        scale.addListener(scaleChangedListener)
     }
 
     private fun getKeypoints(frame: VisualizationFrame): List<Landmark.Keypoint> {
@@ -137,6 +141,7 @@ class FrameView(
         scale.removeListener(scaleChangedListener)
         orderManager.removeOrderChangedListener(orderChangedCallback)
         disposeLandmarkViews()
+        frameViewStorage.store(this)
     }
 
     private fun draw() {

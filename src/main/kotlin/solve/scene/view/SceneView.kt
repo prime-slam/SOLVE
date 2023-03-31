@@ -58,18 +58,23 @@ class SceneView : View() {
         val associationsManager = AssociationsManager(
             frameSize, framesMargin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer
         )
-        val grid = VirtualizedFXGridProvider.createGrid(
-            frames, columnsNumber, gridCellSize, controller.scaleProperty, outOfFramesLayer
-        ) { frame ->
+        lateinit var frameViewCache: FrameViewCache
+        frameViewCache = FrameViewCache { frame ->
             FrameView(
                 frameSize,
                 controller.scaleProperty,
                 frameDataLoadingScope,
                 associationsManager,
                 scene,
+                frameViewCache,
                 scene.canvasLayersCount,
                 frame
             )
+        }
+        val grid = VirtualizedFXGridProvider.createGrid(
+            frames, columnsNumber, gridCellSize, controller.scaleProperty, outOfFramesLayer
+        ) { frame ->
+            frameViewCache.get(frame)
         }
 
         bindPositionProperties(grid)
