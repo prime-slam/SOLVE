@@ -51,11 +51,9 @@ class FrameView(
     private val scaleChangedListener = InvalidationListener { scaleImageAndLandmarks(scale.value) }
 
     init {
-        init()
         canvas.viewOrder = IMAGE_VIEW_ORDER
         add(canvas)
-        setFrame(frame)
-        scaleImageAndLandmarks(scale.value)
+        init(frame)
 
         setOnMouseClicked {
             if (it.button != MouseButton.PRIMARY) {
@@ -87,8 +85,10 @@ class FrameView(
         }
     }
 
-    fun init() {
+    fun init(frame: VisualizationFrame?) {
         scale.addListener(scaleChangedListener)
+        setFrame(frame)
+        scaleImageAndLandmarks(scale.value)
     }
 
     private fun getKeypoints(frame: VisualizationFrame): List<Landmark.Keypoint> {

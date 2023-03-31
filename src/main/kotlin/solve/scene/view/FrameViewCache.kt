@@ -11,7 +11,7 @@ class FrameViewCache(val size: DoubleSize, private val factory: (VisualizationFr
     private val storage = mutableSetOf<FrameView>()
 
     fun get(frame: VisualizationFrame?) = storage.firstOrNull()?.also { frameView ->
-        frameView.init()
+        frameView.init(frame)
         storage.remove(frameView)
     } ?: factory(frame)
 
