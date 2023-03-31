@@ -4,7 +4,6 @@ import javafx.animation.Timeline
 import javafx.beans.InvalidationListener
 import javafx.beans.WeakInvalidationListener
 import javafx.event.EventHandler
-import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.HBox
@@ -12,25 +11,29 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
 import javafx.util.Duration
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
 import solve.scene.model.Landmark
 import solve.scene.model.LayerSettings
 import solve.scene.model.Point
+import solve.scene.view.drawing.CanvasEventHandler
 import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameElement
+import solve.scene.view.drawing.FrameEventManager
 import solve.scene.view.utils.createColorTimeline
 import solve.utils.clearChildren
 import solve.utils.getBlackOrWhiteContrastingTo
-import solve.utils.getScreenPosition
 import solve.utils.withReplacedOpacity
-import tornadofx.*
+import tornadofx.add
 import solve.utils.structures.DoublePoint as DoublePoint
 
 class PlaneView(
     private val plane: Landmark.Plane,
     private val frameDrawer: FrameDrawer,
-    private val canvasNode: Node,
+    private val frameEventManager: FrameEventManager,
     viewOrder: Int,
     scale: Double
 ) : LandmarkView(scale, viewOrder, plane) {
@@ -71,20 +74,22 @@ class PlaneView(
     private var mousePressedFramePosition: DoublePoint? = null
 
     private val mousePressedHandler = EventHandler<MouseEvent> { mouse ->
-        if (!isMouseOver(mouse) || !plane.layerSettings.enabled) {
+        if (!plane.layerSettings.enabled) {
             return@EventHandler
         }
-        mousePressedFramePosition = canvasNode.getScreenPosition()
+        mouse.consume()
+        mousePressedFramePosition = frameDrawer.screenPosition
     }
+    private val mousePressedCanvasEventHandler = CanvasEventHandler(planeElement, mousePressedHandler)
 
     private val mouseReleasedHandler = EventHandler<MouseEvent> { mouse ->
-        if (!isMouseOver(mouse) || !plane.layerSettings.enabled) {
-            mousePressedFramePosition = null
+        if (!plane.layerSettings.enabled) {
             return@EventHandler
         }
+        mouse.consume()
         val mousePressedCanvasPosition = mousePressedFramePosition ?: return@EventHandler
         val maxDistance = 2.0
-        if (mousePressedCanvasPosition.distanceTo(canvasNode.getScreenPosition()) > maxDistance) {
+        if (mousePressedCanvasPosition.distanceTo(frameDrawer.screenPosition) > maxDistance) {
             return@EventHandler
         }
         if (isSelected) {
@@ -93,6 +98,7 @@ class PlaneView(
         }
         plane.layerState.selectedLandmarksUids.add(plane.uid)
     }
+    private val mouseReleasedCanvasEventHandler = CanvasEventHandler(planeElement, mouseReleasedHandler)
 
     private val enabledChangedEventHandler = InvalidationListener {
         onEnabledChanged()
@@ -169,22 +175,16 @@ class PlaneView(
         timeline.play()
     }
 
-    private fun isMouseOver(mouse: MouseEvent): Boolean {
-        val mouseX = (mouse.x / scale).toInt().toShort()
-        val mouseY = (mouse.y / scale).toInt().toShort()
-        return plane.points.any { point -> point.x == mouseX && point.y == mouseY }
-    }
-
     private fun addListeners() {
-        canvasNode.addEventHandler(MouseEvent.MOUSE_PRESSED, mousePressedHandler)
-        canvasNode.addEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleasedHandler)
+        frameEventManager.subscribeMousePressed(mousePressedCanvasEventHandler)
+        frameEventManager.subscribeMouseReleased(mouseReleasedCanvasEventHandler)
 
         plane.layerSettings.enabledProperty.addListener(weakEnabledChangedEventHandler)
     }
 
     private fun removeListeners() {
-        canvasNode.removeEventHandler(MouseEvent.MOUSE_PRESSED, mousePressedHandler)
-        canvasNode.removeEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleasedHandler)
+        frameEventManager.unsubscribeMousePressed(mousePressedCanvasEventHandler)
+        frameEventManager.unsubscribeMouseReleased(mouseReleasedCanvasEventHandler)
 
         plane.layerSettings.enabledProperty.removeListener(weakEnabledChangedEventHandler)
     }

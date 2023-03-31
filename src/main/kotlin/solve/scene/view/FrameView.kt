@@ -23,6 +23,7 @@ import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.drawing.BufferedImageView
 import solve.scene.view.drawing.FrameDrawer
+import solve.scene.view.drawing.FrameEventManager
 import solve.scene.view.drawing.ImageFrameElement
 import solve.utils.structures.Size as DoubleSize
 import tornadofx.action
@@ -44,6 +45,7 @@ class FrameView(
     private var currentFrame: VisualizationFrame? = null
     private val canvas = BufferedImageView(size.width, size.height, scale.value)
     private val frameDrawer = FrameDrawer(canvas, canvasLayersCount + 1)
+    private val frameEventManager = FrameEventManager(canvas, scale)
     private var currentJob: Job? = null
 
     // Should be stored to avoid weak listener from be collected
@@ -118,7 +120,7 @@ class FrameView(
                 val landmarkViews = landmarkData.mapValues {
                     it.value.map { landmark ->
                         LandmarkView.create(
-                            landmark, orderManager.indexOf(it.key.settings), scale.value, frameDrawer, canvas
+                            landmark, orderManager.indexOf(it.key.settings), scale.value, frameDrawer, frameEventManager
                         )
                     }
                 }
@@ -174,7 +176,11 @@ class FrameView(
     }
 
     private fun removeLandmarksNodes() {
-        doForAllLandmarks { view, _ -> if (view.node != null) { children.remove(view.node) } }
+        doForAllLandmarks { view, _ ->
+            if (view.node != null) {
+                children.remove(view.node)
+            }
+        }
     }
 
     private fun addLandmarksNodes() = doForAllLandmarks { view, _ ->
