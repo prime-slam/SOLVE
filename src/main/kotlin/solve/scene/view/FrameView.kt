@@ -31,7 +31,7 @@ import tornadofx.contextmenu
 import tornadofx.item
 
 class FrameView(
-    private val size: DoubleSize,
+    val size: DoubleSize,
     private val scale: DoubleProperty,
     private val coroutineScope: CoroutineScope,
     private val associationsManager: AssociationsManager,
