@@ -60,7 +60,11 @@ class SceneView : View() {
             frameSize, framesMargin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer
         )
 
-        frameViewCache = if (frameViewCache?.size == frameSize) frameViewCache!! else FrameViewCache(frameSize) { frame ->
+        val canReuseCache =
+            frameViewCache?.size == frameSize && frameViewCache?.canvasBufferDepth == scene.canvasLayersCount
+        frameViewCache = if (canReuseCache) frameViewCache!! else FrameViewCache(
+            frameSize, scene.canvasLayersCount
+        ) { frame ->
             FrameView(
                 frameSize,
                 controller.scaleProperty,
