@@ -12,6 +12,10 @@ import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.input.ScrollEvent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.Grid
 import solve.utils.structures.Size as DoubleSize
@@ -45,6 +49,29 @@ class VirtualizedFXGrid(
             xProperty.set(position?.x ?: 0.0)
             yProperty.set(position?.y ?: 0.0)
         }
+    }
+
+    fun changeColumnsNumber(newColumnsNumber: Int) {
+        if (newColumnsNumber < 0) {
+            println("Columns number of the scene grid should be a positive number!")
+            return
+        }
+
+        val gridItems = virtualGrid.items.toList()
+        virtualGrid.clear()
+
+        val fullRowsNumber = gridItems.lastIndex / newColumnsNumber
+        for (i in 0 until fullRowsNumber) {
+            val addingRowItems = gridItems.subList(i * newColumnsNumber, (i + 1) * newColumnsNumber)
+            virtualGrid.items.addRow(addingRowItems)
+        }
+
+        val firstRemainingItemIndex = fullRowsNumber * newColumnsNumber
+        val lastRowItems = gridItems.slice(firstRemainingItemIndex..gridItems.lastIndex).toMutableList()
+        repeat(newColumnsNumber - lastRowItems.count()) {
+            lastRowItems.add(null)
+        }
+        virtualGrid.items.addRow(lastRowItems)
     }
 
     override fun scrollX(newX: Double): Double {

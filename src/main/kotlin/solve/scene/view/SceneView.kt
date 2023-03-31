@@ -1,8 +1,8 @@
 package solve.scene.view
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import javafx.application.Platform
+import kotlinx.coroutines.*
+import kotlinx.coroutines.javafx.JavaFx
 import solve.scene.controller.SceneController
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
@@ -24,6 +24,8 @@ class SceneView : View() {
         label("Empty scene placeholder")
     }
 
+    private var isRunning = false
+
     init {
         controller.sceneWidthProperty.bind(root.widthProperty())
         controller.sceneProperty.onChange { scene ->
@@ -38,7 +40,9 @@ class SceneView : View() {
     private fun draw() {
         unbindPositionProperties()
         currentGrid?.dispose()
+        currentGrid = null
         root.children.clear()
+        System.gc() // Necessary for timely garbage collection of the old scene.
 
         val scene = controller.sceneProperty.value
 
