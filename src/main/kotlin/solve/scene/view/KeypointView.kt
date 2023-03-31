@@ -1,7 +1,6 @@
 package solve.scene.view
 
 import javafx.beans.InvalidationListener
-import javafx.beans.WeakInvalidationListener
 import javafx.scene.paint.Color
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
@@ -28,7 +27,6 @@ class KeypointView(
     private val selectedRadiusChangedEventHandler = InvalidationListener {
         updateShapeRadius(node)
     }
-    private val weakSelectedRadiusChangedEventHandler = WeakInvalidationListener(selectedRadiusChangedEventHandler)
 
     init {
         setUpShape(node, keypoint.uid)
@@ -99,11 +97,11 @@ class KeypointView(
     }
 
     private fun addListeners() {
-        keypoint.layerSettings.selectedRadiusProperty.addListener(weakSelectedRadiusChangedEventHandler)
+        keypoint.layerSettings.selectedRadiusProperty.addListener(selectedRadiusChangedEventHandler)
     }
 
     private fun removeListeners() {
-        keypoint.layerSettings.selectedRadiusProperty.removeListener(weakSelectedRadiusChangedEventHandler)
+        keypoint.layerSettings.selectedRadiusProperty.removeListener(selectedRadiusChangedEventHandler)
     }
 
     private fun updateShapeRadius(shape: Ellipse) {

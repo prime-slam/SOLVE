@@ -81,5 +81,8 @@ class VirtualizedFXGrid(
         bindings.unbindBidirectional(vsp.vValProperty())
         bindings.unbindBidirectional(vsp.hValProperty())
         scaleProperty.removeListener(scaleChangedListener)
+        virtualGrid.indexedCells.values.forEach { frame ->
+            frame.dispose()
+        }
     }
 }
