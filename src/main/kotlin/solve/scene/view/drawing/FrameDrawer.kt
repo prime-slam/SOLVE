@@ -4,8 +4,11 @@ import javafx.scene.paint.Color
 import solve.scene.model.Point
 import solve.scene.model.PointPairs
 import solve.scene.model.Size
+import solve.utils.getScreenPosition
 
 class FrameDrawer(private val canvas: BufferedImageView, private val layersCount: Int) {
+    val screenPosition
+        get() = canvas.getScreenPosition()
     val width = canvas.roundedWidth
     val height = canvas.roundedHeight
 
