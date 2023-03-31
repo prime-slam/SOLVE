@@ -52,7 +52,7 @@ class SceneController : Controller() {
     fun setScene(newScene: Scene, keepSettings: Boolean) {
         columnsCount = calculateColumnsCount(newScene)
         sceneProperty.value = newScene
-        if (!keepSettings) {
+        if (!keepSettings || scaleProperty.value < minScale) {
             scaleProperty.value = minScale
         }
     }
