@@ -1,6 +1,5 @@
 package solve.scene.model
 
-import java.lang.ref.WeakReference
 import solve.utils.structures.Size as DoubleSize
 
 class Scene(
@@ -19,10 +18,14 @@ class Scene(
     private val layerSettingsStorage =
         layerSettings.filterNot { it is LayerSettings.PlaneLayerSettings }.toMutableList()
 
-    private val changedCallbacks = mutableListOf<WeakReference<() -> Unit>>()
+    private val changedCallbacks = mutableListOf<() -> Unit>()
 
     override fun addOrderChangedListener(action: () -> Unit) {
-        changedCallbacks.add(WeakReference(action))
+        changedCallbacks.add(action)
+    }
+
+    override fun removeOrderChangedListener(action: () -> Unit) {
+        changedCallbacks.remove(action)
     }
 
     override fun indexOf(element: LayerSettings): Int = when (element) {
@@ -41,10 +44,7 @@ class Scene(
             is LayerSettings.PlaneLayerSettings -> planeLayerSettingsStorage.changeLayerIndex(element, index)
             else -> layerSettingsStorage.changeLayerIndex(element, index)
         }
-        changedCallbacks.forEach { ref ->
-            val callback = ref.get() ?: return@forEach
-            callback()
-        }
+        changedCallbacks.forEach { it() }
     }
 
     fun getFramesLayerSettings() = frames.flatMap { it.layers.map { layer -> layer.settings } }.distinct()
