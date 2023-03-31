@@ -12,6 +12,7 @@ import javafx.scene.shape.Shape
 import javafx.util.Duration
 import solve.scene.model.Landmark
 import solve.scene.view.drawing.FrameDrawer
+import solve.scene.view.drawing.FrameEventManager
 import tornadofx.ChangeListener
 import tornadofx.visibleWhen
 
@@ -23,11 +24,11 @@ sealed class LandmarkView(
     private val landmark: Landmark,
 ) {
     companion object {
-        fun create(landmark: Landmark, viewOrder: Int, scale: Double, frameDrawer: FrameDrawer, canvasNode: Node): LandmarkView {
+        fun create(landmark: Landmark, viewOrder: Int, scale: Double, frameDrawer: FrameDrawer, frameEventManager: FrameEventManager): LandmarkView {
             return when (landmark) {
                 is Landmark.Keypoint -> KeypointView(landmark, viewOrder, scale)
                 is Landmark.Line -> LineView(landmark, viewOrder, scale)
-                is Landmark.Plane -> PlaneView(landmark, frameDrawer, canvasNode, viewOrder, scale)
+                is Landmark.Plane -> PlaneView(landmark, frameDrawer, frameEventManager, viewOrder, scale)
             }
         }
 
