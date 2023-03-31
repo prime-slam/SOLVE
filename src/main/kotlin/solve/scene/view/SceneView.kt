@@ -18,6 +18,7 @@ class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
     private var currentGrid: Grid? = null
+    private var frameViewCache: FrameViewCache? = null
 
     override val root = vbox {
         label("Empty scene placeholder")
@@ -58,15 +59,15 @@ class SceneView : View() {
         val associationsManager = AssociationsManager(
             frameSize, framesMargin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer
         )
-        lateinit var frameViewCache: FrameViewCache
-        frameViewCache = FrameViewCache { frame ->
+
+        frameViewCache = if (frameViewCache?.size == frameSize) frameViewCache!! else FrameViewCache(frameSize) { frame ->
             FrameView(
                 frameSize,
                 controller.scaleProperty,
                 frameDataLoadingScope,
                 associationsManager,
                 scene,
-                frameViewCache,
+                frameViewCache!!,
                 scene.canvasLayersCount,
                 frame
             )
@@ -74,7 +75,7 @@ class SceneView : View() {
         val grid = VirtualizedFXGridProvider.createGrid(
             frames, columnsNumber, gridCellSize, controller.scaleProperty, outOfFramesLayer
         ) { frame ->
-            frameViewCache.get(frame)
+            frameViewCache!!.get(frame)
         }
 
         bindPositionProperties(grid)
