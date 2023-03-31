@@ -2,7 +2,6 @@ package solve.scene.view
 
 import RectangleFrameElement
 import javafx.beans.InvalidationListener
-import javafx.beans.WeakInvalidationListener
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.image.Image
@@ -48,11 +47,10 @@ class FrameView(
     private val frameEventManager = FrameEventManager(canvas, scale)
     private var currentJob: Job? = null
 
-    // Should be stored to avoid weak listener from be collected
     private val scaleChangedListener = InvalidationListener { scaleImageAndLandmarks(scale.value) }
 
     init {
-        scale.addListener(WeakInvalidationListener(scaleChangedListener))
+        scale.addListener(scaleChangedListener)
 
         canvas.viewOrder = IMAGE_VIEW_ORDER
         add(canvas)
@@ -136,6 +134,8 @@ class FrameView(
     }
 
     fun dispose() {
+        scale.removeListener(scaleChangedListener)
+        orderManager.removeOrderChangedListener(orderChangedCallback)
         disposeLandmarkViews()
     }
 
