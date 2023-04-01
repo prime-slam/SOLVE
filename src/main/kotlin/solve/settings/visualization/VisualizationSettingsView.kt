@@ -9,10 +9,6 @@ import solve.utils.*
 import tornadofx.*
 
 class VisualizationSettingsView: View() {
-    companion object {
-        private const val VisualizationSettingsViewMinWidth = 205.0
-    }
-
     private class FramesLayerSettingsComparator: Comparator<LayerSettings> {
         override fun compare(firstLayerSettings: LayerSettings, secondLayerSettings: LayerSettings): Int {
             val layersSettings = listOf(firstLayerSettings, secondLayerSettings)
@@ -51,5 +47,9 @@ class VisualizationSettingsView: View() {
             val sortedNewLayers = newLayers.sortedWith(framesLayerSettingsComparator)
             visualizationSettingsLayersController.setLayerFields(sortedNewLayers)
         }
+    }
+
+    companion object {
+        private const val VisualizationSettingsViewMinWidth = 205.0
     }
 }

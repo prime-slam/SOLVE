@@ -12,13 +12,6 @@ import solve.utils.createPxBoxWithValue
 import tornadofx.*
 
 class SidePanelTabsView: View() {
-    companion object {
-        private const val TabIconSize = 20.0
-        private const val TabWidth = 30.0
-        private const val TabLabelSymbolSize = 4.4
-        private const val TabOffsetSpaceSize = 35.0
-    }
-
     private val location: SidePanelLocation by param()
     private val tabs: List<SidePanelTab> by param()
     private val initialTab: SidePanelTab? by param()
@@ -90,14 +83,16 @@ class SidePanelTabsView: View() {
             tabsToggleGroup.selectToggle(null)
         }
     }
+
+    companion object {
+        private const val TabIconSize = 20.0
+        private const val TabWidth = 30.0
+        private const val TabLabelSymbolSize = 4.4
+        private const val TabOffsetSpaceSize = 35.0
+    }
 }
 
 class SidePanelTabsStyle: Stylesheet() {
-    companion object {
-        private val DefaultTabColor = Color.TRANSPARENT
-        private val HoveredTabColor = Color.LIGHTGRAY
-        private val PressedTabColor = DarkLightGrayColor
-    }
     init {
         toggleButton {
             backgroundColor += DefaultTabColor
@@ -117,5 +112,11 @@ class SidePanelTabsStyle: Stylesheet() {
                 backgroundColor += PressedTabColor
             }
         }
+    }
+
+    companion object {
+        private val DefaultTabColor = Color.TRANSPARENT
+        private val HoveredTabColor = Color.LIGHTGRAY
+        private val PressedTabColor = DarkLightGrayColor
     }
 }

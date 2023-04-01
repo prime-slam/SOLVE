@@ -6,11 +6,6 @@ import java.lang.Double.min
 import kotlin.io.path.inputStream
 
 class CatalogueField(val frame: ProjectFrame) {
-    companion object {
-        private const val MaxImagePreviewHeight = 100.0
-        private const val SmoothPreviewImage = false
-    }
-
     fun loadPreviewImage(imageViewHeight: Double): Image {
         val loadingImageHeight = min(imageViewHeight, MaxImagePreviewHeight)
 
@@ -25,4 +20,9 @@ class CatalogueField(val frame: ProjectFrame) {
 
     val fileName: String
         get() = frame.imagePath.fileName.toString()
+
+    companion object {
+        private const val MaxImagePreviewHeight = 100.0
+        private const val SmoothPreviewImage = false
+    }
 }
