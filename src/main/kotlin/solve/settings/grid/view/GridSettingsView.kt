@@ -114,8 +114,6 @@ class GridSettingsView: View() {
                 controller.setColumnsNumber(installedColumnsNumber.value)
             }
         })
-
-        padding = createInsetsWithValue(5.0)
     }
 
     companion object {

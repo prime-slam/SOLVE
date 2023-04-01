@@ -13,17 +13,19 @@ fun createSettingsField(
     fieldLabelWidth: Double,
     settingNode: Node,
     settingNodeWidth: Double,
-    settingsNodeAlignment: Alignment = Alignment.Center
+    settingsNodeAlignment: Alignment = Alignment.Center,
+    fieldHeight: Double = 35.0
 ) : HBox {
     val fieldHBox = HBox()
     val settingsNodeHBox = HBox()
 
     val labelHBox = HBox()
     labelHBox.add(fieldLabel)
-    labelHBox.alignment = Pos.CENTER_LEFT
+    labelHBox.alignment = Pos.CENTER
     fieldHBox.add(fieldLabel)
 
     fieldLabel.prefWidth = fieldLabelWidth
+    fieldHBox.prefHeight = fieldHeight
 
     val wrappedSettingNode = HBox(settingNode)
     wrappedSettingNode.alignment = when (settingsNodeAlignment) {

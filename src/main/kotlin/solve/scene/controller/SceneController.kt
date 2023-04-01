@@ -24,8 +24,8 @@ class SceneController : Controller() {
     var columnsNumber: Int
         get() = columnsNumberProperty.value
         set(value) {
-            if (value <= 0 || value >= MaxColumnsNumber) {
-                println("Number of the grid columns should be a positive number!")
+            if (value <= 0 || value > MaxColumnsNumber) {
+                println("Number of the grid columns is out of range!")
                 return
             }
 
