@@ -1,12 +1,14 @@
 package solve.main
 
 import solve.catalogue.view.CatalogueView
+import solve.constants.IconsSettingsGridGridPath
 import solve.constants.IconsSidePanelCataloguePath
 import solve.constants.IconsSidePanelVisualizationSettingsPath
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
 import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
+import solve.settings.grid.view.GridSettingsView
 import solve.settings.visualization.VisualizationSettingsView
 import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentView
@@ -34,11 +36,18 @@ class MainView : View() {
         loadResourcesImage(IconsSidePanelCataloguePath),
         find<CatalogueView>().root
     ))
-    private val rightSidePanelTabs = listOf(SidePanelTab(
-        "Layers",
-        loadResourcesImage(IconsSidePanelVisualizationSettingsPath),
-        find<VisualizationSettingsView>().root
-    ))
+    private val rightSidePanelTabs = listOf(
+        SidePanelTab(
+            "Layers",
+            loadResourcesImage(IconsSidePanelVisualizationSettingsPath),
+            find<VisualizationSettingsView>().root
+        ),
+        SidePanelTab(
+            "Grid",
+            loadResourcesImage(IconsSettingsGridGridPath),
+            find<GridSettingsView>().root
+        )
+    )
 
     private val leftSidePanelViews =
         createSidePanelsViews(leftSidePanelTabs, SidePanelLocation.Left, leftSidePanelTabs.first())

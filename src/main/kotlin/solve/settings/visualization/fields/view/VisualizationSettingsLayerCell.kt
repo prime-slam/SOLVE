@@ -47,7 +47,7 @@ class VisualizationSettingsLayerCell(
         val layerType = getLayerSettingsType(item)
 
         prefHeight = LayerFieldHeight
-        addStylesheet(VisualizationSettingsLayerCellStyle::class)
+        addStylesheet(TransparentScalingButtonStyle::class)
 
         val layerIconNode = createLayerIconNode(layerType)
         if (layerIconNode != null) {
@@ -275,12 +275,12 @@ class VisualizationSettingsLayerCell(
 
         private val LayerSettingsSpawnPositionOffset = DoublePoint(-135.0, 25.0)
 
-        private val pointLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPointLayerPath)
-        private val lineLayerIconImage = loadResourcesImage(IconsVisualizationSettingsLineLayerPath)
-        private val planeLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPlaneLayerPath)
-        private val editIconImage = loadResourcesImage(IconsVisualizationSettingsEditPath)
-        private val layerVisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerVisiblePath)
-        private val layerInvisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerInvisiblePath)
+        private val pointLayerIconImage = loadResourcesImage(IconsSettingsVisualizationPointLayerPath)
+        private val lineLayerIconImage = loadResourcesImage(IconsSettingsVisualizationLineLayerPath)
+        private val planeLayerIconImage = loadResourcesImage(IconsSettingsVisualizationPlaneLayerPath)
+        private val editIconImage = loadResourcesImage(IconsSettingsVisualizationEditPath)
+        private val layerVisibleIconImage = loadResourcesImage(IconsSettingsVisualizationLayerVisiblePath)
+        private val layerInvisibleIconImage = loadResourcesImage(IconsSettingsVisualizationLayerInvisiblePath)
     }
 }
 
