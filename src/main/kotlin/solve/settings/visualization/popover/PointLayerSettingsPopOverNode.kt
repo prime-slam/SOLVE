@@ -11,14 +11,6 @@ class PointLayerSettingsPopOverNode(
     private val pointLayerSettings: LayerSettings.PointLayerSettings,
     private val sceneController: SceneController
 ): LayerSettingsPopOverNode() {
-    companion object {
-        const val LayerSettingsNodePrefWidth = 260.0
-        const val LayerSettingsNodePrefHeight = 90.0
-
-        const val PointSizeSliderMinValue = 1.0
-        const val PointSizeSliderMaxValue = 20.0
-    }
-
     private val radiusSliderValueChangedEventHandler = ChangeListener<Number> { _, _, radiusValue ->
         pointLayerSettings.selectedRadius = radiusValue as Double
     }
@@ -37,5 +29,13 @@ class PointLayerSettingsPopOverNode(
         addSettingField("One color", buildLandmarkUseOneColorCheckBox(pointLayerSettings), Alignment.Left)
 
         return popOver
+    }
+
+    companion object {
+        const val LayerSettingsNodePrefWidth = 260.0
+        const val LayerSettingsNodePrefHeight = 90.0
+
+        const val PointSizeSliderMinValue = 1.0
+        const val PointSizeSliderMaxValue = 20.0
     }
 }

@@ -11,11 +11,6 @@ import solve.utils.ServiceLocator
 import tornadofx.Controller
 
 class CatalogueController: Controller() {
-    companion object {
-        val initialViewFormat = ViewFormat.FileName
-        val initialSelectionState = CatalogueSettingsView.SelectionState.All
-    }
-
     val model = CatalogueModel()
 
     private val view: CatalogueView by inject()
@@ -50,5 +45,10 @@ class CatalogueController: Controller() {
     private fun reinitializeCatalogue() {
         settingsView.resetSettings()
         view.reinitializeView()
+    }
+
+    companion object {
+        val initialViewFormat = ViewFormat.FileName
+        val initialSelectionState = CatalogueSettingsView.SelectionState.All
     }
 }

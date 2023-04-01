@@ -7,10 +7,6 @@ import javafx.scene.image.ImageView
 import tornadofx.*
 
 class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
-    companion object {
-        private const val PreviewImageHeight = 80.0
-    }
-
     override val dragViewMaxFieldsNumber = 30
     override val listViewCellHeight = 110.0
 
@@ -52,4 +48,8 @@ class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
     }
 
     override val root = fieldsListView
+
+    companion object {
+        private const val PreviewImageHeight = 80.0
+    }
 }

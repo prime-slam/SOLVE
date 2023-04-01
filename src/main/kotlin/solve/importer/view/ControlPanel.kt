@@ -27,10 +27,6 @@ class ControlPanel : View() {
 
     var coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    companion object {
-        private const val ButtonWidth = 180.0
-    }
-
     private val algorithmsLabel = label {
         val listOfKind = mutableListOf<String>()
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
@@ -111,5 +107,9 @@ class ControlPanel : View() {
                 listOfKind.add(algName)
             }
         }
+    }
+
+    companion object {
+        private const val ButtonWidth = 180.0
     }
 }

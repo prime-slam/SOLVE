@@ -18,15 +18,6 @@ import solve.utils.loadResourcesImage
 import tornadofx.*
 
 class MainView : View() {
-    companion object {
-        private const val LeftSidePanelAndSceneDividerPosition = 0.25
-        private const val RightSidePanelAndSceneDividerPosition = 0.88
-
-        private const val TabsViewLocationParamName = "location"
-        private const val TabsViewTabsParamName = "tabs"
-        private const val TabsViewInitialTabParamName = "initialTab"
-    }
-
     private val sceneView: SceneView by inject()
 
     private lateinit var mainViewSplitPane: SidePanelSplitPane
@@ -109,6 +100,15 @@ class MainView : View() {
     }
 
     private data class SidePanelViews(val tabsView: SidePanelTabsView, val contentView: SidePanelContentView)
+
+    companion object {
+        private const val LeftSidePanelAndSceneDividerPosition = 0.25
+        private const val RightSidePanelAndSceneDividerPosition = 0.88
+
+        private const val TabsViewLocationParamName = "location"
+        private const val TabsViewTabsParamName = "tabs"
+        private const val TabsViewInitialTabParamName = "initialTab"
+    }
 }
 
 class MainSplitPaneStyle: Stylesheet() {

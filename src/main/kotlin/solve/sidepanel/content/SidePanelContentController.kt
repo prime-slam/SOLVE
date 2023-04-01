@@ -14,7 +14,6 @@ class SidePanelContentController : Controller() {
     private val view: SidePanelContentView by inject(scope)
     private val mainController: MainController by inject(FX.defaultScope)
 
-
     fun showContent(contentNode: Node) {
         if (!isContentShowing) {
             mainController.showSidePanelContent(location)

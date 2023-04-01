@@ -126,10 +126,6 @@ abstract class CatalogueFieldsView: View() {
 }
 
 class CatalogueFieldsStyle : Stylesheet() {
-    companion object {
-        private val SelectedFieldColor = Color.valueOf("#0096c9")
-    }
-
     init {
         listView {
             cell {
@@ -138,5 +134,9 @@ class CatalogueFieldsStyle : Stylesheet() {
                 }
             }
         }
+    }
+
+    companion object {
+        private val SelectedFieldColor = Color.valueOf("#0096c9")
     }
 }

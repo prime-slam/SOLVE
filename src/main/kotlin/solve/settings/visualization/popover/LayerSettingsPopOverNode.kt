@@ -9,13 +9,6 @@ import solve.utils.structures.Alignment
 import tornadofx.*
 
 abstract class LayerSettingsPopOverNode {
-    companion object {
-        private const val LayerSettingLabelFontSize = 16.0
-        private const val LayerSettingsLabelPaddingLeft = 10.0
-        private const val LayerSettingsFieldLabelWidth = 100.0
-        private const val LayerSettingsSettingNodeWidth = 160.0
-    }
-
     protected val popOver: VBox = VBox()
 
     fun addSettingField(name: String, settingNode: Node, settingsNodeAlignment: Alignment = Alignment.Center) {
@@ -33,4 +26,11 @@ abstract class LayerSettingsPopOverNode {
     }
 
     abstract fun getPopOverNode(): Node
+
+    companion object {
+        private const val LayerSettingLabelFontSize = 16.0
+        private const val LayerSettingsLabelPaddingLeft = 10.0
+        private const val LayerSettingsFieldLabelWidth = 100.0
+        private const val LayerSettingsSettingNodeWidth = 160.0
+    }
 }

@@ -21,10 +21,6 @@ import solve.utils.removeSafely
 import tornadofx.*
 
 class CatalogueView : View() {
-    companion object {
-        private const val ApplyButtonSize = 15.0
-    }
-
     val currentSelectionState: CatalogueSettingsView.SelectionState
         get() {
             val node = displayingFieldsView ?: nonDisplayingFieldsView
@@ -150,5 +146,9 @@ class CatalogueView : View() {
 
     private fun resetNodes() {
         checkForEmptyFields()
+    }
+
+    companion object {
+        private const val ApplyButtonSize = 15.0
     }
 }

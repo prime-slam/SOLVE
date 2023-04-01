@@ -9,10 +9,6 @@ import solve.constants.IconsCatalogueImagePath
 import tornadofx.*
 
 class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
-    companion object {
-        private const val ListViewFieldIconSize = 20.0
-    }
-
     private val fileNamesFieldIconImage = loadResourcesImage(IconsCatalogueImagePath)
 
     override val dragViewMaxFieldsNumber = 100
@@ -55,4 +51,8 @@ class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
     }
 
     override val root = fieldsListView
+
+    companion object {
+        private const val ListViewFieldIconSize = 20.0
+    }
 }

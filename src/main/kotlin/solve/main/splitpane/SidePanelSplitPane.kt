@@ -8,10 +8,6 @@ class SidePanelSplitPane(
     private val panelsLocation: SidePanelLocation,
     private val initiallyDisplayingLocation: SidePanelLocation
 ): FixedSplitPane(dividersInitialPositions, containedNodes)  {
-    companion object {
-        private const val MinimalDividersPositionDifference = 0.001
-    }
-
     private var isLeftSidePanelHidden = false
     private var isRightSidePanelHidden = false
 
@@ -125,6 +121,10 @@ class SidePanelSplitPane(
             SidePanelLocation.Right -> hideNodeAt(SidePanelLocation.Left)
             else -> return
         }
+    }
+
+    companion object {
+        private const val MinimalDividersPositionDifference = 0.001
     }
 }
 
