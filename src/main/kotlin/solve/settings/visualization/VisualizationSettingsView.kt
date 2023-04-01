@@ -1,7 +1,6 @@
 package solve.settings.visualization
 
 import javafx.scene.layout.*
-import javafx.scene.paint.Color
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.settings.visualization.fields.controller.VisualizationSettingsLayersController
@@ -39,11 +38,6 @@ class VisualizationSettingsView: View() {
         minWidth = VisualizationSettingsViewMinWidth
 
         add(visualizationSettingsLayersView)
-        vbox {
-            border =
-                Border(BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT))
-            hgrow = Priority.ALWAYS
-        }
         padding = createInsetsWithValue(5.0)
         vgrow = Priority.ALWAYS
     }

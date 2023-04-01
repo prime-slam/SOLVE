@@ -1,8 +1,6 @@
 package solve.scene.view
 
-import javafx.application.Platform
 import kotlinx.coroutines.*
-import kotlinx.coroutines.javafx.JavaFx
 import solve.scene.controller.SceneController
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
@@ -23,8 +21,6 @@ class SceneView : View() {
     override val root = vbox {
         label("Empty scene placeholder")
     }
-
-    private var isRunning = false
 
     init {
         controller.sceneWidthProperty.bind(root.widthProperty())
@@ -54,7 +50,7 @@ class SceneView : View() {
         val frameSize = scene.frameSize
         val gridCellSize = DoubleSize(frameSize.width + framesMargin, frameSize.height + framesMargin)
 
-        val columnsNumber = controller.columnsCount
+        val columnsNumber = controller.columnsNumber
         // VirtualizedFX Grid assumes that frames count is a divider for the columns number
         val emptyFrames = (0 until (columnsNumber - scene.frames.count() % columnsNumber) % columnsNumber).map { null }
         val frames = scene.frames + emptyFrames

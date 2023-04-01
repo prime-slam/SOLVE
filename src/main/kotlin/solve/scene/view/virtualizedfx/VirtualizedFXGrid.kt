@@ -52,11 +52,6 @@ class VirtualizedFXGrid(
     }
 
     fun changeColumnsNumber(newColumnsNumber: Int) {
-        if (newColumnsNumber < 0) {
-            println("Columns number of the scene grid should be a positive number!")
-            return
-        }
-
         val gridItems = virtualGrid.items.toList()
         virtualGrid.clear()
 
@@ -72,6 +67,11 @@ class VirtualizedFXGrid(
             lastRowItems.add(null)
         }
         virtualGrid.items.addRow(lastRowItems)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(1000)
+            System.gc()
+        }
     }
 
     override fun scrollX(newX: Double): Double {
