@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="453.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="solve.importer.view.ImporterView">
+   <top>
+      <VBox prefHeight="133.0" prefWidth="453.0" style="-fx-background-color: 000000;" BorderPane.alignment="CENTER">
+         <children>
+            <Label prefHeight="0.0" prefWidth="141.0" text="Import a directory">
+               <font>
+                  <Font name="Roboto Condensed" size="20.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="24.0" top="24.0" />
+               </VBox.margin>
+            </Label>
+            <BorderPane prefHeight="0.0" prefWidth="453.0" style="-fx-background-color:">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <right>
+                  <MFXButton depthLevel="LEVEL1" prefHeight="31.0" prefWidth="98.0" style="-fx-border-color: #78909C; -fx-font-family: Roboto Consended; -fx-font-weight: BOLD; -fx-border-radius: 4px; -fx-text-fill: #78909C;" text="SELECT" onAction="#changeAction" textFill="#78909c" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets right="24.0" top="15.0" />
+                     </BorderPane.margin>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </MFXButton>
+               </right>
+               <left>
+                  <MFXTextField floatMode="BORDER" floatingText="Select project directory" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="280.0" style="-fx-border-color: #B0BEC5; -fx-font-family: Roboto Consended; -fx-font-size: 15px;" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                     <BorderPane.margin>
+                        <Insets left="24.0" top="16.0" />
+                     </BorderPane.margin>
+                  </MFXTextField>
+               </left>
+            </BorderPane>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </center>
+   <bottom>
+
+      <MFXButton style="-fx-font-family: Roboto Concended; -fx-font-weight: Bold; -fx-text-fill: #78909C;" text="CANCEL" onAction="#cancelAction" textFill="#78909c" BorderPane.alignment="TOP_RIGHT">
+         <BorderPane.margin>
+            <Insets bottom="24.0" right="24.0" />
+         </BorderPane.margin>
+      </MFXButton>
+   </bottom>
+</BorderPane>
