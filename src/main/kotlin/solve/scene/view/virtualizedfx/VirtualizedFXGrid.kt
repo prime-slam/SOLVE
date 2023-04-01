@@ -69,7 +69,7 @@ class VirtualizedFXGrid(
         virtualGrid.items.addRow(lastRowItems)
 
         CoroutineScope(Dispatchers.Main).launch {
-            delay(1000)
+            delay(ColumnsNumberChangeGCCallDelayMillis)
             System.gc()
         }
     }
@@ -110,5 +110,9 @@ class VirtualizedFXGrid(
         virtualGrid.indexedCells.values.forEach { frame ->
             frame.dispose()
         }
+    }
+
+    companion object {
+        private const val ColumnsNumberChangeGCCallDelayMillis = 1000L
     }
 }
