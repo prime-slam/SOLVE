@@ -36,6 +36,7 @@ javafx {
 
 dependencies {
     testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion")
+    implementation("io.github.palexdev:materialfx:11.15.0")
     implementation(kotlin("stdlib-jdk8"))
     implementation("no.tornado:tornadofx:$tornadofxVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonCSVVersion")
