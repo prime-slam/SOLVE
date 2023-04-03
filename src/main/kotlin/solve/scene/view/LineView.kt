@@ -4,7 +4,6 @@ import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
 import javafx.beans.InvalidationListener
-import javafx.beans.WeakInvalidationListener
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.util.Duration
@@ -35,7 +34,6 @@ class LineView(
     private val selectedWidthChangedEventHandler = InvalidationListener {
         updateLineWidth(node)
     }
-    private val weakSelectedWidthChangedEventHandler = WeakInvalidationListener(selectedWidthChangedEventHandler)
 
     init {
         setUpShape(node, line.uid)
@@ -105,11 +103,11 @@ class LineView(
     }
 
     private fun addListeners() {
-        line.layerSettings.selectedWidthProperty.addListener(weakSelectedWidthChangedEventHandler)
+        line.layerSettings.selectedWidthProperty.addListener(selectedWidthChangedEventHandler)
     }
 
     private fun removeListeners() {
-        line.layerSettings.selectedWidthProperty.removeListener(weakSelectedWidthChangedEventHandler)
+        line.layerSettings.selectedWidthProperty.removeListener(selectedWidthChangedEventHandler)
     }
 
     private fun createShape(): Line {
