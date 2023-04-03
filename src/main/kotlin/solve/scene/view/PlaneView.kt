@@ -77,7 +77,6 @@ class PlaneView(
         if (!plane.layerSettings.enabled) {
             return@EventHandler
         }
-        mouse.consume()
         mousePressedFramePosition = frameDrawer.screenPosition
     }
     private val mousePressedCanvasEventHandler = CanvasEventHandler(planeElement, mousePressedHandler)
@@ -86,7 +85,6 @@ class PlaneView(
         if (!plane.layerSettings.enabled) {
             return@EventHandler
         }
-        mouse.consume()
         val mousePressedCanvasPosition = mousePressedFramePosition ?: return@EventHandler
         val maxDistance = 2.0
         if (mousePressedCanvasPosition.distanceTo(frameDrawer.screenPosition) > maxDistance) {
