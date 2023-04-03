@@ -7,6 +7,10 @@ data class CanvasEventHandler<T : Event>(
     val frameElement: FrameElement, val handler: EventHandler<T>
 ) : Comparable<CanvasEventHandler<T>> {
     override fun compareTo(other: CanvasEventHandler<T>): Int {
-        return frameElement.compareTo(other.frameElement)
+        val viewOrderComparison = other.frameElement.viewOrder.compareTo(frameElement.viewOrder)
+        if (viewOrderComparison != 0) {
+            return viewOrderComparison
+        }
+        return other.frameElement.hashCode().compareTo(frameElement.hashCode())
     }
 }
