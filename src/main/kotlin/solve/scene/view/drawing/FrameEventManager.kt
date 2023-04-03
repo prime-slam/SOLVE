@@ -5,8 +5,8 @@ import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 
 class FrameEventManager(canvasNode: Node, private val scaleProperty: DoubleProperty) {
-    private val mousePressedHandlers = sortedSetOf<CanvasEventHandler<MouseEvent>>()
-    private val mouseReleasedHandlers = sortedSetOf<CanvasEventHandler<MouseEvent>>()
+    private val mousePressedHandlers = mutableSetOf<CanvasEventHandler<MouseEvent>>()
+    private val mouseReleasedHandlers = mutableSetOf<CanvasEventHandler<MouseEvent>>()
 
     init {
         canvasNode.addEventHandler(MouseEvent.MOUSE_PRESSED) { mouse ->
@@ -34,7 +34,7 @@ class FrameEventManager(canvasNode: Node, private val scaleProperty: DoublePrope
     }
 
     private fun invokeMouseEventHandlers(handlers: Iterable<CanvasEventHandler<MouseEvent>>, mouse: MouseEvent) {
-        for (handler in handlers) {
+        for (handler in handlers.sorted()) {
             if (isMouseOver(handler.frameElement, mouse)) {
                 handler.handler.handle(mouse)
                 return
