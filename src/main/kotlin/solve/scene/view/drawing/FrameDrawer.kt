@@ -32,12 +32,6 @@ class FrameDrawer(private val canvas: BufferedImageView, private val layersCount
         }
     }
 
-    fun removeElement(element: FrameElement) {
-        element.points.parallelStream().forEach { point ->
-            buffer[point.x + width * point.y][element.viewOrder] = 0
-        }
-    }
-
     fun fullRedraw() {
         redrawPoints(allPairs)
     }
