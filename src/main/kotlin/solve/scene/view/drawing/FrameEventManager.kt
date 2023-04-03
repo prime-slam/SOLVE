@@ -35,11 +35,9 @@ class FrameEventManager(canvasNode: Node, private val scaleProperty: DoublePrope
 
     private fun invokeMouseEventHandlers(handlers: Iterable<CanvasEventHandler<MouseEvent>>, mouse: MouseEvent) {
         for (handler in handlers) {
-            if (mouse.isConsumed) {
-                return
-            }
             if (isMouseOver(handler.frameElement, mouse)) {
                 handler.handler.handle(mouse)
+                return
             }
         }
     }
