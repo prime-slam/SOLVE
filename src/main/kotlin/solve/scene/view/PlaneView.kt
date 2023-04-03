@@ -2,7 +2,6 @@ package solve.scene.view
 
 import javafx.animation.Timeline
 import javafx.beans.InvalidationListener
-import javafx.beans.WeakInvalidationListener
 import javafx.event.EventHandler
 import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
@@ -101,7 +100,6 @@ class PlaneView(
     private val enabledChangedEventHandler = InvalidationListener {
         onEnabledChanged()
     }
-    private val weakEnabledChangedEventHandler = WeakInvalidationListener(enabledChangedEventHandler)
 
     init {
         addListeners()
@@ -177,14 +175,14 @@ class PlaneView(
         frameEventManager.subscribeMousePressed(mousePressedCanvasEventHandler)
         frameEventManager.subscribeMouseReleased(mouseReleasedCanvasEventHandler)
 
-        plane.layerSettings.enabledProperty.addListener(weakEnabledChangedEventHandler)
+        plane.layerSettings.enabledProperty.addListener(enabledChangedEventHandler)
     }
 
     private fun removeListeners() {
         frameEventManager.unsubscribeMousePressed(mousePressedCanvasEventHandler)
         frameEventManager.unsubscribeMouseReleased(mouseReleasedCanvasEventHandler)
 
-        plane.layerSettings.enabledProperty.removeListener(weakEnabledChangedEventHandler)
+        plane.layerSettings.enabledProperty.removeListener(enabledChangedEventHandler)
     }
 
     private fun getColorWithOpacity() = plane.layerSettings.getColorWithOpacity(plane)
