@@ -60,26 +60,26 @@ class SceneView : View() {
             frameSize, framesMargin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer
         )
 
+        val frameViewParameters = FrameViewParameters(frameDataLoadingScope, associationsManager, scene)
+
         val canReuseCache =
             frameViewCache?.size == frameSize && frameViewCache?.canvasBufferDepth == scene.canvasLayersCount
         frameViewCache = if (canReuseCache) frameViewCache!! else FrameViewCache(
             frameSize, scene.canvasLayersCount
-        ) { frame ->
+        ) { frame, parameters ->
             FrameView(
                 frameSize,
                 controller.scaleProperty,
-                frameDataLoadingScope,
-                associationsManager,
-                scene,
                 frameViewCache!!,
                 scene.canvasLayersCount,
+                parameters,
                 frame
             )
         }
         val grid = VirtualizedFXGridProvider.createGrid(
             frames, columnsNumber, gridCellSize, controller.scaleProperty, outOfFramesLayer
         ) { frame ->
-            frameViewCache!!.get(frame)
+            frameViewCache!!.get(frame, frameViewParameters)
         }
 
         bindPositionProperties(grid)
