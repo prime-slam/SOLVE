@@ -7,7 +7,6 @@ import javafx.scene.Group
 import javafx.scene.image.Image
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.javafx.JavaFx
@@ -16,8 +15,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 import solve.scene.model.Landmark
 import solve.scene.model.Layer
-import solve.scene.model.LayerSettings
-import solve.scene.model.OrderManager
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.drawing.BufferedImageView
@@ -33,13 +30,15 @@ import tornadofx.item
 class FrameView(
     val size: DoubleSize,
     private val scale: DoubleProperty,
-    private val coroutineScope: CoroutineScope,
-    private val associationsManager: AssociationsManager,
-    private val orderManager: OrderManager<LayerSettings>,
     private val frameViewStorage: FrameViewStorage,
     canvasLayersCount: Int,
+    parameters: FrameViewParameters,
     frame: VisualizationFrame?
 ) : Group() {
+    private var coroutineScope = parameters.coroutineScope
+    private var associationsManager = parameters.associationsManager
+    private var orderManager = parameters.orderManager
+
     private var drawnLandmarks: Map<Layer, List<LandmarkView>>? = null
     private var drawnImage: Image? = null
     private var currentFrame: VisualizationFrame? = null
@@ -53,7 +52,7 @@ class FrameView(
     init {
         canvas.viewOrder = IMAGE_VIEW_ORDER
         add(canvas)
-        init(frame)
+        init(frame, parameters)
 
         setOnMouseClicked {
             if (it.button != MouseButton.PRIMARY) {
@@ -85,10 +84,17 @@ class FrameView(
         }
     }
 
-    fun init(frame: VisualizationFrame?) {
+    fun init(frame: VisualizationFrame?, parameters: FrameViewParameters) {
         scale.addListener(scaleChangedListener)
         setFrame(frame)
+        updateParameters(parameters)
         scaleImageAndLandmarks(scale.value)
+    }
+
+    private fun updateParameters(parameters: FrameViewParameters) {
+        coroutineScope = parameters.coroutineScope
+        associationsManager = parameters.associationsManager
+        orderManager = parameters.orderManager
     }
 
     private fun getKeypoints(frame: VisualizationFrame): List<Landmark.Keypoint> {
