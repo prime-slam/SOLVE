@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleObjectProperty
 import solve.scene.model.Scene
 import solve.scene.view.SceneView
 import solve.utils.ceilToInt
+import solve.utils.structures.DoublePoint
 import tornadofx.Controller
 import kotlin.math.max
 import kotlin.math.min

@@ -9,6 +9,7 @@ import javafx.scene.shape.Line
 import javafx.util.Duration
 import solve.scene.model.Landmark
 import solve.scene.view.utils.createStrokeTransition
+import solve.utils.structures.DoublePoint
 
 class LineView(
     private val line: Landmark.Line,

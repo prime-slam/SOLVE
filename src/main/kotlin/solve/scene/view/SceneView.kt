@@ -7,7 +7,7 @@ import solve.scene.controller.SceneController
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
-import solve.utils.structures.DoublePoint as DoubleSize
+import solve.utils.structures.DoublePoint
 import tornadofx.View
 import tornadofx.label
 import tornadofx.onChange
@@ -47,7 +47,7 @@ class SceneView : View() {
         }
 
         val frameSize = scene.frameSize
-        val gridCellSize = DoubleSize(frameSize.x + framesMargin, frameSize.y + framesMargin)
+        val gridCellSize = DoublePoint(frameSize.x + framesMargin, frameSize.y + framesMargin)
 
         val columnsNumber = controller.columnsCount
         // VirtualizedFX Grid assumes that frames count is a divider for the columns number
