@@ -7,7 +7,6 @@ import solve.scene.controller.SceneController
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
-import solve.utils.structures.DoublePoint as DoublePoint
 import solve.utils.structures.DoublePoint as DoubleSize
 import tornadofx.View
 import tornadofx.label
