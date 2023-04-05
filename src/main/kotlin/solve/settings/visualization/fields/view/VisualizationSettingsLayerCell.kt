@@ -28,29 +28,7 @@ import tornadofx.*
 
 class VisualizationSettingsLayerCell(
     private val sceneController: SceneController
-) : DragAndDropListCell<LayerSettings>() {
-    companion object {
-        private const val LayerFieldHeight = 30.0
-        private const val LayerFieldNameMaxWidth = 80.0
-        private const val LayerFieldNameFontSize = 13.0
-        private const val LayerFieldEditIconSize = 18.0
-        private const val LayerVisibilityIconSize = 22.0
-        private const val LayerIconWidth = 25.0
-
-        private const val LayerFieldHBoxPaddingRight = -2.5
-        private const val LayerTypeIconPaddingRight = 5.0
-        private const val LayerVisibilityIconPaddingLeft = -5.0
-
-        private val LayerSettingsSpawnPositionOffset = DoublePoint(-135.0, 25.0)
-
-        private val pointLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPointLayerPath)
-        private val lineLayerIconImage = loadResourcesImage(IconsVisualizationSettingsLineLayerPath)
-        private val planeLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPlaneLayerPath)
-        private val editIconImage = loadResourcesImage(IconsVisualizationSettingsEditPath)
-        private val layerVisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerVisiblePath)
-        private val layerInvisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerInvisiblePath)
-    }
-
+) : DragAndDropListCell<LayerSettings>(LayerSettings::class) {
     override fun setAfterDragDropped(
         event: DragEvent,
         thisItemInfo: DragAndDropCellItemInfo<LayerSettings>,
@@ -269,13 +247,31 @@ class VisualizationSettingsLayerCell(
 
         return groupItems.lastIndex - groupIndex
     }
+
+    companion object {
+        private const val LayerFieldHeight = 30.0
+        private const val LayerFieldNameMaxWidth = 80.0
+        private const val LayerFieldNameFontSize = 13.0
+        private const val LayerFieldEditIconSize = 18.0
+        private const val LayerVisibilityIconSize = 22.0
+        private const val LayerIconWidth = 25.0
+
+        private const val LayerFieldHBoxPaddingRight = -2.5
+        private const val LayerTypeIconPaddingRight = 5.0
+        private const val LayerVisibilityIconPaddingLeft = -5.0
+
+        private val LayerSettingsSpawnPositionOffset = DoublePoint(-135.0, 25.0)
+
+        private val pointLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPointLayerPath)
+        private val lineLayerIconImage = loadResourcesImage(IconsVisualizationSettingsLineLayerPath)
+        private val planeLayerIconImage = loadResourcesImage(IconsVisualizationSettingsPlaneLayerPath)
+        private val editIconImage = loadResourcesImage(IconsVisualizationSettingsEditPath)
+        private val layerVisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerVisiblePath)
+        private val layerInvisibleIconImage = loadResourcesImage(IconsVisualizationSettingsLayerInvisiblePath)
+    }
 }
 
 class VisualizationSettingsLayerCellStyle: Stylesheet() {
-    companion object {
-        private val LayerEditButtonBackgroundColor = Color.TRANSPARENT
-        private const val HoveredEditButtonScale = 1.25
-    }
     init {
         button {
             backgroundColor += LayerEditButtonBackgroundColor
@@ -286,5 +282,10 @@ class VisualizationSettingsLayerCellStyle: Stylesheet() {
                 }
             }
         }
+    }
+
+    companion object {
+        private val LayerEditButtonBackgroundColor = Color.TRANSPARENT
+        private const val HoveredEditButtonScale = 1.25
     }
 }
