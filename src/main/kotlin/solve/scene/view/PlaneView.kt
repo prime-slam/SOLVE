@@ -27,7 +27,6 @@ import solve.utils.clearChildren
 import solve.utils.getBlackOrWhiteContrastingTo
 import solve.utils.withReplacedOpacity
 import tornadofx.add
-import solve.utils.structures.DoublePoint as DoublePoint
 
 class PlaneView(
     private val plane: Landmark.Plane,
@@ -65,7 +64,11 @@ class PlaneView(
     private val planeElement = PlaneFrameElement(
         viewOrder,
         plane.points,
-        if (plane.layerSettings.enabled) getColorWithOpacity() else getDisabledPlaneColor()
+        if (plane.layerSettings.enabled) {
+            getColorWithOpacity()
+        } else {
+            getDisabledPlaneColor()
+        }
     )
 
     private var lastEnabledPlaneElementColor = planeElement.color
