@@ -9,8 +9,10 @@ import javafx.scene.input.ClipboardContent
 import javafx.scene.input.DataFormat
 import javafx.scene.input.DragEvent
 import javafx.scene.input.TransferMode
+import kotlin.reflect.KClass
+import kotlin.reflect.cast
 
-abstract class DragAndDropListCell<T> : ListCell<T>() {
+abstract class DragAndDropListCell<T: Any>(private val itemType: KClass<T>) : ListCell<T>() {
     init {
         contentDisplay = ContentDisplay.CENTER
         alignment = Pos.CENTER
@@ -87,8 +89,9 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
 
     fun onDragDropped(event: DragEvent) {
         if (isListViewCellSource(listView, event.gestureSource)) {
-            val droppedCellItem =
-                (event.gestureSource as? DragAndDropListCell<Any>)?.item as? T ?: return
+            val droppedCellItem = itemType.cast(
+                (event.gestureSource as? DragAndDropListCell<*>)?.item ?: return
+            )
             if (!isAbleToDropItem(item, droppedCellItem)) {
                 return
             }
@@ -108,7 +111,7 @@ abstract class DragAndDropListCell<T> : ListCell<T>() {
     override fun updateItem(item: T, empty: Boolean) {
         super.updateItem(item, empty)
 
-        if (item != null && !empty) {
+        if (!empty) {
             val itemGraphic = createItemCellGraphic(item)
             if (itemGraphic != null) {
                 graphic = itemGraphic
