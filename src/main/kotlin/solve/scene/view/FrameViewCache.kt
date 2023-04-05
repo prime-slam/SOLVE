@@ -1,7 +1,7 @@
 package solve.scene.view
 
 import solve.scene.model.VisualizationFrame
-import solve.utils.structures.Size as DoubleSize
+import solve.utils.structures.DoublePoint as DoubleSize
 
 interface FrameViewStorage {
     fun store(frameView: FrameView)

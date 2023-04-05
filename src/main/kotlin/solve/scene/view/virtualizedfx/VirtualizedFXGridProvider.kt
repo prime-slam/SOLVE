@@ -10,7 +10,7 @@ import solve.scene.view.FrameView
 import solve.scene.view.Grid
 import solve.scene.view.GridProvider
 import solve.scene.view.association.OutOfFramesLayer
-import solve.utils.structures.Size as DoubleSize
+import solve.utils.structures.DoublePoint as DoubleSize
 
 object VirtualizedFXGridProvider : GridProvider {
     override fun createGrid(
@@ -23,7 +23,7 @@ object VirtualizedFXGridProvider : GridProvider {
     ): Grid {
         val gridData = ObservableGrid.fromList(data, columnsNumber)
         val grid = VirtualGrid(gridData) { item -> FrameViewAdapter(cellFactory(item)) }
-        grid.cellSize = Size(cellSize.width * scale.value, cellSize.height * scale.value)
+        grid.cellSize = Size(cellSize.x * scale.value, cellSize.y * scale.value)
         grid.prefHeight = Int.MAX_VALUE.toDouble()
 
         val vsp = wrapGridWithVsp(grid, outOfFramesLayer)

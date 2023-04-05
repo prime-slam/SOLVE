@@ -14,7 +14,7 @@ import javafx.scene.Node
 import javafx.scene.input.ScrollEvent
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.Grid
-import solve.utils.structures.Size as DoubleSize
+import solve.utils.structures.DoublePoint as DoubleSize
 import tornadofx.onChange
 
 class VirtualizedFXGrid(
@@ -37,7 +37,7 @@ class VirtualizedFXGrid(
         scrollX(0.0)
         scrollY(0.0)
         val newScale = scaleProperty.value
-        virtualGrid.cellSize = Size(cellSize.width * newScale, cellSize.height * newScale)
+        virtualGrid.cellSize = Size(cellSize.x * newScale, cellSize.y * newScale)
     }
 
     init {

@@ -24,7 +24,7 @@ class SceneController : Controller() {
 
     private val minScale
         get() = max(
-            defaultMinScale, sceneWidthProperty.value / ((scene.frameSize.width + SceneView.framesMargin) * columnsCount)
+            defaultMinScale, sceneWidthProperty.value / ((scene.frameSize.x + SceneView.framesMargin) * columnsCount)
         )
 
     val xProperty = SimpleDoubleProperty(defaultX)
