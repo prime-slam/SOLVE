@@ -25,6 +25,7 @@ import solve.scene.view.drawing.FrameEventManager
 import solve.scene.view.utils.createColorTimeline
 import solve.utils.clearChildren
 import solve.utils.getBlackOrWhiteContrastingTo
+import solve.utils.structures.DoublePoint
 import solve.utils.withReplacedOpacity
 import tornadofx.add
 

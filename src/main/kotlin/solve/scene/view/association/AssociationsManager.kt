@@ -3,8 +3,8 @@ package solve.scene.view.association
 import javafx.beans.property.DoubleProperty
 import solve.scene.model.Landmark
 import solve.scene.model.VisualizationFrame
-import tornadofx.add
 import solve.utils.structures.DoublePoint as DoubleSize
+import tornadofx.add
 
 class AssociationsManager(
     private val frameSize: DoubleSize,
