@@ -39,7 +39,7 @@ class SceneController : Controller() {
             scaleProperty.value = value
         }
 
-    private val minScaleProperty = SimpleDoubleProperty(DefaultMinScale)
+    private val minScaleProperty = SimpleDoubleProperty(MinScale)
     var minScale: Double
         get() = minScaleProperty.value
         set(value) {
@@ -51,7 +51,7 @@ class SceneController : Controller() {
             minScaleProperty.value = value
         }
 
-    private val maxScaleProperty = SimpleDoubleProperty(DefaultMaxScale)
+    private val maxScaleProperty = SimpleDoubleProperty(MaxScale)
     var maxScale: Double
         get() = maxScaleProperty.value
         set(value) {
@@ -135,11 +135,11 @@ class SceneController : Controller() {
     }
 
     companion object {
-        const val DefaultMinScale = 0.2
-        const val DefaultMaxScale = 20.0
+        const val MinScale = 0.2
+        const val MaxScale = 10.0
 
         const val DefaultColumnsNumber = 4
-        const val MaxColumnsNumber = 10
+        const val MaxColumnsNumber = 5
 
         private const val DefaultX = 0.0
         private const val DefaultY = 0.0

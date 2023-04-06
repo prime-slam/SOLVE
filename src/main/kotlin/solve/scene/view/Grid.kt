@@ -18,5 +18,7 @@ interface Grid {
 
     fun setOnMouseWheel(handler: EventHandler<ScrollEvent>)
 
+    fun changeColumnsNumber(columnsNumber: Int)
+
     fun dispose()
 }

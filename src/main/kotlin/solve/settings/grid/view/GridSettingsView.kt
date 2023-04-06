@@ -54,10 +54,10 @@ class GridSettingsView: View() {
 
     private fun buildScaleRangeSlider(): RangeSlider {
         val rangeSlider = RangeSlider(
-            GridSettingsController.MinScale,
-            GridSettingsController.MaxScale,
-            SceneController.DefaultMinScale,
-            SceneController.DefaultMaxScale
+            SceneController.MinScale,
+            SceneController.MaxScale,
+            SceneController.MinScale,
+            SceneController.MaxScale
         )
         rangeSlider.isShowTickLabels = true
 

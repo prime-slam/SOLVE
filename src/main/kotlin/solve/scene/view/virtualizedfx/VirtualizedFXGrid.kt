@@ -12,10 +12,6 @@ import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.input.ScrollEvent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.Grid
 import solve.utils.structures.Size as DoubleSize
@@ -51,27 +47,22 @@ class VirtualizedFXGrid(
         }
     }
 
-    fun changeColumnsNumber(newColumnsNumber: Int) {
+    override fun changeColumnsNumber(columnsNumber: Int) {
         val gridItems = virtualGrid.items.toList()
         virtualGrid.clear()
 
-        val fullRowsNumber = gridItems.lastIndex / newColumnsNumber
+        val fullRowsNumber = gridItems.lastIndex / columnsNumber
         for (i in 0 until fullRowsNumber) {
-            val addingRowItems = gridItems.subList(i * newColumnsNumber, (i + 1) * newColumnsNumber)
+            val addingRowItems = gridItems.subList(i * columnsNumber, (i + 1) * columnsNumber)
             virtualGrid.items.addRow(addingRowItems)
         }
 
-        val firstRemainingItemIndex = fullRowsNumber * newColumnsNumber
+        val firstRemainingItemIndex = fullRowsNumber * columnsNumber
         val lastRowItems = gridItems.slice(firstRemainingItemIndex..gridItems.lastIndex).toMutableList()
-        repeat(newColumnsNumber - lastRowItems.count()) {
+        repeat(columnsNumber - lastRowItems.count()) {
             lastRowItems.add(null)
         }
         virtualGrid.items.addRow(lastRowItems)
-
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(ColumnsNumberChangeGCCallDelayMillis)
-            System.gc()
-        }
     }
 
     override fun scrollX(newX: Double): Double {
@@ -110,9 +101,5 @@ class VirtualizedFXGrid(
         virtualGrid.indexedCells.values.forEach { frame ->
             frame.dispose()
         }
-    }
-
-    companion object {
-        private const val ColumnsNumberChangeGCCallDelayMillis = 1000L
     }
 }

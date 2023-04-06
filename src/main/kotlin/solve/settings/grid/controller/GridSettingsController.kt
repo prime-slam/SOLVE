@@ -17,9 +17,4 @@ class GridSettingsController: Controller() {
     fun setMaxScale(maxScale: Double) {
         sceneController.maxScale = maxScale
     }
-
-    companion object {
-        const val MinScale = 0.2
-        const val MaxScale = 10.0
-    }
 }
