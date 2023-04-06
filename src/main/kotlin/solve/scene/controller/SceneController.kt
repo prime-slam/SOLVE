@@ -24,7 +24,7 @@ class SceneController : Controller() {
 
     private val minScale
         get() = max(
-            defaultMinScale, sceneWidthProperty.value / ((scene.frameSize.x + SceneView.framesMargin) * columnsCount)
+            MinScale, sceneWidthProperty.value / ((scene.frameSize.x + SceneView.framesMargin) * columnsCount)
         )
 
     val xProperty = SimpleDoubleProperty(defaultX)
@@ -57,7 +57,7 @@ class SceneController : Controller() {
         }
     }
 
-    fun zoomIn(mousePosition: DoublePoint) = zoom(min(scaleProperty.value * scaleFactor, maxScale), mousePosition)
+    fun zoomIn(mousePosition: DoublePoint) = zoom(min(scaleProperty.value * scaleFactor, MaxScale), mousePosition)
 
     fun zoomOut(mousePosition: DoublePoint) = zoom(max(scaleProperty.value / scaleFactor, min(minScale, scaleProperty.value)), mousePosition)
 
@@ -77,8 +77,8 @@ class SceneController : Controller() {
 
         private const val defaultScale = 1.0
         private const val scaleFactor = 1.15
-        private const val maxScale = 20.0
-        private const val defaultMinScale = 0.2
+        const val MaxScale = 20.0
+        const val MinScale = 0.2
 
         private const val maxColumnsCount = 5
 

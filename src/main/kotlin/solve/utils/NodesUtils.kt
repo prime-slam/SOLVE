@@ -42,3 +42,13 @@ fun Node.createSnapshot(): Image {
         nodeSnapshot.height.floor()
     )
 }
+
+fun Node.scale(value: Double) {
+    if (value <= 0) {
+        println("Scale value should be a positive number!")
+        return
+    }
+
+    scaleX = value
+    scaleY = value
+}

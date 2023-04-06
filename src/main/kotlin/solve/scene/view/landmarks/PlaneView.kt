@@ -181,10 +181,9 @@ class PlaneView(
     private fun getDisabledPlaneColor() = getColorWithOpacity().withReplacedOpacity(LayerSettings.MinOpacity)
 
     private fun onEnabledChanged() {
-        lateinit var planeVisibilityColor: Color
-
         planeUIDLabel.enabled = plane.layerSettings.enabled
-        planeVisibilityColor = if (plane.layerSettings.enabled) {
+
+        val planeVisibilityColor: Color = if (plane.layerSettings.enabled) {
             lastEnabledPlaneElementColor
         } else {
             Color.TRANSPARENT
