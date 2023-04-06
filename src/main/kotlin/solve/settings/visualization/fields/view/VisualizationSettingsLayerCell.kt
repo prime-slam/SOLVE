@@ -251,10 +251,10 @@ class VisualizationSettingsLayerCell(
     private fun getItemRenderIndex(
         itemInfo: DragAndDropCellItemInfo<LayerSettings>
     ): Int {
-        val groupItems = if (itemInfo.item is LayerSettings.PlaneLayerSettings) {
-            listView.items.filtered { it is LayerSettings.PlaneLayerSettings }
+        val groupItems = if (itemInfo.item.usesCanvas) {
+            listView.items.filtered { it.usesCanvas }
         } else {
-            listView.items.filtered { it !is LayerSettings.PlaneLayerSettings }
+            listView.items.filtered { !it.usesCanvas }
         }
         val groupIndex = groupItems.indexOf(itemInfo.item)
 

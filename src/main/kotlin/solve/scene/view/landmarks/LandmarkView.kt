@@ -1,4 +1,4 @@
-package solve.scene.view
+package solve.scene.view.landmarks
 
 import javafx.beans.InvalidationListener
 import javafx.collections.SetChangeListener
@@ -8,6 +8,8 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
 import javafx.util.Duration
 import solve.scene.model.Landmark
+import solve.scene.view.HIGHLIGHTING_VIEW_ORDER_GAP
+import solve.scene.view.LANDMARKS_VIEW_ORDER
 import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameEventManager
 import tornadofx.ChangeListener

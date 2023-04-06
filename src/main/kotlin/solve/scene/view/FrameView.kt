@@ -21,6 +21,7 @@ import solve.scene.view.drawing.BufferedImageView
 import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameEventManager
 import solve.scene.view.drawing.ImageFrameElement
+import solve.scene.view.landmarks.LandmarkView
 import solve.utils.structures.DoublePoint as DoubleSize
 import tornadofx.action
 import tornadofx.add

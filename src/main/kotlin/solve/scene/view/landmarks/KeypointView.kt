@@ -1,4 +1,4 @@
-package solve.scene.view
+package solve.scene.view.landmarks
 
 import javafx.beans.InvalidationListener
 import javafx.scene.paint.Color

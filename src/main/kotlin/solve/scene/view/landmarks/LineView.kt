@@ -1,4 +1,4 @@
-package solve.scene.view
+package solve.scene.view.landmarks
 
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
