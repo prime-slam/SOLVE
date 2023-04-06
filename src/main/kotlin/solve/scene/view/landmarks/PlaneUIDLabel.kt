@@ -11,9 +11,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
+import solve.scene.controller.SceneController
 import solve.scene.model.Landmark
 import solve.utils.clearChildren
 import solve.utils.getBlackOrWhiteContrastingTo
+import solve.utils.scale
 import solve.utils.structures.DoublePoint
 import tornadofx.ChangeListener
 import tornadofx.add
@@ -48,24 +50,6 @@ class PlaneUIDLabel(private val plane: Landmark.Plane) {
     }
     private val weakEnabledChangedEventHandler = WeakChangeListener(enabledChangedEventHandler)
 
-    private fun calculatePlaneCenterPoint(): DoublePoint {
-        val centroidPoint = DoublePoint(plane.points.map { it.x }.average(), plane.points.map { it.y }.average())
-        val nearestToCentroid = plane.points.minBy { point ->
-            DoublePoint(point.x.toDouble(), point.y.toDouble()).distanceTo(centroidPoint)
-        }
-
-        return DoublePoint(nearestToCentroid.x.toDouble(), nearestToCentroid.y.toDouble())
-    }
-
-    private fun buildUIDLabel(): Label {
-        val uidLabel = Label(plane.uid.toString())
-        uidLabel.textFill = getBlackOrWhiteContrastingTo(plane.layerSettings.getColor(plane))
-        uidLabel.font = Font.font(null, FontWeight.BOLD, UIDLabelFontSize)
-        uidLabel.isVisible = false
-
-        return uidLabel
-    }
-
     init {
         addListeners()
     }
@@ -98,9 +82,31 @@ class PlaneUIDLabel(private val plane: Landmark.Plane) {
 
     fun updatePosition(scale: Double) {
         val labelCoordinates = planeCenterPoint * scale
+        uidLabel.scale(calculateUIDLabelScale(scale))
         uidLabelNode.layoutX = labelCoordinates.x - (uidLabel.width) / 2.0
         uidLabelNode.layoutY = labelCoordinates.y - (uidLabel.height) / 2.0
     }
+
+    private fun calculatePlaneCenterPoint(): DoublePoint {
+        val centroidPoint = DoublePoint(plane.points.map { it.x }.average(), plane.points.map { it.y }.average())
+        val nearestToCentroid = plane.points.minBy { point ->
+            DoublePoint(point.x.toDouble(), point.y.toDouble()).distanceTo(centroidPoint)
+        }
+
+        return DoublePoint(nearestToCentroid.x.toDouble(), nearestToCentroid.y.toDouble())
+    }
+
+    private fun buildUIDLabel(): Label {
+        val uidLabel = Label(plane.uid.toString())
+        uidLabel.textFill = getBlackOrWhiteContrastingTo(plane.layerSettings.getColor(plane))
+        uidLabel.font = Font.font(null, FontWeight.BOLD, UIDLabelFontSize)
+        uidLabel.isVisible = false
+
+        return uidLabel
+    }
+
+    private fun calculateUIDLabelScale(sceneScale: Double) =
+        (1 - SceneController.MinScale / sceneScale * UIDLabelScaleChangeCoefficient)
 
     private fun addListeners() {
         enabledProperty.addListener(weakEnabledChangedEventHandler)
@@ -108,7 +114,8 @@ class PlaneUIDLabel(private val plane: Landmark.Plane) {
 
     companion object {
         private const val UIDLabelFontSize = 12.0
+        private const val UIDLabelScaleChangeCoefficient = 0.8 // Should be in the (0, 1) range.
 
-        private const val PlaneUIDLabelSpawnDelayMillis = 25L
+        private const val PlaneUIDLabelSpawnDelayMillis = 50L
     }
 }
