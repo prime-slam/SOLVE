@@ -38,7 +38,6 @@ class SceneView : View() {
         currentGrid?.dispose()
         currentGrid = null
         root.children.clear()
-        System.gc() // Necessary for timely garbage collection of the old scene.
 
         val scene = controller.sceneProperty.value
 
