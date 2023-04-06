@@ -1,6 +1,7 @@
 package solve.settings.visualization.fields.view
 
 import javafx.application.Platform
+import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -80,6 +81,20 @@ class VisualizationSettingsLayerCell(
         return bothArePlanes || bothAreNotPlanes
     }
 
+    override fun setOnNotAbleToDropItem(
+        event: DragEvent,
+        thisItemInfo: DragAndDropCellItemInfo<LayerSettings>,
+        droppedItemInfo: DragAndDropCellItemInfo<LayerSettings>?
+    ) {
+        if (droppedItemInfo != null && !isAbleToDropItem(thisItemInfo.item, droppedItemInfo.item)) {
+            val hintPopOver = PopOver(label("Plane and non-plane layers cannot be swapped!") {
+                padding = Insets(0.0, 10.0, 0.0, 10.0)
+            })
+            hintPopOver.arrowLocation = PopOver.ArrowLocation.RIGHT_TOP
+            hintPopOver.show(this)
+        }
+    }
+
     private fun createLayerIconNode(layerType: LandmarkType): Node? {
         val layerIcon = getLayerIcon(layerType)
         layerIcon ?: return null
@@ -103,7 +118,7 @@ class VisualizationSettingsLayerCell(
         graphic = editImageViewIcon
         isPickOnBounds = false
 
-        initializePopOver(this, this, layerType)
+        initializeLayerSettingsPopOver(this, this, layerType)
         alignment = Pos.CENTER_RIGHT
     }
 
@@ -136,7 +151,7 @@ class VisualizationSettingsLayerCell(
         return labelPosition - popOverNodeSizeOffsetVector + LayerSettingsSpawnPositionOffset
     }
 
-    private fun initializePopOver(
+    private fun initializeLayerSettingsPopOver(
         layerSettingsButton: Button,
         spawnNode: Node,
         layerType: LandmarkType

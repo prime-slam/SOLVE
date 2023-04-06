@@ -89,29 +89,31 @@ abstract class DragAndDropListCell<T: Any>(private val itemType: KClass<T>) : Li
 
     fun onDragDropped(event: DragEvent) {
         if (isListViewCellSource(listView, event.gestureSource)) {
+            val thisItemInfo = createItemInfo(item)
+
             val droppedCellItem = itemType.cast(
-                (event.gestureSource as? DragAndDropListCell<*>)?.item ?: return
+                (event.gestureSource as? DragAndDropListCell<*>)?.item ?:
+                    setOnNotAbleToDropItem(event, thisItemInfo, null).also { return }
             )
             if (!isAbleToDropItem(item, droppedCellItem)) {
+                setOnNotAbleToDropItem(event, thisItemInfo, createItemInfo(droppedCellItem))
                 return
             }
             val droppedCellIndex = listView.items.indexOf(droppedCellItem)
-            val thisItem = item
 
             listView.items[droppedCellIndex] = item
             listView.items[index] = droppedCellItem
 
-            val thisItemInfo = createItemInfo(thisItem)
             val droppedItemInfo = createItemInfo(droppedCellItem)
 
             setAfterDragDropped(event, thisItemInfo, droppedItemInfo)
         }
     }
 
-    override fun updateItem(item: T, empty: Boolean) {
+    override fun updateItem(item: T?, empty: Boolean) {
         super.updateItem(item, empty)
 
-        if (!empty) {
+        if (item != null && !empty) {
             val itemGraphic = createItemCellGraphic(item)
             if (itemGraphic != null) {
                 graphic = itemGraphic
@@ -130,6 +132,11 @@ abstract class DragAndDropListCell<T: Any>(private val itemType: KClass<T>) : Li
     protected open fun setOnDragEntered(event: DragEvent, itemInfo: DragAndDropCellItemInfo<T>) { }
 
     protected open fun setOnDragExited(event: DragEvent, itemInfo: DragAndDropCellItemInfo<T>) { }
+
+    protected open fun setOnNotAbleToDropItem(
+        event: DragEvent,
+        thisItemInfo: DragAndDropCellItemInfo<T>,
+        droppedItemInfo: DragAndDropCellItemInfo<T>?) { }
 
     protected open fun setAfterDragDropped(
         event: DragEvent,
