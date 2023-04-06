@@ -1,10 +1,13 @@
 package solve.settings.visualization.popover
 
+import javafx.beans.InvalidationListener
+import javafx.beans.WeakInvalidationListener
+import javafx.beans.value.ChangeListener
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ColorPicker
+import javafx.scene.control.Slider
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
-import tornadofx.*
 
 fun buildLandmarkColorPicker(
     layerSettings: LayerSettings,
@@ -16,9 +19,13 @@ fun buildLandmarkColorPicker(
     colorPicker.setOnAction {
         layerSettings.commonColor = colorPicker.value
     }
-    sceneController.sceneProperty.onChange {
+
+    val sceneChangedEventHandler = InvalidationListener {
         colorPicker.value = layerSettings.commonColor
     }
+    val weakSceneChangedEventHandler = WeakInvalidationListener(sceneChangedEventHandler)
+
+    sceneController.sceneProperty.addListener(weakSceneChangedEventHandler)
 
     return colorPicker
 }
@@ -29,9 +36,33 @@ fun buildLandmarkUseOneColorCheckBox(
     val checkBox = CheckBox()
 
     checkBox.isSelected = layerSettings.useCommonColor
-    checkBox.selectedProperty().onChange { useCommonColor ->
+
+    val checkBoxValueChangedEventHandler = ChangeListener { _, _, useCommonColor ->
         layerSettings.useCommonColor = useCommonColor
     }
 
+    checkBox.selectedProperty().addListener(checkBoxValueChangedEventHandler)
+
     return checkBox
+}
+
+fun buildSizeSlider(
+    initialSizeValue: Double,
+    minValue: Double,
+    maxValue: Double,
+    changeListener: ChangeListener<Number>
+): Slider {
+    val slider = Slider()
+
+    if (initialSizeValue !in minValue..maxValue) {
+        throw IllegalArgumentException("The initial selected size value is out of selection range!")
+    }
+    slider.min = minValue
+    slider.max = maxValue
+    slider.value = initialSizeValue
+    slider.isShowTickLabels = true
+
+    slider.valueProperty().addListener(changeListener)
+
+    return slider
 }
