@@ -34,8 +34,10 @@ class VisualizationSettingsLayersView: View() {
         }
         fieldsListView.setOnDragDropped { event ->
             sortFieldsListViewCellsInItemsOrder()
-            if (isListViewCellSource(fieldsListView, event.gestureSource)) {
-                fieldListViewCells.last { it.item != null }.onDragDropped(event)
+            val lastFieldListViewCell = fieldListViewCells.last { it.item != null }
+            if (isListViewCellSource(fieldsListView, event.gestureSource) &&
+                (event.gestureSource as VisualizationSettingsLayerCell) != lastFieldListViewCell) {
+                lastFieldListViewCell.onDragDropped(event)
             }
 
             event.isDropCompleted = true
