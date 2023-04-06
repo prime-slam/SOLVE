@@ -18,7 +18,7 @@ class VisualizationSettingsLayersController : Controller() {
     private fun initializeSceneLayersIndices(
         layers: List<LayerSettings>
     ) {
-        var firstPlaneLayerSettingsIndex = layers.indexOfFirst { it is LayerSettings.PlaneLayerSettings }
+        var firstPlaneLayerSettingsIndex = layers.indexOfFirst { it.usesCanvas }
         if (firstPlaneLayerSettingsIndex == -1) {
             firstPlaneLayerSettingsIndex = layers.count()
         }

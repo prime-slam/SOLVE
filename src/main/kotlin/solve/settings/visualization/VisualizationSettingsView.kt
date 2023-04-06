@@ -17,9 +17,9 @@ class VisualizationSettingsView: View() {
     private class FramesLayerSettingsComparator: Comparator<LayerSettings> {
         override fun compare(firstLayerSettings: LayerSettings, secondLayerSettings: LayerSettings): Int {
             val layersSettings = listOf(firstLayerSettings, secondLayerSettings)
-            return if (layersSettings.any { it is LayerSettings.PlaneLayerSettings } &&
-                layersSettings.any { it !is LayerSettings.PlaneLayerSettings }) {
-                if (firstLayerSettings is LayerSettings.PlaneLayerSettings) 1 else -1
+            return if (layersSettings.any { it.usesCanvas } &&
+                layersSettings.any { !it.usesCanvas }) {
+                if (firstLayerSettings.usesCanvas) 1 else -1
             } else {
                 firstLayerSettings.layerName.compareTo(secondLayerSettings.layerName)
             }

@@ -1,20 +1,11 @@
-package solve.scene.view
+package solve.scene.view.landmarks
 
 import javafx.animation.Timeline
 import javafx.beans.InvalidationListener
 import javafx.event.EventHandler
-import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.HBox
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
-import javafx.scene.text.FontWeight
 import javafx.util.Duration
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.coroutines.launch
 import solve.scene.model.Landmark
 import solve.scene.model.LayerSettings
 import solve.scene.model.Point
@@ -23,11 +14,8 @@ import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameElement
 import solve.scene.view.drawing.FrameEventManager
 import solve.scene.view.utils.createColorTimeline
-import solve.utils.clearChildren
-import solve.utils.getBlackOrWhiteContrastingTo
 import solve.utils.structures.DoublePoint
 import solve.utils.withReplacedOpacity
-import tornadofx.add
 
 class PlaneView(
     private val plane: Landmark.Plane,
@@ -36,13 +24,6 @@ class PlaneView(
     viewOrder: Int,
     scale: Double
 ) : LandmarkView(scale, viewOrder, plane) {
-    companion object {
-        private const val UIDLabelFontSize = 12.0
-        private const val OpacityUnhighlightCoefficient = 0.5
-
-        private const val PlaneUIDLabelSpawnDelayMillis = 25L
-    }
-
     private class PlaneFrameElement(viewOrder: Int, override val points: List<Point>, initialColor: Color) :
         FrameElement(viewOrder) {
         var color: Color = initialColor
@@ -54,13 +35,9 @@ class PlaneView(
         override fun getColor(point: Point) = color
     }
 
-    private var planeUIDLabel: Label? = null
-    override val node = HBox().also { it.isMouseTransparent = true }
+    private var planeUIDLabel = PlaneUIDLabel(plane)
 
-    private var planeCenterPoint: DoublePoint? = null
-    private val uidLabelCoordinates: DoublePoint
-        get() = (planeCenterPoint ?: DoublePoint(0.0, 0.0)) * scale
-    private var isShowingUIDLabel = false
+    override val node = planeUIDLabel.uidLabelNode
 
     private val planeElement = PlaneFrameElement(
         viewOrder,
@@ -76,7 +53,7 @@ class PlaneView(
 
     private var mousePressedFramePosition: DoublePoint? = null
 
-    private val mousePressedHandler = EventHandler<MouseEvent> { mouse ->
+    private val mousePressedHandler = EventHandler<MouseEvent> {
         if (!plane.layerSettings.enabled) {
             return@EventHandler
         }
@@ -84,7 +61,7 @@ class PlaneView(
     }
     private val mousePressedCanvasEventHandler = CanvasEventHandler(planeElement, mousePressedHandler)
 
-    private val mouseReleasedHandler = EventHandler<MouseEvent> { mouse ->
+    private val mouseReleasedHandler = EventHandler<MouseEvent> {
         if (!plane.layerSettings.enabled) {
             return@EventHandler
         }
@@ -136,15 +113,15 @@ class PlaneView(
     }
 
     override fun scaleChanged() {
-        if (isShowingUIDLabel) {
-            updateUIDLabelPosition()
+        if (planeUIDLabel.isShowingLabel) {
+            planeUIDLabel.updatePosition(scale)
         }
     }
 
     private var highlightingAnimation: Timeline? = null
 
     override fun highlightShape(duration: Duration) {
-        showUIDLabel()
+        planeUIDLabel.show(scale)
 
         val initialColor = getColorWithOpacity()
         val targetColor = initialColor.withReplacedOpacity(initialColor.opacity * OpacityUnhighlightCoefficient)
@@ -159,7 +136,7 @@ class PlaneView(
     }
 
     override fun unhighlightShape(duration: Duration) {
-        hideUIDLabel()
+        planeUIDLabel.hide()
 
         highlightingAnimation?.stop()
         highlightingAnimation = null
@@ -206,71 +183,17 @@ class PlaneView(
     private fun onEnabledChanged() {
         lateinit var planeVisibilityColor: Color
 
-        if (plane.layerSettings.enabled) {
-            planeVisibilityColor = lastEnabledPlaneElementColor
-            planeUIDLabel?.isVisible = true
+        planeUIDLabel.enabled = plane.layerSettings.enabled
+        planeVisibilityColor = if (plane.layerSettings.enabled) {
+            lastEnabledPlaneElementColor
         } else {
-            planeVisibilityColor = Color.TRANSPARENT
-            planeUIDLabel?.isVisible = false
+            Color.TRANSPARENT
         }
 
         redrawPlaneWithColor(planeVisibilityColor)
     }
 
-    private fun createUIDLabel(): Label {
-        val uidLabel = Label(plane.uid.toString())
-        uidLabel.textFill = getBlackOrWhiteContrastingTo(plane.layerSettings.getColor(plane))
-        uidLabel.font = Font.font(null, FontWeight.BOLD, UIDLabelFontSize)
-
-        return uidLabel
-    }
-
-    private fun calculatePlaneCenterPoint(): DoublePoint {
-        val centroidPoint = DoublePoint(plane.points.map { it.x }.average(), plane.points.map { it.y }.average())
-        val nearestToCentroid = plane.points.minBy { point ->
-            DoublePoint(point.x.toDouble(), point.y.toDouble()).distanceTo(centroidPoint)
-        }
-
-        return DoublePoint(nearestToCentroid.x.toDouble(), nearestToCentroid.y.toDouble())
-    }
-
-    private fun updateUIDLabelPosition() {
-        node.layoutX = uidLabelCoordinates.x - (planeUIDLabel?.width ?: 0.0) / 2.0
-        node.layoutY = uidLabelCoordinates.y - (planeUIDLabel?.height ?: 0.0) / 2.0
-    }
-
-    private fun hideUIDLabel() {
-        if (!isShowingUIDLabel) {
-            return
-        }
-
-        node.clearChildren()
-        isShowingUIDLabel = false
-    }
-
-    private fun showUIDLabel() {
-        if (isShowingUIDLabel) {
-            return
-        }
-
-        if (planeCenterPoint == null) {
-            planeCenterPoint = calculatePlaneCenterPoint()
-        }
-        if (planeUIDLabel == null) {
-            planeUIDLabel = createUIDLabel()
-        }
-        val uidLabel = planeUIDLabel ?: return
-
-        uidLabel.isVisible = false
-        node.add(this.planeUIDLabel ?: return)
-
-        // Without delay the spawn coordinates of the uid label are incorrect.
-        val uidSpawnCoroutineScope = CoroutineScope(Dispatchers.JavaFx)
-        uidSpawnCoroutineScope.launch(Dispatchers.JavaFx) {
-            delay(PlaneUIDLabelSpawnDelayMillis)
-            updateUIDLabelPosition()
-            uidLabel.isVisible = true
-            isShowingUIDLabel = true
-        }
+    companion object {
+        private const val OpacityUnhighlightCoefficient = 0.5
     }
 }
