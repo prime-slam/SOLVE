@@ -48,21 +48,7 @@ class VirtualizedFXGrid(
     }
 
     override fun changeColumnsNumber(columnsNumber: Int) {
-        val gridItems = virtualGrid.items.toList()
-        virtualGrid.clear()
-
-        val fullRowsNumber = gridItems.lastIndex / columnsNumber
-        for (i in 0 until fullRowsNumber) {
-            val addingRowItems = gridItems.subList(i * columnsNumber, (i + 1) * columnsNumber)
-            virtualGrid.items.addRow(addingRowItems)
-        }
-
-        val firstRemainingItemIndex = fullRowsNumber * columnsNumber
-        val lastRowItems = gridItems.slice(firstRemainingItemIndex..gridItems.lastIndex).toMutableList()
-        repeat(columnsNumber - lastRowItems.count()) {
-            lastRowItems.add(null)
-        }
-        virtualGrid.items.addRow(lastRowItems)
+        virtualGrid.items = virtualGrid.items.toList().toGridData(columnsNumber)
     }
 
     override fun scrollX(newX: Double): Double {
