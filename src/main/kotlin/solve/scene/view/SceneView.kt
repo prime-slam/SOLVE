@@ -15,7 +15,7 @@ import tornadofx.vbox
 class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
-    private var currentGrid: Grid? = null
+    var currentGrid: Grid? = null
     private var frameViewCache: FrameViewCache? = null
 
     override val root = vbox {
