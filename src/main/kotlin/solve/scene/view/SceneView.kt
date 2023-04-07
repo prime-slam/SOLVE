@@ -50,9 +50,6 @@ class SceneView : View() {
         val gridCellSize = DoubleSize(frameSize.width + framesMargin, frameSize.height + framesMargin)
 
         val columnsNumber = controller.columnsNumber
-        // VirtualizedFX Grid assumes that frames count is a divider for the columns number
-        val emptyFrames = (0 until (columnsNumber - scene.frames.count() % columnsNumber) % columnsNumber).map { null }
-        val frames = scene.frames + emptyFrames
 
         val outOfFramesLayer = OutOfFramesLayer()
         val associationsManager = AssociationsManager(

@@ -1,7 +1,6 @@
 package solve.scene.view.virtualizedfx
 
 import io.github.palexdev.mfxcore.base.beans.Size
-import io.github.palexdev.mfxcore.collections.ObservableGrid
 import io.github.palexdev.virtualizedfx.grid.VirtualGrid
 import io.github.palexdev.virtualizedfx.utils.VSPUtils
 import javafx.beans.property.DoubleProperty
@@ -21,8 +20,9 @@ object VirtualizedFXGridProvider : GridProvider {
         outOfFramesLayer: OutOfFramesLayer,
         cellFactory: (VisualizationFrame?) -> FrameView
     ): Grid {
-        val gridData = ObservableGrid.fromList(data, columnsNumber)
+        val gridData = data.toGridData(columnsNumber)
         val grid = VirtualGrid(gridData) { item -> FrameViewAdapter(cellFactory(item)) }
+
         grid.cellSize = Size(cellSize.width * scale.value, cellSize.height * scale.value)
         grid.prefHeight = Int.MAX_VALUE.toDouble()
 
