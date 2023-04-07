@@ -1,5 +1,6 @@
 package solve.settings.grid.view
 
+import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.layout.*
@@ -17,6 +18,11 @@ import tornadofx.*
 class GridSettingsView: View() {
     private val controller: GridSettingsController by inject()
 
+    private lateinit var scaleRangeSlider: RangeSlider
+
+    val columnsCounterValueProperty = SimpleObjectProperty(SceneController.MaxColumnsNumber)
+    var columnsCounterValue: Int by columnsCounterValueProperty
+
     override val root = vbox {
         vbox {
             style {
@@ -27,7 +33,9 @@ class GridSettingsView: View() {
                 minWidth = GridSettingsViewMinWidth
 
                 add(createGridSettingsField("Columns", buildColumnsNumberCounter()))
-                add(createGridSettingsField("Scale range", buildScaleRangeSlider()))
+
+                scaleRangeSlider = buildScaleRangeSlider()
+                add(createGridSettingsField("Scale range", scaleRangeSlider))
             }
             border = Border(
                 BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
@@ -37,6 +45,11 @@ class GridSettingsView: View() {
         }
         padding = createInsetsWithValue(5.0)
         vgrow = Priority.ALWAYS
+    }
+
+    fun setDefaultScaleRangeSliderValues() {
+        scaleRangeSlider.lowValue = scaleRangeSlider.min
+        scaleRangeSlider.highValue = scaleRangeSlider.max
     }
 
     private fun createGridSettingsField(name: String, settingNode: Node) =
@@ -69,7 +82,7 @@ class GridSettingsView: View() {
                 return@onChange
             }
 
-            controller.setMinScale(newMinScale)
+            controller.setSceneMinScale(newMinScale)
         }
         rangeSlider.highValueProperty().onChange { newMaxScale ->
             if (isSmallerThanAllowedDifference()) {
@@ -77,15 +90,13 @@ class GridSettingsView: View() {
                 return@onChange
             }
 
-            controller.setMaxScale(newMaxScale)
+            controller.setSceneMaxScale(newMaxScale)
         }
 
         return rangeSlider
     }
 
     private fun buildColumnsNumberCounter() = hbox(5) {
-        val installedColumnsNumber = SceneController.DefaultColumnsNumber.toProperty()
-
         fun createColumnsNumberButton(iconPath: String, action: () -> Unit) = button {
             addStylesheet(TransparentScalingButtonStyle::class)
 
@@ -100,18 +111,18 @@ class GridSettingsView: View() {
         }
 
         add(createColumnsNumberButton(IconsSettingsGridDecrementPath) {
-            if (installedColumnsNumber > 1) {
-                --installedColumnsNumber.value
-                controller.setColumnsNumber(installedColumnsNumber.value)
+            if (columnsCounterValueProperty.value > 1) {
+                --columnsCounterValueProperty.value
+                controller.setSceneColumnsNumber(columnsCounterValueProperty.value)
             }
         })
-        label(installedColumnsNumber) {
+        label(columnsCounterValueProperty) {
             font = Font(GridSettingsColumnsNumberCounterFontSize)
         }
         add(createColumnsNumberButton(IconsSettingsGridIncrementPath) {
-            if (installedColumnsNumber < SceneController.MaxColumnsNumber) {
-                ++installedColumnsNumber.value
-                controller.setColumnsNumber(installedColumnsNumber.value)
+            if (columnsCounterValueProperty.value < SceneController.MaxColumnsNumber) {
+                ++columnsCounterValueProperty.value
+                controller.setSceneColumnsNumber(columnsCounterValueProperty.value)
             }
         })
     }
