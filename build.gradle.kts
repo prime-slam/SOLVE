@@ -13,10 +13,11 @@ val jacksonCSVVersion: String by rootProject
 val jacksonModuleKotlinVersion: String by rootProject
 val virtualizedfxVersion: String by rootProject
 val coroutinesVersion: String by rootProject
+val controlsfxVersion: String by rootProject
 val junitVersion: String by rootProject
 val junitJupiterVersion: String by rootProject
 val junitJupiterEngineVersion: String by rootProject
-val controlsfxVersion: String by rootProject
+val junitJupiterParamsVersion: String by rootProject
 
 repositories {
     mavenCentral()
@@ -45,6 +46,9 @@ dependencies {
     implementation("junit:junit:$junitVersion")
     implementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     implementation("org.controlsfx:controlsfx:$controlsfxVersion")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterParamsVersion")
 }
 
 tasks {
