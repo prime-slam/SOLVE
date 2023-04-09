@@ -14,6 +14,8 @@ val jacksonModuleKotlinVersion: String by rootProject
 val virtualizedfxVersion: String by rootProject
 val coroutinesVersion: String by rootProject
 val junitVersion: String by rootProject
+val junitJupiterVersion: String by rootProject
+val junitJupiterEngineVersion: String by rootProject
 
 repositories {
     mavenCentral()
@@ -31,9 +33,7 @@ javafx {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.0-M1")
-    testImplementation ("org.junit.jupiter:junit-jupiter-params:5.8.0-M1")
-    testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.8.0-M1")
+    testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion")
     implementation(kotlin("stdlib-jdk8"))
     implementation("no.tornado:tornadofx:$tornadofxVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonCSVVersion")
@@ -42,7 +42,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:$coroutinesVersion")
     implementation("junit:junit:$junitVersion")
-    implementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    implementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 }
 
 tasks {
