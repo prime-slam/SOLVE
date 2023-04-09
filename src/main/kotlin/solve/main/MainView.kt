@@ -1,5 +1,7 @@
 package solve.main
 
+import io.github.palexdev.materialfx.css.themes.MFXThemeManager
+import io.github.palexdev.materialfx.css.themes.Themes
 import solve.catalogue.view.CatalogueView
 import solve.constants.IconsSidePanelCataloguePath
 import solve.constants.IconsSidePanelVisualizationSettingsPath
@@ -71,6 +73,11 @@ class MainView : View() {
     }
 
     override val root = mainViewBorderPane
+
+    override fun onBeforeShow() {
+        super.onBeforeShow()
+        MFXThemeManager.addOn(root.scene, Themes.DEFAULT)
+    }
 
     fun hideSidePanelContent(location: SidePanelLocation) {
         mainViewSplitPane.hideNodeAt(location)
