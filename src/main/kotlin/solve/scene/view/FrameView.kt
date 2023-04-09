@@ -5,6 +5,8 @@ import javafx.beans.InvalidationListener
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Group
 import javafx.scene.image.Image
+import javafx.scene.input.Clipboard
+import javafx.scene.input.ClipboardContent
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
 import kotlinx.coroutines.Job
@@ -27,7 +29,11 @@ import tornadofx.action
 import tornadofx.add
 import tornadofx.contextmenu
 import tornadofx.item
-
+import solve.utils.action
+import solve.utils.item
+import solve.utils.lineSeparator
+import solve.utils.mfxContextMenu
+import tornadofx.*
 class FrameView(
     val size: DoubleSize,
     private val scale: DoubleProperty,
@@ -67,8 +73,15 @@ class FrameView(
                 AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
             associationsManager.chooseFrame(associationParameters)
         }
+        mfxContextMenu {
+            item("Copy timestamp").action {
+                val timestamp = frame?.timestamp ?: return@action
+                val clipboardContent = ClipboardContent().also { it.putString(timestamp.toString()) }
+                Clipboard.getSystemClipboard().setContent(clipboardContent)
+            }
 
-        contextmenu {
+            lineSeparator()
+
             item("Associate keypoints").action {
                 val clickedFrame = currentFrame ?: return@action
                 if (!clickedFrame.hasPoints()) {
