@@ -1,10 +1,12 @@
 package solve.importer.view
 
-import javafx.scene.layout.BorderPane
+import io.github.palexdev.materialfx.css.themes.MFXThemeManager
+import io.github.palexdev.materialfx.css.themes.Themes
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import solve.importer.controller.ImporterController
 import tornadofx.View
+import tornadofx.borderpane
 
 class ImporterView : View() {
 
@@ -16,16 +18,15 @@ class ImporterView : View() {
 
     override fun onDock() {
         (root.scene.window as Stage).minWidth = 390.0
+        MFXThemeManager.addOn(root.scene, Themes.DEFAULT)
     }
 
-    override val root: BorderPane by fxml("/fxml/app.fxml", hasControllerAttribute = true)
-
-    fun changeAction() {
-        val dir = directoryChooser.showDialog(currentStage)
-        controller.directoryPath.set(dir?.absolutePath)
-    }
-
-    fun cancelAction() {
-        this.close()
+    override val root = borderpane {
+        style="-fx-background-color: #ffffff;"
+        prefHeight = 570.0
+        prefWidth = 453.0
+        top<DirectoryPathView>()
+        center<ProjectTreeView>()
+        bottom<ControlPanel>()
     }
 }

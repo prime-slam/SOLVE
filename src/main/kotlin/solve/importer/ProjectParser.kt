@@ -3,7 +3,7 @@ package solve.importer
 import javafx.scene.control.TreeItem
 import solve.importer.model.*
 import solve.importer.view.ImporterView
-import solve.project.model.*
+import solve.project.model.LayerKind
 import solve.utils.createAlertForError
 import solve.utils.toStringWithoutBrackets
 import tornadofx.FX.Companion.find
@@ -177,7 +177,6 @@ object ProjectParser {
 
         return ProjectAfterPartialParsing(path, frames, hasAnyErrors)
     }
-
 
     fun createTreeWithFiles(
         project: ProjectAfterPartialParsing,

@@ -1,10 +1,12 @@
 package solve
 
-import solve.main.MainView
 import javafx.stage.Stage
-import tornadofx.*
+import solve.main.MainView
+import solve.styles.TreeTableViewStylesheet
+import tornadofx.App
+import tornadofx.launch
 
-class SolveApp : App(MainView::class) {
+class SolveApp : App(MainView::class, TreeTableViewStylesheet::class) {
     override fun start(stage: Stage) {
         with(stage) {
             width = 1000.0
