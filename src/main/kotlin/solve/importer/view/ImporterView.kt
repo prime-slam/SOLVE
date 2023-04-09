@@ -18,8 +18,13 @@ class ImporterView : View() {
 
     override fun onDock() {
         (root.scene.window as Stage).minWidth = 390.0
+    }
+
+    override fun onBeforeShow() {
+        super.onBeforeShow()
         MFXThemeManager.addOn(root.scene, Themes.DEFAULT)
     }
+
 
     override val root = borderpane {
         style="-fx-background-color: #ffffff;"
