@@ -25,7 +25,6 @@ class ImporterView : View() {
         MFXThemeManager.addOn(root.scene, Themes.DEFAULT)
     }
 
-
     override val root = borderpane {
         style="-fx-background-color: #ffffff;"
         prefHeight = 570.0
