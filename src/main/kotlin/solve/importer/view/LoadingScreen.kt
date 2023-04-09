@@ -1,5 +1,6 @@
 package solve.importer.view
 
+import io.github.palexdev.materialfx.controls.MFXProgressSpinner
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.ContentDisplay
@@ -10,6 +11,7 @@ import javafx.stage.Stage
 import kotlinx.coroutines.cancel
 import solve.constants.IconsImporterLoadingPath
 import solve.utils.loadResourcesImage
+import solve.utils.mfxButton
 import tornadofx.*
 
 class LoadingScreen : View("Loading") {
@@ -24,8 +26,8 @@ class LoadingScreen : View("Loading") {
             padding = Insets(0.0, 0.0, 8.0, 0.0)
             center {
                 label {
-                    text = "Please, wait..."
-                    font = Font.font(20.0)
+                    MFXProgressSpinner()
+                    font = Font.font("Roboto Condensed", 15.0)
                     graphic = ImageView(loading).apply {
                         fitHeight = 80.0
                         fitWidth = 80.0
@@ -34,7 +36,7 @@ class LoadingScreen : View("Loading") {
                 }
             }
             bottom {
-                button("Cancel") {
+                mfxButton("Cancel") {
                     BorderPane.setAlignment(this, Pos.BOTTOM_CENTER)
                     maxWidth = 130.0
                     action {
