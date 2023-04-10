@@ -28,7 +28,7 @@ object VirtualizedFXGridProvider : GridProvider {
         grid.prefHeight = Int.MAX_VALUE.toDouble()
 
         val vsp = wrapGridWithVsp(grid, outOfFramesLayer)
-        vsp.isAutoHideBars = true
+        // vsp.isAutoHideBars = true TODO: return this when https://github.com/palexdev/VirtualizedFX/pull/12 will be fixed
         vsp.isSmoothScroll = true
         // Set up scrolling speed to achieve smooth scrolling
         VSPUtils.setVSpeed(vsp, 100.0, 100.0, 100.0)
