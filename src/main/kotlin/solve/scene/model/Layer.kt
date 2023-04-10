@@ -5,6 +5,10 @@ sealed class Layer(
     open val settings: LayerSettings,
     open val getLandmarks: () -> List<Landmark>
 ) {
+    override fun toString(): String {
+        return name
+    }
+
     class PointLayer(
         name: String,
         override val settings: LayerSettings.PointLayerSettings,
