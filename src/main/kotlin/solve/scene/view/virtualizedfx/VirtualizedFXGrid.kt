@@ -7,6 +7,7 @@ import io.github.palexdev.virtualizedfx.grid.VirtualGrid
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.Node
+import javafx.scene.input.MouseButton
 import javafx.scene.input.ScrollEvent
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.Grid
@@ -24,6 +25,9 @@ class VirtualizedFXGrid(
 
     override fun setUpPanning() {
         virtualGrid.setOnMousePressed { event ->
+            if (event.button != MouseButton.PRIMARY) {
+                return@setOnMousePressed
+            }
             dragStartMousePosition = Position.of(event.x, event.y)
             dragStartGridPosition = virtualGrid.position
         }
