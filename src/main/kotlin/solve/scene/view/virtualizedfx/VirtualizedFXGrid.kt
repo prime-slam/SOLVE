@@ -33,6 +33,9 @@ class VirtualizedFXGrid(
         }
 
         virtualGrid.setOnMouseDragged { event ->
+            if (event.button != MouseButton.PRIMARY) {
+                return@setOnMouseDragged
+            }
             val xDelta = dragStartMousePosition.x - event.x
             val yDelta = dragStartMousePosition.y - event.y
             virtualGrid.scrollTo(dragStartGridPosition.x + xDelta, Orientation.HORIZONTAL)
