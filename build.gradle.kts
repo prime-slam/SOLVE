@@ -28,7 +28,7 @@ javafx {
 }
 
 dependencies {
-    implementation("io.github.palexdev:materialfx:11.15.0")
+    implementation("io.github.palexdev:materialfx:11.16.1")
     implementation(kotlin("stdlib-jdk8"))
     implementation("no.tornado:tornadofx:$tornadofxVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonCSVVersion")
