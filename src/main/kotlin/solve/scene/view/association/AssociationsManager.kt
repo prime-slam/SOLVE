@@ -1,6 +1,7 @@
 package solve.scene.view.association
 
 import javafx.beans.property.DoubleProperty
+import javafx.scene.paint.Color
 import solve.scene.model.*
 import tornadofx.*
 
@@ -13,45 +14,47 @@ class AssociationsManager(
     private val columnsNumber: Int,
     private val outOfFramesLayer: OutOfFramesLayer,
 ) {
+    val chosenLayerName
+        get() = firstFrameAssociationParameters?.key?.layerName
     private var firstFrameAssociationParameters: AssociationParameters? = null
 
     // Maps first frame and layer on it with a list of second frames and drawn shapes
-    private var drawnShapes =
-        mutableMapOf<VisualizationFrame, MutableMap<VisualizationFrame, List<AssociationLine>>>() // TODO: more than one layer in a frame
-    private var drawnAdorners = mutableMapOf<VisualizationFrame, AssociationAdorner>()
+    val drawnAssociations =
+        mutableMapOf<AssociationKey, MutableMap<VisualizationFrame, List<AssociationLine>>>().toObservable()
+    private val drawnAdorners = mutableMapOf<VisualizationFrame, AssociationAdorner>()
 
     fun initAssociation(associationParameters: AssociationParameters) {
-        val firstFrame = firstFrameAssociationParameters?.frame
-        if (firstFrame != null) {
-            clearAdorner(firstFrame)
-        }
-
+        val firstFrame = firstFrameAssociationParameters?.key?.frame
+        firstFrame?.apply { clearAdorner(firstFrame) }
         firstFrameAssociationParameters = associationParameters
-        drawAdorner(associationParameters.frame)
+        drawAdorner(associationParameters.key.frame)
     }
 
-    fun chooseFrame(secondFrameParameters: AssociationParameters) {
+    fun associate(secondFrameParameters: AssociationParameters, color: Color) {
         val firstFrameParameters = firstFrameAssociationParameters ?: return
+        val firstFrame = firstFrameParameters.key.frame
+        val secondFrame = secondFrameParameters.key.frame
 
-        clearAdorner(firstFrameParameters.frame)
+        clearAdorner(firstFrame)
 
-        val isAlreadyAssociated = isAlreadyAssociated(firstFrameParameters.frame, secondFrameParameters.frame)
-        if (isAlreadyAssociated || firstFrameParameters.frame == secondFrameParameters.frame) {
+        val isAlreadyAssociated = isAlreadyAssociated(firstFrameParameters.key, secondFrame)
+        if (isAlreadyAssociated || firstFrame == secondFrame) {
             firstFrameAssociationParameters = null
             return
         }
 
         associate(
-            firstFrameParameters.frame,
-            secondFrameParameters.frame,
+            firstFrameParameters.key,
+            secondFrameParameters.key,
             firstFrameParameters.landmarks,
-            secondFrameParameters.landmarks
+            secondFrameParameters.landmarks,
+            color
         )
         firstFrameAssociationParameters = null
     }
 
-    private fun isAlreadyAssociated(firstFrame: VisualizationFrame, secondFrame: VisualizationFrame) =
-        drawnShapes[firstFrame]?.containsKey(secondFrame) == true
+    private fun isAlreadyAssociated(associationKey: AssociationKey, secondFrame: VisualizationFrame) =
+        drawnAssociations[associationKey]?.containsKey(secondFrame) == true
 
     private fun drawAdorner(frame: VisualizationFrame) {
         val framePosition = getFramePosition(frame)
@@ -66,13 +69,14 @@ class AssociationsManager(
     }
 
     private fun associate(
-        firstFrame: VisualizationFrame,
-        secondFrame: VisualizationFrame,
+        firstKey: AssociationKey,
+        secondKey: AssociationKey,
         firstLandmarks: List<Landmark>,
-        secondLandmarks: List<Landmark>
+        secondLandmarks: List<Landmark>,
+        color: Color
     ) {
-        val firstFramePosition = getFramePosition(firstFrame)
-        val secondFramePosition = getFramePosition(secondFrame)
+        val firstFramePosition = getFramePosition(firstKey.frame)
+        val secondFramePosition = getFramePosition(secondKey.frame)
 
         val lines = firstLandmarks.map { firstLandmark ->
             val firstKeypoint = firstLandmark as Landmark.Keypoint
@@ -81,15 +85,18 @@ class AssociationsManager(
                 keypoint.uid == firstKeypoint.uid
             } as? Landmark.Keypoint ?: return@map null
 
-            AssociationLine(firstFramePosition, secondFramePosition, firstKeypoint, secondKeypoint, scale)
+            AssociationLine(firstFramePosition, secondFramePosition, firstKeypoint, secondKeypoint, scale, color)
         }.filterNotNull()
 
         lines.forEach { line ->
             outOfFramesLayer.add(line.node)
         }
 
-        drawnShapes.putIfAbsent(firstFrame, mutableMapOf())
-        drawnShapes[firstFrame]?.set(secondFrame, lines)
+        drawnAssociations.putIfAbsent(firstKey, mutableMapOf())
+        drawnAssociations[firstKey]?.set(secondKey.frame, lines)
+
+        drawnAssociations.putIfAbsent(secondKey, mutableMapOf())
+        drawnAssociations[secondKey]?.set(firstKey.frame, lines)
     }
 
     private fun getFramePosition(frame: VisualizationFrame): Pair<Double, Double> {
@@ -99,14 +106,20 @@ class AssociationsManager(
         return Pair(firstFrameColumn * (frameWidth + framesIndent), firstFrameRow * (frameHeight + framesIndent))
     }
 
-    fun clearAssociation(frame: VisualizationFrame) {
-        drawnShapes[frame]?.values?.forEach { lines ->
+    fun clearAssociation(key: AssociationKey) {
+        drawnAssociations[key]?.forEach { (frame, lines) ->
+            val secondKey = AssociationKey(frame, key.layerName)
+            drawnAssociations.remove(secondKey)
             lines.forEach { line ->
                 outOfFramesLayer.children.remove(line.node)
             }
         }
-        drawnShapes.remove(frame)
+        drawnAssociations.remove(key)
     }
 
-    data class AssociationParameters(val frame: VisualizationFrame, val landmarks: List<Landmark.Keypoint>)
+    data class AssociationKey(val frame: VisualizationFrame, val layerName: String)
+
+    data class AssociationParameters(
+        val key: AssociationKey, val landmarks: List<Landmark.Keypoint>
+    )
 }

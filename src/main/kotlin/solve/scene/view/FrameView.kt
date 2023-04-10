@@ -1,23 +1,25 @@
 package solve.scene.view
 
+import io.github.palexdev.materialfx.controls.MFXContextMenu
 import javafx.beans.*
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.collections.MapChangeListener
 import javafx.scene.Group
+import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
+import javafx.stage.Window
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
-import solve.scene.model.Landmark
 import solve.scene.model.*
+import solve.scene.view.association.AssociationLine
 import solve.scene.view.association.AssociationsManager
-import solve.utils.action
-import solve.utils.item
-import solve.utils.lineSeparator
-import solve.utils.mfxContextMenu
+import solve.utils.*
 import tornadofx.*
 
 class FrameView(
@@ -37,55 +39,102 @@ class FrameView(
 
     // Should be stored to avoid weak listener from be collected
     private val scaleChangedListener = InvalidationListener { scaleImageAndLandmarks(scale.value) }
+    private val associationsUpdatedListener =
+        MapChangeListener<AssociationsManager.AssociationKey, Map<VisualizationFrame, List<AssociationLine>>> { change ->
+            hasAssociations.value = getAssociatedLayersNames(currentFrame ?: return@MapChangeListener).isNotEmpty()
+        }
+
+    private val hasKeypoints = SimpleBooleanProperty(frame?.hasPoints() ?: false)
+    private val hasAssociations = SimpleBooleanProperty(false)
 
     init {
         scale.addListener(WeakInvalidationListener(scaleChangedListener))
+        associationsManager.drawnAssociations.addListener(associationsUpdatedListener)
 
         canvas.viewOrder = IMAGE_VIEW_ORDER
         add(canvas)
         setFrame(frame)
         scaleImageAndLandmarks(scale.value)
 
-        setOnMouseClicked {
-            if (it.button != MouseButton.PRIMARY) {
-                return@setOnMouseClicked
-            }
-            val clickedFrame = currentFrame ?: return@setOnMouseClicked
-            if (!clickedFrame.hasPoints()) {
-                return@setOnMouseClicked
-            }
-            val associationParameters =
-                AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
-            associationsManager.chooseFrame(associationParameters)
-        }
+        addChooseSecondAssociationFrameAction()
+
         mfxContextMenu {
-            item("Copy timestamp").action {
-                val timestamp = frame?.timestamp ?: return@action
-                val clipboardContent = ClipboardContent().also { it.putString(timestamp.toString()) }
-                Clipboard.getSystemClipboard().setContent(clipboardContent)
-            }
-
+            addCopyTimestampAction()
             lineSeparator()
-
-            item("Associate keypoints").action {
-                val clickedFrame = currentFrame ?: return@action
-                if (!clickedFrame.hasPoints()) {
-                    return@action
-                }
-                val associationParameters =
-                    AssociationsManager.AssociationParameters(clickedFrame, getKeypoints(clickedFrame))
-                associationsManager.initAssociation(associationParameters)
-            }
-            item("Clear associations").action {
-                val clickedFrame = currentFrame ?: return@action
-                associationsManager.clearAssociation(clickedFrame)
-            }
+            addAssociationActions()
         }
     }
 
-    private fun getKeypoints(frame: VisualizationFrame): List<Landmark.Keypoint> {
-        val layer = frame.layers.filterIsInstance<Layer.PointLayer>().first() // TODO: more than one layer in a frame
-        return layer.getLandmarks()
+    private fun Node.addChooseSecondAssociationFrameAction() {
+        setOnMouseClicked { mouse ->
+            if (mouse.button != MouseButton.PRIMARY) {
+                return@setOnMouseClicked
+            }
+            val clickedFrame = currentFrame ?: return@setOnMouseClicked
+            val chosenLayerName = associationsManager.chosenLayerName ?: return@setOnMouseClicked
+            val layer = clickedFrame.layers.filterIsInstance<Layer.PointLayer>().single { it.name == chosenLayerName }
+            val associationKey = AssociationsManager.AssociationKey(clickedFrame, layer.name)
+            val associationParameters = AssociationsManager.AssociationParameters(associationKey, layer.getLandmarks())
+            associationsManager.associate(associationParameters, layer.settings.commonColor)
+        }
+    }
+
+    private fun MFXContextMenu.addCopyTimestampAction() {
+        item("Copy timestamp").action {
+            val timestamp = currentFrame?.timestamp ?: return@action
+            val clipboardContent = ClipboardContent().also { it.putString(timestamp.toString()) }
+            Clipboard.getSystemClipboard().setContent(clipboardContent)
+        }
+    }
+
+    private fun MFXContextMenu.addAssociationActions() {
+        item("Associate keypoints").also { it.enableWhen(hasKeypoints) }.action {
+            val clickedFrame = currentFrame ?: return@action
+            val layer = choosePointLayer(clickedFrame, ownerWindow) ?: return@action
+            val associationKey = AssociationsManager.AssociationKey(clickedFrame, layer.name)
+            val associationParameters = AssociationsManager.AssociationParameters(associationKey, layer.getLandmarks())
+            associationsManager.initAssociation(associationParameters)
+        }
+
+        item("Clear associations").also { it.enableWhen(hasAssociations) }.action {
+            val clickedFrame = currentFrame ?: return@action
+            val layer = chooseAssociatedPointLayer(clickedFrame, ownerWindow) ?: return@action
+            val associationKey = AssociationsManager.AssociationKey(clickedFrame, layer.name)
+            associationsManager.clearAssociation(associationKey)
+        }
+    }
+
+    private fun chooseAssociatedPointLayer(frame: VisualizationFrame, owner: Window): Layer.PointLayer? {
+        val associatedLayersNames = getAssociatedLayersNames(frame)
+        val enabledAssociatedPointLayers = frame.layers
+            .filterIsInstance<Layer.PointLayer>()
+            .filter { layer -> associatedLayersNames.any { it == layer.name } }
+            .filter { it.settings.enabled }
+        return chooseLayer(enabledAssociatedPointLayers, owner)
+    }
+
+    private fun getAssociatedLayersNames(frame: VisualizationFrame): List<String> {
+        return associationsManager.drawnAssociations.filter { it.key.frame == frame }.map { it.key.layerName }
+    }
+
+    private fun choosePointLayer(frame: VisualizationFrame, owner: Window): Layer.PointLayer? {
+        val enabledPointLayers = frame.layers
+            .filterIsInstance<Layer.PointLayer>()
+            .filter { it.settings.enabled }
+        return chooseLayer(enabledPointLayers, owner)
+    }
+
+    private fun <T> chooseLayer(layers: List<T>, owner: Window): T? {
+        if (layers.isEmpty()) {
+            return null
+        }
+
+        return if (layers.count() == 1) {
+            layers.single()
+        } else {
+            val chooserDialog = ChooserDialog<T>("Choose layer", 200.0, 150.0, owner)
+            chooserDialog.choose(layers)
+        }
     }
 
     fun setFrame(frame: VisualizationFrame?) {
@@ -124,10 +173,13 @@ class FrameView(
         }
 
         currentFrame = frame
+        hasKeypoints.value = frame.hasPoints()
+        hasAssociations.value = getAssociatedLayersNames(frame).isNotEmpty()
     }
 
     fun dispose() {
         disposeLandmarkViews()
+        associationsManager.drawnAssociations.removeListener(associationsUpdatedListener)
     }
 
     private fun draw() {
