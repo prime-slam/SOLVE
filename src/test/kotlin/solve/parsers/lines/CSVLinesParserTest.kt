@@ -57,6 +57,8 @@ internal class CSVLinesParserTest {
             Line(9, 1.0, 8.0, 32.0, 12.0),
         )
         private val csvTestLinesStringData =
-            testLines.joinToString(prefix = CSVLineDataStringPrefix, separator = "\n") { it.toString() }
+            testLines.joinToString(prefix = CSVLineDataStringPrefix, separator = "\n") { it.getCSVDataString() }
+
+        private fun Line.getCSVDataString() = "$uid,$x0,$y0,$x1,$y1"
     }
 }
