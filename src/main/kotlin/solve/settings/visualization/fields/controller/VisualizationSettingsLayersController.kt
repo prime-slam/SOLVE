@@ -15,15 +15,9 @@ class VisualizationSettingsLayersController : Controller() {
         initializeSceneLayersIndices(layers)
     }
 
-    private fun initializeSceneLayersIndices(
-        layers: List<LayerSettings>
-    ) {
-        var firstPlaneLayerSettingsIndex = layers.indexOfFirst { it.usesCanvas }
-        if (firstPlaneLayerSettingsIndex == -1) {
-            firstPlaneLayerSettingsIndex = layers.count()
-        }
-        val planeLayers = layers.subList(firstPlaneLayerSettingsIndex, layers.count())
-        val notPlaneLayers = layers.subList(0, firstPlaneLayerSettingsIndex)
+    private fun initializeSceneLayersIndices(layers: List<LayerSettings>) {
+        val planeLayers = layers.filter { it.usesCanvas }
+        val notPlaneLayers = layers.filterNot { !it.usesCanvas }
 
         notPlaneLayers.reversed().forEachIndexed { index, notPlane ->
             sceneController.scene.changeLayerIndex(notPlane, index)
