@@ -8,3 +8,7 @@ internal fun createCSVFileWithData(tempFolder: File, csvStringData: String): Fil
 
     return csvDataFile
 }
+
+internal val doubleWithCommaRegex = Regex("[+|-]?([0-9]+)\\.[0-9]* *,")
+
+internal val lineBreakWithIntWithCommaRegex = Regex("\n[0-9]+ *,")
