@@ -2,6 +2,7 @@ package solve.scene.view.virtualizedfx
 
 import io.github.palexdev.mfxcore.base.beans.Size
 import io.github.palexdev.mfxcore.collections.ObservableGrid
+import io.github.palexdev.virtualizedfx.cell.GridCell
 import io.github.palexdev.virtualizedfx.grid.VirtualGrid
 import io.github.palexdev.virtualizedfx.utils.VSPUtils
 import javafx.beans.property.DoubleProperty
@@ -11,6 +12,20 @@ import solve.scene.view.Grid
 import solve.scene.view.GridProvider
 import solve.scene.view.association.OutOfFramesLayer
 import solve.utils.structures.Size as DoubleSize
+
+class ZoomableVirtualGrid<T, C : GridCell<T>>(items: ObservableGrid<T>, cellFactory: (T) -> C) :
+    VirtualGrid<T, C>(items, cellFactory) {
+    override fun onCellSizeChanged() {
+        val helper = gridHelper
+        helper.computeEstimatedSize()
+
+        if (width != 0.0 && height != 0.0) {
+            if (!viewportManager.init()) {
+                requestViewportLayout()
+            }
+        }
+    }
+}
 
 object VirtualizedFXGridProvider : GridProvider {
     override fun createGrid(
@@ -22,7 +37,7 @@ object VirtualizedFXGridProvider : GridProvider {
         cellFactory: (VisualizationFrame?) -> FrameView
     ): Grid {
         val gridData = ObservableGrid.fromList(data, columnsNumber)
-        val grid = VirtualGrid(gridData) { item -> FrameViewAdapter(cellFactory(item)) }
+        val grid = ZoomableVirtualGrid(gridData) { item -> FrameViewAdapter(cellFactory(item)) }
         grid.cellSize = Size(cellSize.width * scale.value, cellSize.height * scale.value)
         grid.prefHeight = Int.MAX_VALUE.toDouble()
 
