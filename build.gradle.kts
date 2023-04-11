@@ -16,6 +16,7 @@ val coroutinesVersion: String by rootProject
 val junitVersion: String by rootProject
 val junitJupiterVersion: String by rootProject
 val junitJupiterEngineVersion: String by rootProject
+val controlsfxVersion: String by rootProject
 
 repositories {
     mavenCentral()
@@ -43,6 +44,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:$coroutinesVersion")
     implementation("junit:junit:$junitVersion")
     implementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
+    implementation("org.controlsfx:controlsfx:$controlsfxVersion")
 }
 
 tasks {
