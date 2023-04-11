@@ -1,5 +1,7 @@
 package solve.parsers.lines
 
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
+import com.fasterxml.jackson.dataformat.csv.CsvReadException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -34,11 +36,74 @@ internal class CSVLinesParserTest {
     }
 
     @Test
+    fun `Parsing an empty CSV file with lines parser`(@TempDir tempFolder: File) {
+        val emptyCSVFile = createCSVFileWithData(tempFolder, "")
+
+        assertThrows(CsvReadException::class.java) {
+            CSVLinesParser.parse(emptyCSVFile.path)
+        }
+    }
+
+    @Test
+    fun `Parsing a lines CSV file with missing data values`(@TempDir tempFolder: File) {
+        val firstEmptyCoordinatesCount = 8
+        var csvStringDataWithMissingValues = csvTestLinesStringData.replaceFirst(doubleWithCommaRegex, ",")
+        repeat(firstEmptyCoordinatesCount - 1) {
+            csvStringDataWithMissingValues = csvStringDataWithMissingValues.replaceFirst(doubleWithCommaRegex, ",")
+        }
+
+        val firstEmptyUIDsCount = 2
+        repeat(firstEmptyUIDsCount) {
+            csvStringDataWithMissingValues =
+                csvStringDataWithMissingValues.replaceFirst(lineBreakWithIntWithCommaRegex, "\n,")
+        }
+
+        println(csvStringDataWithMissingValues)
+
+        val testLinesWithMissingData = testLines.slice(3..testLines.lastIndex).toMutableList()
+        val firstLineWithAllDataNotMissing = testLines[2]
+        val missingLinesData = listOf(
+            Line(0, 0.0, 0.0, 0.0, 2.0),
+            Line(0, 0.0, 0.0, 0.0, 3.0),
+            Line(3, 0.0, 0.0, firstLineWithAllDataNotMissing.x1, firstLineWithAllDataNotMissing.y1)
+        )
+        testLinesWithMissingData.addAll(0, missingLinesData)
+
+        val csvDataFile = createCSVFileWithData(tempFolder, csvStringDataWithMissingValues)
+        assertEquals(testLinesWithMissingData, CSVLinesParser.parse(csvDataFile.path))
+    }
+
+    @Test
+    fun `Parsing a lines CSV file with wrong delimiter`(@TempDir tempFolder: File) {
+        val csvStringDataWithWrongDelimiter = csvTestLinesStringData.replace(",", ";")
+        val csvDataFile = createCSVFileWithData(tempFolder, csvStringDataWithWrongDelimiter)
+
+        assertThrows(UnrecognizedPropertyException::class.java) {
+            CSVLinesParser.parse(csvDataFile.path)
+        }
+    }
+
+    @Test
     fun `Extracting a UIDs from lines CSV file with standard format`(@TempDir tempFolder: File) {
-        val uids = testLines.map { it.uid }
         val csvDataFile = createCSVFileWithData(tempFolder, csvTestLinesStringData)
 
-        assertEquals(uids, CSVLinesParser.extractUIDs(csvDataFile.path))
+        assertEquals(testUIDs, CSVLinesParser.extractUIDs(csvDataFile.path))
+    }
+
+    @Test
+    fun `Extracting a UIDs from lines CSV file with only one header`(@TempDir tempFolder: File) {
+        val csvDataFile = createCSVFileWithData(tempFolder, CSVLineDataStringPrefix)
+
+        assertEquals(emptyList<Long>(), CSVLinesParser.extractUIDs(csvDataFile.path))
+    }
+
+    @Test
+    fun `Extracting a UIDs from empty CSV file with lines UIDs extractor`(@TempDir tempFolder: File) {
+        val csvDataFile = createCSVFileWithData(tempFolder, "")
+
+        assertThrows(CsvReadException::class.java) {
+            CSVLinesParser.extractUIDs(csvDataFile.path)
+        }
     }
 
     companion object {
@@ -58,6 +123,7 @@ internal class CSVLinesParserTest {
         )
         private val csvTestLinesStringData =
             testLines.joinToString(prefix = CSVLineDataStringPrefix, separator = "\n") { it.getCSVDataString() }
+        private val testUIDs = testLines.map { it.uid }
 
         private fun Line.getCSVDataString() = "$uid,$x0,$y0,$x1,$y1"
     }

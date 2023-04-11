@@ -5,8 +5,9 @@ import com.fasterxml.jackson.dataformat.csv.CsvReadException
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import solve.parsers.lines.CSVLinesParser
 import solve.parsers.lines.createCSVFileWithData
+import solve.parsers.lines.doubleWithCommaRegex
+import solve.parsers.lines.lineBreakWithIntWithCommaRegex
 import solve.parsers.structures.Point
 import java.io.File
 
@@ -47,37 +48,35 @@ internal class CSVPointsParserTest {
     }
 
     @Test
-    fun `Parsing a points CSV file with missing data`(@TempDir tempFolder: File) {
-        val doubleWithCommaRegex = Regex("[+|-]?([0-9]+)\\.[0-9]* *,?")
-
-        val firstEmptyCoordinatesCount = 5
-        var csvStringDataWithMissingColumns =
+    fun `Parsing a points CSV file with missing data values`(@TempDir tempFolder: File) {
+        val firstEmptyCoordinatesCount = 3
+        var csvStringDataWithMissingValues =
             csvTestPointsStringData.replaceFirst(doubleWithCommaRegex, ",")
         repeat(firstEmptyCoordinatesCount - 1) {
-            csvStringDataWithMissingColumns = csvStringDataWithMissingColumns.replaceFirst(doubleWithCommaRegex, ",")
+            csvStringDataWithMissingValues = csvStringDataWithMissingValues.replaceFirst(doubleWithCommaRegex, ",")
         }
 
-        val firstEmptyUIDCount = 2
-        val uidWithCommaRegex = Regex("[0-9]+ *,")
-        repeat(firstEmptyUIDCount) {
-            csvStringDataWithMissingColumns = csvStringDataWithMissingColumns.replaceFirst(uidWithCommaRegex, ",")
+        val firstEmptyUIDsCount = 2
+        repeat(firstEmptyUIDsCount) {
+            csvStringDataWithMissingValues =
+                csvStringDataWithMissingValues.replaceFirst(lineBreakWithIntWithCommaRegex, "\n,")
         }
 
         val testPointsWithMissingData = testPoints.slice(3..testPoints.lastIndex).toMutableList()
         val firstPointWithAllDataNotMissing = testPoints[2]
-        val missingDataPoints = listOf(
-            Point(0, 0.0, 0.0),
-            Point(0, 0.0, 0.0),
+        val missingPointsData = listOf(
+            Point(0, 0.0, 7.0),
+            Point(0, 0.0, -9.25),
             Point(firstPointWithAllDataNotMissing.uid, 0.0, firstPointWithAllDataNotMissing.y)
         )
-        testPointsWithMissingData.addAll(0, missingDataPoints)
+        testPointsWithMissingData.addAll(0, missingPointsData)
 
-        val csvDataFile = createCSVFileWithData(tempFolder, csvStringDataWithMissingColumns)
+        val csvDataFile = createCSVFileWithData(tempFolder, csvStringDataWithMissingValues)
         assertEquals(testPointsWithMissingData, CSVPointsParser.parse(csvDataFile.path))
     }
 
     @Test
-    fun `Parsing a CSV file with wrong delimiter`(@TempDir tempFolder: File) {
+    fun `Parsing a points CSV file with wrong delimiter`(@TempDir tempFolder: File) {
         val csvStringDataWithWrongDelimiter = csvTestPointsStringData.replace(",", ";")
         val csvDataFile = createCSVFileWithData(tempFolder, csvStringDataWithWrongDelimiter)
 
@@ -90,14 +89,14 @@ internal class CSVPointsParserTest {
     fun `Extracting a UIDs from points CSV file with standard format`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, csvTestPointsStringData)
 
-        assertEquals(testUIDs, CSVLinesParser.extractUIDs(csvDataFile.path))
+        assertEquals(testUIDs, CSVPointsParser.extractUIDs(csvDataFile.path))
     }
 
     @Test
     fun `Extracting a UIDs from points CSV file with only one header`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, CSVPointDataStringPrefix)
 
-        assertEquals(emptyList<Long>(), CSVLinesParser.extractUIDs(csvDataFile.path))
+        assertEquals(emptyList<Long>(), CSVPointsParser.extractUIDs(csvDataFile.path))
     }
 
     @Test
@@ -105,7 +104,7 @@ internal class CSVPointsParserTest {
         val csvDataFile = createCSVFileWithData(tempFolder, "")
 
         assertThrows(CsvReadException::class.java) {
-            CSVLinesParser.extractUIDs(csvDataFile.path)
+            CSVPointsParser.extractUIDs(csvDataFile.path)
         }
     }
 
