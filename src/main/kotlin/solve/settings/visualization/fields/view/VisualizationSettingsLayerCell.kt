@@ -73,10 +73,10 @@ class VisualizationSettingsLayerCell(
     }
 
     override fun isAbleToDropItem(thisItem: LayerSettings, droppedItem: LayerSettings): Boolean {
-        val bothArePlanes = thisItem.usesCanvas && droppedItem.usesCanvas
-        val bothAreNotPlanes = !thisItem.usesCanvas && !droppedItem.usesCanvas
+        val bothUseCanvas = thisItem.usesCanvas && droppedItem.usesCanvas
+        val bothNotUseCanvas = !thisItem.usesCanvas && !droppedItem.usesCanvas
 
-        return bothArePlanes || bothAreNotPlanes
+        return bothUseCanvas || bothNotUseCanvas
     }
 
     override fun setOnNotAbleToDropItem(
