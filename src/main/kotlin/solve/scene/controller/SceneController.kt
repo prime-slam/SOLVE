@@ -37,7 +37,7 @@ class SceneController : Controller() {
     var installedMinScale: Double
         get() = installedMinScaleProperty.value
         set(value) {
-            if (value <= 0 || value > maxScale) {
+            if (value <= 0 || value >= installedMaxScale) {
                 println("Min scene scale value should be a positive number that is less than max scene scale!")
                 return
             }
@@ -49,7 +49,7 @@ class SceneController : Controller() {
     var installedMaxScale: Double
         get() = installedMaxScaleProperty.value
         set(value) {
-            if (value <= 0 || value < minScale) {
+            if (value <= 0 || value <= installedMinScale) {
                 println("Max scene scale value should be a positive number that is greater than min scene scale!")
                 return
             }
