@@ -21,7 +21,7 @@ class SceneController : Controller() {
     val scene: Scene
         get() = sceneProperty.value
 
-    val columnsNumberProperty = SimpleObjectProperty(MaxColumnsNumber)
+    val columnsNumberProperty = SimpleObjectProperty(0)
     var columnsNumber: Int
         get() = columnsNumberProperty.value
         set(value) {

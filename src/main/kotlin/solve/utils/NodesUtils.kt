@@ -52,3 +52,7 @@ fun Node.scale(value: Double) {
     scaleX = value
     scaleY = value
 }
+
+fun Node.unscale() {
+    scale(1.0)
+}
