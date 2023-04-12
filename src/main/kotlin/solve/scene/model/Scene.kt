@@ -1,6 +1,6 @@
 package solve.scene.model
 
-import solve.utils.structures.DoublePoint as DoubleSize
+import solve.utils.structures.Size as DoubleSize
 
 class Scene(
     val frames: List<VisualizationFrame>,
