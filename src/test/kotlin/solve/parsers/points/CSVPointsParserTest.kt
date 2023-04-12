@@ -13,7 +13,7 @@ import java.io.File
 
 internal class CSVPointsParserTest {
     @Test
-    fun `Parsing a points CSV file containing data in standard format`(@TempDir tempFolder: File) {
+    fun `Parsing a points CSV file containing data in a standard format`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, csvTestPointsStringData)
 
         assertEquals(testPoints, CSVPointsParser.parse(csvDataFile.path))
@@ -39,7 +39,7 @@ internal class CSVPointsParserTest {
     }
 
     @Test
-    fun `Parsing an empty CSV file with points parser`(@TempDir tempFolder: File) {
+    fun `Parsing an empty CSV file with a points parser`(@TempDir tempFolder: File) {
         val emptyCSVFile = createCSVFileWithData(tempFolder, "")
 
         assertThrows(CsvReadException::class.java) {
@@ -76,7 +76,7 @@ internal class CSVPointsParserTest {
     }
 
     @Test
-    fun `Parsing a points CSV file with wrong delimiter`(@TempDir tempFolder: File) {
+    fun `Parsing a points CSV file with a wrong delimiter`(@TempDir tempFolder: File) {
         val csvStringDataWithWrongDelimiter = csvTestPointsStringData.replace(",", ";")
         val csvDataFile = createCSVFileWithData(tempFolder, csvStringDataWithWrongDelimiter)
 
@@ -86,21 +86,21 @@ internal class CSVPointsParserTest {
     }
 
     @Test
-    fun `Extracting a UIDs from points CSV file with standard format`(@TempDir tempFolder: File) {
+    fun `Extracting UIDs from points CSV file with a standard format`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, csvTestPointsStringData)
 
         assertEquals(testUIDs, CSVPointsParser.extractUIDs(csvDataFile.path))
     }
 
     @Test
-    fun `Extracting a UIDs from points CSV file with only one header`(@TempDir tempFolder: File) {
+    fun `Extracting UIDs from points CSV file with only one header`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, CSVPointDataStringPrefix)
 
         assertEquals(emptyList<Long>(), CSVPointsParser.extractUIDs(csvDataFile.path))
     }
 
     @Test
-    fun `Extracting a UIDs from empty CSV file with points UIDs extractor`(@TempDir tempFolder: File) {
+    fun `Extracting UIDs from empty CSV file with a points extractor`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, "")
 
         assertThrows(CsvReadException::class.java) {
