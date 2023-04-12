@@ -1,5 +1,6 @@
 package solve.settings.grid.view
 
+import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Insets
 import javafx.scene.Node
@@ -9,6 +10,7 @@ import javafx.scene.text.Font
 import org.controlsfx.control.RangeSlider
 import solve.constants.IconsSettingsGridDecrementPath
 import solve.constants.IconsSettingsGridIncrementPath
+import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.settings.createSettingsField
 import solve.settings.grid.controller.GridSettingsController
@@ -17,11 +19,13 @@ import tornadofx.*
 
 class GridSettingsView: View() {
     private val controller: GridSettingsController by inject()
+    private val sceneController: SceneController by inject()
+    private var sceneFacade: SceneFacade? = null
 
     private lateinit var scaleRangeSlider: RangeSlider
 
-    val columnsCounterValueProperty = SimpleObjectProperty(SceneController.MaxColumnsNumber)
-    var columnsCounterValue: Int by columnsCounterValueProperty
+    private val columnsNumber: Int
+        get() = sceneController.columnsNumber
 
     override val root = vbox {
         vbox {
@@ -47,7 +51,14 @@ class GridSettingsView: View() {
         vgrow = Priority.ALWAYS
     }
 
-    fun setDefaultScaleRangeSliderValues() {
+    init {
+        Platform.runLater {
+            sceneFacade = ServiceLocator.getService()
+            addSceneListeners()
+        }
+    }
+
+    private fun setDefaultScaleRangeSliderValues() {
         scaleRangeSlider.lowValue = scaleRangeSlider.min
         scaleRangeSlider.highValue = scaleRangeSlider.max
     }
@@ -67,10 +78,10 @@ class GridSettingsView: View() {
 
     private fun buildScaleRangeSlider(): RangeSlider {
         val rangeSlider = RangeSlider(
-            SceneController.MinScale,
-            SceneController.MaxScale,
-            SceneController.MinScale,
-            SceneController.MaxScale
+            SceneController.DefaultMinScale,
+            SceneController.DefaultMaxScale,
+            SceneController.DefaultMinScale,
+            SceneController.DefaultMaxScale
         )
         rangeSlider.isShowTickLabels = true
 
@@ -111,20 +122,24 @@ class GridSettingsView: View() {
         }
 
         add(createColumnsNumberButton(IconsSettingsGridDecrementPath) {
-            if (columnsCounterValueProperty.value > 1) {
-                --columnsCounterValueProperty.value
-                controller.setSceneColumnsNumber(columnsCounterValueProperty.value)
+            if (columnsNumber > 1) {
+                controller.setSceneColumnsNumber(columnsNumber - 1)
             }
         })
-        label(columnsCounterValueProperty) {
+        label(sceneController.columnsNumberProperty) {
             font = Font(GridSettingsColumnsNumberCounterFontSize)
         }
         add(createColumnsNumberButton(IconsSettingsGridIncrementPath) {
-            if (columnsCounterValueProperty.value < SceneController.MaxColumnsNumber) {
-                ++columnsCounterValueProperty.value
-                controller.setSceneColumnsNumber(columnsCounterValueProperty.value)
+            if (columnsNumber < SceneController.MaxColumnsNumber) {
+                controller.setSceneColumnsNumber(columnsNumber + 1)
             }
         })
+    }
+
+    private fun addSceneListeners() {
+        sceneFacade?.lastKeepSettingsLayers?.onChange {
+            setDefaultScaleRangeSliderValues()
+        }
     }
 
     companion object {

@@ -11,9 +11,8 @@ import tornadofx.Controller
 
 class MainController : Controller() {
     private val view: MainView by inject()
-    private val sceneController: SceneController by inject()
     private val catalogueController: CatalogueController by inject()
-    private val sceneFacade = SceneFacade(sceneController).also { ServiceLocator.registerService(it) }
+    private val sceneFacade: SceneFacade? = ServiceLocator.getService()
 
     fun displayCatalogueFrames(frames: List<ProjectFrame>) = catalogueController.setCatalogueFrames(frames)
 
@@ -26,6 +25,6 @@ class MainController : Controller() {
     }
 
     fun visualizeProject(layers: List<ProjectLayer>, frames: List<ProjectFrame>) {
-        sceneFacade.visualize(layers, frames, false)
+        sceneFacade?.visualize(layers, frames, false)
     }
 }

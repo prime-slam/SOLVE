@@ -2,9 +2,11 @@ package solve.scene.controller
 
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
+import solve.scene.SceneFacade
 import solve.scene.model.Scene
 import solve.scene.view.DelayedFrameUpdatesManager
 import solve.scene.view.SceneView
+import solve.utils.ServiceLocator
 import solve.utils.ceilToInt
 import solve.utils.structures.DoublePoint
 import tornadofx.Controller
@@ -14,14 +16,12 @@ import kotlin.math.min
 import kotlin.math.sqrt
 
 class SceneController : Controller() {
-    private val view: SceneView by inject()
-
     val sceneWidthProperty = SimpleDoubleProperty()
     val sceneProperty = SimpleObjectProperty(Scene(emptyList(), emptyList()))
     val scene: Scene
         get() = sceneProperty.value
 
-    val columnsNumberProperty = SimpleObjectProperty(calculateColumnsCount(scene))
+    val columnsNumberProperty = SimpleObjectProperty(MaxColumnsNumber)
     var columnsNumber: Int
         get() = columnsNumberProperty.value
         set(value) {
@@ -33,36 +33,41 @@ class SceneController : Controller() {
             columnsNumberProperty.value = value
         }
 
-    val scaleProperty = SimpleDoubleProperty(calculateScaleCorrespondingToColumns())
+    val installedMinScaleProperty = SimpleDoubleProperty(DefaultMinScale)
+    var installedMinScale: Double
+        get() = installedMinScaleProperty.value
+        set(value) {
+            if (value <= 0 || value > maxScale) {
+                println("Min scene scale value should be a positive number that is less than max scene scale!")
+                return
+            }
+
+            installedMinScaleProperty.value = value
+        }
+
+    val installedMaxScaleProperty = SimpleDoubleProperty(DefaultMaxScale)
+    var installedMaxScale: Double
+        get() = installedMaxScaleProperty.value
+        set(value) {
+            if (value <= 0 || value < minScale) {
+                println("Max scene scale value should be a positive number that is greater than min scene scale!")
+                return
+            }
+
+            installedMaxScaleProperty.value = value
+        }
+
+    val scaleProperty = SimpleDoubleProperty(calculateMinScaleDependingOnColumns())
     var scale: Double
         get() = scaleProperty.value
         set(value) {
             scaleProperty.value = value
         }
 
-    private val scaleLowValueProperty = SimpleDoubleProperty(MinScale)
-    var scaleLowValue: Double
-        get() = scaleLowValueProperty.value
-        set(value) {
-            if (value <= 0 || value >= scaleHighValue) {
-                println("Min scene scale value should be a positive number that is less than max scene scale!")
-                return
-            }
-
-            scaleLowValueProperty.value = value
-        }
-
-    private val scaleHighValueProperty = SimpleDoubleProperty(MaxScale)
-    var scaleHighValue: Double
-        get() = scaleHighValueProperty.value
-        set(value) {
-            if (value <= 0 || value <= scaleLowValue) {
-                println("Max scene scale value should be a positive number that is greater than min scene scale!")
-                return
-            }
-
-            scaleHighValueProperty.value = value
-        }
+    private val minScale: Double
+        get() = calculateMinScaleDependingOnColumns()
+    private val maxScale: Double
+        get() = installedMaxScale
 
     val xProperty = SimpleDoubleProperty(DefaultX)
     val yProperty = SimpleDoubleProperty(DefaultY)
@@ -87,22 +92,29 @@ class SceneController : Controller() {
         }
 
     init {
+        val sceneFacade = SceneFacade(this)
+        ServiceLocator.registerService(sceneFacade)
+
         addGridSettingsBindings()
     }
 
     fun setScene(newScene: Scene, keepSettings: Boolean) {
-        setDefaultScaleRange()
-        columnsNumber = calculateColumnsCount(newScene)
         sceneProperty.value = newScene
 
         if (!keepSettings) {
-            scale = calculateScaleCorrespondingToColumns()
+            reinitializeSettings(newScene)
+        } else {
+            recalculateScale()
         }
     }
 
-    fun zoomIn(mousePosition: DoublePoint) = zoom(min(scale * ScaleFactor, scaleHighValue), mousePosition)
+    fun zoomIn(mousePosition: DoublePoint) = zoom(min(scale * ScaleFactor, maxScale), mousePosition)
 
-    fun zoomOut(mousePosition: DoublePoint) = zoom(max(scale / ScaleFactor, min(scaleLowValue, scale)), mousePosition)
+    fun zoomOut(mousePosition: DoublePoint) = zoom(max(scale / ScaleFactor, min(minScale, scale)), mousePosition)
+
+    fun recalculateScale() {
+        scale = max(minScale, calculateMinScaleDependingOnColumns())
+    }
 
     private fun zoom(newScale: Double, mousePosition: DoublePoint) {
         val initialMouseX = (xProperty.value + mousePosition.x) / scale
@@ -116,39 +128,53 @@ class SceneController : Controller() {
         }
     }
 
+    private fun reinitializeSettings(newScene: Scene) {
+        columnsNumber = calculateColumnsCount(newScene)
+        setDefaultScaleRange()
+        scale = calculateMinScaleDependingOnColumns()
+    }
+
     private fun addGridSettingsBindings() {
         columnsNumberProperty.onChange { newColumnsNumber ->
             newColumnsNumber ?: return@onChange
 
-            view.currentGrid?.changeColumnsNumber(newColumnsNumber)
+            scale = calculateMinScaleDependingOnColumns()
         }
 
-        scaleLowValueProperty.onChange { newMinScale ->
-            if (newMinScale > scale) {
-                scale = newMinScale
+        installedMinScaleProperty.onChange { installedMinScale ->
+            if (installedMinScale > scale) {
+                scale = installedMinScale
             }
         }
 
-        scaleHighValueProperty.onChange { newMaxScale ->
-            if (newMaxScale < scale) {
-                scale = newMaxScale
+        installedMaxScaleProperty.onChange { installedMaxScale ->
+            if (installedMaxScale < scale) {
+                scale = installedMaxScale
             }
         }
     }
 
-    private fun calculateScaleCorrespondingToColumns() = max(
-        MinScale,
-        sceneWidthProperty.value / ((scene.frameSize.width + SceneView.framesMargin) * columnsNumber)
-    )
+    private fun calculateMinScaleDependingOnColumns(): Double {
+        val displayingColumnsNumber = min(scene.frames.count(), columnsNumber)
+
+        return min(
+            max(
+                installedMinScale,
+                sceneWidthProperty.value /
+                        ((scene.frameSize.width + SceneView.framesMargin) * displayingColumnsNumber)
+            ),
+            DefaultMaxScale
+        )
+    }
 
     private fun setDefaultScaleRange() {
-        scaleLowValue = MinScale
-        scaleHighValue = MaxScale
+        installedMaxScale = DefaultMaxScale
+        installedMinScale = DefaultMinScale
     }
 
     companion object {
-        const val MinScale = 0.2
-        const val MaxScale = 10.0
+        const val DefaultMinScale = 0.2
+        const val DefaultMaxScale = 20.0
 
         const val MaxColumnsNumber = 5
 

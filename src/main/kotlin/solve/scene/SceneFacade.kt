@@ -1,5 +1,7 @@
 package solve.scene
 
+import javafx.beans.property.SimpleObjectProperty
+import javafx.collections.ObservableList
 import java.io.FileInputStream
 import javafx.scene.image.Image
 import solve.parsers.factories.LineFactory
@@ -19,11 +21,13 @@ import solve.scene.model.LayerSettings
 import solve.scene.model.LayerState
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
+import tornadofx.observableListOf
 
 // Interaction interface of the scene for main controller
 // Should be recreated if new project was imported
 class SceneFacade(private val controller: SceneController) {
     private val visualizationLayers = HashMap<String, LayerSettings>()
+    val lastKeepSettingsLayers = observableListOf<LayerSettings>()
 
     // Is used to set unique colors for layers where all landmarks have the same color
     private val layersColorManager = ColorManager<String>()
@@ -34,6 +38,12 @@ class SceneFacade(private val controller: SceneController) {
             visualizationLayers[projectLayer.key] ?: projectLayer.toLayerSettings()
                 .also { visualizationLayers[projectLayer.key] = it }
         }
+
+        if (!keepSettings) {
+            lastKeepSettingsLayers.removeAll()
+            lastKeepSettingsLayers.addAll(layersSettings)
+        }
+
         val layerStates = layers.map { projectLayer -> LayerState(projectLayer.name) }
         val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame(layerStates) }
         val scene = Scene(visualizationFrames, layersSettings)

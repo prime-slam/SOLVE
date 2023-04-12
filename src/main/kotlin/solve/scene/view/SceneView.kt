@@ -1,5 +1,6 @@
 package solve.scene.view
 
+import javafx.application.Platform
 import kotlinx.coroutines.*
 import solve.scene.controller.SceneController
 import solve.scene.view.association.AssociationsManager
@@ -15,7 +16,7 @@ import tornadofx.vbox
 class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
-    var currentGrid: Grid? = null
+    private var currentGrid: Grid? = null
     private var frameViewCache: FrameViewCache? = null
 
     override val root = vbox {
@@ -23,14 +24,7 @@ class SceneView : View() {
     }
 
     init {
-        controller.sceneWidthProperty.bind(root.widthProperty())
-        controller.sceneProperty.onChange { scene ->
-            if (scene != null) {
-                frameDataLoadingScope.cancel()
-                frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
-                draw()
-            }
-        }
+        addBindings()
     }
 
     private fun draw() {
@@ -113,6 +107,32 @@ class SceneView : View() {
         controller.yProperty.unbind()
         controller.scrollX = null
         controller.scrollY = null
+    }
+
+    private fun addBindings() {
+        controller.sceneWidthProperty.bind(root.widthProperty())
+        controller.sceneProperty.onChange { scene ->
+            if (scene != null) {
+                frameDataLoadingScope.cancel()
+                frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
+                draw()
+            }
+        }
+
+        // Grid settings bindings.
+        controller.columnsNumberProperty.onChange { columnsNumber ->
+            columnsNumber ?: return@onChange
+
+            currentGrid?.changeColumnsNumber(columnsNumber)
+        }
+        Platform.runLater {
+            currentWindow?.widthProperty()?.onChange {
+                Platform.runLater {
+                    controller.recalculateScale()
+                }
+            }
+
+        }
     }
 
     companion object {
