@@ -84,8 +84,10 @@ object ImagePlanesParser : Parser<Plane> {
         val uids = mutableSetOf<Long>()
 
         bufferedImage.forEachPixelColor { _, color ->
-            val uid = color.toLong()
-            uids.add(uid)
+            if (color != BackgroundColor) {
+                val uid = color.toLong()
+                uids.add(uid)
+            }
         }
 
         return uids.toList()
