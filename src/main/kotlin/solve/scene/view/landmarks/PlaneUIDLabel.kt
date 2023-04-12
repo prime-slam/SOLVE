@@ -106,7 +106,7 @@ class PlaneUIDLabel(private val plane: Landmark.Plane) {
     }
 
     private fun calculateUIDLabelScale(sceneScale: Double) =
-        (1 - SceneController.MinScale / sceneScale * UIDLabelScaleChangeCoefficient)
+        (1 - SceneController.DefaultMinScale / sceneScale * UIDLabelScaleChangeCoefficient)
 
     private fun addListeners() {
         enabledProperty.addListener(weakEnabledChangedEventHandler)
