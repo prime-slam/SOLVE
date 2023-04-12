@@ -3,8 +3,8 @@ package solve.scene.view.association
 import javafx.beans.property.DoubleProperty
 import solve.scene.model.Landmark
 import solve.scene.model.VisualizationFrame
-import solve.utils.structures.DoublePoint as DoubleSize
 import tornadofx.add
+import solve.utils.structures.Size as DoubleSize
 
 class AssociationsManager(
     private val frameSize: DoubleSize,
@@ -56,7 +56,7 @@ class AssociationsManager(
 
     private fun drawAdorner(frame: VisualizationFrame) {
         val framePosition = getFramePosition(frame)
-        val adorner = AssociationAdorner(frameSize.x, frameSize.y, framePosition, scale)
+        val adorner = AssociationAdorner(frameSize.width, frameSize.height, framePosition, scale)
         drawnAdorners[frame] = adorner
         outOfFramesLayer.add(adorner.node)
     }
@@ -97,7 +97,7 @@ class AssociationsManager(
         val indexOfFrame = frames.indexOf(frame)
         val firstFrameRow = indexOfFrame / columnsNumber
         val firstFrameColumn = indexOfFrame % columnsNumber
-        return Pair(firstFrameColumn * (frameSize.x + framesIndent), firstFrameRow * (frameSize.y + framesIndent))
+        return Pair(firstFrameColumn * (frameSize.width + framesIndent), firstFrameRow * (frameSize.height + framesIndent))
     }
 
     fun clearAssociation(frame: VisualizationFrame) {

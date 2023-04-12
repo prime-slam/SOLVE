@@ -3,7 +3,7 @@ package solve.scene.view
 import javafx.beans.property.DoubleProperty
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.OutOfFramesLayer
-import solve.utils.structures.DoublePoint as DoubleSize
+import solve.utils.structures.Size as DoubleSize
 
 interface GridProvider {
     fun createGrid(
