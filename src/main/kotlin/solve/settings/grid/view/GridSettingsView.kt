@@ -107,21 +107,62 @@ class GridSettingsView: View() {
         return rangeSlider
     }
 
-    private fun buildColumnsNumberCounter() = hbox(5) {
-        fun createColumnsNumberButton(iconPath: String, action: () -> Unit) = button {
-            addStylesheet(TransparentScalingButtonStyle::class)
-
-            val iconImage = loadResourcesImage(iconPath)
-
-            action {
-                action()
-            }
-
-            iconImage ?: return@button
-            graphic = createImageViewIcon(iconImage, GridSettingsColumnsNumberButtonsSize)
+    private fun createColumnsNumberButton(
+        iconPath: String,
+        isActiveProperty: SimpleObjectProperty<Boolean>,
+        action: () -> Unit,
+    ) = button {
+        style {
+            backgroundColor += Color.TRANSPARENT
         }
 
-        add(createColumnsNumberButton(IconsSettingsGridDecrementPath) {
+        val iconImage = loadResourcesImage(iconPath)
+
+        action {
+            if (isActiveProperty.value) {
+                action()
+            }
+        }
+
+        fun updateViewByActivity(isActive: Boolean) {
+            if (!isActive) {
+                unscale()
+                graphic.opacity = GridSettingsColumnsNumberButtonInactiveOpacity
+            } else {
+                graphic.opacity = 1.0
+            }
+        }
+
+        iconImage ?: return@button
+        graphic = createImageViewIcon(iconImage, GridSettingsColumnsNumberButtonsSize)
+        updateViewByActivity(isActiveProperty.value)
+
+        isActiveProperty.onChange { isActive ->
+            isActive ?: return@onChange
+
+            updateViewByActivity(isActive)
+        }
+        setOnMouseEntered {
+            if (isActiveProperty.value) {
+                scale(GridSettingsColumnsNumberButtonHoveredScale)
+            }
+        }
+        setOnMouseExited {
+            unscale()
+        }
+    }
+
+    private fun buildColumnsNumberCounter() = hbox(5) {
+        val isDecrementActive = SimpleObjectProperty(false)
+        val isIncrementActive = SimpleObjectProperty(false)
+        sceneController.columnsNumberProperty.onChange { columnsNumber ->
+            columnsNumber ?: return@onChange
+
+            isDecrementActive.value = columnsNumber > 1
+            isIncrementActive.value = columnsNumber < SceneController.MaxColumnsNumber
+        }
+
+        add(createColumnsNumberButton(IconsSettingsGridDecrementPath, isDecrementActive) {
             if (columnsNumber > 1) {
                 controller.setSceneColumnsNumber(columnsNumber - 1)
             }
@@ -129,7 +170,7 @@ class GridSettingsView: View() {
         label(sceneController.columnsNumberProperty) {
             font = Font(GridSettingsColumnsNumberCounterFontSize)
         }
-        add(createColumnsNumberButton(IconsSettingsGridIncrementPath) {
+        add(createColumnsNumberButton(IconsSettingsGridIncrementPath, isIncrementActive) {
             if (columnsNumber < SceneController.MaxColumnsNumber) {
                 controller.setSceneColumnsNumber(columnsNumber + 1)
             }
@@ -152,6 +193,8 @@ class GridSettingsView: View() {
 
         private const val GridSettingsColumnsNumberButtonsSize = 18.0
         private const val GridSettingsColumnsNumberCounterFontSize = 18.0
+        private const val GridSettingsColumnsNumberButtonHoveredScale = 1.25
+        private const val GridSettingsColumnsNumberButtonInactiveOpacity = 0.6
 
         // Minimal allow difference between the min and max scale values.
         private const val GridSettingsScaleRangeMinDifference = 0.1

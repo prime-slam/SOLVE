@@ -283,22 +283,3 @@ class VisualizationSettingsLayerCell(
         private val layerInvisibleIconImage = loadResourcesImage(IconsSettingsVisualizationLayerInvisiblePath)
     }
 }
-
-class VisualizationSettingsLayerCellStyle: Stylesheet() {
-    init {
-        button {
-            backgroundColor += LayerEditButtonBackgroundColor
-
-            and(hover) {
-                imageView {
-                    scale(HoveredEditButtonScale)
-                }
-            }
-        }
-    }
-
-    companion object {
-        private val LayerEditButtonBackgroundColor = Color.TRANSPARENT
-        private const val HoveredEditButtonScale = 1.25
-    }
-}
