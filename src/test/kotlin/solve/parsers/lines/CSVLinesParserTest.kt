@@ -10,7 +10,7 @@ import java.io.File
 
 internal class CSVLinesParserTest {
     @Test
-    fun `Parsing a lines CSV file containing data in standard format`(@TempDir tempFolder: File) {
+    fun `Parsing a lines CSV file containing data in a standard format`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, csvTestLinesStringData)
 
         assertEquals(testLines, CSVLinesParser.parse(csvDataFile.path))
@@ -36,7 +36,7 @@ internal class CSVLinesParserTest {
     }
 
     @Test
-    fun `Parsing an empty CSV file with lines parser`(@TempDir tempFolder: File) {
+    fun `Parsing an empty CSV file with a lines parser`(@TempDir tempFolder: File) {
         val emptyCSVFile = createCSVFileWithData(tempFolder, "")
 
         assertThrows(CsvReadException::class.java) {
@@ -74,7 +74,7 @@ internal class CSVLinesParserTest {
     }
 
     @Test
-    fun `Parsing a lines CSV file with wrong delimiter`(@TempDir tempFolder: File) {
+    fun `Parsing a lines CSV file with a wrong delimiter`(@TempDir tempFolder: File) {
         val csvStringDataWithWrongDelimiter = csvTestLinesStringData.replace(",", ";")
         val csvDataFile = createCSVFileWithData(tempFolder, csvStringDataWithWrongDelimiter)
 
@@ -84,21 +84,21 @@ internal class CSVLinesParserTest {
     }
 
     @Test
-    fun `Extracting a UIDs from lines CSV file with standard format`(@TempDir tempFolder: File) {
+    fun `Extracting UIDs from lines CSV file with a standard format`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, csvTestLinesStringData)
 
         assertEquals(testUIDs, CSVLinesParser.extractUIDs(csvDataFile.path))
     }
 
     @Test
-    fun `Extracting a UIDs from lines CSV file with only one header`(@TempDir tempFolder: File) {
+    fun `Extracting UIDs from lines CSV file with only one header`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, CSVLineDataStringPrefix)
 
         assertEquals(emptyList<Long>(), CSVLinesParser.extractUIDs(csvDataFile.path))
     }
 
     @Test
-    fun `Extracting a UIDs from empty CSV file with lines UIDs extractor`(@TempDir tempFolder: File) {
+    fun `Extracting UIDs from empty CSV file with lines extractor`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, "")
 
         assertThrows(CsvReadException::class.java) {

@@ -25,10 +25,11 @@ object ImagePlanesParser : Parser<Plane> {
         }
     }
 
-    private const val COLOR_BITS_NUMBER = 8
+    const val ColorBitsNumber = 8
+    const val BackgroundColor = 0
 
     private fun convertSeparateToWholeRGB(r: UByte, g: UByte, b: UByte): Int =
-        (r.toInt() shl COLOR_BITS_NUMBER * 2) + (g.toInt() shl COLOR_BITS_NUMBER) + b.toInt()
+        (r.toInt() shl ColorBitsNumber * 2) + (g.toInt() shl ColorBitsNumber) + b.toInt()
 
     private fun getPlanePixelColor(
         pixelIndex: Int,
@@ -49,7 +50,7 @@ object ImagePlanesParser : Parser<Plane> {
     private inline fun BufferedImage.forEachPixelColor(action: (index: Int, color: Int) -> Unit) {
         val imageByteDataArray = getImageByteDataArray(this)
         val colorSegmentsType: ColorSegmentsType =
-            ColorSegmentsType.getColorSegmentsType(this.colorModel.numComponents) ?: return
+            ColorSegmentsType.getColorSegmentsType(colorModel.numComponents) ?: return
         val colorComponentsNumber = colorSegmentsType.colorComponentsNumber
 
         for (i in imageByteDataArray.indices step colorComponentsNumber) {
@@ -69,7 +70,7 @@ object ImagePlanesParser : Parser<Plane> {
             val x = i % imageWidth
             val y = i / imageWidth
 
-            if (color != 0) {
+            if (color != BackgroundColor) {
                 planePoints.getOrPut(color.toLong()) { mutableListOf() }.add(Point(x.toShort(), y.toShort()))
             }
         }
