@@ -32,6 +32,9 @@ class VirtualizedFXGrid(
     override val yProperty = SimpleDoubleProperty(virtualGrid.position.y)
 
     private val scaleChangedListener = InvalidationListener {
+        // Virtual grid can't lay out columns correctly if position differs from (0, 0)
+        scrollX(0.0)
+        scrollY(0.0)
         val newScale = scaleProperty.value
         virtualGrid.cellSize = Size(cellSize.width * newScale, cellSize.height * newScale)
     }

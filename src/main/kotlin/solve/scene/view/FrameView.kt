@@ -104,7 +104,11 @@ class FrameView(
     }
 
     fun setFrame(frame: VisualizationFrame?) {
-        if (frame?.timestamp == currentFrame?.timestamp) {
+        if (DelayedFrameUpdatesManager.shouldDelay) {
+            DelayedFrameUpdatesManager.delayUpdate(this, frame)
+            return
+        }
+        if (frame == currentFrame) {
             return
         }
         currentJob?.cancel()
