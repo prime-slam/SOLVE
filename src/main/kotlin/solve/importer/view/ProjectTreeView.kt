@@ -7,6 +7,7 @@ import javafx.scene.control.TreeTableColumn
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
+import javafx.scene.text.Font
 import solve.constants.IconsImporterDescriptionPath
 import solve.constants.IconsImporterErrorFilePath
 import solve.constants.IconsImporterErrorFolderPath
@@ -107,7 +108,9 @@ open class ProjectTreeView : View() {
                             item?.errors?.toStringWithoutBrackets()
                         }
                         if (!empty && text.isNotEmpty()) {
-                            tooltip(text)
+                            tooltip(text).apply {
+                                style = "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.tooltipFontSize}; -fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+                            }
                         }
                     }
                 }

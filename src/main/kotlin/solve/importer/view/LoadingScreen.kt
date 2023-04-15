@@ -16,7 +16,6 @@ class LoadingScreen : View("Loading") {
     private val primaryColor: Color = Color.valueOf(Style.PrimaryColor)
 
     private val controlPanel: ControlPanel by inject()
-
     private val progressSpinner = MFXProgressSpinner().apply {
         color1 = primaryColor
         color2 = primaryColor

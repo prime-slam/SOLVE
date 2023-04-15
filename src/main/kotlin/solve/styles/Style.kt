@@ -33,6 +33,9 @@ object Style {
 
     const val Font = "Roboto"
 
+    const val headerFontSize = "20px"
+
+
     const val ListFontColor = "3E4345"
 
     const val HeaderFontColor = "1A1A1A"
