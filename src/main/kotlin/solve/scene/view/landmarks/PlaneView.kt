@@ -3,6 +3,7 @@ package solve.scene.view.landmarks
 import javafx.animation.Timeline
 import javafx.beans.InvalidationListener
 import javafx.event.EventHandler
+import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.util.Duration
@@ -53,16 +54,16 @@ class PlaneView(
 
     private var mousePressedFramePosition: DoublePoint? = null
 
-    private val mousePressedHandler = EventHandler<MouseEvent> {
-        if (!plane.layerSettings.enabled) {
+    private val mousePressedHandler = EventHandler<MouseEvent> { mouse ->
+        if (mouse.button != MouseButton.PRIMARY || !plane.layerSettings.enabled) {
             return@EventHandler
         }
         mousePressedFramePosition = frameDrawer.screenPosition
     }
     private val mousePressedCanvasEventHandler = CanvasEventHandler(planeElement, mousePressedHandler)
 
-    private val mouseReleasedHandler = EventHandler<MouseEvent> {
-        if (!plane.layerSettings.enabled) {
+    private val mouseReleasedHandler = EventHandler<MouseEvent> { mouse ->
+        if (mouse.button != MouseButton.PRIMARY || !plane.layerSettings.enabled) {
             return@EventHandler
         }
         val mousePressedCanvasPosition = mousePressedFramePosition ?: return@EventHandler
