@@ -1,12 +1,15 @@
 package solve.scene.view.association
 
 import javafx.beans.property.DoubleProperty
-import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
+import javafx.scene.text.Font
+import javafx.scene.text.FontWeight
+import solve.styles.Style
 import tornadofx.*
 
 class AssociationAdorner(
@@ -30,13 +33,11 @@ class AssociationAdorner(
         rect.fill = RectangleColor
         rect.opacity = RectangleOpacity
 
-        val label = Label("Select second frame")
-        label.background = Background(
-            BackgroundFill(
-                Color.WHITE,
-                CornerRadii.EMPTY, Insets.EMPTY
-            )
-        )
+        val label = Label("Select second frame").also {
+            it.textFill = Paint.valueOf(Style.surfaceColor)
+            it.font = Font.font(Style.fontCondensed, FontWeight.BOLD, 20.0)
+            it.minWidth = Region.USE_PREF_SIZE
+        }
 
         pane.add(rect)
         pane.add(label)
@@ -52,7 +53,7 @@ class AssociationAdorner(
     }
 
     companion object {
-        private const val RectangleOpacity = 0.3
-        private val RectangleColor: Color = Color.BLUE
+        private const val RectangleOpacity = 0.5
+        private val RectangleColor: Color = c("78909c")
     }
 }
