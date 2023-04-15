@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.scene.Node
+import javafx.scene.input.MouseButton
 import javafx.scene.input.ScrollEvent
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.Grid
@@ -63,11 +64,17 @@ class VirtualizedFXGrid(
 
     override fun setUpPanning() {
         virtualGrid.setOnMousePressed { event ->
+            if (event.button != MouseButton.PRIMARY) {
+                return@setOnMousePressed
+            }
             dragStartMousePosition = Position.of(event.x, event.y)
             dragStartGridPosition = virtualGrid.position
         }
 
         virtualGrid.setOnMouseDragged { event ->
+            if (event.button != MouseButton.PRIMARY) {
+                return@setOnMouseDragged
+            }
             val xDelta = dragStartMousePosition.x - event.x
             val yDelta = dragStartMousePosition.y - event.y
             virtualGrid.scrollTo(dragStartGridPosition.x + xDelta, Orientation.HORIZONTAL)
