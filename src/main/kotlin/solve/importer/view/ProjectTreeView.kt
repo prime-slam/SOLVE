@@ -7,6 +7,7 @@ import javafx.scene.control.TreeTableColumn
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
+import javafx.scene.text.Font
 import solve.constants.IconsImporterDescriptionPath
 import solve.constants.IconsImporterErrorFilePath
 import solve.constants.IconsImporterErrorFolderPath
@@ -15,6 +16,8 @@ import solve.importer.ProjectParser
 import solve.importer.controller.ImporterController
 import solve.importer.model.FileInTree
 import solve.importer.model.FileInfo
+import solve.styles.Style
+import solve.styles.TreeTableViewStylesheet
 import solve.utils.loadResourcesImage
 import solve.utils.toStringWithoutBrackets
 import tornadofx.*
@@ -37,8 +40,9 @@ open class ProjectTreeView : View() {
 
     override val root =
         treetableview(rootTree) {
+            addStylesheet(TreeTableViewStylesheet::class)
             style =
-                "-fx-font-family: Roboto Condensed; -fx-font-weight: REGULAR; -fx-text-fill: #78909C; -fx-font-size: 14px;"
+                "-fx-font-family: ${Style.fontCondensed}; -fx-text-fill: #${Style.primaryColor}; -fx-font-size: 14px;"
             BorderPane.setMargin(this, Insets(0.0, 0.0, 2.0, 15.0))
 
             visibleWhen { controller.projectAfterPartialParsing.isNotNull }
@@ -50,7 +54,7 @@ open class ProjectTreeView : View() {
             }
             val errorsColumn: TreeTableColumn<FileInTree, FileInfo> = TreeTableColumn<FileInTree, FileInfo>().apply {
                 isResizable = false
-                prefWidth = 150.0
+                prefWidth = 200.0
             }
 
             filesColumn.cellValueFactory = TreeItemPropertyValueFactory("file")
@@ -103,7 +107,10 @@ open class ProjectTreeView : View() {
                             null
                         } else item?.errors?.toStringWithoutBrackets()
                         if (!empty && text.isNotEmpty()) {
-                            tooltip(text)
+                            tooltip(text).apply {
+                                font = Font.font("Roboto", 12.0)
+                                style = "-fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+                            }
                         }
                     }
                 }

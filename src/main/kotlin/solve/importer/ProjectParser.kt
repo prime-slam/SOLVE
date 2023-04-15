@@ -157,6 +157,7 @@ object ProjectParser {
             val ownerWindow = find<ImporterView>().root.scene.window
             createAlertForError("The images folder is missing in the directory", ownerWindow)
             return null
+
         }
 
         images.map { img ->

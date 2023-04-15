@@ -4,34 +4,36 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.paint.Color.*
 import javafx.scene.paint.Paint
 import tornadofx.*
+import java.net.URI
 
 class TreeTableViewStylesheet : Stylesheet() {
     companion object {
         val fxTreeTableCellBorderColor by cssproperty<MultiValue<Paint>>("-fx-table-cell-border-color")
-        val background = valueOf("eff0f0")
-        val surfaceColor = WHITE
-        val primaryColorLight = valueOf("B0BEC5")
-        val primaryColor = valueOf("78909C")
+        val backgroundColour = valueOf(Style.backgroundColour)
+        val surfaceColor = valueOf(Style.surfaceColor)
+        val primaryColor = valueOf(Style.primaryColor)
     }
 
     init {
         treeTableCell {
-
             textFill = BLACK
             prefHeight = 35.px
         }
 
         treeTableRowCell {
+
             arrow {
+                backgroundImage += URI("/icons/importer/Shape.png")
+
                 prefHeight = 12.px
                 prefWidth = 7.px
-                backgroundColor += primaryColorLight
+                backgroundColor += TRANSPARENT
             }
 
             fxTreeTableCellBorderColor.value += TRANSPARENT
             backgroundColor += surfaceColor
             and(hover) {
-                backgroundColor += background
+                backgroundColor += backgroundColour
                 and(empty) {
                     backgroundColor += surfaceColor
                 }
@@ -39,12 +41,18 @@ class TreeTableViewStylesheet : Stylesheet() {
         }
 
         treeTableView {
+
+
             borderColor += box(WHITE)
             hBarPolicy = ScrollPane.ScrollBarPolicy.NEVER
             scrollBar {
-                arrow{
+                s(incrementArrow, decrementArrow){
+                    backgroundColor += TRANSPARENT
+                }
+                s(incrementButton, decrementButton){
                     visibility = FXVisibility.HIDDEN
                 }
+
                 prefWidth = 10.0.px
                 backgroundColor += surfaceColor
                 thumb {
@@ -53,7 +61,6 @@ class TreeTableViewStylesheet : Stylesheet() {
             }
             and(focused) {
                 borderWidth += box(0.px, 0.px, 0.px, 0.px)
-
             }
 
             backgroundColor += surfaceColor
@@ -64,5 +71,7 @@ class TreeTableViewStylesheet : Stylesheet() {
                 minHeight = 0.px
             }
         }
+
+        }
+
     }
-}

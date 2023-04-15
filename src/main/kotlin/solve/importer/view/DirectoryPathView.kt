@@ -7,11 +7,11 @@ import javafx.geometry.Pos
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import javafx.stage.DirectoryChooser
 import solve.importer.ProjectParser
 import solve.importer.controller.ImporterController
+import solve.styles.Style
 import solve.utils.mfxButton
 import solve.utils.mfxTextField
 import tornadofx.*
@@ -22,6 +22,8 @@ class DirectoryPathView : View() {
 
     private val directoryChooser = DirectoryChooser().apply { title = "Choose working directory" }
 
+    private val roboto = Style.fontCondensed
+
     private val directoryField = mfxTextField {
         isEditable = false
         isAllowEdit = false
@@ -29,40 +31,56 @@ class DirectoryPathView : View() {
         enableWhen {
             controller.projectAfterPartialParsing.isNotNull
         }
-        textFill = Color.valueOf("000000")
+        textFill = Color.valueOf(Style.onBackgroundColor)
+
         prefHeight=48.0
         prefWidth=280.0
         BorderPane.setAlignment(this, Pos.CENTER)
         BorderPane.setMargin(this, Insets(16.0, 0.0,0.0, 0.0))
-        style = "-fx-border-color: #B0BEC5; -fx-font-family: Roboto Condensed; -fx-font-size: 15px;"
+
+        style = "-fx-border-color: #${Style.primaryColorLight}; -fx-font-size: 15px;"
+
         floatMode = FloatMode.BORDER
-        font = Font.font("Roboto Condensed", 14.0)
+        font = Font.font(roboto, 14.0)
 
         floatingText = "Select project directory"
+        controller.directoryPath.onChange {
+            if (it != null && it != ""){
+                floatingText = "Selected project directory"
+            }
+            else{
+                floatingText = "Select project directory"
+            }
+        }
+
         controller.projectAfterPartialParsing.onChange {
             if (controller.projectAfterPartialParsing.value != null){
-                tooltip(controller.directoryPath.value)
+                tooltip(controller.directoryPath.value).apply {
+                    font = Font.font(Style.font, 12.0)
+                    style = "-fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+                }
             }
-
-            val x = controller.directoryPath.value
-            this.text = if (x == null) "Select project directory"
-            else "Project directory\n$x"
+            text = if (it != null){
+                controller.directoryPath.value
+            } else{
+                ""
+            }
         }
     }
 
     private val labelName = label("Import a directory") {
         prefHeight=0.0
         prefWidth=141.0
-        font = Font.font("Roboto Condensed", 20.0)
+        font = Font.font(Style.fontCondensed, 20.0)
         VBox.setMargin(this, Insets(0.0, 0.0, 0.0, 0.0))
     }
 
     private val selectButton = mfxButton ("SELECT"){
-        style="-fx-border-color: #78909C; -fx-font-family: Roboto Condensed; -fx-font-weight: BOLD; -fx-border-radius: 4px; -fx-text-fill: #78909C;"
+        style="-fx-border-color: #${Style.primaryColor}; -fx-font-family: $roboto; -fx-font-size: ${Style.fontSize}; -fx-font-weight: BOLD; -fx-border-radius: 4px; -fx-text-fill: #${Style.primaryColor};"
         BorderPane.setAlignment(this, Pos.CENTER)
         BorderPane.setMargin(this, Insets(15.0, 0.0, 0.0, 0.0))
-        textFill = Paint.valueOf("78909C")
-        font = Font.font("Roboto Condensed", 14.0)
+        textFill = Color.valueOf(Style.primaryColor)
+
         alignment=Pos.CENTER
         depthLevel = DepthLevel.LEVEL1
         prefHeight = 31.0
@@ -75,7 +93,7 @@ class DirectoryPathView : View() {
 
     override val root =
         vbox {
-            padding = Insets(24.0, 24.0, 0.0, 24.0)
+            padding = Insets(0.0, 24.0, 0.0, 24.0)
             controller.directoryPath.onChange {
                 if (!it.isNullOrEmpty()) {
                     val projectAfterPartialParsing = ProjectParser.partialParseDirectory(it.toString())
@@ -88,10 +106,7 @@ class DirectoryPathView : View() {
                     }
                 }
             }
-
-            prefHeight = 133.0
-            prefWidth = 453.0
-            style = "-fx-background-color: 000000"
+            style = "-fx-background-color: #${Style.surfaceColor}"
             BorderPane.setAlignment(this, Pos.CENTER)
             add(labelName)
             borderpane {

@@ -21,6 +21,7 @@ import solve.importer.model.FrameAfterPartialParsing
 import solve.main.MainController
 import solve.menubar.view.MenuBarView
 import solve.project.model.Project
+import solve.styles.Style
 import solve.utils.createAlertForError
 import solve.utils.loadResourcesImage
 import solve.utils.mfxButton
@@ -34,9 +35,13 @@ class ControlPanel : View() {
 
     private val mainController: MainController by inject()
 
+    private val robotoCondensed = Style.fontCondensed
+    private val buttonStyle = Style.buttonStyle
+
     private val importer = find<DirectoryPathView>()
 
     private val importButtonModel = ButtonModel()
+
     private val filesCountIcon = loadResourcesImage(IconsImporterCheckCirclePath)
     private val errorsCountIcon = loadResourcesImage(IconsImporterWarningPath)
 
@@ -45,7 +50,7 @@ class ControlPanel : View() {
     private val algorithmsLabel = label {
         val listOfKind = mutableListOf<String>()
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
-        font = Font.font("Roboto Condensed", 15.0)
+        font = Font.font(robotoCondensed, 15.0)
 
         controller.projectAfterPartialParsing.onChange {
             it?.let {
@@ -59,9 +64,9 @@ class ControlPanel : View() {
 
     private val importButton = mfxButton("IMPORT") {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
-        maxWidth = 68.0
+        maxWidth = 75.0
         prefHeight = 23.0
-        style = "-fx-font-family: Roboto Condensed; -fx-font-weight: Bold; -fx-text-fill: #78909C;"
+        style = buttonStyle
         buttonController.changeDisable(importButtonModel)
         isDisable = importButtonModel.disabled.value
         prefWidth = ButtonWidth
@@ -81,10 +86,10 @@ class ControlPanel : View() {
     }
 
     private val cancelButton = mfxButton("CANCEL") {
-        maxWidth = 68.0
+        maxWidth = 75.0
         prefHeight = 23.0
-        style = "-fx-font-family: Roboto Condensed; -fx-font-weight: Bold; -fx-text-fill: #78909C;"
-        textFill = Paint.valueOf("78909C")
+        style = buttonStyle
+        textFill = Paint.valueOf(Style.primaryColor)
         BorderPane.setAlignment(this, Pos.TOP_RIGHT)
         prefWidth = ButtonWidth
         action {
@@ -95,7 +100,7 @@ class ControlPanel : View() {
     private val countImagesLabel = label {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
 
-        font = Font.font("Roboto Condensed", 15.0)
+        font = Font.font(Style.fontCondensed, 15.0)
         controller.projectAfterPartialParsing.onChange {
             val countFiles = it?.projectFrames?.count()
             this.text = "$countFiles images found"
@@ -106,7 +111,7 @@ class ControlPanel : View() {
     private val countErrorsLabel = label {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
 
-        font = Font.font("Roboto Condensed", 15.0)
+        font = Font.font(Style.fontCondensed, 15.0)
         controller.projectAfterPartialParsing.onChange {
             var countErrors = 0
             it?.projectFrames?.forEach { frame ->
@@ -120,7 +125,7 @@ class ControlPanel : View() {
 
 
     override val root = borderpane {
-        padding = Insets(0.0, 24.0, 24.0, 24.0)
+        padding = Insets(0.0, 24.0, 14.0, 24.0)
         top {
             vbox(10) {
                 separator().apply { visibleWhen { controller.projectAfterPartialParsing.isNotNull } }
@@ -147,17 +152,13 @@ class ControlPanel : View() {
         }
     }
 
-
     private fun cancelAction() {
-        controller.projectAfterPartialParsing.set(null)
-
+        controller.directoryPath.set(null)
         importer.close()
     }
 
     private fun showLoading() {
-        val loadingScreen = LoadingScreen()
-
-        find(ImporterView::class).replaceWith(loadingScreen)
+        MaterialFXDialog().changeContent(find<MenuBarView>().content)
     }
 
     private fun importAction(button: MFXButton, projectVal: Project) {
@@ -165,13 +166,16 @@ class ControlPanel : View() {
             mainController.visualizeProject(projectVal.layers, projectVal.frames)
             mainController.displayCatalogueFrames(projectVal.frames)
             button.isDisable = true
-            MenuBarView().importer.close()
+
+            find<MenuBarView>().dialog.close()
+
         } catch (e: Exception) {
             createAlertForError("Visualization error", find<ImporterView>().root.scene.window)
         }
     }
 
     private fun getListOfAlgorithms(frame: FrameAfterPartialParsing, listOfKind: MutableList<String>) {
+        listOfKind.clear()
         frame.outputs.forEach { output ->
             val algName = output.algorithmName
             if (!listOfKind.contains(algName)) {
