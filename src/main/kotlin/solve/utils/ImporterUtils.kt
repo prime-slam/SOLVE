@@ -1,21 +1,31 @@
 package solve.utils
 
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder
+import io.github.palexdev.materialfx.enums.ScrimPriority
+import javafx.stage.Modality
+import javafx.stage.Window
 import solve.importer.view.AlertDialog
-import solve.importer.view.DirectoryPathView
-import tornadofx.FX.Companion.find
 
-fun createAlertForError(content: String) {
-    val container = MaterialFXDialog.createGenericDialog(AlertDialog(content).root)
+fun createAlertForError(content: String, owner: Window) {
+    var container = AlertDialog(content)
 
-    val dialog = MaterialFXDialog.createStageDialog(
-        container,
-        find<DirectoryPathView>().currentStage,
-        find<DirectoryPathView>().root
-    ).apply {
-        isDraggable = false
-    }
+        val dialogContent = MFXGenericDialogBuilder.build()
+            .setContent(container.root)
+            .setShowMinimize(false)
+            .setShowAlwaysOnTop(false)
+            .setShowClose(false)
+            .get()
 
-    dialog.show()
+        val dialog = MFXGenericDialogBuilder.build(dialogContent)
+            .toStageDialogBuilder()
+            .initOwner(owner)
+            .initModality(Modality.APPLICATION_MODAL)
+            .setDraggable(true)
+            .setScrimPriority(ScrimPriority.WINDOW)
+            .setScrimOwner(true)
+            .get()
+
+       dialog.show()
 }
 fun List<String>.toStringWithoutBrackets(): String {
     return this.toString().replace("[", "").replace("]", "")

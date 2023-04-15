@@ -27,7 +27,6 @@ class MenuBarView : View() {
             action {
                 controller.directoryPath.set(null)
                 controller.projectAfterPartialParsing.set(null)
-                content = MaterialFXDialog.createGenericDialog(importer.root)
                 dialog = MaterialFXDialog.createStageDialog(content, mainView.currentStage, mainView.root)
                 dialog.show()
                 content.padding = Insets(0.0, 0.0, 10.0, 0.0)
@@ -36,7 +35,6 @@ class MenuBarView : View() {
         button("Manage plugins") {
         }
         button("Settings") {
-
         }
         button("Help") {
         }
