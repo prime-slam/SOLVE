@@ -11,6 +11,7 @@ class ImporterView : View() {
         stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto")
 
         style = "-fx-background-color: #${Style.surfaceColor};"
+
         prefHeight = 555.0
         prefWidth = 453.0
         top<DirectoryPathView>()

@@ -33,11 +33,11 @@ class ControlPanel : View() {
 
     private val mainController: MainController by inject()
 
-    private val buttonStyle = Style.buttonStyle
+    private val menuBarView: MenuBarView by inject()
 
     private val importer: DirectoryPathView by inject()
 
-    private val menuBarView: MenuBarView by inject()
+    private val buttonStyle = Style.buttonStyle
 
     private val loading: LoadingScreen by inject()
 
@@ -51,6 +51,7 @@ class ControlPanel : View() {
     private val algorithmsLabel = label {
         val listOfKind = mutableListOf<String>()
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
+
         style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
 
         controller.projectAfterPartialParsing.onChange {

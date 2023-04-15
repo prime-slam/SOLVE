@@ -13,6 +13,7 @@ import java.net.URI
 class TreeTableViewStylesheet : Stylesheet() {
     companion object {
         val fxTreeTableCellBorderColor by cssproperty<MultiValue<Paint>>("-fx-table-cell-border-color")
+
         val backgroundColour: Color = valueOf(Style.backgroundColour)
         val surfaceColor: Color = valueOf(Style.surfaceColor)
         val primaryColor: Color = valueOf(Style.primaryColor)
@@ -71,5 +72,6 @@ class TreeTableViewStylesheet : Stylesheet() {
                 minHeight = 0.px
             }
         }
+
     }
 }
