@@ -6,7 +6,7 @@ import solve.styles.TreeTableViewStylesheet
 import tornadofx.App
 import tornadofx.launch
 
-class SolveApp : App(MainView::class, TreeTableViewStylesheet::class) {
+class SolveApp : App(MainView::class) {
     override fun start(stage: Stage) {
         with(stage) {
             width = 1000.0
