@@ -35,7 +35,6 @@ class MenuBarView : View() {
         button("Manage plugins") {
         }
         button("Settings") {
-
         }
         button("Help") {
         }
