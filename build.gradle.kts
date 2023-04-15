@@ -12,6 +12,7 @@ val tornadofxVersion: String by rootProject
 val jacksonCSVVersion: String by rootProject
 val jacksonModuleKotlinVersion: String by rootProject
 val virtualizedfxVersion: String by rootProject
+val materialfxVersion: String by rootProject
 val coroutinesVersion: String by rootProject
 val controlsfxVersion: String by rootProject
 val junitVersion: String by rootProject
@@ -36,12 +37,12 @@ javafx {
 
 dependencies {
     testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion")
-    implementation("io.github.palexdev:materialfx:11.15.0")
     implementation(kotlin("stdlib-jdk8"))
     implementation("no.tornado:tornadofx:$tornadofxVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonCSVVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleKotlinVersion")
     implementation("io.github.palexdev:virtualizedfx:$virtualizedfxVersion")
+    implementation("io.github.palexdev:materialfx:$materialfxVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:$coroutinesVersion")
     implementation("junit:junit:$junitVersion")
