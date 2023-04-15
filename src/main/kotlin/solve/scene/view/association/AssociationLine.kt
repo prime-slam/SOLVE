@@ -12,14 +12,15 @@ class AssociationLine(
     private val secondFramePosition: Pair<Double, Double>,
     private val firstKeypoint: Landmark.Keypoint,
     private val secondKeypoint: Landmark.Keypoint,
-    private val scale: DoubleProperty
+    private val scale: DoubleProperty,
+    color: Color
 ) {
     private val line = Line()
     val node: Node = line
 
     init {
         updateLinePosition()
-        line.stroke = AssociationLineColor
+        line.stroke = color
 
         scale.onChange {
             updateLinePosition()
@@ -31,9 +32,5 @@ class AssociationLine(
         line.startY = (firstFramePosition.second + firstKeypoint.coordinate.y) * scale.value
         line.endX = (secondFramePosition.first + secondKeypoint.coordinate.x) * scale.value
         line.endY = (secondFramePosition.second + secondKeypoint.coordinate.y) * scale.value
-    }
-
-    companion object {
-        private val AssociationLineColor = Color.RED
     }
 }
