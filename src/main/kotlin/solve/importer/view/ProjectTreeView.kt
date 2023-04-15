@@ -7,6 +7,7 @@ import javafx.scene.control.TreeTableColumn
 import javafx.scene.control.cell.TreeItemPropertyValueFactory
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
+import javafx.scene.text.Font
 import solve.constants.IconsImporterDescriptionPath
 import solve.constants.IconsImporterErrorFilePath
 import solve.constants.IconsImporterErrorFolderPath
@@ -40,8 +41,17 @@ open class ProjectTreeView : View() {
     override val root =
         treetableview(rootTree) {
             addStylesheet(TreeTableViewStylesheet::class)
+<<<<<<< HEAD
             style = "-fx-font-family: ${Style.font}; -fx-text-fill: #${Style.primaryColor}; " +
                 "-fx-font-size: ${Style.buttonFontSize};"
+=======
+            style =
+<<<<<<< HEAD
+                "-fx-font-family: ${Style.font}; -fx-text-fill: #${Style.primaryColor}; -fx-font-size: ${Style.buttonFontSize};"
+=======
+                "-fx-font-family: ${Style.fontCondensed}; -fx-text-fill: #${Style.primaryColor}; -fx-font-size: 14px;"
+>>>>>>> 5a01415 (added materialfx dialogs and fixed some bugs)
+>>>>>>> 4cb42a8 (added materialfx dialogs and fixed some bugs)
             BorderPane.setMargin(this, Insets(0.0, 0.0, 2.0, 15.0))
 
             visibleWhen { controller.projectAfterPartialParsing.isNotNull }
@@ -108,8 +118,17 @@ open class ProjectTreeView : View() {
                         }
                         if (!empty && text.isNotEmpty()) {
                             tooltip(text).apply {
+<<<<<<< HEAD
                                 style = "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.tooltipFontSize}; " +
                                     "-fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+=======
+<<<<<<< HEAD
+                                style = "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.tooltipFontSize}; -fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+=======
+                                font = Font.font("Roboto", 12.0)
+                                style = "-fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+>>>>>>> 5a01415 (added materialfx dialogs and fixed some bugs)
+>>>>>>> 4cb42a8 (added materialfx dialogs and fixed some bugs)
                             }
                         }
                     }

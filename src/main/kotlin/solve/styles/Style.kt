@@ -28,3 +28,4 @@ object Style {
     const val buttonStyle = "-fx-font-family: 'Roboto Condensed'; -fx-font-size: $buttonFontSize; " +
         "-fx-font-weight: 700; -fx-text-fill: #78909C;"
 }
+
