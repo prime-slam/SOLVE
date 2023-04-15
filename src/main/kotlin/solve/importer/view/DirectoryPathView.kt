@@ -45,11 +45,10 @@ class DirectoryPathView : View() {
 
         floatingText = "Select project directory"
         controller.directoryPath.onChange {
-            if (it != null && it != ""){
-                floatingText = "Selected project directory"
-            }
-            else{
-                floatingText = "Select project directory"
+            floatingText = if (it != null && it != ""){
+                "Selected project directory"
+            } else{
+                "Select project directory"
             }
         }
 

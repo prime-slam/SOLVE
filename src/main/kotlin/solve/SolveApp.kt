@@ -2,7 +2,6 @@ package solve
 
 import javafx.stage.Stage
 import solve.main.MainView
-import solve.styles.TreeTableViewStylesheet
 import tornadofx.App
 import tornadofx.launch
 
