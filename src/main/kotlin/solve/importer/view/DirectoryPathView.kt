@@ -38,7 +38,7 @@ class DirectoryPathView : View() {
         BorderPane.setMargin(this, Insets(16.0, 0.0, 0.0, 0.0))
 
         style = "-fx-border-color: #${Style.PrimaryColorLight}; -fx-font-size: ${Style.MainFontSize}; " +
-            "-fx-font-family: ${Style.FontCondensed}"
+                "-fx-font-family: ${Style.FontCondensed}"
 
         floatMode = FloatMode.BORDER
         floatingText = "Project directory"
@@ -67,8 +67,8 @@ class DirectoryPathView : View() {
 
     private val selectButton = mfxButton("SELECT") {
         style = "-fx-border-color: #${Style.PrimaryColor};  -fx-font-size: ${Style.ButtonFontSize}; " +
-            "-fx-font-family: ${Style.FontCondensed}; -fx-font-weight:700; -fx-border-radius: 4px; " +
-            "-fx-text-fill: #${Style.PrimaryColor};"
+                "-fx-font-family: ${Style.FontCondensed}; -fx-font-weight:700; -fx-border-radius: 4px; " +
+                "-fx-text-fill: #${Style.PrimaryColor};"
         BorderPane.setAlignment(this, Pos.CENTER)
         BorderPane.setMargin(this, Insets(15.0, 0.0, 0.0, 0.0))
         textFill = Color.valueOf(Style.PrimaryColor)

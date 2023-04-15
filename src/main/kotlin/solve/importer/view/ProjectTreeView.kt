@@ -41,7 +41,7 @@ open class ProjectTreeView : View() {
         treetableview(rootTree) {
             addStylesheet(TreeTableViewStylesheet::class)
             style = "-fx-font-family: ${Style.Font}; -fx-text-fill: #${Style.PrimaryColor}; " +
-                "-fx-font-size: ${Style.ButtonFontSize};"
+                    "-fx-font-size: ${Style.ButtonFontSize};"
             BorderPane.setMargin(this, Insets(0.0, 0.0, 2.0, 15.0))
 
             visibleWhen { controller.projectAfterPartialParsing.isNotNull }
