@@ -1,12 +1,16 @@
 package solve.settings.grid.view
 
-import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Insets
 import javafx.scene.Node
-import javafx.scene.layout.*
+import javafx.scene.layout.Border
+import javafx.scene.layout.BorderStroke
+import javafx.scene.layout.BorderStrokeStyle
+import javafx.scene.layout.CornerRadii
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import javafx.scene.layout.BorderWidths
+import javafx.scene.layout.Priority
 import org.controlsfx.control.RangeSlider
 import solve.constants.IconsSettingsGridDecrementPath
 import solve.constants.IconsSettingsGridIncrementPath
@@ -14,13 +18,17 @@ import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.settings.createSettingsField
 import solve.settings.grid.controller.GridSettingsController
-import solve.utils.*
+import solve.utils.createInsetsWithValue
+import solve.utils.loadResourcesImage
+import solve.utils.unscale
+import solve.utils.valuesDifference
+import solve.utils.createImageViewIcon
+import solve.utils.scale
 import tornadofx.*
 
 class GridSettingsView: View() {
     private val controller: GridSettingsController by inject()
     private val sceneController: SceneController by inject()
-    private var sceneFacade: SceneFacade? = null
 
     private lateinit var scaleRangeSlider: RangeSlider
 
@@ -52,10 +60,7 @@ class GridSettingsView: View() {
     }
 
     init {
-        Platform.runLater {
-            sceneFacade = ServiceLocator.getService()
-            addSceneListeners()
-        }
+        addSceneListeners()
     }
 
     private fun setDefaultScaleRangeSliderValues() {
@@ -178,7 +183,7 @@ class GridSettingsView: View() {
     }
 
     private fun addSceneListeners() {
-        sceneFacade?.lastKeepSettingsLayers?.onChange {
+        SceneFacade.lastKeepSettingsLayers.onChange {
             setDefaultScaleRangeSliderValues()
         }
     }

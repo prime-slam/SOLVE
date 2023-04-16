@@ -7,7 +7,6 @@ import solve.catalogue.view.CatalogueSettingsView
 import solve.catalogue.view.CatalogueView
 import solve.project.model.ProjectFrame
 import solve.scene.SceneFacade
-import solve.utils.ServiceLocator
 import tornadofx.Controller
 
 class CatalogueController: Controller() {
@@ -22,10 +21,8 @@ class CatalogueController: Controller() {
     }
 
     fun visualizeFramesSelection(frames: List<ProjectFrame>) {
-        val sceneFacade = ServiceLocator.getService<SceneFacade>() ?: return
-
         val layers = frames.flatMap { it.layers }.distinct()
-        sceneFacade.visualize(layers, frames, true)
+        SceneFacade.visualize(layers, frames, true)
     }
 
     fun selectAllFields() = view.selectAllFields()
