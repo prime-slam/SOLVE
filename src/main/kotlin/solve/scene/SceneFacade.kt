@@ -1,7 +1,5 @@
 package solve.scene
 
-import javafx.beans.property.SimpleObjectProperty
-import javafx.collections.ObservableList
 import java.io.FileInputStream
 import javafx.scene.image.Image
 import solve.parsers.factories.LineFactory
@@ -21,11 +19,14 @@ import solve.scene.model.LayerSettings
 import solve.scene.model.LayerState
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
+import solve.utils.ServiceLocator
 import tornadofx.observableListOf
 
 // Interaction interface of the scene for main controller
 // Should be recreated if new project was imported
-class SceneFacade(private val controller: SceneController) {
+object SceneFacade {
+    private val controller: SceneController? = ServiceLocator.getService()
+
     private val visualizationLayers = HashMap<String, LayerSettings>()
     val lastKeepSettingsLayers = observableListOf<LayerSettings>()
 
@@ -47,7 +48,7 @@ class SceneFacade(private val controller: SceneController) {
         val layerStates = layers.map { projectLayer -> LayerState(projectLayer.name) }
         val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame(layerStates) }
         val scene = Scene(visualizationFrames, layersSettings)
-        controller.setScene(scene, keepSettings)
+        controller?.setScene(scene, keepSettings)
     }
 
     private fun ProjectLayer.toLayerSettings(): LayerSettings {

@@ -2,7 +2,6 @@ package solve.scene.controller
 
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
-import solve.scene.SceneFacade
 import solve.scene.model.Scene
 import solve.scene.view.DelayedFrameUpdatesManager
 import solve.scene.view.SceneView
@@ -92,8 +91,7 @@ class SceneController : Controller() {
         }
 
     init {
-        val sceneFacade = SceneFacade(this)
-        ServiceLocator.registerService(sceneFacade)
+        ServiceLocator.registerService(this)
 
         addGridSettingsBindings()
     }
