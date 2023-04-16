@@ -21,7 +21,8 @@ abstract class LayerSettingsPopOverNode {
             LayerSettingsFieldLabelWidth,
             settingNode,
             LayerSettingsSettingNodeWidth,
-            settingsNodeAlignment)
+            settingsNodeAlignment
+        )
         popOver.add(settingsField)
     }
 
