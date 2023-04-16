@@ -4,6 +4,8 @@ import javafx.beans.value.WeakChangeListener
 import javafx.scene.Node
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
+import solve.scene.model.LayerSettings.LineLayerSettings.Companion.LineWidthSliderMaxValue
+import solve.scene.model.LayerSettings.LineLayerSettings.Companion.LineWidthSliderMinValue
 import solve.utils.structures.Alignment
 import tornadofx.*
 
@@ -14,9 +16,6 @@ class LineLayerSettingsPopOverNode(
     companion object {
         const val LayerSettingsNodePrefWidth = 260.0
         const val LayerSettingsNodePrefHeight = 90.0
-
-        const val LineWidthSliderMinValue = 1.0
-        const val LineWidthSliderMaxValue = 10.0
     }
 
     private val widthSliderValueChangedEventHandler = ChangeListener<Number> { _, _, widthValue ->

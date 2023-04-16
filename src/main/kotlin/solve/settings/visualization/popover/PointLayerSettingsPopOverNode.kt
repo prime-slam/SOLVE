@@ -4,6 +4,8 @@ import javafx.beans.value.WeakChangeListener
 import javafx.scene.Node
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
+import solve.scene.model.LayerSettings.PointLayerSettings.Companion.PointSizeSliderMaxValue
+import solve.scene.model.LayerSettings.PointLayerSettings.Companion.PointSizeSliderMinValue
 import solve.utils.structures.Alignment
 import tornadofx.*
 
@@ -34,8 +36,5 @@ class PointLayerSettingsPopOverNode(
     companion object {
         const val LayerSettingsNodePrefWidth = 260.0
         const val LayerSettingsNodePrefHeight = 90.0
-
-        const val PointSizeSliderMinValue = 1.0
-        const val PointSizeSliderMaxValue = 20.0
     }
 }
