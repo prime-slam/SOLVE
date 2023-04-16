@@ -183,7 +183,7 @@ class GridSettingsView: View() {
     }
 
     private fun addSceneListeners() {
-        SceneFacade.lastKeepSettingsLayers.onChange {
+        SceneFacade.lastVisualizationKeepSettingsProperty.onChange {
             setDefaultScaleRangeSliderValues()
         }
     }
