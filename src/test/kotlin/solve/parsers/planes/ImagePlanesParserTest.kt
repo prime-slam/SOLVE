@@ -14,6 +14,7 @@ import solve.parsers.structures.Plane
 import solve.scene.model.Point
 import java.awt.image.BufferedImage
 import java.io.File
+import javax.imageio.ImageIO
 
 internal class ImagePlanesParserTest {
     // JPG format has not been tested because the data is distorted due to compression.
@@ -44,6 +45,23 @@ internal class ImagePlanesParserTest {
         val onePixelPlane = Plane(onePixelColor.toLong(), listOf(Point(0, 0)))
 
         assertEquals(listOf(onePixelPlane), ImagePlanesParser.parse(imageDataFile.path))
+    }
+
+    @Test
+    fun `Parsing a PNG image saved in a JPG file extension with an image parser`(@TempDir tempFolder: File) {
+        val imageDataFile = createFileWithImageData(testData.maskImage, ImageFormat.PNG, tempFolder)
+        val wrongFormatImageFile = File(tempFolder, "data.jpg")
+        imageDataFile.renameTo(wrongFormatImageFile)
+
+        assertEquals(emptyList<Plane>(), ImagePlanesParser.parse(imageDataFile.path))
+    }
+
+    @Test
+    fun `Parsing a not image file with an image parser`(@TempDir tempFolder: File) {
+        val notImageFile = File(tempFolder, "data.png")
+        notImageFile.writeText("Text\n")
+
+        assertEquals(emptyList<Plane>(), ImagePlanesParser.parse(notImageFile.path))
     }
 
     @Test
