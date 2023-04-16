@@ -101,9 +101,8 @@ class SceneController : Controller() {
 
         if (!keepSettings) {
             reinitializeSettings(newScene)
-        } else {
-            recalculateScale()
         }
+        recalculateScale()
     }
 
     fun zoomIn(mousePosition: DoublePoint) = zoom(min(scale * ScaleFactor, maxScale), mousePosition)
@@ -111,7 +110,7 @@ class SceneController : Controller() {
     fun zoomOut(mousePosition: DoublePoint) = zoom(max(scale / ScaleFactor, min(minScale, scale)), mousePosition)
 
     fun recalculateScale() {
-        scale = max(minScale, calculateMinScaleDependingOnColumns())
+        scale = minScale
     }
 
     private fun zoom(newScale: Double, mousePosition: DoublePoint) {
@@ -129,7 +128,6 @@ class SceneController : Controller() {
     private fun reinitializeSettings(newScene: Scene) {
         columnsNumber = calculateColumnsCount(newScene)
         setDefaultScaleRange()
-        scale = calculateMinScaleDependingOnColumns()
     }
 
     private fun addGridSettingsBindings() {
@@ -159,7 +157,7 @@ class SceneController : Controller() {
             max(
                 installedMinScale,
                 sceneWidthProperty.value /
-                        ((scene.frameSize.width + SceneView.framesMargin) * displayingColumnsNumber)
+                    ((scene.frameSize.width + SceneView.framesMargin) * displayingColumnsNumber)
             ),
             DefaultMaxScale
         )
