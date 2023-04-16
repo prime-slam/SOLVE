@@ -5,7 +5,8 @@ import io.github.palexdev.materialfx.dialogs.MFXStageDialog
 import javafx.geometry.Insets
 import solve.importer.controller.ImporterController
 import solve.importer.view.ImporterView
-import solve.importer.view.MaterialFXDialog
+import solve.main.MainView
+import solve.utils.MaterialFXDialog
 import tornadofx.View
 import tornadofx.action
 import tornadofx.button
@@ -24,10 +25,9 @@ class MenuBarView : View() {
             action {
                 controller.directoryPath.set(null)
                 controller.projectAfterPartialParsing.set(null)
-                content = MaterialFXDialog().createGenericDialog()
-                dialog = MaterialFXDialog().createStageDialog(content)
+                content = MaterialFXDialog.createGenericDialog(ImporterView().root)
+                dialog = MaterialFXDialog.createStageDialog(content, find<MainView>().currentStage, find<MainView>().root)
                 dialog.show()
-
                 content.padding = Insets(0.0,0.0,10.0,0.0)
             }
         }
