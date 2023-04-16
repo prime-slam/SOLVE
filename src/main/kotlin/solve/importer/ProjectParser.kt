@@ -82,10 +82,8 @@ object ProjectParser {
         }
 
         if (errorOutputs.isNotEmpty()) {
-            val ownerWindow = find<ImporterView>().root.scene.window
             createAlertForError(
-                "$errorOutputs are incorrect names of files. They can't be converted to Long",
-                ownerWindow
+                "$errorOutputs are incorrect names of files. They can't be converted to Long"
             )
         }
     }
@@ -112,7 +110,7 @@ object ProjectParser {
                         if (errorImages.count() == 1) "${errorImages.toStringWithoutBrackets()} is"
                         else "${errorImages.first()} and ${errorImages.count() - 1} others are"
                     } " +
-                            "because the file name can't be converted to long", ownerWindow
+                            "because the file name can't be converted to long"
                 )
             }
         }
@@ -133,14 +131,13 @@ object ProjectParser {
         var isImagesExist = false
 
         fun alertErrorFolderMessage() {
-            val ownerWindow = find<ImporterView>().root.scene.window
             createAlertForError(
                 "The directory ${
                     if (errorFolders.count() == 1) "${errorFolders.toStringWithoutBrackets()} is" else
                         "${errorFolders.first()} and ${errorFolders.count() - 1} others are"
                 } skipped, " +
                         "because names of folders don't contain correct kind name. " +
-                        "The correct directory name should look like: name_kind", ownerWindow
+                        "The correct directory name should look like: name_kind"
             )
         }
 
@@ -154,10 +151,8 @@ object ProjectParser {
         }
 
         if (!isImagesExist) {
-            val ownerWindow = find<ImporterView>().root.scene.window
-            createAlertForError("The images folder is missing in the directory", ownerWindow)
+            createAlertForError("The images folder is missing in the directory")
             return null
-
         }
 
         images.map { img ->
