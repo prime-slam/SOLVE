@@ -7,7 +7,6 @@ import javafx.geometry.Pos
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
 import javafx.stage.DirectoryChooser
 import solve.importer.ProjectParser
 import solve.importer.controller.ImporterController

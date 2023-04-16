@@ -104,7 +104,6 @@ object ProjectParser {
 
         fun alertErrorImages() {
             if (errorImages.isNotEmpty()) {
-                val ownerWindow = find<ImporterView>().root.scene.window
                 createAlertForError(
                     "Image ${
                         if (errorImages.count() == 1) "${errorImages.toStringWithoutBrackets()} is"

@@ -6,7 +6,6 @@ import javafx.geometry.Pos
 import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Paint
-import javafx.scene.text.Font
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
