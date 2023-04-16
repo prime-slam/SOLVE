@@ -6,7 +6,6 @@ import javafx.geometry.Pos
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.text.Font
 import javafx.stage.Stage
 import kotlinx.coroutines.cancel
 import solve.styles.Style
@@ -36,7 +35,7 @@ class LoadingScreen : View("Loading") {
                 label("Import a directory") {
                     prefHeight=0.0
                     prefWidth=141.0
-                    font = Font.font(Style.fontCondensed, 20.0)
+                    style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 20px"
                     BorderPane.setMargin(this, Insets(0.0, 0.0, 0.0, 24.0))
                 }
             }
@@ -48,7 +47,7 @@ class LoadingScreen : View("Loading") {
                         VBox.setMargin(this, Insets(0.0,0.0,0.0,30.0))
                     })
                     label("Please, wait...") {
-                        style = "-fx-font-size: 20px"
+                        style = "-fx-font-size: 20px; -fx-font-style: ${Style.fontCondensed}"
                     }
                 }
             }

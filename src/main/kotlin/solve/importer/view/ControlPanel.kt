@@ -22,10 +22,7 @@ import solve.main.MainController
 import solve.menubar.view.MenuBarView
 import solve.project.model.Project
 import solve.styles.Style
-import solve.utils.createAlertForError
-import solve.utils.loadResourcesImage
-import solve.utils.mfxButton
-import solve.utils.toStringWithoutBrackets
+import solve.utils.*
 import tornadofx.*
 
 class ControlPanel : View() {
@@ -35,7 +32,6 @@ class ControlPanel : View() {
 
     private val mainController: MainController by inject()
 
-    private val robotoCondensed = Style.fontCondensed
     private val buttonStyle = Style.buttonStyle
 
     private val importer = find<DirectoryPathView>()
@@ -50,7 +46,7 @@ class ControlPanel : View() {
     private val algorithmsLabel = label {
         val listOfKind = mutableListOf<String>()
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
-        font = Font.font(robotoCondensed, 15.0)
+        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 15px;"
 
         controller.projectAfterPartialParsing.onChange {
             it?.let {
@@ -100,7 +96,7 @@ class ControlPanel : View() {
     private val countImagesLabel = label {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
 
-        font = Font.font(Style.fontCondensed, 15.0)
+        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 15px;"
         controller.projectAfterPartialParsing.onChange {
             val countFiles = it?.projectFrames?.count()
             this.text = "$countFiles images found"
@@ -111,7 +107,7 @@ class ControlPanel : View() {
     private val countErrorsLabel = label {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
 
-        font = Font.font(Style.fontCondensed, 15.0)
+        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 15px;"
         controller.projectAfterPartialParsing.onChange {
             var countErrors = 0
             it?.projectFrames?.forEach { frame ->
@@ -122,7 +118,6 @@ class ControlPanel : View() {
             this.graphic = ImageView(errorsCountIcon)
         }
     }
-
 
     override val root = borderpane {
         padding = Insets(0.0, 24.0, 14.0, 24.0)
@@ -158,7 +153,7 @@ class ControlPanel : View() {
     }
 
     private fun showLoading() {
-        MaterialFXDialog().changeContent(find<MenuBarView>().content)
+        MaterialFXDialog.changeContent(find<MenuBarView>().content, LoadingScreen().root)
     }
 
     private fun importAction(button: MFXButton, projectVal: Project) {
@@ -170,7 +165,7 @@ class ControlPanel : View() {
             find<MenuBarView>().dialog.close()
 
         } catch (e: Exception) {
-            createAlertForError("Visualization error", find<ImporterView>().root.scene.window)
+            createAlertForError("Visualization error")
         }
     }
 

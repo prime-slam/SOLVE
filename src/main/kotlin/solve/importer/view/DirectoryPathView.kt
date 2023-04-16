@@ -22,9 +22,8 @@ class DirectoryPathView : View() {
 
     private val directoryChooser = DirectoryChooser().apply { title = "Choose working directory" }
 
-    private val roboto = Style.fontCondensed
-
     private val directoryField = mfxTextField {
+        val empty = text
         isEditable = false
         isAllowEdit = false
 
@@ -38,44 +37,36 @@ class DirectoryPathView : View() {
         BorderPane.setAlignment(this, Pos.CENTER)
         BorderPane.setMargin(this, Insets(16.0, 0.0,0.0, 0.0))
 
-        style = "-fx-border-color: #${Style.primaryColorLight}; -fx-font-size: 15px;"
+        style = "-fx-border-color: #${Style.primaryColorLight}; -fx-font-size: 15px; -fx-font-family: ${Style.fontCondensed}"
 
         floatMode = FloatMode.BORDER
-        font = Font.font(roboto, 14.0)
-
         floatingText = "Select project directory"
-        controller.directoryPath.onChange {
-            floatingText = if (it != null && it != ""){
-                "Selected project directory"
-            } else{
-                "Select project directory"
-            }
-        }
 
         controller.projectAfterPartialParsing.onChange {
             if (controller.projectAfterPartialParsing.value != null){
                 tooltip(controller.directoryPath.value).apply {
-                    font = Font.font(Style.font, 12.0)
-                    style = "-fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+                    style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 12px; -fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
                 }
             }
             text = if (it != null){
                 controller.directoryPath.value
             } else{
-                ""
+                empty
             }
         }
     }
 
     private val labelName = label("Import a directory") {
         prefHeight=0.0
-        prefWidth=141.0
-        font = Font.font(Style.fontCondensed, 20.0)
+        prefWidth=200.0
+
+        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 20px;"
+
         VBox.setMargin(this, Insets(0.0, 0.0, 0.0, 0.0))
     }
 
     private val selectButton = mfxButton ("SELECT"){
-        style="-fx-border-color: #${Style.primaryColor}; -fx-font-family: $roboto; -fx-font-size: ${Style.fontSize}; -fx-font-weight: BOLD; -fx-border-radius: 4px; -fx-text-fill: #${Style.primaryColor};"
+        style="-fx-border-color: #${Style.primaryColor}; -fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.fontSize}; -fx-font-weight: BOLD; -fx-border-radius: 4px; -fx-text-fill: #${Style.primaryColor};"
         BorderPane.setAlignment(this, Pos.CENTER)
         BorderPane.setMargin(this, Insets(15.0, 0.0, 0.0, 0.0))
         textFill = Color.valueOf(Style.primaryColor)
