@@ -41,7 +41,7 @@ open class ProjectTreeView : View() {
         treetableview(rootTree) {
             addStylesheet(TreeTableViewStylesheet::class)
             style =
-                "-fx-font-family: ${Style.fontCondensed}; -fx-text-fill: #${Style.primaryColor}; -fx-font-size: 14px;"
+                "-fx-font-family: ${Style.font}; -fx-text-fill: #${Style.primaryColor}; -fx-font-size: ${Style.buttonFontSize}px;"
             BorderPane.setMargin(this, Insets(0.0, 0.0, 2.0, 15.0))
 
             visibleWhen { controller.projectAfterPartialParsing.isNotNull }
@@ -107,7 +107,7 @@ open class ProjectTreeView : View() {
                         } else item?.errors?.toStringWithoutBrackets()
                         if (!empty && text.isNotEmpty()) {
                             tooltip(text).apply {
-                                style = "-fx-font-family: ${Style.font}; -fx-font-size: 12px; -fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+                                style = "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.tooltipFontSize}; -fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
                             }
                         }
                     }

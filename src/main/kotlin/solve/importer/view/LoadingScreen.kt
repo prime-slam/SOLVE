@@ -2,8 +2,8 @@ package solve.importer.view
 
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner
 import javafx.geometry.Insets
-import javafx.geometry.Pos
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.stage.Stage
@@ -33,9 +33,10 @@ class LoadingScreen : View("Loading") {
             style = "-fx-background-color: #ffffff"
             top{
                 label("Import a directory") {
+                    hgrow = Priority.ALWAYS
                     prefHeight=0.0
-                    prefWidth=141.0
-                    style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 20px"
+                    prefWidth=200.0
+                    style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.headerFontSize}"
                     BorderPane.setMargin(this, Insets(0.0, 0.0, 0.0, 24.0))
                 }
             }
@@ -47,7 +48,7 @@ class LoadingScreen : View("Loading") {
                         VBox.setMargin(this, Insets(0.0,0.0,0.0,30.0))
                     })
                     label("Please, wait...") {
-                        style = "-fx-font-size: 20px; -fx-font-style: ${Style.fontCondensed}"
+                        style = "-fx-font-size: ${Style.headerFontSize}; -fx-font-style: ${Style.fontCondensed}"
                     }
                 }
             }
@@ -57,8 +58,6 @@ class LoadingScreen : View("Loading") {
                     maxWidth = 75.0
                     prefHeight = 23.0
                     style = Style.buttonStyle
-                    BorderPane.setAlignment(this, Pos.TOP_RIGHT)
-                    prefWidth = 180.0
                     action {
                         find<ControlPanel>().coroutineScope.cancel()
                         close()
