@@ -10,7 +10,6 @@ import javafx.stage.Stage
 
 object MaterialFXDialog {
     fun createGenericDialog(container: Pane): MFXGenericDialog {
-
         return MFXGenericDialogBuilder.build()
             .setContent(container)
             .setShowMinimize(false)
