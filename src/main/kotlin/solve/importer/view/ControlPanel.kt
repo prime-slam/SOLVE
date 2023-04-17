@@ -2,9 +2,7 @@ package solve.importer.view
 
 import io.github.palexdev.materialfx.controls.MFXButton
 import javafx.geometry.Insets
-import javafx.geometry.Pos
 import javafx.scene.image.ImageView
-import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Paint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +43,7 @@ class ControlPanel : View() {
     private val algorithmsLabel = label {
         val listOfKind = mutableListOf<String>()
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
-        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 15px;"
+        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
 
         controller.projectAfterPartialParsing.onChange {
             it?.let {
@@ -85,7 +83,6 @@ class ControlPanel : View() {
         prefHeight = 23.0
         style = buttonStyle
         textFill = Paint.valueOf(Style.primaryColor)
-        BorderPane.setAlignment(this, Pos.TOP_RIGHT)
         prefWidth = ButtonWidth
         action {
             cancelAction()
@@ -95,7 +92,7 @@ class ControlPanel : View() {
     private val countImagesLabel = label {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
 
-        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 15px;"
+        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
         controller.projectAfterPartialParsing.onChange {
             val countFiles = it?.projectFrames?.count()
             this.text = "$countFiles images found"
@@ -106,7 +103,7 @@ class ControlPanel : View() {
     private val countErrorsLabel = label {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
 
-        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 15px;"
+        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
         controller.projectAfterPartialParsing.onChange {
             var countErrors = 0
             it?.projectFrames?.forEach { frame ->

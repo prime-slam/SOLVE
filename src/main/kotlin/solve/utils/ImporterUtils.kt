@@ -6,7 +6,9 @@ import tornadofx.FX.Companion.find
 fun createAlertForError(content: String) {
     val container = MaterialFXDialog.createGenericDialog(AlertDialog(content).root)
 
-    val dialog = MaterialFXDialog.createStageDialog(container, find<DirectoryPathView>().currentStage, find<DirectoryPathView>().root )
+    val dialog = MaterialFXDialog.createStageDialog(container, find<DirectoryPathView>().currentStage, find<DirectoryPathView>().root ).apply {
+        isDraggable = false
+    }
 
     dialog.show()
 }
