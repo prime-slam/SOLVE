@@ -1,5 +1,9 @@
 package solve.styles
 
+import io.github.palexdev.materialfx.controls.MFXButton
+import javafx.scene.control.ToggleButton
+import javafx.scene.shape.Circle
+
 object Style {
     const val backgroundColour = "EFF0F0"
 
@@ -10,6 +14,8 @@ object Style {
     const val onBackgroundColor = "000000"
 
     const val primaryColorLight = "B0BEC5"
+
+    const val secondaryColor = "41497F"
 
     const val fontCondensed = "'Roboto Condensed'"
 
@@ -25,6 +31,15 @@ object Style {
 
     const val tooltipFontSize = "12px"
 
-    const val buttonStyle = "-fx-font-family: 'Roboto Condensed'; -fx-font-size: $buttonFontSize; " +
-        "-fx-font-weight: 700; -fx-text-fill: #78909C;"
+    const val buttonStyle = "-fx-font-family: 'Roboto Condensed'; -fx-font-size: ${buttonFontSize}; -fx-font-weight: 700; -fx-text-fill: #78909C;"
+
+    const val navigationRailTabSize = 70.0
+
+    const val FabRadius = 28.0
+
+    const val tabStyle = "-fx-font-family: ${font}; -fx-font-weight:700; -fx-font-size: ${buttonFontSize}; -fx-text-fill: ${primaryColorLight}; -fx-background-radius: 36"
+
+    fun circleForRipple(button: MFXButton) = Circle(button.layoutX + 36.0, button.layoutY + 36.0,35.0)
+
+    fun circleForRipple(button: ToggleButton) = Circle(button.layoutX + 36.0, button.layoutY + 36.0,35.0)
 }

@@ -40,7 +40,7 @@ class MainView : View() {
         private const val TabsViewTabsParamName = "tabs"
         private const val TabsViewInitialTabParamName = "initialTab"
 
-        private val importIcon = loadResourcesImage(IconsImportFab)
+        private val importIcon = loadResourcesImage(IconsImportFAB)
         private val pluginsIcon = loadResourcesImage(IconsPlugins)
         private val settingsIcon = loadResourcesImage(IconsSettings)
         private val helpIcon = loadResourcesImage(IconsHelp)
