@@ -172,7 +172,6 @@ class ControlPanel : View() {
             mainController.visualizeProject(projectVal.layers, projectVal.frames)
             mainController.displayCatalogueFrames(projectVal.frames)
             button.isDisable = true
-
             menuBarView.dialog.close()
         } catch (e: Exception) {
             createAlertForError("Visualization error")
