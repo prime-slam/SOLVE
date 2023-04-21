@@ -1,45 +1,77 @@
 package solve.main
 
+import io.github.palexdev.materialfx.controls.MFXButton
 import io.github.palexdev.materialfx.css.themes.MFXThemeManager
 import io.github.palexdev.materialfx.css.themes.Themes
+import io.github.palexdev.materialfx.dialogs.MFXGenericDialog
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog
+import javafx.geometry.Insets
+import javafx.scene.control.ContentDisplay
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
+import javafx.scene.layout.VBox
+import javafx.scene.shape.Circle
 import solve.catalogue.view.CatalogueView
-import solve.constants.IconsSettingsGridGridPath
-import solve.constants.IconsSidePanelCataloguePath
-import solve.constants.IconsSidePanelVisualizationSettingsPath
+import solve.constants.*
+import solve.importer.controller.ImporterController
+import solve.importer.view.ImporterView
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
-import solve.menubar.view.MenuBarView
 import solve.scene.view.SceneView
 import solve.settings.grid.view.GridSettingsView
 import solve.settings.visualization.VisualizationSettingsView
 import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentView
 import solve.sidepanel.tabs.SidePanelTabsView
+import solve.styles.MFXButtonStyleSheet
+import solve.styles.Style
+import solve.utils.MaterialFXDialog
 import solve.utils.createPxBox
 import solve.utils.loadResourcesImage
+import solve.utils.mfxButton
 import tornadofx.*
 
 class MainView : View() {
+    companion object {
+        private const val LeftSidePanelAndSceneDividerPosition = 0.25
+        private const val RightSidePanelAndSceneDividerPosition = 0.88
+
+        private const val TabsViewLocationParamName = "location"
+        private const val TabsViewTabsParamName = "tabs"
+        private const val TabsViewInitialTabParamName = "initialTab"
+
+        private val importIcon = loadResourcesImage(IconsImportFab)
+        private val pluginsIcon = loadResourcesImage(IconsPlugins)
+        private val settingsIcon = loadResourcesImage(IconsSettings)
+        private val helpIcon = loadResourcesImage(IconsHelp)
+    }
+
+    val importer: ImporterView by inject()
+
+    private val mainView: MainView by inject()
+
+    val controller: ImporterController by inject()
+
     private val sceneView: SceneView by inject()
+
+    var content = MFXGenericDialog()
+    var dialog = MFXStageDialog()
 
     private lateinit var mainViewSplitPane: SidePanelSplitPane
 
     private val leftSidePanelTabs = listOf(
         SidePanelTab(
-            "Catalogue",
-            loadResourcesImage(IconsSidePanelCataloguePath),
+            "Project",
             find<CatalogueView>().root
         )
     )
+
     private val rightSidePanelTabs = listOf(
         SidePanelTab(
             "Layers",
-            loadResourcesImage(IconsSidePanelVisualizationSettingsPath),
             find<VisualizationSettingsView>().root
-        ),
-        SidePanelTab(
+        ), SidePanelTab(
             "Grid",
-            loadResourcesImage(IconsSettingsGridGridPath),
             find<GridSettingsView>().root
         )
     )
@@ -49,8 +81,48 @@ class MainView : View() {
     private val rightSidePanelViews =
         createSidePanelsViews(rightSidePanelTabs, SidePanelLocation.Right)
 
+    private val importFab = mfxButton {
+        VBox.setMargin(this, Insets(5.0, 8.0, 10.0, 8.0))
+
+        val circle = Circle(this.layoutX + Style.FabRadius, this.layoutY + Style.FabRadius, Style.FabRadius)
+        clip = circle
+        graphic = ImageView(importIcon)
+        setPrefSize(56.0, 56.0)
+        style = "-fx-background-color: #${Style.secondaryColor}; -fx-background-radius: 28;"
+        action {
+            importAction()
+        }
+    }
+
+    private val pluginsButton = createTabButton("Plugins", pluginsIcon)
+
+    private val settingsButton = createTabButton("Settings", settingsIcon)
+
+    private val helpButton = createTabButton("Help", helpIcon)
+
+    private val nameApp = label("SOLVE") {
+        style = "-fx-font-family: ${Style.font}; -fx-font-weight:700; -fx-font-size: 18px"
+        VBox.setMargin(this, Insets(0.0, 6.0, 0.0, 6.0))
+    }
+
+    private val leftPanel = vbox(7) {
+        addStylesheet(MFXButtonStyleSheet::class)
+        style = "-fx-background-color: #${Style.surfaceColor}"
+        add(nameApp)
+        add(importFab)
+        add(leftSidePanelViews.tabsView.root)
+    }
+
+    private val rightPanel = vbox(7) {
+        addStylesheet(MFXButtonStyleSheet::class)
+        style = "-fx-background-color: #${Style.surfaceColor}"
+        add(rightSidePanelViews.tabsView.root)
+    }
+
     private val mainViewBorderPane = borderpane {
-        top<MenuBarView>()
+        right = rightPanel
+        left = leftPanel
+
         val splitPaneDividersPositions = listOf(
             LeftSidePanelAndSceneDividerPosition,
             RightSidePanelAndSceneDividerPosition
@@ -69,11 +141,30 @@ class MainView : View() {
         )
         mainViewSplitPane.addStylesheet(MainSplitPaneStyle::class)
         center = mainViewSplitPane
-        left = leftSidePanelViews.tabsView.root
-        right = rightSidePanelViews.tabsView.root
     }
 
     override val root = mainViewBorderPane
+
+    private fun createTabButton(text: String, icon: Image?): MFXButton {
+        return mfxButton(text) {
+            clip = Style.circleForRipple(this)
+            styleClass.add("mfxButton")
+            setPrefSize(Style.navigationRailTabSize, Style.navigationRailTabSize)
+            paddingAll = 0.0
+            contentDisplay = ContentDisplay.TOP
+            graphic = ImageView(icon)
+            style = Style.tabStyle
+        }
+    }
+
+    private fun importAction() {
+        controller.directoryPath.set(null)
+        controller.projectAfterPartialParsing.set(null)
+        content = MaterialFXDialog.createGenericDialog(importer.root)
+        dialog = MaterialFXDialog.createStageDialog(content, mainView.currentStage, mainView.root)
+        dialog.show()
+        content.padding = Insets(0.0, 0.0, 10.0, 0.0)
+    }
 
     override fun onBeforeShow() {
         super.onBeforeShow()
@@ -108,15 +199,6 @@ class MainView : View() {
     }
 
     private data class SidePanelViews(val tabsView: SidePanelTabsView, val contentView: SidePanelContentView)
-
-    companion object {
-        private const val LeftSidePanelAndSceneDividerPosition = 0.25
-        private const val RightSidePanelAndSceneDividerPosition = 0.88
-
-        private const val TabsViewLocationParamName = "location"
-        private const val TabsViewTabsParamName = "tabs"
-        private const val TabsViewInitialTabParamName = "initialTab"
-    }
 }
 
 class MainSplitPaneStyle : Stylesheet() {
