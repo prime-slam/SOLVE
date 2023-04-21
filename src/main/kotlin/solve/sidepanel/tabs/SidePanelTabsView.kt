@@ -14,7 +14,11 @@ import solve.utils.createPxBoxWithValue
 import tornadofx.*
 import java.net.URI
 
-class SidePanelTabsView : View() {
+open class SidePanelTabsView : View() {
+    companion object {
+        private const val TabIconSize = 20.0
+    }
+
     private val location: SidePanelLocation by param()
     private val tabs: List<SidePanelTab> by param()
     private val initialTab: SidePanelTab? by param()
@@ -79,13 +83,6 @@ class SidePanelTabsView : View() {
         } else {
             tabsToggleGroup.selectToggle(null)
         }
-    }
-
-    companion object {
-        private const val TabIconSize = 20.0
-        private const val TabWidth = 30.0
-        private const val TabLabelSymbolSize = 4.4
-        private const val TabOffsetSpaceSize = 35.0
     }
 }
 
