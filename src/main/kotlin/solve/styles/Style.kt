@@ -6,6 +6,7 @@ import javafx.scene.control.ToggleButton
 import javafx.scene.shape.Circle
 import tornadofx.*
 
+
 object Style {
     const val BackgroundColor = "EFF0F0"
 
@@ -32,9 +33,6 @@ object Style {
     const val FontCondensed = "'Roboto Condensed'"
 
     const val Font = "Roboto"
-
-    const val headerFontSize = "20px"
-
 
     const val ListFontColor = "3E4345"
 
