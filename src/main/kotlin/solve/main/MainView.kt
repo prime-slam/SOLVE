@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCombination
 import javafx.scene.layout.VBox
 import javafx.scene.shape.Circle
 import solve.catalogue.view.CatalogueView
+import solve.settings.grid.view.GridSettingsView
 import solve.constants.IconsHelp
 import solve.constants.IconsImportFab
 import solve.constants.IconsPlugins
@@ -24,7 +25,6 @@ import solve.importer.view.ImporterView
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
 import solve.scene.view.SceneView
-import solve.settings.grid.view.GridSettingsView
 import solve.settings.visualization.VisualizationSettingsView
 import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentView

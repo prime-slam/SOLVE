@@ -168,6 +168,7 @@ class ControlPanel : View() {
         MaterialFXDialog.changeContent(mainView.content, loading.root)
     }
 
+<<<<<<< HEAD
     private fun importAction(button: MFXButton) {
         coroutineScope = CoroutineScope(Dispatchers.Main)
         coroutineScope.launch {
@@ -182,6 +183,16 @@ class ControlPanel : View() {
             } catch (e: Exception) {
                 createAlertForError("Visualization error")
             }
+=======
+    private fun importAction(button: MFXButton, projectVal: Project) {
+        try {
+            mainController.visualizeProject(projectVal.layers, projectVal.frames)
+            mainController.displayCatalogueFrames(projectVal.frames)
+            button.isDisable = true
+            menuBarView.dialog.close()
+        } catch (e: Exception) {
+            createAlertForError("Visualization error")
+>>>>>>> 8e28c04 (added panels)
         }
     }
 
