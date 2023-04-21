@@ -1,15 +1,18 @@
 package solve.sidepanel.tabs
 
+import javafx.scene.control.ContentDisplay
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import solve.main.splitpane.SidePanelLocation
 import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentController
-import solve.utils.DarkLightGrayColor
+import solve.styles.Style
 import solve.utils.createImageViewIcon
 import solve.utils.createPxBoxWithValue
 import tornadofx.*
+import java.net.URI
 
 class SidePanelTabsView : View() {
     private val location: SidePanelLocation by param()
@@ -28,6 +31,7 @@ class SidePanelTabsView : View() {
 
     override val root = tabsVBox.also {
         it.addStylesheet(SidePanelTabsStyle::class)
+        it.style = "-fx-background-color: #${Style.surfaceColor}"
     }
 
     init {
@@ -36,21 +40,14 @@ class SidePanelTabsView : View() {
     }
 
     private fun addTab(tab: SidePanelTab) {
-        val tabButton = togglebutton(tabsToggleGroup) {
-            graphic = group {
-                label(tab.name) {
-                    tab.icon?.let {
-                        val iconImageView = createImageViewIcon(it, TabIconSize)
-                        graphic = pane {
-                            add(iconImageView)
-                            paddingLeft = 5
-                        }
-                    }
-                }
-                rotate = -90.0
-            }
+        val tabButton = togglebutton(tab.name, tabsToggleGroup) {
+            contentDisplay = ContentDisplay.TOP
+            graphic = tab.icon?.let { createImageViewIcon(it, TabIconSize) }
 
-            setPrefSize(TabWidth, TabOffsetSpaceSize + TabIconSize + TabLabelSymbolSize * tab.name.count())
+            style =
+                "-fx-font-family: ${Style.font}; -fx-font-weight:700; -fx-border-color: ${Style.secondaryColor}; -fx-font-size: ${Style.buttonFontSize}; -fx-text-fill: ${Style.primaryColorLight}; -fx-background-radius: 36"
+
+            setPrefSize(72.0, 72.0)
             usePrefSize = true
 
             action {
@@ -95,28 +92,19 @@ class SidePanelTabsView : View() {
 class SidePanelTabsStyle : Stylesheet() {
     init {
         toggleButton {
-            backgroundColor += DefaultTabColor
+            backgroundColor += Paint.valueOf(Style.surfaceColor)
             backgroundInsets += createPxBoxWithValue(0.0)
             backgroundRadius += createPxBoxWithValue(0.0)
+            graphic = URI("/icons/sidepanel/Project.png")
 
             and(hover) {
-                backgroundColor += HoveredTabColor
+                backgroundColor += Paint.valueOf(Style.backgroundColour)
                 focusColor = Color.TRANSPARENT
             }
-
-            and(pressed) {
-                backgroundColor += PressedTabColor
-            }
-
             and(selected) {
-                backgroundColor += PressedTabColor
+                backgroundColor += Paint.valueOf(Style.surfaceColor)
+                graphic = URI("/icons/sidepanel/Project2.png")
             }
         }
-    }
-
-    companion object {
-        private val DefaultTabColor = Color.TRANSPARENT
-        private val HoveredTabColor = Color.LIGHTGRAY
-        private val PressedTabColor = DarkLightGrayColor
     }
 }
