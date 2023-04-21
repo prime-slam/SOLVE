@@ -7,6 +7,7 @@ import solve.importer.controller.ImporterController
 import solve.importer.view.ImporterView
 import solve.main.MainView
 import solve.utils.*
+import solve.utils.materialfx.MaterialFXDialog
 import tornadofx.*
 
 class LeftPanelView : View() {
