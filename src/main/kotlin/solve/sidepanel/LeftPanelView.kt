@@ -3,7 +3,6 @@ package solve.sidepanel
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog
 import javafx.geometry.Insets
-import solve.constants.*
 import solve.importer.controller.ImporterController
 import solve.importer.view.ImporterView
 import solve.main.MainView
