@@ -138,7 +138,7 @@ class SceneView : View() {
         Platform.runLater {
             currentWindow?.widthProperty()?.onChange {
                 Platform.runLater {
-                    controller.recalculateScale()
+                    controller.recalculateScale(true)
                 }
             }
 
