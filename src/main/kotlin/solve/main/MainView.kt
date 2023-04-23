@@ -43,17 +43,7 @@ class MainView : View() {
 
     private val mainView: MainView by inject()
 
-<<<<<<< HEAD
     val controller: ImporterController by inject()
-=======
-        private val importIcon = loadResourcesImage(IconsImportFAB)
-        private val pluginsIcon = loadResourcesImage(IconsPlugins)
-        private val settingsIcon = loadResourcesImage(IconsSettings)
-        private val helpIcon = loadResourcesImage(IconsHelp)
-        private val layersIcon = loadResourcesImage(IconsLayers)
-        private val gridIcon = loadResourcesImage(IconsGrid)
-    }
->>>>>>> 44262de (removed unused)
 
     private val sceneView: SceneView by inject()
 
