@@ -4,8 +4,8 @@ import javafx.beans.value.WeakChangeListener
 import javafx.scene.Node
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
-import solve.scene.model.LayerSettings.LineLayerSettings.Companion.LineWidthSliderMaxValue
-import solve.scene.model.LayerSettings.LineLayerSettings.Companion.LineWidthSliderMinValue
+import solve.scene.model.LayerSettings.LineLayerSettings.Companion.MaxWidthValue
+import solve.scene.model.LayerSettings.LineLayerSettings.Companion.MinWidthValue
 import solve.utils.structures.Alignment
 import tornadofx.*
 
@@ -29,8 +29,8 @@ class LineLayerSettingsPopOverNode(
         addSettingField("Color", buildLandmarkColorPicker(lineLayerSettings, sceneController))
         addSettingField("Width", buildSizeSlider(
             lineLayerSettings.selectedWidth,
-            LineWidthSliderMinValue,
-            LineWidthSliderMaxValue,
+            MinWidthValue,
+            MaxWidthValue,
             weakWidthSliderValueChangedEventHandler
         ))
         addSettingField("One color", buildLandmarkUseOneColorCheckBox(lineLayerSettings), Alignment.Left)
