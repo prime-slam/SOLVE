@@ -7,7 +7,7 @@ class GridSettingsController: Controller() {
     private val sceneController: SceneController by inject()
 
     fun setSceneColumnsNumber(columnsNumber: Int) {
-        sceneController.columnsNumber = columnsNumber
+        sceneController.installedColumnsNumber = columnsNumber
     }
 
     fun setSceneMinScale(minScale: Double) {

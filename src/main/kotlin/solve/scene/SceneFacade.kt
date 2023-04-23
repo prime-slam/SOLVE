@@ -50,7 +50,7 @@ object SceneFacade {
         val layerStates = layers.map { projectLayer -> LayerState(projectLayer.name) }
         val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame(layerStates) }
         val scene = Scene(visualizationFrames, layersSettings)
-        controller?.setScene(scene, keepSettings)
+        controller.setScene(scene, keepSettings)
     }
 
     private fun ProjectLayer.toLayerSettings(): LayerSettings {

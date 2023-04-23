@@ -19,17 +19,19 @@ class SceneController : Controller() {
     val scene: Scene
         get() = sceneProperty.value
 
-    val columnsNumberProperty = SimpleObjectProperty(0)
-    var columnsNumber: Int
-        get() = columnsNumberProperty.value
+    val installedColumnsNumberProperty = SimpleObjectProperty(0)
+    var installedColumnsNumber: Int
+        get() = installedColumnsNumberProperty.value
         set(value) {
             if (value <= 0 || value > MaxColumnsNumber) {
                 println("Number of the grid columns is out of range!")
                 return
             }
 
-            columnsNumberProperty.value = value
+            installedColumnsNumberProperty.value = value
         }
+    val columnsNumber: Int
+        get() = min(scene.frames.count(), installedColumnsNumber)
 
     val installedMinScaleProperty = SimpleDoubleProperty(DefaultMinScale)
     var installedMinScale: Double
@@ -101,6 +103,7 @@ class SceneController : Controller() {
 
         if (!keepSettings) {
             reinitializeSettings(newScene)
+            println(1)
         }
         recalculateScale(false)
     }
@@ -128,13 +131,13 @@ class SceneController : Controller() {
     }
 
     private fun reinitializeSettings(newScene: Scene) {
-        columnsNumber = calculateColumnsCount(newScene)
+        installedColumnsNumber = calculateColumnsNumber(newScene)
         setDefaultScaleRange()
     }
 
     private fun addGridSettingsBindings() {
-        columnsNumberProperty.onChange { newColumnsNumber ->
-            newColumnsNumber ?: return@onChange
+        installedColumnsNumberProperty.onChange { installedColumnsNumber ->
+            installedColumnsNumber ?: return@onChange
 
             scale = calculateMinScaleDependingOnColumns()
         }
@@ -153,13 +156,11 @@ class SceneController : Controller() {
     }
 
     private fun calculateMinScaleDependingOnColumns(): Double {
-        val displayingColumnsNumber = min(scene.frames.count(), columnsNumber)
-
         return min(
             max(
                 installedMinScale,
                 sceneWidthProperty.value /
-                    ((scene.frameSize.width + SceneView.framesMargin) * displayingColumnsNumber)
+                    ((scene.frameSize.width + SceneView.framesMargin) * columnsNumber)
             ),
             DefaultMaxScale
         )
@@ -181,7 +182,7 @@ class SceneController : Controller() {
 
         private const val ScaleFactor = 1.15
 
-        fun calculateColumnsCount(scene: Scene): Int {
+        fun calculateColumnsNumber(scene: Scene): Int {
             return min(sqrt(scene.frames.size.toDouble()).ceilToInt(), MaxColumnsNumber)
         }
     }

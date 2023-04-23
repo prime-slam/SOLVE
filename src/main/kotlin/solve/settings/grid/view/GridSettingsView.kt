@@ -33,7 +33,7 @@ class GridSettingsView: View() {
     private lateinit var scaleRangeSlider: RangeSlider
 
     private val columnsNumber: Int
-        get() = sceneController.columnsNumber
+        get() = sceneController.installedColumnsNumber
 
     override val root = vbox {
         vbox {
@@ -160,7 +160,7 @@ class GridSettingsView: View() {
     private fun buildColumnsNumberCounter() = hbox(5) {
         val isDecrementActive = SimpleObjectProperty(false)
         val isIncrementActive = SimpleObjectProperty(false)
-        sceneController.columnsNumberProperty.onChange { columnsNumber ->
+        sceneController.installedColumnsNumberProperty.onChange { columnsNumber ->
             columnsNumber ?: return@onChange
 
             isDecrementActive.value = columnsNumber > 1
@@ -172,7 +172,7 @@ class GridSettingsView: View() {
                 controller.setSceneColumnsNumber(columnsNumber - 1)
             }
         })
-        label(sceneController.columnsNumberProperty) {
+        label(sceneController.installedColumnsNumberProperty) {
             font = Font(GridSettingsColumnsNumberCounterFontSize)
         }
         add(createColumnsNumberButton(IconsSettingsGridIncrementPath, isIncrementActive) {
