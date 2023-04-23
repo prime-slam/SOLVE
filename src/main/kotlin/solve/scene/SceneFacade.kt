@@ -20,10 +20,9 @@ import solve.scene.model.LayerSettings
 import solve.scene.model.LayerState
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
-import solve.utils.ServiceLocator
+import tornadofx.find
 
 // Interaction interface of the scene for main controller
-// Should be recreated if new project was imported
 object SceneFacade {
     val lastVisualizationKeepSettingsProperty = SimpleObjectProperty(false)
     var lastVisualizationKeepSettings: Boolean
@@ -32,7 +31,7 @@ object SceneFacade {
             lastVisualizationKeepSettingsProperty.value = value
         }
 
-    private val controller: SceneController? = ServiceLocator.getService()
+    private val controller: SceneController = find()
 
     private val visualizationLayers = HashMap<String, LayerSettings>()
 
