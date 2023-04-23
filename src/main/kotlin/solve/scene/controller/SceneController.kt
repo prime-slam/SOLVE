@@ -90,6 +90,9 @@ class SceneController : Controller() {
             scrollY(value)
         }
 
+    private val haveEmptySpace: Boolean
+        get() = scale < calculateMinScaleDependingOnColumns()
+
     init {
         ServiceLocator.registerService(this)
 
@@ -102,15 +105,17 @@ class SceneController : Controller() {
         if (!keepSettings) {
             reinitializeSettings(newScene)
         }
-        recalculateScale()
+        recalculateScale(false)
     }
 
     fun zoomIn(mousePosition: DoublePoint) = zoom(min(scale * ScaleFactor, maxScale), mousePosition)
 
     fun zoomOut(mousePosition: DoublePoint) = zoom(max(scale / ScaleFactor, min(minScale, scale)), mousePosition)
 
-    fun recalculateScale() {
-        scale = minScale
+    fun recalculateScale(keepOldScale: Boolean) {
+        if (!keepOldScale || haveEmptySpace) {
+            scale = minScale
+        }
     }
 
     private fun zoom(newScale: Double, mousePosition: DoublePoint) {
