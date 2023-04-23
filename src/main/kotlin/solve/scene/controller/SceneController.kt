@@ -5,7 +5,6 @@ import javafx.beans.property.SimpleObjectProperty
 import solve.scene.model.Scene
 import solve.scene.view.DelayedFrameUpdatesManager
 import solve.scene.view.SceneView
-import solve.utils.ServiceLocator
 import solve.utils.ceilToInt
 import solve.utils.structures.DoublePoint
 import tornadofx.Controller
@@ -94,8 +93,6 @@ class SceneController : Controller() {
         get() = scale < calculateMinScaleDependingOnColumns()
 
     init {
-        ServiceLocator.registerService(this)
-
         addGridSettingsBindings()
     }
 
