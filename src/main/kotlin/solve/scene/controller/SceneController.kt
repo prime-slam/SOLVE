@@ -103,7 +103,6 @@ class SceneController : Controller() {
 
         if (!keepSettings) {
             reinitializeSettings(newScene)
-            println(1)
         }
         recalculateScale(false)
     }

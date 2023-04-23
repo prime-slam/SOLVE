@@ -58,8 +58,6 @@ internal class CSVLinesParserTest {
                 csvStringDataWithMissingValues.replaceFirst(lineBreakWithIntWithCommaRegex, "\n,")
         }
 
-        println(csvStringDataWithMissingValues)
-
         val testLinesWithMissingData = testLines.slice(3..testLines.lastIndex).toMutableList()
         val firstLineWithAllDataNotMissing = testLines[2]
         val missingLinesData = listOf(
