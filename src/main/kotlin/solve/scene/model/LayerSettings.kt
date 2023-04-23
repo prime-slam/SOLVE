@@ -62,8 +62,8 @@ sealed class LayerSettings(
         companion object {
             private const val OrdinaryRadius: Double = 5.0
 
-            const val PointSizeSliderMinValue = 1.0
-            const val PointSizeSliderMaxValue = 20.0
+            const val MinSizeValue = 1.0
+            const val MaxSizeValue = 20.0
         }
 
         override val usesCanvas = false
@@ -82,8 +82,8 @@ sealed class LayerSettings(
         companion object {
             private const val OrdinaryWidth: Double = 3.0
 
-            const val LineWidthSliderMinValue = 1.0
-            const val LineWidthSliderMaxValue = 10.0
+            const val MinWidthValue = 1.0
+            const val MaxWidthValue = 10.0
         }
 
         override val usesCanvas = false

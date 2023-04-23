@@ -4,8 +4,8 @@ import javafx.beans.value.WeakChangeListener
 import javafx.scene.Node
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
-import solve.scene.model.LayerSettings.PointLayerSettings.Companion.PointSizeSliderMaxValue
-import solve.scene.model.LayerSettings.PointLayerSettings.Companion.PointSizeSliderMinValue
+import solve.scene.model.LayerSettings.PointLayerSettings.Companion.MaxSizeValue
+import solve.scene.model.LayerSettings.PointLayerSettings.Companion.MinSizeValue
 import solve.utils.structures.Alignment
 import tornadofx.*
 
@@ -24,8 +24,8 @@ class PointLayerSettingsPopOverNode(
         addSettingField("Color", buildLandmarkColorPicker(pointLayerSettings, sceneController))
         addSettingField("Size", buildSizeSlider(
             pointLayerSettings.selectedRadius,
-            PointSizeSliderMinValue,
-            PointSizeSliderMaxValue,
+            MinSizeValue,
+            MaxSizeValue,
             weakRadiusSliderValueChangedEventHandler
         ))
         addSettingField("One color", buildLandmarkUseOneColorCheckBox(pointLayerSettings), Alignment.Left)
