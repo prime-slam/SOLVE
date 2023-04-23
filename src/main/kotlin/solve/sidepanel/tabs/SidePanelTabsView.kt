@@ -3,22 +3,14 @@ package solve.sidepanel.tabs
 import javafx.scene.control.ContentDisplay
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
-import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
 import solve.main.splitpane.SidePanelLocation
 import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentController
+import solve.styles.SidePanelTabsStyle
 import solve.styles.Style
-import solve.utils.createImageViewIcon
-import solve.utils.createPxBoxWithValue
 import tornadofx.*
-import java.net.URI
 
 open class SidePanelTabsView : View() {
-    companion object {
-        private const val TabIconSize = 20.0
-    }
-
     private val location: SidePanelLocation by param()
     private val tabs: List<SidePanelTab> by param()
     private val initialTab: SidePanelTab? by param()
@@ -45,11 +37,10 @@ open class SidePanelTabsView : View() {
 
     private fun addTab(tab: SidePanelTab) {
         val tabButton = togglebutton(tab.name, tabsToggleGroup) {
+            styleClass.add(tab.name.lowercase())
             contentDisplay = ContentDisplay.TOP
-            graphic = tab.icon?.let { createImageViewIcon(it, TabIconSize) }
-
             style =
-                "-fx-font-family: ${Style.font}; -fx-font-weight:700; -fx-border-color: ${Style.secondaryColor}; -fx-font-size: ${Style.buttonFontSize}; -fx-text-fill: ${Style.primaryColorLight}; -fx-background-radius: 36"
+                "-fx-font-family: ${Style.font}; -fx-font-weight:700; -fx-font-size: ${Style.buttonFontSize}; -fx-background-radius: 36"
 
             setPrefSize(72.0, 72.0)
             usePrefSize = true
@@ -84,6 +75,7 @@ open class SidePanelTabsView : View() {
             tabsToggleGroup.selectToggle(null)
         }
     }
+<<<<<<< HEAD
 }
 
 class SidePanelTabsStyle : Stylesheet() {
@@ -105,3 +97,6 @@ class SidePanelTabsStyle : Stylesheet() {
         }
     }
 }
+=======
+}
+>>>>>>> b5567c6 (changed шшсщт дщфвштп)
