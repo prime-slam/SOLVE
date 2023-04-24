@@ -1,7 +1,7 @@
 package solve.scene.view.association
 
 import javafx.beans.property.DoubleProperty
-import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.ObjectProperty
 import javafx.scene.paint.Color
 import solve.scene.model.Landmark
 import solve.scene.model.VisualizationFrame
@@ -33,7 +33,7 @@ class AssociationsManager(
         drawAdorner(associationParameters.key.frame)
     }
 
-    fun associate(secondFrameParameters: AssociationParameters, colorProperty: SimpleObjectProperty<Color>) {
+    fun associate(secondFrameParameters: AssociationParameters, colorProperty: ObjectProperty<Color>) {
         val firstFrameParameters = firstFrameAssociationParameters ?: return
         val firstFrame = firstFrameParameters.key.frame
         val secondFrame = secondFrameParameters.key.frame
@@ -76,7 +76,7 @@ class AssociationsManager(
         secondKey: AssociationKey,
         firstLandmarks: List<Landmark>,
         secondLandmarks: List<Landmark>,
-        colorProperty: SimpleObjectProperty<Color>
+        colorProperty: ObjectProperty<Color>
     ) {
         val firstFramePosition = getFramePosition(firstKey.frame)
         val secondFramePosition = getFramePosition(secondKey.frame)
