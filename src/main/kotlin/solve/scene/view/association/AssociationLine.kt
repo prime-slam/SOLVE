@@ -1,5 +1,6 @@
 package solve.scene.view.association
 
+import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ObjectProperty
 import javafx.scene.Node
@@ -14,7 +15,8 @@ class AssociationLine(
     private val firstKeypoint: Landmark.Keypoint,
     private val secondKeypoint: Landmark.Keypoint,
     private val scale: DoubleProperty,
-    colorProperty: ObjectProperty<Color>
+    colorProperty: ObjectProperty<Color>,
+    enabledProperty: BooleanProperty
 ) {
     private val line = Line()
     val node: Node = line
@@ -22,6 +24,7 @@ class AssociationLine(
     init {
         updateLinePosition()
         line.strokeProperty().bind(colorProperty)
+        line.visibleProperty().bind(enabledProperty)
 
         scale.onChange {
             updateLinePosition()
@@ -30,6 +33,7 @@ class AssociationLine(
 
     fun dispose() {
         line.strokeProperty().unbind()
+        line.visibleProperty().unbind()
     }
 
     private fun updateLinePosition() {
