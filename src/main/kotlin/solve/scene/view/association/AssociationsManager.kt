@@ -1,6 +1,7 @@
 package solve.scene.view.association
 
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.paint.Color
 import solve.scene.model.Landmark
 import solve.scene.model.VisualizationFrame
@@ -32,7 +33,7 @@ class AssociationsManager(
         drawAdorner(associationParameters.key.frame)
     }
 
-    fun associate(secondFrameParameters: AssociationParameters, color: Color) {
+    fun associate(secondFrameParameters: AssociationParameters, colorProperty: SimpleObjectProperty<Color>) {
         val firstFrameParameters = firstFrameAssociationParameters ?: return
         val firstFrame = firstFrameParameters.key.frame
         val secondFrame = secondFrameParameters.key.frame
@@ -50,7 +51,7 @@ class AssociationsManager(
             secondFrameParameters.key,
             firstFrameParameters.landmarks,
             secondFrameParameters.landmarks,
-            color
+            colorProperty
         )
         firstFrameAssociationParameters = null
     }
@@ -75,7 +76,7 @@ class AssociationsManager(
         secondKey: AssociationKey,
         firstLandmarks: List<Landmark>,
         secondLandmarks: List<Landmark>,
-        color: Color
+        colorProperty: SimpleObjectProperty<Color>
     ) {
         val firstFramePosition = getFramePosition(firstKey.frame)
         val secondFramePosition = getFramePosition(secondKey.frame)
@@ -87,7 +88,7 @@ class AssociationsManager(
                 keypoint.uid == firstKeypoint.uid
             } as? Landmark.Keypoint ?: return@map null
 
-            AssociationLine(firstFramePosition, secondFramePosition, firstKeypoint, secondKeypoint, scale, color)
+            AssociationLine(firstFramePosition, secondFramePosition, firstKeypoint, secondKeypoint, scale, colorProperty)
         }.filterNotNull()
 
         lines.forEach { line ->
@@ -114,6 +115,7 @@ class AssociationsManager(
             drawnAssociations.remove(secondKey)
             lines.forEach { line ->
                 outOfFramesLayer.children.remove(line.node)
+                line.dispose()
             }
         }
         drawnAssociations.remove(key)

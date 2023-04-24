@@ -33,6 +33,7 @@ import solve.utils.*
 import solve.utils.structures.Size as DoubleSize
 import tornadofx.add
 import tornadofx.*
+
 class FrameView(
     val size: DoubleSize,
     private val scale: DoubleProperty,
@@ -91,7 +92,7 @@ class FrameView(
             val layer = clickedFrame.layers.filterIsInstance<Layer.PointLayer>().single { it.name == chosenLayerName }
             val associationKey = AssociationsManager.AssociationKey(clickedFrame, layer.name)
             val associationParameters = AssociationsManager.AssociationParameters(associationKey, layer.getLandmarks())
-            associationsManager.associate(associationParameters, layer.settings.commonColor)
+            associationsManager.associate(associationParameters, layer.settings.commonColorProperty)
         }
     }
 
