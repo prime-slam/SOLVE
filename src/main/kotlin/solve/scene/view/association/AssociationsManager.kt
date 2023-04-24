@@ -130,7 +130,7 @@ class AssociationsManager(
     fun clearAssociation(key: AssociationKey) {
         drawnAssociations[key]?.forEach { (frame, lines) ->
             val secondKey = AssociationKey(frame, key.layerName)
-            drawnAssociations.remove(secondKey)
+            drawnAssociations[secondKey]?.remove(key.frame)
             lines.forEach { line ->
                 outOfFramesLayer.children.remove(line.node)
                 line.dispose()
