@@ -92,7 +92,7 @@ class FrameView(
             val layer = clickedFrame.layers.filterIsInstance<Layer.PointLayer>().single { it.name == chosenLayerName }
             val associationKey = AssociationsManager.AssociationKey(clickedFrame, layer.name)
             val associationParameters = AssociationsManager.AssociationParameters(associationKey, layer.getLandmarks())
-            associationsManager.associate(associationParameters, layer.settings.commonColorProperty)
+            associationsManager.associate(associationParameters, layer.settings.commonColorProperty, layer.settings.enabledProperty)
         }
     }
 

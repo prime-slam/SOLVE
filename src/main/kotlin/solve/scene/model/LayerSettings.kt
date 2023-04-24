@@ -112,7 +112,7 @@ sealed class LayerSettings(
             field = value
         }
 
-    val enabledProperty = SimpleObjectProperty(true)
+    val enabledProperty = SimpleBooleanProperty(true)
     var enabled: Boolean
         get() = enabledProperty.get()
         set(value) = enabledProperty.set(value)

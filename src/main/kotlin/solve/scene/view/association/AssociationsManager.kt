@@ -1,5 +1,6 @@
 package solve.scene.view.association
 
+import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ObjectProperty
 import javafx.scene.paint.Color
@@ -33,7 +34,11 @@ class AssociationsManager(
         drawAdorner(associationParameters.key.frame)
     }
 
-    fun associate(secondFrameParameters: AssociationParameters, colorProperty: ObjectProperty<Color>) {
+    fun associate(
+        secondFrameParameters: AssociationParameters,
+        colorProperty: ObjectProperty<Color>,
+        enabledProperty: BooleanProperty
+    ) {
         val firstFrameParameters = firstFrameAssociationParameters ?: return
         val firstFrame = firstFrameParameters.key.frame
         val secondFrame = secondFrameParameters.key.frame
@@ -51,7 +56,8 @@ class AssociationsManager(
             secondFrameParameters.key,
             firstFrameParameters.landmarks,
             secondFrameParameters.landmarks,
-            colorProperty
+            colorProperty,
+            enabledProperty
         )
         firstFrameAssociationParameters = null
     }
@@ -76,7 +82,8 @@ class AssociationsManager(
         secondKey: AssociationKey,
         firstLandmarks: List<Landmark>,
         secondLandmarks: List<Landmark>,
-        colorProperty: ObjectProperty<Color>
+        colorProperty: ObjectProperty<Color>,
+        enabledProperty: BooleanProperty
     ) {
         val firstFramePosition = getFramePosition(firstKey.frame)
         val secondFramePosition = getFramePosition(secondKey.frame)
@@ -88,7 +95,15 @@ class AssociationsManager(
                 keypoint.uid == firstKeypoint.uid
             } as? Landmark.Keypoint ?: return@map null
 
-            AssociationLine(firstFramePosition, secondFramePosition, firstKeypoint, secondKeypoint, scale, colorProperty)
+            AssociationLine(
+                firstFramePosition,
+                secondFramePosition,
+                firstKeypoint,
+                secondKeypoint,
+                scale,
+                colorProperty,
+                enabledProperty
+            )
         }.filterNotNull()
 
         lines.forEach { line ->
@@ -106,7 +121,10 @@ class AssociationsManager(
         val indexOfFrame = frames.indexOf(frame)
         val firstFrameRow = indexOfFrame / columnsNumber
         val firstFrameColumn = indexOfFrame % columnsNumber
-        return Pair(firstFrameColumn * (frameSize.width + framesIndent), firstFrameRow * (frameSize.height + framesIndent))
+        return Pair(
+            firstFrameColumn * (frameSize.width + framesIndent),
+            firstFrameRow * (frameSize.height + framesIndent)
+        )
     }
 
     fun clearAssociation(key: AssociationKey) {
