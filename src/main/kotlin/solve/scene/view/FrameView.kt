@@ -196,6 +196,8 @@ class FrameView(
         frameDrawer.clear()
         frameDrawer.fullRedraw()
 
+        currentFrame = frame
+
         if (frame == null) {
             return
         }
