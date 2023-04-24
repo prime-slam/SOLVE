@@ -73,12 +73,20 @@ class FrameView(
         add(canvas)
         init(frame, parameters)
 
+        addAssociationListeners()
         addChooseSecondAssociationFrameAction()
 
         mfxContextMenu {
             addCopyTimestampAction()
             lineSeparator()
             addAssociationActions()
+        }
+    }
+
+    private fun Node.addAssociationListeners() {
+        setOnContextMenuRequested {
+            hasKeypoints.value = currentFrame?.hasPoints()
+            hasAssociations.value = getAssociatedLayersNames(currentFrame ?: return@setOnContextMenuRequested).isNotEmpty()
         }
     }
 
@@ -92,7 +100,11 @@ class FrameView(
             val layer = clickedFrame.layers.filterIsInstance<Layer.PointLayer>().single { it.name == chosenLayerName }
             val associationKey = AssociationsManager.AssociationKey(clickedFrame, layer.name)
             val associationParameters = AssociationsManager.AssociationParameters(associationKey, layer.getLandmarks())
-            associationsManager.associate(associationParameters, layer.settings.commonColorProperty, layer.settings.enabledProperty)
+            associationsManager.associate(
+                associationParameters,
+                layer.settings.commonColorProperty,
+                layer.settings.enabledProperty
+            )
         }
     }
 
@@ -131,7 +143,8 @@ class FrameView(
     }
 
     private fun getAssociatedLayersNames(frame: VisualizationFrame): List<String> {
-        return associationsManager.drawnAssociations.filter { it.key.frame == frame }.map { it.key.layerName }
+        val layerNames = associationsManager.drawnAssociations.filter { it.key.frame == frame }.map { it.key.layerName }
+        return layerNames.filter { layerName -> frame.layers.any { it.name == layerName && it.settings.enabled } }
     }
 
     private fun choosePointLayer(frame: VisualizationFrame, owner: Window): Layer.PointLayer? {
@@ -215,8 +228,6 @@ class FrameView(
         }
 
         currentFrame = frame
-        hasKeypoints.value = frame.hasPoints()
-        hasAssociations.value = getAssociatedLayersNames(frame).isNotEmpty()
     }
 
     fun dispose() {
@@ -283,5 +294,6 @@ class FrameView(
             landmarkViews.forEach { view -> delegate(view, layerIndex) }
         }
 
-    private fun VisualizationFrame.hasPoints() = this.layers.filterIsInstance<Layer.PointLayer>().isNotEmpty()
+    private fun VisualizationFrame.hasPoints() =
+        this.layers.filterIsInstance<Layer.PointLayer>().any { it.settings.enabled }
 }
