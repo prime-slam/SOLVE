@@ -15,8 +15,6 @@ object Style {
 
         const val font = "Roboto"
 
-        const val buttonStyle = "-fx-font-family: 'Roboto Condensed'; -fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #78909C;"
-
         const val fontWeightBold = "700"
 
         const val buttonFontSize = "14px"
@@ -26,4 +24,6 @@ object Style {
         const val headerFontSize = "20px"
 
         const val tooltipFontSize = "12px"
+
+        const val buttonStyle = "-fx-font-family: 'Roboto Condensed'; -fx-font-size: ${buttonFontSize}; -fx-font-weight: 700; -fx-text-fill: #78909C;"
 }
