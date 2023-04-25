@@ -13,7 +13,9 @@ import tornadofx.button
 import tornadofx.hbox
 
 class MenuBarView : View() {
-    val importer = find<ImporterView>()
+    val importer: ImporterView by inject()
+
+    private val mainView: MainView by inject()
 
     var content = MFXGenericDialog()
     var dialog = MFXStageDialog()
@@ -25,10 +27,10 @@ class MenuBarView : View() {
             action {
                 controller.directoryPath.set(null)
                 controller.projectAfterPartialParsing.set(null)
-                content = MaterialFXDialog.createGenericDialog(ImporterView().root)
-                dialog = MaterialFXDialog.createStageDialog(content, find<MainView>().currentStage, find<MainView>().root)
+                content = MaterialFXDialog.createGenericDialog(importer.root)
+                dialog = MaterialFXDialog.createStageDialog(content, mainView.currentStage, mainView.root)
                 dialog.show()
-                content.padding = Insets(0.0,0.0,10.0,0.0)
+                content.padding = Insets(0.0, 0.0, 10.0, 0.0)
             }
         }
         button("Manage plugins") {
