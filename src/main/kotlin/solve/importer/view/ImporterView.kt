@@ -5,8 +5,6 @@ import tornadofx.View
 import tornadofx.borderpane
 
 class ImporterView : View() {
-    val importer = find<DirectoryPathView>()
-
     override val root = borderpane {
         stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto+Condensed")
         stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700")
