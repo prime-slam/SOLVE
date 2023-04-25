@@ -15,6 +15,8 @@ import tornadofx.*
 class LoadingScreen : View("Loading") {
     private val primaryColor: Color = Color.valueOf(Style.primaryColor)
 
+    private val controlPanel: ControlPanel by inject()
+
     private val progressSpinner = MFXProgressSpinner().apply {
         color1 = primaryColor
         color2 = primaryColor
@@ -31,11 +33,11 @@ class LoadingScreen : View("Loading") {
             prefHeight = 570.0
             prefWidth = 453.0
             style = "-fx-background-color: #ffffff"
-            top{
+            top {
                 label("Import a directory") {
                     hgrow = Priority.ALWAYS
-                    prefHeight=0.0
-                    prefWidth=200.0
+                    prefHeight = 0.0
+                    prefWidth = 200.0
                     style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.headerFontSize}"
                     BorderPane.setMargin(this, Insets(0.0, 0.0, 0.0, 24.0))
                 }
@@ -43,24 +45,28 @@ class LoadingScreen : View("Loading") {
             center {
 
                 vbox(15) {
-                    BorderPane.setMargin(this, Insets(200.0, 0.0,0.0,170.0))
+                    BorderPane.setMargin(this, Insets(200.0, 0.0, 0.0, 170.0))
                     add(progressSpinner.apply {
-                        VBox.setMargin(this, Insets(0.0,0.0,0.0,30.0))
+                        VBox.setMargin(this, Insets(0.0, 0.0, 0.0, 30.0))
                     })
                     label("Please, wait...") {
-                        style = "-fx-font-size: ${Style.headerFontSize}; -fx-font-style: ${Style.fontCondensed}"
+                        style = "-fx-font-size: ${Style.headerFontSize}; -fx-font-family: ${Style.fontCondensed}"
                     }
                 }
             }
             bottom {
-                mfxButton("CANCEL") {
-                    BorderPane.setMargin(this, Insets(0.0, 24.0, 24.0, 0.0))
-                    maxWidth = 75.0
-                    prefHeight = 23.0
-                    style = Style.buttonStyle
-                    action {
-                        find<ControlPanel>().coroutineScope.cancel()
-                        close()
+                borderpane {
+                    right {
+                        mfxButton("CANCEL") {
+                            BorderPane.setMargin(this, Insets(0.0, 24.0, 24.0, 0.0))
+                            maxWidth = 75.0
+                            prefHeight = 23.0
+                            style = Style.buttonStyle
+                            action {
+                                controlPanel.coroutineScope.cancel()
+                                close()
+                            }
+                        }
                     }
                 }
             }
