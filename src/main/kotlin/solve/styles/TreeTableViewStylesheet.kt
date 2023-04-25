@@ -1,6 +1,7 @@
 package solve.styles
 
 import javafx.scene.control.ScrollPane
+import javafx.scene.paint.Color
 import javafx.scene.paint.Color.*
 import javafx.scene.paint.Paint
 import tornadofx.*
@@ -9,9 +10,9 @@ import java.net.URI
 class TreeTableViewStylesheet : Stylesheet() {
     companion object {
         val fxTreeTableCellBorderColor by cssproperty<MultiValue<Paint>>("-fx-table-cell-border-color")
-        val backgroundColour = valueOf(Style.backgroundColour)
-        val surfaceColor = valueOf(Style.surfaceColor)
-        val primaryColor = valueOf(Style.primaryColor)
+        val backgroundColour: Color = valueOf(Style.backgroundColour)
+        val surfaceColor: Color = valueOf(Style.surfaceColor)
+        val primaryColor: Color = valueOf(Style.primaryColor)
     }
 
     init {
@@ -21,7 +22,6 @@ class TreeTableViewStylesheet : Stylesheet() {
         }
 
         treeTableRowCell {
-
             arrow {
                 backgroundImage += URI("/icons/importer/Shape.png")
 
@@ -29,7 +29,6 @@ class TreeTableViewStylesheet : Stylesheet() {
                 prefWidth = 7.px
                 backgroundColor += TRANSPARENT
             }
-
             fxTreeTableCellBorderColor.value += TRANSPARENT
             backgroundColor += surfaceColor
             and(hover) {
@@ -41,15 +40,13 @@ class TreeTableViewStylesheet : Stylesheet() {
         }
 
         treeTableView {
-
-
             borderColor += box(WHITE)
             hBarPolicy = ScrollPane.ScrollBarPolicy.NEVER
             scrollBar {
-                s(incrementArrow, decrementArrow){
+                s(incrementArrow, decrementArrow) {
                     backgroundColor += TRANSPARENT
                 }
-                s(incrementButton, decrementButton){
+                s(incrementButton, decrementButton) {
                     visibility = FXVisibility.HIDDEN
                 }
 
@@ -71,7 +68,5 @@ class TreeTableViewStylesheet : Stylesheet() {
                 minHeight = 0.px
             }
         }
-
-        }
-
     }
+}

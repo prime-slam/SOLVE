@@ -13,7 +13,6 @@ import solve.styles.Style
 import solve.utils.*
 import tornadofx.*
 
-
 class AlertDialog(contentText: String) : View() {
     private val errorIcon = loadResourcesImage(IconsAlertError)
 
@@ -23,20 +22,21 @@ class AlertDialog(contentText: String) : View() {
                 label("Error") {
                     graphicTextGap = 15.0
                     graphic = ImageView(errorIcon)
-                    BorderPane.setMargin(this, Insets(0.0,0.0,0.0,14.0))
-                    prefHeight=0.0
-                    style = "-fx-font-style: ${Style.fontCondensed}; -fx-font-size: ${Style.headerFontSize};"
+                    BorderPane.setMargin(this, Insets(0.0, 0.0, 0.0, 14.0))
+                    prefHeight = 0.0
+                    style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.headerFontSize};"
                 }
             }
             center {
-                label(contentText){
-                    mfxContextMenu{
-                        style = "-fx-font-style: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
+                label(contentText) {
+                    mfxContextMenu {
+                        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
                         copyError(text)
                     }
 
                     BorderPane.setMargin(this, Insets(0.0, 14.0, 0.0, 14.0))
-                    style = "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.mainFontSize};  -fx-text-fill: #000000;"
+                    style =
+                        "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.mainFontSize};  -fx-text-fill: #000000;"
                     BorderPane.setAlignment(this, Pos.CENTER_LEFT)
                     isWrapText = true
                     prefWidth = 300.0
@@ -48,7 +48,8 @@ class AlertDialog(contentText: String) : View() {
                     BorderPane.setMargin(this, Insets(0.0, 14.0, 14.0, 0.0))
                     maxWidth = 40.0
                     prefHeight = 23.0
-                    style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: 14px; -fx-font-weight: ${Style.fontWeightBold}; -fx-text-fill: #78909C;"
+                    style =
+                        "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.buttonFontSize}; -fx-font-weight: ${Style.fontWeightBold}; -fx-text-fill: #78909C;"
                     BorderPane.setAlignment(this, Pos.TOP_RIGHT)
                     prefWidth = 180.0
                     action {
@@ -63,10 +64,6 @@ class AlertDialog(contentText: String) : View() {
         item("Copy Error").action {
             val clipboardContent = ClipboardContent().also { it.putString(text) }
             Clipboard.getSystemClipboard().setContent(clipboardContent)
-            val clipboard = Clipboard.getSystemClipboard()
-            val content = ClipboardContent()
-            content.putString(text)
-            clipboard.setContent(content)
         }
     }
 }
