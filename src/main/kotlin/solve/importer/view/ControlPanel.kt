@@ -4,10 +4,7 @@ import io.github.palexdev.materialfx.controls.MFXButton
 import javafx.geometry.Insets
 import javafx.scene.image.ImageView
 import javafx.scene.paint.Paint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import solve.constants.IconsImporterCheckCirclePath
 import solve.constants.IconsImporterWarningPath
 import solve.importer.FullParserForImport.fullParseDirectory
@@ -31,7 +28,9 @@ class ControlPanel : View() {
 
     private val buttonStyle = Style.buttonStyle
 
-    private val importer = find<DirectoryPathView>()
+    private val importer: DirectoryPathView by inject()
+
+    private val menuBarView: MenuBarView by inject()
 
     private val importButtonModel = ButtonModel()
 
@@ -51,6 +50,10 @@ class ControlPanel : View() {
                     getListOfAlgorithms(frame, listOfKind)
                 }
                 this.text = "Algorithms: " + listOfKind.toStringWithoutBrackets()
+                tooltip(listOfKind.toStringWithoutBrackets()).apply {
+                    style =
+                        "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.tooltipFontSize}; -fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+                }
             }
         }
     }
@@ -149,7 +152,7 @@ class ControlPanel : View() {
     }
 
     private fun showLoading() {
-        MaterialFXDialog.changeContent(find<MenuBarView>().content, LoadingScreen().root)
+        MaterialFXDialog.changeContent(menuBarView.content, LoadingScreen().root)
     }
 
     private fun importAction(button: MFXButton, projectVal: Project) {
@@ -158,8 +161,7 @@ class ControlPanel : View() {
             mainController.displayCatalogueFrames(projectVal.frames)
             button.isDisable = true
 
-            find<MenuBarView>().dialog.close()
-
+            menuBarView.dialog.close()
         } catch (e: Exception) {
             createAlertForError("Visualization error")
         }
