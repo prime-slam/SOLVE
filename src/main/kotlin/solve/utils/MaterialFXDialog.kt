@@ -33,5 +33,4 @@ object MaterialFXDialog {
     fun changeContent(dialog: MFXGenericDialog, newContent: Pane) {
         dialog.content = newContent
     }
-
 }
