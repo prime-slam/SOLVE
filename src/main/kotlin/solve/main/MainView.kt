@@ -36,7 +36,6 @@ import solve.utils.createPxBox
 import solve.utils.loadResourcesImage
 import solve.utils.materialfx.MaterialFXDialog
 import solve.utils.materialfx.mfxButton
-import solve.utils.mfxButton
 import tornadofx.*
 
 class MainView : View() {
@@ -117,10 +116,6 @@ class MainView : View() {
         addStylesheet(MFXButtonStyleSheet::class)
         style = "-fx-background-color: #${Style.SurfaceColor}"
         add(rightSidePanelViews.tabsView.root)
-<<<<<<< HEAD
-=======
-//        add(gridButton)
->>>>>>> 142531b (added grid tab)
     }
 
     private val mainViewBorderPane = borderpane {
