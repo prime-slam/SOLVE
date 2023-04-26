@@ -16,7 +16,7 @@ import solve.importer.controller.ImporterController
 import solve.importer.model.ButtonModel
 import solve.importer.model.FrameAfterPartialParsing
 import solve.main.MainController
-import solve.menubar.view.MenuBarView
+import solve.main.MainView
 import solve.project.model.Project
 import solve.styles.Style
 import solve.utils.MaterialFXDialog
@@ -33,9 +33,9 @@ class ControlPanel : View() {
 
     private val mainController: MainController by inject()
 
-    private val menuBarView: MenuBarView by inject()
-
     private val importer: DirectoryPathView by inject()
+
+    private val mainView: MainView by inject()
 
     private val buttonStyle = Style.buttonStyle
 
@@ -164,7 +164,7 @@ class ControlPanel : View() {
     }
 
     private fun showLoading() {
-        MaterialFXDialog.changeContent(menuBarView.content, loading.root)
+        MaterialFXDialog.changeContent(mainView.content, LoadingScreen().root)
     }
 
     private fun importAction(button: MFXButton, projectVal: Project) {
@@ -172,7 +172,8 @@ class ControlPanel : View() {
             mainController.visualizeProject(projectVal.layers, projectVal.frames)
             mainController.displayCatalogueFrames(projectVal.frames)
             button.isDisable = true
-            menuBarView.dialog.close()
+
+            mainView.dialog.close()
         } catch (e: Exception) {
             createAlertForError("Visualization error")
         }
