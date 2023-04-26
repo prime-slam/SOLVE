@@ -117,6 +117,10 @@ class MainView : View() {
         addStylesheet(MFXButtonStyleSheet::class)
         style = "-fx-background-color: #${Style.SurfaceColor}"
         add(rightSidePanelViews.tabsView.root)
+<<<<<<< HEAD
+=======
+//        add(gridButton)
+>>>>>>> 142531b (added grid tab)
     }
 
     private val mainViewBorderPane = borderpane {
