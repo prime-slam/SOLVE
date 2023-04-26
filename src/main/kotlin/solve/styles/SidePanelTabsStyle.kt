@@ -2,10 +2,7 @@ package solve.styles
 
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
-import solve.constants.IconsProjectFilled
-import solve.constants.IconsLayers
-import solve.constants.IconsLayersFilled
-import solve.constants.IconsProject
+import solve.constants.*
 import solve.utils.createPxBoxWithValue
 import tornadofx.Stylesheet
 import tornadofx.cssclass
@@ -53,7 +50,7 @@ class SidePanelTabsStyle : Stylesheet() {
         }
 
         grid {
-            graphic = URI(IconsLayers)
+            graphic = URI(IconsGrid)
 
             and(hover) {
                 backgroundColor += Paint.valueOf(Style.backgroundColour)
@@ -61,7 +58,7 @@ class SidePanelTabsStyle : Stylesheet() {
             }
             and(selected) {
                 backgroundColor += Paint.valueOf(Style.surfaceColor)
-                graphic = URI(IconsLayersFilled)
+                graphic = URI(IconsGridSelected)
             }
         }
     }
