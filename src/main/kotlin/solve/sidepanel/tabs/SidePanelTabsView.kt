@@ -76,28 +76,4 @@ open class SidePanelTabsView : View() {
             tabsToggleGroup.selectToggle(null)
         }
     }
-<<<<<<< HEAD
 }
-
-class SidePanelTabsStyle : Stylesheet() {
-    init {
-        toggleButton {
-            backgroundColor += Paint.valueOf(Style.surfaceColor)
-            backgroundInsets += createPxBoxWithValue(0.0)
-            backgroundRadius += createPxBoxWithValue(0.0)
-            graphic = URI("/icons/sidepanel/Project.png")
-
-            and(hover) {
-                backgroundColor += Paint.valueOf(Style.backgroundColour)
-                focusColor = Color.TRANSPARENT
-            }
-            and(selected) {
-                backgroundColor += Paint.valueOf(Style.surfaceColor)
-                graphic = URI("/icons/sidepanel/Project2.png")
-            }
-        }
-    }
-}
-=======
-}
->>>>>>> b5567c6 (changed шшсщт дщфвштп)
