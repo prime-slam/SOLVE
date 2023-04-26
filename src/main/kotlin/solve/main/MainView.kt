@@ -18,6 +18,7 @@ import solve.importer.view.ImporterView
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
 import solve.scene.view.SceneView
+import solve.settings.grid.view.GridSettingsView
 import solve.settings.visualization.VisualizationSettingsView
 import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentView
