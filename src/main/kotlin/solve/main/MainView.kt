@@ -36,26 +36,10 @@ import solve.utils.createPxBox
 import solve.utils.loadResourcesImage
 import solve.utils.materialfx.MaterialFXDialog
 import solve.utils.materialfx.mfxButton
+import solve.utils.mfxButton
 import tornadofx.*
 
 class MainView : View() {
-<<<<<<< HEAD
-=======
-    companion object {
-        private const val LeftSidePanelAndSceneDividerPosition = 0.25
-        private const val RightSidePanelAndSceneDividerPosition = 0.88
-
-        private const val TabsViewLocationParamName = "location"
-        private const val TabsViewTabsParamName = "tabs"
-        private const val TabsViewInitialTabParamName = "initialTab"
-
-        private val importIcon = loadResourcesImage(IconsImportFAB)
-        private val pluginsIcon = loadResourcesImage(IconsPlugins)
-        private val settingsIcon = loadResourcesImage(IconsSettings)
-        private val helpIcon = loadResourcesImage(IconsHelp)
-    }
-
->>>>>>> 200e295 (removed unused)
     val importer: ImporterView by inject()
 
     private val mainView: MainView by inject()
