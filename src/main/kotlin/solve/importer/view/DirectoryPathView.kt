@@ -62,7 +62,6 @@ class DirectoryPathView : View() {
         prefWidth = 200.0
 
         style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.headerFontSize}; "
-
         VBox.setMargin(this, Insets(0.0, 0.0, 0.0, 0.0))
     }
 
