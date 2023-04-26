@@ -14,6 +14,7 @@ import java.net.URI
 class SidePanelTabsStyle : Stylesheet() {
     val project by cssclass()
     val layers by cssclass()
+    val grid by cssclass()
 
     init {
         toggleButton {
@@ -39,6 +40,19 @@ class SidePanelTabsStyle : Stylesheet() {
         }
 
         layers {
+            graphic = URI(IconsLayers)
+
+            and(hover) {
+                backgroundColor += Paint.valueOf(Style.backgroundColour)
+                focusColor = Color.TRANSPARENT
+            }
+            and(selected) {
+                backgroundColor += Paint.valueOf(Style.surfaceColor)
+                graphic = URI(IconsLayersFilled)
+            }
+        }
+
+        grid {
             graphic = URI(IconsLayers)
 
             and(hover) {
