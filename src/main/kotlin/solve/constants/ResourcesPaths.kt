@@ -33,3 +33,4 @@ const val IconsFiltersOrCheckBoxPath = "icons/filters/or_checkbox.svg"
 // Common icons.
 const val IconsEditPath = "icons/common/edit.svg"
 const val IconsDeletePath = "icons/common/delete.svg"
+
