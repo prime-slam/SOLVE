@@ -215,7 +215,7 @@ class MainView : View() {
 
     private data class SidePanelViews(val tabsView: SidePanelTabsView, val contentView: SidePanelContentView)
 
-    companion object {
+    companion object{
         private const val LeftSidePanelAndSceneDividerPosition = 0.20
         private const val RightSidePanelAndSceneDividerPosition = 0.82
 
