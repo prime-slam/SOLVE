@@ -37,6 +37,7 @@ open class SidePanelTabsView : View() {
 
     private fun addTab(tab: SidePanelTab) {
         val tabButton = togglebutton(tab.name, tabsToggleGroup) {
+            clip = Style.circleForRipple(this)
             styleClass.add(tab.name.lowercase())
             contentDisplay = ContentDisplay.TOP
             style =
