@@ -27,10 +27,15 @@ class LoadingScreen : View("Loading") {
     private val primaryColor: Color = Color.valueOf(Style.primaryColor)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     private val controlPanel: ControlPanel by inject()
 
 =======
 >>>>>>> 5a01415 (added materialfx dialogs and fixed some bugs)
+=======
+    private val controlPanel: ControlPanel by inject()
+
+>>>>>>> 87734e2 (moved controlPanel into the field)
     private val progressSpinner = MFXProgressSpinner().apply {
         color1 = primaryColor
         color2 = primaryColor
@@ -103,6 +108,7 @@ class LoadingScreen : View("Loading") {
                             style = Style.buttonStyle
                             action {
 <<<<<<< HEAD
+<<<<<<< HEAD
                                 controlPanel.coroutineScope.cancel()
                                 close()
                             }
@@ -121,6 +127,9 @@ class LoadingScreen : View("Loading") {
 >>>>>>> 5a01415 (added materialfx dialogs and fixed some bugs)
 =======
                                 find<ControlPanel>().coroutineScope.cancel()
+=======
+                                controlPanel.coroutineScope.cancel()
+>>>>>>> 87734e2 (moved controlPanel into the field)
                                 close()
                             }
                         }
