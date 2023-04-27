@@ -85,19 +85,54 @@ class MainView : View() {
         clip = circle
         graphic = ImageView(importIcon)
         setPrefSize(56.0, 56.0)
+<<<<<<< HEAD
         style = "-fx-background-color: #${Style.SecondaryColor}; -fx-background-radius: 28;"
         isFocusTraversable = false
         tooltip("Ctrl+I")
+=======
+        style = "-fx-background-color: #${Style.secondaryColor}; -fx-background-radius: 28;"
+>>>>>>> 1fa9d84 (added prefSize)
         action {
             importAction()
         }
     }
 
+<<<<<<< HEAD
     private val pluginsButton = createTabButton("Plugins", pluginsIcon)
 
     private val settingsButton = createTabButton("Settings", settingsIcon)
 
     private val helpButton = createTabButton("Help", helpIcon)
+=======
+    private val pluginsButton = mfxButton("Plugins") {
+        clip = Style.circleForRipple(this)
+        contentDisplay = ContentDisplay.TOP
+        setPrefSize(Style.navigationRailTabSize, Style.navigationRailTabSize)
+        styleClass.add("mfxButton")
+        paddingAll = 0.0
+        graphic = ImageView(pluginsIcon)
+        style = Style.tabStyle
+    }
+
+    private val settingsButton = mfxButton("Settings") {
+        styleClass.add("mfxButton")
+        setPrefSize(Style.navigationRailTabSize, Style.navigationRailTabSize)
+        clip = Style.circleForRipple(this)
+        paddingAll = 0.0
+        contentDisplay = ContentDisplay.TOP
+        graphic = ImageView(settingsIcon)
+        style = Style.tabStyle
+    }
+
+    private val helpButton = mfxButton("Help") {
+        styleClass.add("mfxButton")
+        setPrefSize(Style.navigationRailTabSize, Style.navigationRailTabSize)
+        paddingAll = 0.0
+        contentDisplay = ContentDisplay.TOP
+        graphic = ImageView(helpIcon)
+        style = Style.tabStyle
+    }
+>>>>>>> 1fa9d84 (added prefSize)
 
     private val nameApp = label("SOLVE") {
         style = "-fx-font-family: ${Style.Font}; -fx-font-weight:700; -fx-font-size: 18px"
