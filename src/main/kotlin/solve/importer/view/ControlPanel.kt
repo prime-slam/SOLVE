@@ -37,6 +37,8 @@ class ControlPanel : View() {
 
     private val mainView: MainView by inject()
 
+    private val loading: LoadingScreen by inject()
+
     private val buttonStyle = Style.buttonStyle
 
     private val loading: LoadingScreen by inject()
@@ -164,7 +166,7 @@ class ControlPanel : View() {
     }
 
     private fun showLoading() {
-        MaterialFXDialog.changeContent(mainView.content, LoadingScreen().root)
+        MaterialFXDialog.changeContent(mainView.content, loading.root)
     }
 
     private fun importAction(button: MFXButton, projectVal: Project) {
