@@ -37,6 +37,7 @@ import solve.utils.materialfx.action
 import solve.utils.materialfx.item
 import solve.utils.materialfx.lineSeparator
 import solve.utils.materialfx.mfxContextMenu
+import solve.utils.*
 import tornadofx.*
 import tornadofx.add
 import solve.utils.structures.Size as DoubleSize

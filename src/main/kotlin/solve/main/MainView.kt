@@ -61,7 +61,6 @@ class MainView : View() {
             "Ctrl+P"
         )
     )
-
     private val rightSidePanelTabs = listOf(
         SidePanelTab(
             LayersTabName,
