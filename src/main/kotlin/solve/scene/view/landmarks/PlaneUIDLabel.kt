@@ -21,7 +21,7 @@ import tornadofx.ChangeListener
 import tornadofx.add
 
 class PlaneUIDLabel(private val plane: Landmark.Plane) {
-    val uidLabelNode = Group().also {  it.isMouseTransparent = true }
+    val uidLabelNode = Group().also { it.isMouseTransparent = true }
     private val uidLabel: Label by lazy {
         val createdLabel = buildUIDLabel()
         uidLabelNode.add(createdLabel)

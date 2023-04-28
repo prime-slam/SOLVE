@@ -11,7 +11,6 @@ import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.input.DragEvent
-import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.util.Duration
 import org.controlsfx.control.PopOver
@@ -85,9 +84,11 @@ class VisualizationSettingsLayerCell(
         droppedItemInfo: DragAndDropCellItemInfo<LayerSettings>?
     ) {
         if (droppedItemInfo != null && !isAbleToDropItem(thisItemInfo.item, droppedItemInfo.item)) {
-            val hintPopOver = PopOver(label("Plane and non-plane layers cannot be swapped!") {
-                padding = Insets(0.0, 10.0, 0.0, 10.0)
-            })
+            val hintPopOver = PopOver(
+                label("Plane and non-plane layers cannot be swapped!") {
+                    padding = Insets(0.0, 10.0, 0.0, 10.0)
+                }
+            )
             hintPopOver.arrowLocation = PopOver.ArrowLocation.RIGHT_TOP
             hintPopOver.show(this)
         }
@@ -205,8 +206,7 @@ class VisualizationSettingsLayerCell(
             LandmarkType.Plane -> null
         }
 
-    private fun createLayerSettingsPopOver(contentNode: Node, titleLabel: String): PopOver
-    {
+    private fun createLayerSettingsPopOver(contentNode: Node, titleLabel: String): PopOver {
         val popOver = PopOver(contentNode)
         popOver.detach()
         popOver.title = titleLabel
@@ -221,13 +221,13 @@ class VisualizationSettingsLayerCell(
         return popOver
     }
 
-    private fun getLayerIcon(layerType: LandmarkType) = when(layerType) {
+    private fun getLayerIcon(layerType: LandmarkType) = when (layerType) {
         LandmarkType.Keypoint -> pointLayerIconImage
         LandmarkType.Line -> lineLayerIconImage
         LandmarkType.Plane -> planeLayerIconImage
     }
 
-    private fun getPopOverNodeSize(layerType: LandmarkType) = when(layerType) {
+    private fun getPopOverNodeSize(layerType: LandmarkType) = when (layerType) {
         LandmarkType.Keypoint -> DoublePoint(
             PointLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
             PointLayerSettingsPopOverNode.LayerSettingsNodePrefHeight

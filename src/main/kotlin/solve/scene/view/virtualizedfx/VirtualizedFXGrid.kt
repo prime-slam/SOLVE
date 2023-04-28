@@ -15,8 +15,8 @@ import javafx.scene.input.MouseButton
 import javafx.scene.input.ScrollEvent
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.Grid
-import solve.utils.structures.Size as DoubleSize
 import tornadofx.onChange
+import solve.utils.structures.Size as DoubleSize
 
 class VirtualizedFXGrid(
     private val virtualGrid: VirtualGrid<VisualizationFrame?, FrameViewAdapter>,

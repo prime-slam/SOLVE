@@ -24,11 +24,13 @@ class MainView : View() {
 
     private lateinit var mainViewSplitPane: SidePanelSplitPane
 
-    private val leftSidePanelTabs = listOf(SidePanelTab(
-        "Catalogue",
-        loadResourcesImage(IconsSidePanelCataloguePath),
-        find<CatalogueView>().root
-    ))
+    private val leftSidePanelTabs = listOf(
+        SidePanelTab(
+            "Catalogue",
+            loadResourcesImage(IconsSidePanelCataloguePath),
+            find<CatalogueView>().root
+        )
+    )
     private val rightSidePanelTabs = listOf(
         SidePanelTab(
             "Layers",
@@ -46,7 +48,6 @@ class MainView : View() {
         createSidePanelsViews(leftSidePanelTabs, SidePanelLocation.Left, leftSidePanelTabs.first())
     private val rightSidePanelViews =
         createSidePanelsViews(rightSidePanelTabs, SidePanelLocation.Right)
-
 
     private val mainViewBorderPane = borderpane {
         top<MenuBarView>()
@@ -118,7 +119,7 @@ class MainView : View() {
     }
 }
 
-class MainSplitPaneStyle: Stylesheet() {
+class MainSplitPaneStyle : Stylesheet() {
     init {
         splitPane {
             splitPaneDivider {

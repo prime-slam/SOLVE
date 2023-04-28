@@ -84,7 +84,6 @@ open class ProjectTreeView : View() {
                                         ImageView(imageIcon).apply {
                                             fitHeight = 16.0
                                             fitWidth = 16.0
-
                                         }
                                     } else {
                                         ImageView(errorFolderIcon)
@@ -104,7 +103,9 @@ open class ProjectTreeView : View() {
                         super.updateItem(item, empty)
                         text = if (empty) {
                             null
-                        } else item?.errors?.toStringWithoutBrackets()
+                        } else {
+                            item?.errors?.toStringWithoutBrackets()
+                        }
                         if (!empty && text.isNotEmpty()) {
                             tooltip(text).apply {
                                 style = "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.tooltipFontSize}; -fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"

@@ -14,12 +14,12 @@ import javafx.scene.input.ClipboardContent
 import javafx.scene.input.MouseButton
 import javafx.scene.paint.Color
 import javafx.stage.Window
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.Dispatchers
 import solve.scene.model.Layer
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationLine
@@ -30,9 +30,9 @@ import solve.scene.view.drawing.FrameEventManager
 import solve.scene.view.drawing.ImageFrameElement
 import solve.scene.view.landmarks.LandmarkView
 import solve.utils.*
-import solve.utils.structures.Size as DoubleSize
-import tornadofx.add
 import tornadofx.*
+import tornadofx.add
+import solve.utils.structures.Size as DoubleSize
 
 class FrameView(
     val size: DoubleSize,
@@ -217,7 +217,11 @@ class FrameView(
                 val landmarkViews = landmarkData.mapValues {
                     it.value.map { landmark ->
                         LandmarkView.create(
-                            landmark, orderManager.indexOf(it.key.settings), scale.value, frameDrawer, frameEventManager
+                            landmark,
+                            orderManager.indexOf(it.key.settings),
+                            scale.value,
+                            frameDrawer,
+                            frameEventManager
                         )
                     }
                 }
@@ -264,7 +268,7 @@ class FrameView(
 
     private fun validateImage(image: Image) {
         if (image.height != size.height || image.width != size.width) {
-            println("Image size doesn't equal to the frame size") //TODO: warn user
+            println("Image size doesn't equal to the frame size") // TODO: warn user
         }
     }
 
@@ -285,7 +289,10 @@ class FrameView(
     private fun drawLoadingIndicator() {
         frameDrawer.addOrUpdateElement(
             RectangleFrameElement(
-                FrameDrawer.IMAGE_VIEW_ORDER, Color.GREY, frameDrawer.width, frameDrawer.height
+                FrameDrawer.IMAGE_VIEW_ORDER,
+                Color.GREY,
+                frameDrawer.width,
+                frameDrawer.height
             )
         )
         frameDrawer.fullRedraw()

@@ -3,8 +3,8 @@ package solve.sidepanel.content
 import javafx.scene.Node
 import solve.main.MainController
 import solve.main.splitpane.SidePanelLocation
-import tornadofx.Controller
 import tornadofx.*
+import tornadofx.Controller
 
 class SidePanelContentController : Controller() {
     private val location: SidePanelLocation by param()

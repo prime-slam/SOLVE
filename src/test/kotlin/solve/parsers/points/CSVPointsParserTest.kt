@@ -121,7 +121,7 @@ internal class CSVPointsParserTest {
             Point(5, 2.0, 0.0),
             Point(4, 1.1, 3.0),
             Point(8, 5.0, 14.0),
-            Point(9, 3.0, 5.0),
+            Point(9, 3.0, 5.0)
         )
         private val csvTestPointsStringData =
             testPoints.joinToString(prefix = CSVPointDataStringPrefix, separator = "\n") { it.getCSVDataString() }

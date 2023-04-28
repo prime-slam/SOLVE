@@ -12,7 +12,7 @@ import solve.utils.structures.DoublePoint
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
     viewOrder: Int,
-    scale: Double,
+    scale: Double
 ) : LandmarkView(scale, viewOrder, keypoint) {
     companion object {
         private const val HighlightingScaleFactor: Double = 2.0
@@ -62,7 +62,9 @@ class KeypointView(
     override fun highlightShape(duration: Duration) {
         val scaleTransition = createScaleTransition(node, HighlightingScaleFactor, HighlightingScaleFactor, duration)
         val fillTransition = createFillTransition(
-            node, keypoint.layerSettings.getUniqueColor(keypoint), duration
+            node,
+            keypoint.layerSettings.getUniqueColor(keypoint),
+            duration
         )
 
         toFront(node)

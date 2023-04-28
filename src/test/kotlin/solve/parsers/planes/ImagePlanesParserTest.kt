@@ -14,7 +14,6 @@ import solve.parsers.structures.Plane
 import solve.scene.model.Point
 import java.awt.image.BufferedImage
 import java.io.File
-import javax.imageio.ImageIO
 
 internal class ImagePlanesParserTest {
     // JPG format has not been tested because the data is distorted due to compression.
@@ -109,7 +108,6 @@ internal class ImagePlanesParserTest {
         private val testEmptyData =
             generatePlaneMaskWithGivenPixelColors(TestImageWidth, TestImageHeight, listOf(BackgroundColor))
 
-
         private const val OneColorComponentMask = (1 shl ColorBitsNumber) - 1
 
         private fun getColorByIntRGB(rgb: Int): Color {
@@ -153,7 +151,8 @@ internal class ImagePlanesParserTest {
 
             val maskImage = SwingFXUtils.fromFXImage(writableImage, null)
             val planes = planePoints.keys.map {
-                    uid -> Plane(uid, planePoints[uid] ?: emptyList())
+                    uid ->
+                Plane(uid, planePoints[uid] ?: emptyList())
             }
 
             return PlaneMaskData(maskImage, planes)

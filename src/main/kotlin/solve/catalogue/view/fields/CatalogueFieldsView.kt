@@ -2,8 +2,6 @@ package solve.catalogue.view.fields
 
 import javafx.collections.ObservableList
 import javafx.scene.Node
-import javafx.scene.Parent
-import javafx.scene.Scene
 import javafx.scene.control.Labeled
 import javafx.scene.control.ListView
 import javafx.scene.control.SelectionMode
@@ -12,18 +10,18 @@ import javafx.scene.image.WritableImage
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.DragEvent
 import javafx.scene.input.TransferMode
+import javafx.scene.layout.Priority
+import javafx.scene.paint.Color
 import solve.catalogue.*
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField
 import solve.project.model.ProjectFrame
 import solve.scene.view.SceneView
-import javafx.scene.layout.Priority
-import javafx.scene.paint.Color
 import solve.utils.*
 import tornadofx.*
 import kotlin.math.min
 
-abstract class CatalogueFieldsView: View() {
+abstract class CatalogueFieldsView : View() {
     private val fields: ObservableList<CatalogueField> by param()
     val fieldsListView: ListView<CatalogueField> = listview(fields) {
         addStylesheet(CatalogueFieldsStyle::class)
@@ -120,7 +118,9 @@ abstract class CatalogueFieldsView: View() {
 
         val nodeSnapshot = fieldsSnapshotNode.snapshot(null, null)
         return WritableImage(
-            nodeSnapshot.pixelReader, nodeSnapshot.width.floor(), min(nodeSnapshot.height.floor(), prefSnapshotHeight)
+            nodeSnapshot.pixelReader,
+            nodeSnapshot.width.floor(),
+            min(nodeSnapshot.height.floor(), prefSnapshotHeight)
         )
     }
 }

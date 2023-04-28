@@ -12,7 +12,7 @@ import tornadofx.*
 class LineLayerSettingsPopOverNode(
     private val lineLayerSettings: LayerSettings.LineLayerSettings,
     private val sceneController: SceneController
-): LayerSettingsPopOverNode() {
+) : LayerSettingsPopOverNode() {
     companion object {
         const val LayerSettingsNodePrefWidth = 260.0
         const val LayerSettingsNodePrefHeight = 90.0
@@ -27,12 +27,15 @@ class LineLayerSettingsPopOverNode(
         popOver.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
         addSettingField("Color", buildLandmarkColorPicker(lineLayerSettings, sceneController))
-        addSettingField("Width", buildSizeSlider(
-            lineLayerSettings.selectedWidth,
-            MinWidthValue,
-            MaxWidthValue,
-            weakWidthSliderValueChangedEventHandler
-        ))
+        addSettingField(
+            "Width",
+            buildSizeSlider(
+                lineLayerSettings.selectedWidth,
+                MinWidthValue,
+                MaxWidthValue,
+                weakWidthSliderValueChangedEventHandler
+            )
+        )
         addSettingField("One color", buildLandmarkUseOneColorCheckBox(lineLayerSettings), Alignment.Left)
 
         return popOver

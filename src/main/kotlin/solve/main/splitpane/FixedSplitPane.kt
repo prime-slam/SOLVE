@@ -9,7 +9,7 @@ import tornadofx.onChange
 open class FixedSplitPane(
     private val dividersInitialPositions: List<Double>,
     private val containedNodes: List<Node>
-): SplitPane() {
+) : SplitPane() {
     private var isWindowResizing = false
     protected val dividersInstalledPositions = mutableMapOf<Int, Double>()
 

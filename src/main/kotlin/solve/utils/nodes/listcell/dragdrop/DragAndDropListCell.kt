@@ -12,7 +12,7 @@ import javafx.scene.input.TransferMode
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
-abstract class DragAndDropListCell<T: Any>(private val itemType: KClass<T>) : ListCell<T>() {
+abstract class DragAndDropListCell<T : Any>(private val itemType: KClass<T>) : ListCell<T>() {
     init {
         contentDisplay = ContentDisplay.CENTER
         alignment = Pos.CENTER
@@ -92,8 +92,8 @@ abstract class DragAndDropListCell<T: Any>(private val itemType: KClass<T>) : Li
             val thisItemInfo = createItemInfo(item)
 
             val droppedCellItem = itemType.cast(
-                (event.gestureSource as? DragAndDropListCell<*>)?.item ?:
-                    setOnNotAbleToDropItem(event, thisItemInfo, null).also { return }
+                (event.gestureSource as? DragAndDropListCell<*>)?.item
+                    ?: setOnNotAbleToDropItem(event, thisItemInfo, null).also { return }
             )
             if (!isAbleToDropItem(item, droppedCellItem)) {
                 setOnNotAbleToDropItem(event, thisItemInfo, createItemInfo(droppedCellItem))
@@ -136,7 +136,8 @@ abstract class DragAndDropListCell<T: Any>(private val itemType: KClass<T>) : Li
     protected open fun setOnNotAbleToDropItem(
         event: DragEvent,
         thisItemInfo: DragAndDropCellItemInfo<T>,
-        droppedItemInfo: DragAndDropCellItemInfo<T>?) { }
+        droppedItemInfo: DragAndDropCellItemInfo<T>?
+    ) { }
 
     protected open fun setAfterDragDropped(
         event: DragEvent,

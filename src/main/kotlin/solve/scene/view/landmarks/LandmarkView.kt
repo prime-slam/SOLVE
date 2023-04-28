@@ -20,7 +20,7 @@ import tornadofx.visibleWhen
 sealed class LandmarkView(
     scale: Double,
     viewOrder: Int,
-    private val landmark: Landmark,
+    private val landmark: Landmark
 ) {
     companion object {
         fun create(landmark: Landmark, viewOrder: Int, scale: Double, frameDrawer: FrameDrawer, frameEventManager: FrameEventManager): LandmarkView {

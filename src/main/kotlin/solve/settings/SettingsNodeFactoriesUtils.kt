@@ -15,7 +15,7 @@ fun createSettingsField(
     settingNodeWidth: Double,
     settingsNodeAlignment: Alignment = Alignment.Center,
     fieldHeight: Double = 35.0
-) : HBox {
+): HBox {
     val fieldHBox = HBox()
     val settingsNodeHBox = HBox()
 

@@ -31,8 +31,8 @@ fun buildLandmarkColorPicker(
 }
 
 fun buildLandmarkUseOneColorCheckBox(
-    layerSettings: LayerSettings,
-) : CheckBox {
+    layerSettings: LayerSettings
+): CheckBox {
     val checkBox = CheckBox()
 
     checkBox.isSelected = layerSettings.useCommonColor

@@ -92,9 +92,11 @@ object ProjectParser {
             val imageName = it.nameWithoutExtension
 
             if (imageName.toLongOrNull() != null) {
-                images.add(ImageAfterPartialParsing(imageName, it.invariantSeparatorsPath, mutableListOf()).apply {
-                    incorrectExtensionError(it, errors)
-                })
+                images.add(
+                    ImageAfterPartialParsing(imageName, it.invariantSeparatorsPath, mutableListOf()).apply {
+                        incorrectExtensionError(it, errors)
+                    }
+                )
             } else {
                 errorImages.add(imageName)
             }
@@ -104,10 +106,13 @@ object ProjectParser {
             if (errorImages.isNotEmpty()) {
                 createAlertForError(
                     "Image ${
-                        if (errorImages.count() == 1) "${errorImages.toStringWithoutBrackets()} is"
-                        else "${errorImages.first()} and ${errorImages.count() - 1} others are"
+                    if (errorImages.count() == 1) {
+                        "${errorImages.toStringWithoutBrackets()} is"
+                    } else {
+                        "${errorImages.first()} and ${errorImages.count() - 1} others are"
+                    }
                     } " +
-                            "because the file name can't be converted to long"
+                        "because the file name can't be converted to long"
                 )
             }
         }
@@ -130,11 +135,14 @@ object ProjectParser {
         fun alertErrorFolderMessage() {
             createAlertForError(
                 "The directory ${
-                    if (errorFolders.count() == 1) "${errorFolders.toStringWithoutBrackets()} is" else
-                        "${errorFolders.first()} and ${errorFolders.count() - 1} others are"
+                if (errorFolders.count() == 1) {
+                    "${errorFolders.toStringWithoutBrackets()} is"
+                } else {
+                    "${errorFolders.first()} and ${errorFolders.count() - 1} others are"
+                }
                 } skipped, " +
-                        "because names of folders don't contain correct kind name. " +
-                        "The correct directory name should look like: name_kind"
+                    "because names of folders don't contain correct kind name. " +
+                    "The correct directory name should look like: name_kind"
             )
         }
 
@@ -177,9 +185,11 @@ object ProjectParser {
         project.projectFrames.forEach {
             val image = it.image
             val imageNode: TreeItem<FileInTree> = TreeItem(FileInTree(FileInfo(image.name, false, image.errors)))
-            imageNode.children.addAll(it.outputs.map { output ->
-                TreeItem(FileInTree(FileInfo(output.algorithmName, true, output.errors)))
-            })
+            imageNode.children.addAll(
+                it.outputs.map { output ->
+                    TreeItem(FileInTree(FileInfo(output.algorithmName, true, output.errors)))
+                }
+            )
             tree.children.add(imageNode)
         }
         return tree

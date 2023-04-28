@@ -11,5 +11,5 @@ class CustomButton {
 }
 
 class ButtonModel : ItemViewModel<CustomButton>() {
-    val disabled = bind(CustomButton :: disabled)
+    val disabled = bind(CustomButton::disabled)
 }

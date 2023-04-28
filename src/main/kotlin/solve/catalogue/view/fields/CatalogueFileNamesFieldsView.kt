@@ -1,11 +1,10 @@
 package solve.catalogue.view.fields
 
 import javafx.scene.control.Labeled
-
-import solve.utils.loadResourcesImage
-import solve.catalogue.model.CatalogueField
 import javafx.scene.image.ImageView
+import solve.catalogue.model.CatalogueField
 import solve.constants.IconsCatalogueImagePath
+import solve.utils.loadResourcesImage
 import tornadofx.*
 
 class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
@@ -20,7 +19,7 @@ class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
 
     private fun createFieldIconImageView(): ImageView? {
         if (fileNamesFieldIconImage != null) {
-           return imageview(fileNamesFieldIconImage) {
+            return imageview(fileNamesFieldIconImage) {
                 fitHeight = ListViewFieldIconSize
                 isPreserveRatio = true
             }

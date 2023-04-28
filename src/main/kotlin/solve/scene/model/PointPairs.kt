@@ -8,7 +8,8 @@ object PointPairs {
     private fun createPairs(size: Size) = (0 until size.height).flatMap { row ->
         (0 until size.width).map { column ->
             Point(
-                column.toShort(), row.toShort()
+                column.toShort(),
+                row.toShort()
             )
         }
     }
