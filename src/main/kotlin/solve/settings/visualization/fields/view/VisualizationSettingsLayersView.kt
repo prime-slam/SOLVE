@@ -5,6 +5,7 @@ import javafx.scene.layout.Priority
 import javafx.util.Callback
 import solve.scene.controller.SceneController
 import solve.settings.visualization.fields.controller.VisualizationSettingsLayersController
+import solve.styles.ListViewStylesheet
 import solve.utils.nodes.listcell.dragdrop.isListViewCellSource
 import tornadofx.*
 
@@ -15,6 +16,7 @@ class VisualizationSettingsLayersView : View() {
     private val fieldListViewCells = mutableListOf<VisualizationSettingsLayerCell>()
 
     private val fieldsListView = listview(controller.model.layers) {
+        addStylesheet(ListViewStylesheet::class)
         cellFactory = Callback {
             val layerCell = VisualizationSettingsLayerCell(sceneController)
             fieldListViewCells.add(layerCell)

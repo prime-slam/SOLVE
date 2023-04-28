@@ -25,6 +25,7 @@ import solve.scene.model.LandmarkType
 import solve.scene.model.LayerSettings
 import solve.settings.visualization.popover.LineLayerSettingsPopOverNode
 import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
+import solve.styles.Style
 import solve.utils.TransparentScalingButtonStyle
 import solve.utils.createHGrowHBox
 import solve.utils.createSnapshot
@@ -59,10 +60,6 @@ class VisualizationSettingsLayerCell(
         prefHeight = LayerFieldHeight
         addStylesheet(TransparentScalingButtonStyle::class)
 
-        val layerIconNode = createLayerIconNode(layerType)
-        if (layerIconNode != null) {
-            add(layerIconNode)
-        }
         add(createLayerNameLabel())
         add(createHGrowHBox())
         if (layerType != LandmarkType.Plane) {
@@ -118,8 +115,9 @@ class VisualizationSettingsLayerCell(
     }
 
     private fun createLayerNameLabel(): Label = label(item.layerName) {
+        style = "-fx-font-style: ${Style.FontCondensed}; -fx-font-size: ${Style.ButtonFontSize}"
         font = Font.font(LayerFieldNameFontSize)
-        maxWidth = LayerFieldNameMaxWidth
+//        maxWidth = LayerFieldNameMaxWidth
     }
 
     private fun createLayerEditButton(layerType: LandmarkType): Node = button {

@@ -18,6 +18,8 @@ import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.settings.createSettingsField
 import solve.settings.grid.controller.GridSettingsController
+import solve.styles.RangeSliderStylesheet
+import solve.styles.Style
 import solve.utils.createInsetsWithValue
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
@@ -36,6 +38,10 @@ class GridSettingsView : View() {
         get() = sceneController.installedColumnsNumber
 
     override val root = vbox {
+        stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto+Condensed")
+        stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700")
+        stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto")
+        addStylesheet(RangeSliderStylesheet::class)
         vbox {
             style {
                 backgroundColor += Color.WHITE
@@ -191,12 +197,12 @@ class GridSettingsView : View() {
     }
 
     companion object {
-        private const val GridSettingsViewMinWidth = 220.0
+        private const val GridSettingsViewMinWidth = 300.0
 
-        private const val GridSettingsLabelFontSize = 16.0
+        private const val GridSettingsLabelFontSize = 14.0
 
         private const val GridSettingsLabelWidth = 100.0
-        private const val GridSettingsSettingWidth = 120.0
+        private const val GridSettingsSettingWidth = 200.0
 
         private const val GridSettingsColumnsNumberButtonsSize = 18.0
         private const val GridSettingsColumnsNumberCounterFontSize = 18.0
