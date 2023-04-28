@@ -2,11 +2,9 @@ package solve.importer
 
 import javafx.scene.control.TreeItem
 import solve.importer.model.*
-import solve.importer.view.ImporterView
 import solve.project.model.LayerKind
 import solve.utils.createAlertForError
 import solve.utils.toStringWithoutBrackets
-import tornadofx.FX.Companion.find
 import java.io.File
 
 object ProjectParser {
@@ -152,7 +150,6 @@ object ProjectParser {
         if (!isImagesExist) {
             createAlertForError("The images folder is missing in the directory")
             return null
-
         }
 
         images.map { img ->
