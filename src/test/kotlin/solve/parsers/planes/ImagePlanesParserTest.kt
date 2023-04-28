@@ -3,7 +3,7 @@ package solve.parsers.planes
 import io.github.palexdev.mfxcore.utils.fx.SwingFXUtils
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import solve.parsers.ImageFormat
