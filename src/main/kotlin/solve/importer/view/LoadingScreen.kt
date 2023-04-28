@@ -24,10 +24,6 @@ class LoadingScreen : View("Loading") {
         color4 = primaryColor
     }
 
-    override fun onDock() {
-        (root.scene.window as Stage).minWidth = 390.0
-    }
-
     override val root =
         borderpane {
             prefHeight = 570.0
