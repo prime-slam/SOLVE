@@ -12,7 +12,7 @@ import tornadofx.*
 class PointLayerSettingsPopOverNode(
     private val pointLayerSettings: LayerSettings.PointLayerSettings,
     private val sceneController: SceneController
-): LayerSettingsPopOverNode() {
+) : LayerSettingsPopOverNode() {
     private val radiusSliderValueChangedEventHandler = ChangeListener<Number> { _, _, radiusValue ->
         pointLayerSettings.selectedRadius = radiusValue as Double
     }
@@ -22,12 +22,15 @@ class PointLayerSettingsPopOverNode(
         popOver.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
         addSettingField("Color", buildLandmarkColorPicker(pointLayerSettings, sceneController))
-        addSettingField("Size", buildSizeSlider(
-            pointLayerSettings.selectedRadius,
-            MinSizeValue,
-            MaxSizeValue,
-            weakRadiusSliderValueChangedEventHandler
-        ))
+        addSettingField(
+            "Size",
+            buildSizeSlider(
+                pointLayerSettings.selectedRadius,
+                MinSizeValue,
+                MaxSizeValue,
+                weakRadiusSliderValueChangedEventHandler
+            )
+        )
         addSettingField("One color", buildLandmarkUseOneColorCheckBox(pointLayerSettings), Alignment.Left)
 
         return popOver

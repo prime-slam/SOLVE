@@ -6,7 +6,6 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.stage.Stage
 import kotlinx.coroutines.cancel
 import solve.styles.Style
 import solve.utils.mfxButton
@@ -42,9 +41,11 @@ class LoadingScreen : View("Loading") {
 
                 vbox(15) {
                     BorderPane.setMargin(this, Insets(200.0, 0.0, 0.0, 170.0))
-                    add(progressSpinner.apply {
-                        VBox.setMargin(this, Insets(0.0, 0.0, 0.0, 30.0))
-                    })
+                    add(
+                        progressSpinner.apply {
+                            VBox.setMargin(this, Insets(0.0, 0.0, 0.0, 30.0))
+                        }
+                    )
                     label("Please, wait...") {
                         style = "-fx-font-size: ${Style.headerFontSize}; -fx-font-family: ${Style.fontCondensed}"
                     }

@@ -6,11 +6,11 @@ import javafx.scene.Node
 import javafx.scene.layout.Border
 import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle
+import javafx.scene.layout.BorderWidths
 import javafx.scene.layout.CornerRadii
+import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
-import javafx.scene.layout.BorderWidths
-import javafx.scene.layout.Priority
 import org.controlsfx.control.RangeSlider
 import solve.constants.IconsSettingsGridDecrementPath
 import solve.constants.IconsSettingsGridIncrementPath
@@ -18,15 +18,15 @@ import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.settings.createSettingsField
 import solve.settings.grid.controller.GridSettingsController
+import solve.utils.createImageViewIcon
 import solve.utils.createInsetsWithValue
 import solve.utils.loadResourcesImage
+import solve.utils.scale
 import solve.utils.unscale
 import solve.utils.valuesDifference
-import solve.utils.createImageViewIcon
-import solve.utils.scale
 import tornadofx.*
 
-class GridSettingsView: View() {
+class GridSettingsView : View() {
     private val controller: GridSettingsController by inject()
     private val sceneController: SceneController by inject()
 
@@ -115,7 +115,7 @@ class GridSettingsView: View() {
     private fun createColumnsNumberButton(
         iconPath: String,
         isActiveProperty: SimpleObjectProperty<Boolean>,
-        action: () -> Unit,
+        action: () -> Unit
     ) = button {
         style {
             backgroundColor += Color.TRANSPARENT
@@ -167,19 +167,23 @@ class GridSettingsView: View() {
             isIncrementActive.value = columnsNumber < SceneController.MaxColumnsNumber
         }
 
-        add(createColumnsNumberButton(IconsSettingsGridDecrementPath, isDecrementActive) {
-            if (columnsNumber > 1) {
-                controller.setSceneColumnsNumber(columnsNumber - 1)
+        add(
+            createColumnsNumberButton(IconsSettingsGridDecrementPath, isDecrementActive) {
+                if (columnsNumber > 1) {
+                    controller.setSceneColumnsNumber(columnsNumber - 1)
+                }
             }
-        })
+        )
         label(sceneController.installedColumnsNumberProperty) {
             font = Font(GridSettingsColumnsNumberCounterFontSize)
         }
-        add(createColumnsNumberButton(IconsSettingsGridIncrementPath, isIncrementActive) {
-            if (columnsNumber < SceneController.MaxColumnsNumber) {
-                controller.setSceneColumnsNumber(columnsNumber + 1)
+        add(
+            createColumnsNumberButton(IconsSettingsGridIncrementPath, isIncrementActive) {
+                if (columnsNumber < SceneController.MaxColumnsNumber) {
+                    controller.setSceneColumnsNumber(columnsNumber + 1)
+                }
             }
-        })
+        )
     }
 
     private fun addSceneListeners() {

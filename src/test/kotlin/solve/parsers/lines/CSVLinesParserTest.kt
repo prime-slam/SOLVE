@@ -117,7 +117,7 @@ internal class CSVLinesParserTest {
             Line(5, -4.0, -10.0, -5.0, -4.0),
             Line(4, -9.0, 5.0, 7.0, 10.0),
             Line(8, 7.123, 14.12, 10.4, 25.9),
-            Line(9, 1.0, 8.0, 32.0, 12.0),
+            Line(9, 1.0, 8.0, 32.0, 12.0)
         )
         private val csvTestLinesStringData =
             testLines.joinToString(prefix = CSVLineDataStringPrefix, separator = "\n") { it.getCSVDataString() }

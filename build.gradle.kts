@@ -3,6 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
     kotlin("jvm") version "1.7.20"
     id("org.openjfx.javafxplugin") version "0.0.10"
+    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
     id("application")
     application
 }
@@ -36,7 +37,7 @@ javafx {
 }
 
 dependencies {
-    testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterEngineVersion")
     implementation(kotlin("stdlib-jdk8"))
     implementation("no.tornado:tornadofx:$tornadofxVersion")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:$jacksonCSVVersion")

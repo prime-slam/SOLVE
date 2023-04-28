@@ -7,7 +7,7 @@ class SidePanelSplitPane(
     private val containedNodes: List<Node>,
     private val panelsLocation: SidePanelLocation,
     private val initiallyDisplayingLocation: SidePanelLocation
-): FixedSplitPane(dividersInitialPositions, containedNodes)  {
+) : FixedSplitPane(dividersInitialPositions, containedNodes) {
     private var isLeftSidePanelHidden = false
     private var isRightSidePanelHidden = false
 
@@ -71,13 +71,13 @@ class SidePanelSplitPane(
         if (installedPosition != null && notHiddenDividersIndices != null) {
             val rightDividersWithLessPosition = dividersInstalledPositions.filter { entry ->
                 entry.key in notHiddenDividersIndices &&
-                entry.key > installedPositionIndex &&
-                entry.value <= installedPosition
+                    entry.key > installedPositionIndex &&
+                    entry.value <= installedPosition
             }
             val leftDividersWithGreaterPosition = dividersInstalledPositions.filter { entry ->
                 entry.key in notHiddenDividersIndices &&
-                entry.key < installedPositionIndex &&
-                entry.value >= installedPosition
+                    entry.key < installedPositionIndex &&
+                    entry.value >= installedPosition
             }
 
             var setPosition = installedPosition
@@ -98,7 +98,7 @@ class SidePanelSplitPane(
     private fun isSidePanelLocation(location: SidePanelLocation) =
         panelsLocation == SidePanelLocation.Both || panelsLocation == location
 
-    private fun getNotHiddenDividersIndices() : IntRange? {
+    private fun getNotHiddenDividersIndices(): IntRange? {
         val dividersCount = dividersInstalledPositions.count()
         val firstIndex = if (!isLeftSidePanelHidden) 0 else 1
         val lastIndex = if (!isRightSidePanelHidden) dividersCount - 1 else dividersCount - 2
@@ -109,14 +109,14 @@ class SidePanelSplitPane(
         return firstIndex..lastIndex
     }
 
-    private fun getSideNode(nodeLocation: SidePanelLocation) = when(nodeLocation) {
+    private fun getSideNode(nodeLocation: SidePanelLocation) = when (nodeLocation) {
         SidePanelLocation.Left -> containedNodes.first()
         SidePanelLocation.Right -> containedNodes.last()
         else -> null
     }
 
     private fun hideInitiallyNonDisplayingNodes() {
-        when(initiallyDisplayingLocation) {
+        when (initiallyDisplayingLocation) {
             SidePanelLocation.Left -> hideNodeAt(SidePanelLocation.Right)
             SidePanelLocation.Right -> hideNodeAt(SidePanelLocation.Left)
             else -> return

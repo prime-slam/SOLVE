@@ -8,7 +8,7 @@ import solve.settings.visualization.fields.controller.VisualizationSettingsLayer
 import solve.utils.nodes.listcell.dragdrop.isListViewCellSource
 import tornadofx.*
 
-class VisualizationSettingsLayersView: View() {
+class VisualizationSettingsLayersView : View() {
     private val sceneController: SceneController by inject()
     private val controller: VisualizationSettingsLayersController by inject()
 
@@ -36,7 +36,8 @@ class VisualizationSettingsLayersView: View() {
             sortFieldsListViewCellsInItemsOrder()
             val lastFieldListViewCell = fieldListViewCells.last { it.item != null }
             if (isListViewCellSource(fieldsListView, event.gestureSource) &&
-                (event.gestureSource as VisualizationSettingsLayerCell) != lastFieldListViewCell) {
+                (event.gestureSource as VisualizationSettingsLayerCell) != lastFieldListViewCell
+            ) {
                 lastFieldListViewCell.onDragDropped(event)
             }
 

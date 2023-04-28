@@ -9,7 +9,7 @@ import solve.project.model.ProjectFrame
 import solve.scene.SceneFacade
 import tornadofx.Controller
 
-class CatalogueController: Controller() {
+class CatalogueController : Controller() {
     val model = CatalogueModel()
 
     private val view: CatalogueView by inject()

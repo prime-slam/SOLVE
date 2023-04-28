@@ -18,7 +18,8 @@ fun Node.mfxContextMenu(op: MFXContextMenu.() -> Unit = {}): MFXContextMenu {
 }
 
 fun MFXContextMenu.item(
-    name: String, op: MFXContextMenuItem.() -> Unit = {}
+    name: String,
+    op: MFXContextMenuItem.() -> Unit = {}
 ) = MFXContextMenuItem(name).also {
     op(it)
     this.addItems(it)

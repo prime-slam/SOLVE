@@ -8,12 +8,13 @@ import solve.settings.visualization.fields.view.VisualizationSettingsLayersView
 import solve.utils.*
 import tornadofx.*
 
-class VisualizationSettingsView: View() {
-    private class FramesLayerSettingsComparator: Comparator<LayerSettings> {
+class VisualizationSettingsView : View() {
+    private class FramesLayerSettingsComparator : Comparator<LayerSettings> {
         override fun compare(firstLayerSettings: LayerSettings, secondLayerSettings: LayerSettings): Int {
             val layersSettings = listOf(firstLayerSettings, secondLayerSettings)
             return if (layersSettings.any { it.usesCanvas } &&
-                layersSettings.any { !it.usesCanvas }) {
+                layersSettings.any { !it.usesCanvas }
+            ) {
                 if (firstLayerSettings.usesCanvas) 1 else -1
             } else {
                 firstLayerSettings.layerName.compareTo(secondLayerSettings.layerName)

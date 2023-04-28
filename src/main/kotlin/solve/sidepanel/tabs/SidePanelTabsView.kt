@@ -11,7 +11,7 @@ import solve.utils.createImageViewIcon
 import solve.utils.createPxBoxWithValue
 import tornadofx.*
 
-class SidePanelTabsView: View() {
+class SidePanelTabsView : View() {
     private val location: SidePanelLocation by param()
     private val tabs: List<SidePanelTab> by param()
     private val initialTab: SidePanelTab? by param()
@@ -92,7 +92,7 @@ class SidePanelTabsView: View() {
     }
 }
 
-class SidePanelTabsStyle: Stylesheet() {
+class SidePanelTabsStyle : Stylesheet() {
     init {
         toggleButton {
             backgroundColor += DefaultTabColor

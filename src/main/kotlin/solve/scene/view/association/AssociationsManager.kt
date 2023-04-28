@@ -16,7 +16,7 @@ class AssociationsManager(
     private val scale: DoubleProperty,
     private val frames: List<VisualizationFrame>,
     private val columnsNumber: Int,
-    private val outOfFramesLayer: OutOfFramesLayer,
+    private val outOfFramesLayer: OutOfFramesLayer
 ) {
     val chosenLayerName
         get() = firstFrameAssociationParameters?.key?.layerName
@@ -142,6 +142,7 @@ class AssociationsManager(
     data class AssociationKey(val frame: VisualizationFrame, val layerName: String)
 
     data class AssociationParameters(
-        val key: AssociationKey, val landmarks: List<Landmark.Keypoint>
+        val key: AssociationKey,
+        val landmarks: List<Landmark.Keypoint>
     )
 }

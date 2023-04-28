@@ -6,7 +6,7 @@ import javafx.scene.layout.Priority
 import solve.utils.clearChildren
 import tornadofx.*
 
-class SidePanelContentView: View() {
+class SidePanelContentView : View() {
     private var contentParentNode: Node = vbox {
         hgrow = Priority.ALWAYS
         vgrow = Priority.ALWAYS

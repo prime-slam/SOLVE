@@ -3,7 +3,7 @@ package solve.utils
 import javafx.scene.paint.Color
 import tornadofx.*
 
-class TransparentScalingButtonStyle: Stylesheet() {
+class TransparentScalingButtonStyle : Stylesheet() {
     init {
         button {
             backgroundColor += Color.TRANSPARENT

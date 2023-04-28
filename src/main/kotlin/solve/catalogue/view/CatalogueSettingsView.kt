@@ -6,14 +6,14 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.RadioButton
 import javafx.scene.control.ToggleGroup
 import javafx.scene.layout.Priority
+import solve.catalogue.addNameTooltip
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.ViewFormat
-import solve.catalogue.addNameTooltip
 import tornadofx.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class CatalogueSettingsView: View() {
+class CatalogueSettingsView : View() {
     enum class SelectionState {
         None,
         Part,

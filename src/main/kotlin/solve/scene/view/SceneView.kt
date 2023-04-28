@@ -8,12 +8,12 @@ import solve.scene.controller.SceneController
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
-import solve.utils.structures.DoublePoint as DoublePoint
-import solve.utils.structures.Size as DoubleSize
 import tornadofx.View
 import tornadofx.label
 import tornadofx.onChange
 import tornadofx.vbox
+import solve.utils.structures.DoublePoint as DoublePoint
+import solve.utils.structures.Size as DoubleSize
 
 class SceneView : View() {
     private val controller: SceneController by inject()
@@ -53,27 +53,41 @@ class SceneView : View() {
 
         val outOfFramesLayer = OutOfFramesLayer()
         val associationsManager = AssociationsManager(
-            frameSize, framesMargin, controller.scaleProperty, scene.frames, columnsNumber, outOfFramesLayer
+            frameSize,
+            framesMargin,
+            controller.scaleProperty,
+            scene.frames,
+            columnsNumber,
+            outOfFramesLayer
         )
 
         val frameViewParameters = FrameViewParameters(frameDataLoadingScope, associationsManager, scene)
 
         val canReuseCache =
             frameViewCache?.size == frameSize && frameViewCache?.canvasBufferDepth == scene.canvasLayersCount
-        frameViewCache = if (canReuseCache) frameViewCache!! else FrameViewCache(
-            frameSize, scene.canvasLayersCount
-        ) { frame, parameters ->
-            FrameView(
+        frameViewCache = if (canReuseCache) {
+            frameViewCache!!
+        } else {
+            FrameViewCache(
                 frameSize,
-                controller.scaleProperty,
-                frameViewCache!!,
-                scene.canvasLayersCount,
-                parameters,
-                frame
-            )
+                scene.canvasLayersCount
+            ) { frame, parameters ->
+                FrameView(
+                    frameSize,
+                    controller.scaleProperty,
+                    frameViewCache!!,
+                    scene.canvasLayersCount,
+                    parameters,
+                    frame
+                )
+            }
         }
         val grid = VirtualizedFXGridProvider.createGrid(
-            frames, columnsNumber, gridCellSize, controller.scaleProperty, outOfFramesLayer
+            frames,
+            columnsNumber,
+            gridCellSize,
+            controller.scaleProperty,
+            outOfFramesLayer
         ) { frame ->
             frameViewCache!!.get(frame, frameViewParameters)
         }
@@ -139,7 +153,6 @@ class SceneView : View() {
                     controller.recalculateScale(true)
                 }
             }
-
         }
     }
 

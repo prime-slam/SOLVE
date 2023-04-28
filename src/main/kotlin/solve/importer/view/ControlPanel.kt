@@ -112,8 +112,9 @@ class ControlPanel : View() {
         controller.projectAfterPartialParsing.onChange {
             var countErrors = 0
             it?.projectFrames?.forEach { frame ->
-                if (frame.image.errors.isNotEmpty())
+                if (frame.image.errors.isNotEmpty()) {
                     countErrors += 1
+                }
             }
             this.text = "$countErrors errors"
             this.graphic = ImageView(errorsCountIcon)

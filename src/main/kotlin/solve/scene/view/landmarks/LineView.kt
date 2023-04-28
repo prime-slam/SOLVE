@@ -14,7 +14,7 @@ import solve.utils.structures.DoublePoint
 class LineView(
     private val line: Landmark.Line,
     viewOrder: Int,
-    scale: Double,
+    scale: Double
 ) : LandmarkView(scale, viewOrder, line) {
     companion object {
         private const val HighlightingScaleFactor: Double = 2.0
@@ -73,7 +73,9 @@ class LineView(
     override fun highlightShape(duration: Duration) {
         val scaleTransition = Timeline(KeyFrame(duration, KeyValue(node.strokeWidthProperty(), width)))
         val strokeTransition = createStrokeTransition(
-            node, line.layerSettings.getUniqueColor(line), duration
+            node,
+            line.layerSettings.getUniqueColor(line),
+            duration
         )
 
         toFront(node)
@@ -86,7 +88,9 @@ class LineView(
         val targetWidth = line.layerSettings.selectedWidth * (if (scale < 1) scale else 1.0)
         val scaleTransition = Timeline(KeyFrame(duration, KeyValue(node.strokeWidthProperty(), targetWidth)))
         val strokeTransition = createStrokeTransition(
-            node, line.layerSettings.getColor(line), duration
+            node,
+            line.layerSettings.getColor(line),
+            duration
         )
 
         scaleTransition.setOnFinished {

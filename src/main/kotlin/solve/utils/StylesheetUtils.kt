@@ -12,7 +12,10 @@ val DarkLightGrayColor: Color = Color.web("#AAAAAA")
 
 fun createLinearUnitsBox(top: Double, right: Double, bottom: Double, left: Double, unitsType: Dimension.LinearUnits) =
     CssBox(
-        Dimension(top, unitsType), Dimension(right, unitsType), Dimension(bottom, unitsType), Dimension(left, unitsType)
+        Dimension(top, unitsType),
+        Dimension(right, unitsType),
+        Dimension(bottom, unitsType),
+        Dimension(left, unitsType)
     )
 
 fun createPxBox(top: Double, right: Double, bottom: Double, left: Double) =
@@ -40,7 +43,7 @@ fun getBlackOrWhiteContrastingTo(color: Color): Color {
     val boundaryCoefficient = 0.5
 
     val contrastValue = redCoefficient * color.red.pow(gamma) +
-            greenCoefficient * color.green.pow(gamma)
+        greenCoefficient * color.green.pow(gamma)
     blueCoefficient * color.blue.pow(gamma)
 
     val boundaryValue = boundaryCoefficient.pow(gamma)

@@ -1,7 +1,6 @@
 package solve.scene
 
 import javafx.beans.property.SimpleObjectProperty
-import java.io.FileInputStream
 import javafx.scene.image.Image
 import solve.parsers.factories.LineFactory
 import solve.parsers.factories.PlaneFactory
@@ -21,6 +20,7 @@ import solve.scene.model.LayerState
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
 import tornadofx.find
+import java.io.FileInputStream
 
 // Interaction interface of the scene for main controller
 object SceneFacade {
@@ -77,7 +77,8 @@ object SceneFacade {
     private fun createLayer(file: LandmarkFile, layerSettings: LayerSettings, layerState: LayerState): Layer {
         return when (file.projectLayer.kind) {
             LayerKind.Keypoint -> Layer.PointLayer(
-                file.projectLayer.name, layerSettings as LayerSettings.PointLayerSettings
+                file.projectLayer.name,
+                layerSettings as LayerSettings.PointLayerSettings
             ) {
                 CSVPointsParser.parse(file.path.toString()).map { point ->
                     PointFactory.buildLandmark(point, layerSettings, layerState)
@@ -85,7 +86,8 @@ object SceneFacade {
             }
 
             LayerKind.Line -> Layer.LineLayer(
-                file.projectLayer.name, layerSettings as LayerSettings.LineLayerSettings
+                file.projectLayer.name,
+                layerSettings as LayerSettings.LineLayerSettings
             ) {
                 CSVLinesParser.parse(file.path.toString()).map { line ->
                     LineFactory.buildLandmark(line, layerSettings, layerState)
@@ -93,7 +95,8 @@ object SceneFacade {
             }
 
             LayerKind.Plane -> Layer.PlaneLayer(
-                file.projectLayer.name, layerSettings as LayerSettings.PlaneLayerSettings
+                file.projectLayer.name,
+                layerSettings as LayerSettings.PlaneLayerSettings
             ) {
                 ImagePlanesParser.parse(file.path.toString()).map { plane ->
                     PlaneFactory.buildLandmark(plane, layerSettings, layerState)

@@ -70,7 +70,11 @@ class FrameDrawer(private val canvas: BufferedImageView, private val layersCount
 
     // Calculates one component (red, green, blue) of color during overlaying
     private fun overlayComponents(
-        component1: Double, component2: Double, opacity1: Double, opacity2: Double, opacity: Double
+        component1: Double,
+        component2: Double,
+        opacity1: Double,
+        opacity2: Double,
+        opacity: Double
     ) = (component1 * opacity1 + (1 - opacity1) * component2 * opacity2) / opacity
 
     private fun Color.toArgb() =

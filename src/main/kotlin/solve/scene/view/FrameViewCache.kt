@@ -7,7 +7,7 @@ interface FrameViewStorage {
     fun store(frameView: FrameView)
 }
 
-class FrameViewCache(val size: DoubleSize, val canvasBufferDepth: Int, private val factory: (VisualizationFrame?, FrameViewParameters) -> FrameView): FrameViewStorage {
+class FrameViewCache(val size: DoubleSize, val canvasBufferDepth: Int, private val factory: (VisualizationFrame?, FrameViewParameters) -> FrameView) : FrameViewStorage {
     private val storage = mutableSetOf<FrameView>()
 
     fun get(frame: VisualizationFrame?, frameViewParameters: FrameViewParameters) = storage.firstOrNull()?.also { frameView ->

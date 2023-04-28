@@ -1,16 +1,18 @@
 package solve.scene.view.drawing
 
-import javafx.scene.image.WritableImage
 import javafx.scene.image.ImageView
 import javafx.scene.image.PixelBuffer
 import javafx.scene.image.PixelFormat
+import javafx.scene.image.WritableImage
 import solve.scene.model.Point
 import solve.utils.ceilToInt
 import java.nio.IntBuffer
 
 // Encapsulates pixel drawing
 class BufferedImageView(
-    private val width: Double, private val height: Double, initialScale: Double
+    private val width: Double,
+    private val height: Double,
+    initialScale: Double
 ) : ImageView() {
     private val buffer = IntBuffer.allocate(width.ceilToInt() * height.ceilToInt())
     private val pixelFormat = PixelFormat.getIntArgbPreInstance()

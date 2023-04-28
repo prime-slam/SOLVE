@@ -11,7 +11,10 @@ import javafx.stage.Window
 import tornadofx.toObservable
 
 class ChooserDialog<T>(
-    private val title: String, private val width: Double, private val height: Double, owner: Window
+    private val title: String,
+    private val width: Double,
+    private val height: Double,
+    owner: Window
 ) {
     private val stageDialog =
         MFXStageDialogBuilder.build()
@@ -27,10 +30,12 @@ class ChooserDialog<T>(
         var chosenItem: T? = null
         val chooserListView = MFXListView(items.toObservable()).also { listView ->
             listView.depthLevel = DepthLevel.LEVEL0
-            listView.selectionModel.selectionProperty().addListener(MapChangeListener { newValue ->
-                chosenItem = newValue.valueAdded
-                stageDialog.close()
-            })
+            listView.selectionModel.selectionProperty().addListener(
+                MapChangeListener { newValue ->
+                    chosenItem = newValue.valueAdded
+                    stageDialog.close()
+                }
+            )
         }
         val dialogContent = MFXGenericDialogBuilder.build()
             .setContent(chooserListView)

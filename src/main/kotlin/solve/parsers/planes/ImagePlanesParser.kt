@@ -1,11 +1,11 @@
 package solve.parsers.planes
 
-import java.awt.image.DataBufferByte
 import solve.parsers.Parser
 import solve.parsers.structures.Plane
 import solve.scene.model.Point
 import solve.utils.loadBufferedImage
 import java.awt.image.BufferedImage
+import java.awt.image.DataBufferByte
 
 // A parser class for planes stored in images in a form of a mask.
 object ImagePlanesParser : Parser<Plane> {
@@ -41,7 +41,7 @@ object ImagePlanesParser : Parser<Plane> {
         return convertSeparateToWholeRGB(
             imageByteDataArray[pixelIndex + segmentsByteOffset + 2].toUByte(),
             imageByteDataArray[pixelIndex + segmentsByteOffset + 1].toUByte(),
-            imageByteDataArray[pixelIndex + segmentsByteOffset].toUByte(),
+            imageByteDataArray[pixelIndex + segmentsByteOffset].toUByte()
         )
     }
 

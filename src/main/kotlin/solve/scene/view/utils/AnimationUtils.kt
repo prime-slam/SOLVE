@@ -40,7 +40,10 @@ fun createStrokeTransition(shape: Shape, color: Color, duration: Duration): Tran
 }
 
 fun createColorTimeline(
-    duration: Duration, initialColor: Color, targetColor: Color, colorChangedCallback: (Color) -> Unit
+    duration: Duration,
+    initialColor: Color,
+    targetColor: Color,
+    colorChangedCallback: (Color) -> Unit
 ) = createProgressTimeline(duration) { percent ->
     val red = getIntermediateValue(initialColor.red, targetColor.red, percent)
     val green = getIntermediateValue(initialColor.green, targetColor.green, percent)

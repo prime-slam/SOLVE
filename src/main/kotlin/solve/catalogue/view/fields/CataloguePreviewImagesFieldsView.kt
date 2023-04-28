@@ -2,8 +2,8 @@ package solve.catalogue.view.fields
 
 import javafx.geometry.Pos
 import javafx.scene.control.Labeled
-import solve.catalogue.model.CatalogueField
 import javafx.scene.image.ImageView
+import solve.catalogue.model.CatalogueField
 import tornadofx.*
 
 class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
