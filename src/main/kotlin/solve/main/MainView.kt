@@ -148,6 +148,7 @@ class MainView : View() {
     private fun createTabButton(text: String, icon: Image?): MFXButton {
         return mfxButton(text) {
             clip = Style.circleForRipple(this)
+
             styleClass.add("mfxButton")
             setPrefSize(Style.navigationRailTabSize, Style.navigationRailTabSize)
             paddingAll = 0.0
