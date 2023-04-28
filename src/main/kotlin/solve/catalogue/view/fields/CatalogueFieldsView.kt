@@ -12,24 +12,16 @@ import javafx.scene.input.DragEvent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
-<<<<<<< HEAD
-=======
-import solve.catalogue.*
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField
 import solve.project.model.ProjectFrame
 import solve.scene.view.SceneView
-<<<<<<< HEAD
 import solve.utils.deselectAllItems
 import solve.utils.floorToInt
 import solve.utils.onSelectionChanged
 import solve.utils.selectAllItems
 import solve.utils.selectedItems
 import solve.utils.selectedItemsCount
-=======
-import solve.utils.*
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
 import tornadofx.*
 import kotlin.math.min
 

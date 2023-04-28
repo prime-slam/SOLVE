@@ -37,7 +37,6 @@ import solve.utils.materialfx.action
 import solve.utils.materialfx.item
 import solve.utils.materialfx.lineSeparator
 import solve.utils.materialfx.mfxContextMenu
-import solve.utils.*
 import tornadofx.*
 import tornadofx.add
 import solve.utils.structures.Size as DoubleSize
@@ -82,7 +81,7 @@ class FrameView(
 
     private val associationsUpdatedListener =
         MapChangeListener<AssociationsManager.AssociationKey<VisualizationFrame>,
-            Map<VisualizationFrame, List<AssociationLine>>> {
+                Map<VisualizationFrame, List<AssociationLine>>> {
             hasAssociations.value = getAssociatedLayersNames(currentFrame ?: return@MapChangeListener).isNotEmpty()
         }
 
