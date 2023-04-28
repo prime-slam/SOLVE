@@ -32,6 +32,8 @@ class ControlPanel : View() {
 
     private val menuBarView: MenuBarView by inject()
 
+    private val loading: LoadingScreen by inject()
+
     private val importButtonModel = ButtonModel()
 
     private val filesCountIcon = loadResourcesImage(IconsImporterCheckCirclePath)
@@ -152,7 +154,7 @@ class ControlPanel : View() {
     }
 
     private fun showLoading() {
-        MaterialFXDialog.changeContent(menuBarView.content, LoadingScreen().root)
+        MaterialFXDialog.changeContent(menuBarView.content, loading.root)
     }
 
     private fun importAction(button: MFXButton, projectVal: Project) {
