@@ -3,7 +3,13 @@ package solve.catalogue.view
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
-import javafx.scene.layout.*
+import javafx.scene.layout.Border
+import javafx.scene.layout.BorderStroke
+import javafx.scene.layout.BorderStrokeStyle
+import javafx.scene.layout.BorderWidths
+import javafx.scene.layout.CornerRadii
+import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField

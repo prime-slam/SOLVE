@@ -2,7 +2,10 @@ package solve.styles
 
 import javafx.scene.control.ScrollPane
 import javafx.scene.paint.Color
-import javafx.scene.paint.Color.*
+import javafx.scene.paint.Color.BLACK
+import javafx.scene.paint.Color.TRANSPARENT
+import javafx.scene.paint.Color.WHITE
+import javafx.scene.paint.Color.valueOf
 import javafx.scene.paint.Paint
 import tornadofx.*
 import java.net.URI

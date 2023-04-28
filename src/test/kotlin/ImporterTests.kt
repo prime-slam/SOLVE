@@ -3,8 +3,13 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import solve.importer.ProjectParser.createTreeWithFiles
 import solve.importer.ProjectParser.partialParseDirectory
-import solve.importer.model.*
-import solve.project.model.*
+import solve.importer.model.FileInTree
+import solve.importer.model.FileInfo
+import solve.importer.model.FrameAfterPartialParsing
+import solve.importer.model.ImageAfterPartialParsing
+import solve.importer.model.OutputAfterPartialParsing
+import solve.importer.model.ProjectAfterPartialParsing
+import solve.project.model.LayerKind
 
 class ImporterTests {
     companion object {

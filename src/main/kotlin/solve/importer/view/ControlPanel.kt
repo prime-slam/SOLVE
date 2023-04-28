@@ -4,7 +4,10 @@ import io.github.palexdev.materialfx.controls.MFXButton
 import javafx.geometry.Insets
 import javafx.scene.image.ImageView
 import javafx.scene.paint.Paint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import solve.constants.IconsImporterCheckCirclePath
 import solve.constants.IconsImporterWarningPath
 import solve.importer.FullParserForImport.fullParseDirectory
@@ -16,7 +19,11 @@ import solve.main.MainController
 import solve.menubar.view.MenuBarView
 import solve.project.model.Project
 import solve.styles.Style
-import solve.utils.*
+import solve.utils.MaterialFXDialog
+import solve.utils.createAlertForError
+import solve.utils.loadResourcesImage
+import solve.utils.mfxButton
+import solve.utils.toStringWithoutBrackets
 import tornadofx.*
 
 class ControlPanel : View() {

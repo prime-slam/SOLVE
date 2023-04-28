@@ -1,6 +1,9 @@
 package solve.utils
 
-import io.github.palexdev.materialfx.controls.*
+import io.github.palexdev.materialfx.controls.MFXButton
+import io.github.palexdev.materialfx.controls.MFXContextMenu
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem
+import io.github.palexdev.materialfx.controls.MFXTextField
 import javafx.event.EventTarget
 import javafx.scene.Node
 import tornadofx.attachTo

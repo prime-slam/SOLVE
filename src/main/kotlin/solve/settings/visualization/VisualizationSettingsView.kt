@@ -1,11 +1,11 @@
 package solve.settings.visualization
 
-import javafx.scene.layout.*
+import javafx.scene.layout.Priority
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.settings.visualization.fields.controller.VisualizationSettingsLayersController
 import solve.settings.visualization.fields.view.VisualizationSettingsLayersView
-import solve.utils.*
+import solve.utils.createInsetsWithValue
 import tornadofx.*
 
 class VisualizationSettingsView : View() {
