@@ -41,8 +41,6 @@ class ControlPanel : View() {
 
     private val buttonStyle = Style.buttonStyle
 
-    private val loading: LoadingScreen by inject()
-
     private val importButtonModel = ButtonModel()
 
     private val filesCountIcon = loadResourcesImage(IconsImporterCheckCirclePath)
