@@ -1,7 +1,12 @@
 package solve.importer
 
 import javafx.scene.control.TreeItem
-import solve.importer.model.*
+import solve.importer.model.FileInTree
+import solve.importer.model.FileInfo
+import solve.importer.model.FrameAfterPartialParsing
+import solve.importer.model.ImageAfterPartialParsing
+import solve.importer.model.OutputAfterPartialParsing
+import solve.importer.model.ProjectAfterPartialParsing
 import solve.project.model.LayerKind
 import solve.utils.createAlertForError
 import solve.utils.toStringWithoutBrackets

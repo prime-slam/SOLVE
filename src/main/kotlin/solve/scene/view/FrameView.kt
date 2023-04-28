@@ -29,7 +29,11 @@ import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameEventManager
 import solve.scene.view.drawing.ImageFrameElement
 import solve.scene.view.landmarks.LandmarkView
-import solve.utils.*
+import solve.utils.ChooserDialog
+import solve.utils.action
+import solve.utils.item
+import solve.utils.lineSeparator
+import solve.utils.mfxContextMenu
 import tornadofx.*
 import tornadofx.add
 import solve.utils.structures.Size as DoubleSize

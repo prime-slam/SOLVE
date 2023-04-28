@@ -2,7 +2,10 @@ package solve.importer
 
 import solve.importer.model.ProjectAfterPartialParsing
 import solve.parsers.planes.ImagePlanesParser
-import solve.project.model.*
+import solve.project.model.LandmarkFile
+import solve.project.model.Project
+import solve.project.model.ProjectFrame
+import solve.project.model.ProjectLayer
 import kotlin.io.path.Path
 
 object FullParserForImport {

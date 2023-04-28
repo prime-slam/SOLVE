@@ -3,7 +3,8 @@ package solve.scene.view.association
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Label
-import javafx.scene.layout.*
+import javafx.scene.layout.Region
+import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
