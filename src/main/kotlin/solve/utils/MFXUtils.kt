@@ -8,11 +8,19 @@ import javafx.event.EventTarget
 import javafx.scene.Node
 import tornadofx.attachTo
 
-fun EventTarget.mfxButton(text: String = "", graphic: Node? = null, op: MFXButton.() -> Unit = {}) = MFXButton(text).attachTo(this, op) {
+fun EventTarget.mfxButton(
+    text: String = "",
+    graphic: Node? = null,
+    op: MFXButton.() -> Unit = {}
+) = MFXButton(text).attachTo(this, op) {
     if (graphic != null) it.graphic = graphic
 }
 
-fun EventTarget.mfxTextField(text: String = "", graphic: Node? = null, op: MFXTextField.() -> Unit = {}) = MFXTextField(text).attachTo(this, op)
+fun EventTarget.mfxTextField(
+    text: String = "",
+    graphic: Node? = null,
+    op: MFXTextField.() -> Unit = {}
+) = MFXTextField(text).attachTo(this, op)
 
 fun Node.mfxContextMenu(op: MFXContextMenu.() -> Unit = {}): MFXContextMenu {
     val contextMenu = MFXContextMenu.Builder.build(this).installAndGet()
