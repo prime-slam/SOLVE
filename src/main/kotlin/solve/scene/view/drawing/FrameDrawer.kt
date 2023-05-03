@@ -65,7 +65,8 @@ class FrameDrawer(private val canvas: BufferedImageView, private val layersCount
         val blue2 = color2.getBlue()
         val blue = overlayComponents(blue1, blue2, opacity1, opacity2, opacity)
 
-        return (opacity * 255).toInt() shl 24 or ((red * 255).toInt() shl 16) or ((green * 255).toInt() shl 8) or (blue * 255).toInt()
+        return (opacity * 255).toInt() shl 24 or ((red * 255).toInt() shl 16) or ((green * 255).toInt() shl 8) or
+            (blue * 255).toInt()
     }
 
     // Calculates one component (red, green, blue) of color during overlaying
@@ -77,8 +78,8 @@ class FrameDrawer(private val canvas: BufferedImageView, private val layersCount
         opacity: Double
     ) = (component1 * opacity1 + (1 - opacity1) * component2 * opacity2) / opacity
 
-    private fun Color.toArgb() =
-        (opacity * 255).toInt() shl 24 or ((red * 255).toInt() shl 16) or ((green * 255).toInt() shl 8) or (blue * 255).toInt()
+    private fun Color.toArgb() = (opacity * 255).toInt() shl 24 or ((red * 255).toInt() shl 16) or
+        ((green * 255).toInt() shl 8) or (blue * 255).toInt()
 
     private fun Int.getOpacity() = ((this shr 24) and 0xff) / 255.0
     private fun Int.getRed() = ((this shr 16) and 0xff) / 255.0

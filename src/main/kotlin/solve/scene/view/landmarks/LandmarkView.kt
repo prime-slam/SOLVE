@@ -23,7 +23,13 @@ sealed class LandmarkView(
     private val landmark: Landmark
 ) {
     companion object {
-        fun create(landmark: Landmark, viewOrder: Int, scale: Double, frameDrawer: FrameDrawer, frameEventManager: FrameEventManager): LandmarkView {
+        fun create(
+            landmark: Landmark,
+            viewOrder: Int,
+            scale: Double,
+            frameDrawer: FrameDrawer,
+            frameEventManager: FrameEventManager
+        ): LandmarkView {
             return when (landmark) {
                 is Landmark.Keypoint -> KeypointView(landmark, viewOrder, scale)
                 is Landmark.Line -> LineView(landmark, viewOrder, scale)
