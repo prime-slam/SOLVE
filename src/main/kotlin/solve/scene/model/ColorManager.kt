@@ -3,6 +3,11 @@ package solve.scene.model
 import javafx.scene.paint.Color
 import kotlin.random.Random
 
+/**
+ * Maps keys to assigned colors, also can generate unique colors if no value is assigned
+ *
+ * @param <T> key's type
+ */
 class ColorManager<T> {
     private val colorMap = HashMap<T, Color>()
 
