@@ -37,7 +37,10 @@ object ProjectParser {
             val diff = layers.minus(frame.outputs.map { output -> output.algorithmName }.toSet())
             if (diff.isNotEmpty()) {
                 val missingAlgorithms = diff.toStringWithoutBrackets()
-                frame.image.errors.add("There ${if (diff.count() == 1) "is" else "are"} no $missingAlgorithms for image ${frame.image.name}")
+                frame.image.errors.add(
+                    "There ${if (diff.count() == 1) "is" else "are"} no $missingAlgorithms for " +
+                        "image ${frame.image.name}"
+                )
                 hasAnyErrors = true
             }
         }
@@ -75,7 +78,15 @@ object ProjectParser {
             val imageName = it.nameWithoutExtension
 
             if (imageName.toLongOrNull() != null) {
-                outputs.add(OutputAfterPartialParsing(imageName, it.invariantSeparatorsPath, directoryName, kind, mutableListOf()))
+                outputs.add(
+                    OutputAfterPartialParsing(
+                        imageName,
+                        it.invariantSeparatorsPath,
+                        directoryName,
+                        kind,
+                        mutableListOf()
+                    )
+                )
                 if (!layers.contains(directoryName)) {
                     layers.add(directoryName)
                 }

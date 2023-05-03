@@ -108,7 +108,9 @@ sealed class LayerSettings(
 
     var opacity: Double = DefaultOpacity
         set(value) {
-            if (value !in MinOpacity..MaxOpacity) throw IllegalArgumentException("Percent value should lie between 0 and 100")
+            if (value !in MinOpacity..MaxOpacity) {
+                throw IllegalArgumentException("Percent value should lie between 0 and 100")
+            }
             field = value
         }
 

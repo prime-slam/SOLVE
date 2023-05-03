@@ -53,7 +53,8 @@ class AlertDialog(contentText: String) : View() {
                     maxWidth = 40.0
                     prefHeight = 23.0
                     style =
-                        "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.buttonFontSize}; -fx-font-weight: ${Style.fontWeightBold}; -fx-text-fill: #78909C;"
+                        "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.buttonFontSize}; " +
+                        "-fx-font-weight: ${Style.fontWeightBold}; -fx-text-fill: #78909C;"
                     BorderPane.setAlignment(this, Pos.TOP_RIGHT)
                     prefWidth = 180.0
                     action {

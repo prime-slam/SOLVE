@@ -90,7 +90,8 @@ class FrameView(
     private fun Node.addAssociationListeners() {
         setOnContextMenuRequested {
             hasKeypoints.value = currentFrame?.hasPoints()
-            hasAssociations.value = getAssociatedLayersNames(currentFrame ?: return@setOnContextMenuRequested).isNotEmpty()
+            hasAssociations.value =
+                getAssociatedLayersNames(currentFrame ?: return@setOnContextMenuRequested).isNotEmpty()
         }
     }
 

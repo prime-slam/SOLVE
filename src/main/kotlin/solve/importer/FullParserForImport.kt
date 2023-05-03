@@ -28,7 +28,9 @@ object FullParserForImport {
                 if (!layers.contains(currentLayer)) {
                     layers.add((currentLayer))
                 }
-                landmarks[longName]?.add(LandmarkFile(currentLayer, Path(output.path), ImagePlanesParser.extractUIDs(output.path)))
+                landmarks[longName]?.add(
+                    LandmarkFile(currentLayer, Path(output.path), ImagePlanesParser.extractUIDs(output.path))
+                )
             }
             landmarks[longName]?.toList()
                 ?.let { landmark -> ProjectFrame(longName, Path(it.image.path), landmark) }
