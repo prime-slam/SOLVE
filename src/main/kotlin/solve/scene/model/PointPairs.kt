@@ -1,5 +1,9 @@
 package solve.scene.model
 
+/**
+ * Creates cartesian set of points by given size.
+ * Creates only one instance for each size.
+ */
 object PointPairs {
     private val createdPairs = mutableMapOf<Size, List<Point>>()
 
