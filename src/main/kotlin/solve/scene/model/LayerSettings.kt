@@ -4,13 +4,14 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.paint.Color
 
-// Contains settings that should be reused when scene is recreated
-// Stores common context for landmarks drawing.
-// Layers properties being edited in the settings menu.
-// Settings menu appearance depends on type of the corresponding layer.
-// Meaningful changes here provokes scene redrawing.
-// layerName is unique only in the project, layerKey is unique between layers from other projects too,
-// so it can be used as a key in color manager
+/**
+ * Contains settings that should be shared between layers with the same name and project when scene is recreated.
+ * Stores common context for {@link Landmark} drawing.
+ * Users edit layers properties in the settings panel {@link VisualizationSettingsLayerCell}.
+ * @param layerName is unique only inside its project.
+ * @param layerKey is unique in all projects, so it can be used as a key in color manager.
+ * @param layerColorManager is used to store layers colors (common for all landmarks in a layer).
+ */
 sealed class LayerSettings(
     val layerName: String,
     private val layerKey: String,
@@ -21,11 +22,16 @@ sealed class LayerSettings(
         const val MaxOpacity = 1.0
     }
 
-    // Is used to set unique colors for all landmarks in the layer
     private val colorManager = ColorManager<Long>()
 
-    abstract val usesCanvas: Boolean // True for layers, which draws anything with FrameDrawer
+    /**
+     * Is used to distinguish layers, which landmarks use {@link FrameDrawer}.
+     */
+    abstract val usesCanvas: Boolean
 
+    /**
+     * If true, all landmarks of the layer should be painted with commonColor
+     */
     val useCommonColorProperty = SimpleBooleanProperty(true)
     var useCommonColor: Boolean
         get() = useCommonColorProperty.value
@@ -52,6 +58,9 @@ sealed class LayerSettings(
         return Color(rgbColor.red, rgbColor.green, rgbColor.blue, opacity)
     }
 
+    /**
+     * Provides unique color force even if useCommonColor is true, used for associations
+     */
     fun getUniqueColor(landmark: Landmark): Color = colorManager.getColor(landmark.uid)
 
     class PointLayerSettings(
