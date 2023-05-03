@@ -44,7 +44,7 @@ class VisualizationSettingsView : View() {
 
         sceneController.sceneProperty.onChange { scene ->
             scene ?: return@onChange
-            val newLayers = scene.getFramesLayerSettings()
+            val newLayers = scene.layerSettings
             val sortedNewLayers = newLayers.sortedWith(framesLayerSettingsComparator)
             visualizationSettingsLayersController.setLayerFields(sortedNewLayers)
         }
