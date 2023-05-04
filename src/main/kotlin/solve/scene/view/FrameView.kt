@@ -41,11 +41,11 @@ import solve.utils.structures.Size as DoubleSize
 class FrameView(
     val size: DoubleSize,
     private val scale: DoubleProperty,
-    private val frameViewStorage: FrameViewStorage,
+    private val frameViewStorage: Storage<FrameView>,
     canvasLayersCount: Int,
     parameters: FrameViewParameters,
     frame: VisualizationFrame?
-) : Group() {
+) : Group(), CacheElement<FrameViewData> {
     private var coroutineScope = parameters.coroutineScope
     private var associationsManager = parameters.associationsManager
     private var orderManager = parameters.orderManager
@@ -75,7 +75,7 @@ class FrameView(
     init {
         canvas.viewOrder = IMAGE_VIEW_ORDER
         add(canvas)
-        init(frame, parameters)
+        init(FrameViewData(frame, parameters))
 
         addAssociationListeners()
         addChooseSecondAssociationFrameAction()
@@ -172,10 +172,10 @@ class FrameView(
         }
     }
 
-    fun init(frame: VisualizationFrame?, parameters: FrameViewParameters) {
+    override fun init(params: FrameViewData) {
         scale.addListener(scaleChangedListener)
-        setFrame(frame)
-        updateParameters(parameters)
+        setFrame(params.frame)
+        updateParameters(params.frameViewParameters)
         scaleImageAndLandmarks(scale.value)
     }
 

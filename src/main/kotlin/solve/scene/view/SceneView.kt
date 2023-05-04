@@ -6,22 +6,24 @@ import javafx.scene.input.KeyCodeCombination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import solve.scene.FrameViewSettings
 import solve.scene.controller.SceneController
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
+import solve.utils.Cache
+import solve.utils.structures.DoublePoint as DoublePoint
+import solve.utils.structures.Size as DoubleSize
 import tornadofx.View
 import tornadofx.label
 import tornadofx.onChange
 import tornadofx.vbox
-import solve.utils.structures.DoublePoint as DoublePoint
-import solve.utils.structures.Size as DoubleSize
 
 class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
     private var currentGrid: Grid? = null
-    private var frameViewCache: FrameViewCache? = null
+    private var frameViewCache: Cache<FrameView, FrameViewData, FrameViewSettings>? = null
 
     override val root = vbox {
         label("Empty scene placeholder")
@@ -67,23 +69,22 @@ class SceneView : View() {
         val frameViewParameters = FrameViewParameters(frameDataLoadingScope, associationsManager, scene)
 
         val canReuseCache =
-            frameViewCache?.size == frameSize && frameViewCache?.canvasBufferDepth == scene.canvasLayersCount
-        frameViewCache = if (canReuseCache) {
-            frameViewCache!!
-        } else {
-            FrameViewCache(
+            frameViewCache?.parameters?.size == frameSize && frameViewCache?.parameters?.canvasDepth == scene.canvasLayersCount
+
+        val frameViewSettings = FrameViewSettings(frameSize, scene.canvasLayersCount)
+        val validateFrameView: (FrameView) -> Boolean = { view ->
+            view.size == frameViewSettings.size
+        }
+
+        frameViewCache = if (canReuseCache) frameViewCache!! else Cache(validateFrameView, frameViewSettings) { data ->
+            FrameView(
                 frameSize,
-                scene.canvasLayersCount
-            ) { frame, parameters ->
-                FrameView(
-                    frameSize,
-                    controller.scaleProperty,
-                    frameViewCache!!,
-                    scene.canvasLayersCount,
-                    parameters,
-                    frame
-                )
-            }
+                controller.scaleProperty,
+                frameViewCache!!,
+                scene.canvasLayersCount,
+                data.frameViewParameters,
+                data.frame
+            )
         }
         val grid = VirtualizedFXGridProvider.createGrid(
             frames,
@@ -92,7 +93,7 @@ class SceneView : View() {
             controller.scaleProperty,
             outOfFramesLayer
         ) { frame ->
-            frameViewCache!!.get(frame, frameViewParameters)
+            frameViewCache!!.get(FrameViewData(frame, frameViewParameters))
         }
 
         bindPositionProperties(grid)
