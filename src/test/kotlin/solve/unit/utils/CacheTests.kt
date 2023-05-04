@@ -1,7 +1,9 @@
-package solve.utils
+package solve.unit.utils
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import solve.utils.Cache
+import solve.utils.CacheElement
 import java.lang.IllegalArgumentException
 
 internal class CacheTests {

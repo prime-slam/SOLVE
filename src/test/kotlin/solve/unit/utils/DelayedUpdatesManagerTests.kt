@@ -1,7 +1,9 @@
-package solve.utils
+package solve.unit.utils
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import solve.utils.DelayedUpdatesManager
+import solve.utils.Updatable
 
 internal class DelayedUpdatesManagerTests {
     private class TestUpdatable(private val updateAction: (Int) -> Unit): Updatable<Int> {

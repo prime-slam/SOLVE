@@ -1,4 +1,4 @@
-package solve.parsers.lines
+package solve.unit.parsers.lines
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import com.fasterxml.jackson.dataformat.csv.CsvReadException
@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import solve.parsers.lines.CSVLinesParser
+import solve.parsers.lines.createCSVFileWithData
+import solve.parsers.lines.doubleWithCommaRegex
+import solve.parsers.lines.lineBreakWithIntWithCommaRegex
 import solve.parsers.structures.Line
 import java.io.File
 

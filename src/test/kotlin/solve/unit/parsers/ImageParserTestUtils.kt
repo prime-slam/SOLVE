@@ -1,4 +1,4 @@
-package solve.parsers
+package solve.unit.parsers
 
 import java.awt.image.BufferedImage
 import java.io.File

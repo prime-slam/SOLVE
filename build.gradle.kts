@@ -20,6 +20,7 @@ val junitVersion: String by rootProject
 val junitJupiterVersion: String by rootProject
 val junitJupiterEngineVersion: String by rootProject
 val junitJupiterParamsVersion: String by rootProject
+val testfxVersion: String by rootProject
 
 repositories {
     mavenCentral()
@@ -52,6 +53,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterParamsVersion")
+    testImplementation("org.testfx:testfx-junit5:$testfxVersion")
 }
 
 tasks {

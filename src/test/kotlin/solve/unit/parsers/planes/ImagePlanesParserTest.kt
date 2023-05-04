@@ -1,4 +1,4 @@
-package solve.parsers.planes
+package solve.unit.parsers.planes
 
 import io.github.palexdev.mfxcore.utils.fx.SwingFXUtils
 import javafx.scene.image.WritableImage
@@ -6,8 +6,9 @@ import javafx.scene.paint.Color
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import solve.parsers.ImageFormat
-import solve.parsers.createFileWithImageData
+import solve.parsers.planes.ImagePlanesParser
+import solve.unit.parsers.ImageFormat
+import solve.unit.parsers.createFileWithImageData
 import solve.parsers.planes.ImagePlanesParser.BackgroundColor
 import solve.parsers.planes.ImagePlanesParser.ColorBitsNumber
 import solve.parsers.structures.Plane
