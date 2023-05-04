@@ -39,24 +39,6 @@ import solve.utils.mfxButton
 import tornadofx.*
 
 class MainView : View() {
-    companion object {
-        private const val LeftSidePanelAndSceneDividerPosition = 0.25
-        private const val RightSidePanelAndSceneDividerPosition = 0.88
-
-        private const val TabsViewLocationParamName = "location"
-        private const val TabsViewTabsParamName = "tabs"
-        private const val TabsViewInitialTabParamName = "initialTab"
-
-        const val ProjectTabName = "Project"
-        const val LayersTabName = "Layers"
-        const val GridTabName = "Grid"
-
-        private val importIcon = loadResourcesImage(IconsImportFab)
-        private val pluginsIcon = loadResourcesImage(IconsPlugins)
-        private val settingsIcon = loadResourcesImage(IconsSettings)
-        private val helpIcon = loadResourcesImage(IconsHelp)
-    }
-
     val importer: ImporterView by inject()
 
     private val mainView: MainView by inject()
@@ -232,6 +214,24 @@ class MainView : View() {
     }
 
     private data class SidePanelViews(val tabsView: SidePanelTabsView, val contentView: SidePanelContentView)
+
+    companion object {
+        private const val LeftSidePanelAndSceneDividerPosition = 0.2
+        private const val RightSidePanelAndSceneDividerPosition = 0.85
+
+        private const val TabsViewLocationParamName = "location"
+        private const val TabsViewTabsParamName = "tabs"
+        private const val TabsViewInitialTabParamName = "initialTab"
+
+        const val ProjectTabName = "Project"
+        const val LayersTabName = "Layers"
+        const val GridTabName = "Grid"
+
+        private val importIcon = loadResourcesImage(IconsImportFab)
+        private val pluginsIcon = loadResourcesImage(IconsPlugins)
+        private val settingsIcon = loadResourcesImage(IconsSettings)
+        private val helpIcon = loadResourcesImage(IconsHelp)
+    }
 }
 
 class MainSplitPaneStyle : Stylesheet() {
