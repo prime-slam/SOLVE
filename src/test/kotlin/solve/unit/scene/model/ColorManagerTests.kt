@@ -1,8 +1,9 @@
-package solve.scene.model
+package solve.unit.scene.model
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
+import solve.scene.model.ColorManager
 import tornadofx.c
 
 internal class ColorManagerTests {

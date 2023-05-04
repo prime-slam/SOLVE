@@ -1,7 +1,10 @@
-package solve.scene.model
+package solve.unit.scene.model
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import solve.scene.model.Point
+import solve.scene.model.PointPairs
+import solve.scene.model.Size
 
 internal class PointPairsTests {
     @Test

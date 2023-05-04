@@ -1,4 +1,4 @@
-package solve.parsers.points
+package solve.unit.parsers.points
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import com.fasterxml.jackson.dataformat.csv.CsvReadException
@@ -9,6 +9,7 @@ import org.junit.jupiter.api.io.TempDir
 import solve.parsers.lines.createCSVFileWithData
 import solve.parsers.lines.doubleWithCommaRegex
 import solve.parsers.lines.lineBreakWithIntWithCommaRegex
+import solve.parsers.points.CSVPointsParser
 import solve.parsers.structures.Point
 import java.io.File
 
