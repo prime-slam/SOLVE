@@ -45,7 +45,7 @@ class FrameView(
     canvasLayersCount: Int,
     parameters: FrameViewParameters,
     frame: VisualizationFrame?
-) : Group(), CacheElement<FrameViewData> {
+) : Group(), CacheElement<FrameViewData>, Updatable<VisualizationFrame?> {
     private var coroutineScope = parameters.coroutineScope
     private var associationsManager = parameters.associationsManager
     private var orderManager = parameters.orderManager
@@ -187,9 +187,13 @@ class FrameView(
         orderManager.addOrderChangedListener(orderChangedCallback)
     }
 
+    override fun update(data: VisualizationFrame?) {
+        setFrame(data)
+    }
+
     fun setFrame(frame: VisualizationFrame?) {
-        if (DelayedFrameUpdatesManager.shouldDelay) {
-            DelayedFrameUpdatesManager.delayUpdate(this, frame)
+        if (DelayedFramesUpdatesManager.shouldDelay) {
+            DelayedFramesUpdatesManager.delayUpdate(this, frame)
             return
         }
         if (frame == currentFrame) {

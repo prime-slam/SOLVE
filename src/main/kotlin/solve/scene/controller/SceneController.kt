@@ -3,7 +3,7 @@ package solve.scene.controller
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
 import solve.scene.model.Scene
-import solve.scene.view.DelayedFrameUpdatesManager
+import solve.scene.view.DelayedFramesUpdatesManager
 import solve.scene.view.SceneView
 import solve.utils.ceilToInt
 import solve.utils.structures.DoublePoint
@@ -121,7 +121,7 @@ class SceneController : Controller() {
         val initialMouseX = (xProperty.value + mousePosition.x) / scale
         val initialMouseY = (yProperty.value + mousePosition.y) / scale
 
-        DelayedFrameUpdatesManager.doLockedAction {
+        DelayedFramesUpdatesManager.doLockedAction {
             scaleProperty.value = newScale
 
             x = initialMouseX * scaleProperty.value - mousePosition.x
