@@ -4,6 +4,11 @@ import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.input.MouseEvent
 
+/**
+ * Responds for routing frame mouse events to frame elements.
+ * Calls subscriber from the frame element which has point of the event.
+ * If there are a few overlapping frame elements at the point, the topmost gets the event.
+ */
 class FrameEventManager(canvasNode: Node, private val scaleProperty: DoubleProperty) {
     private val mousePressedHandlers = mutableSetOf<CanvasEventHandler<MouseEvent>>()
     private val mouseReleasedHandlers = mutableSetOf<CanvasEventHandler<MouseEvent>>()
@@ -33,6 +38,9 @@ class FrameEventManager(canvasNode: Node, private val scaleProperty: DoublePrope
         mouseReleasedHandlers.remove(eventHandler)
     }
 
+    /**
+     * Sorts handlers by view order and calls first appropriate handler.
+     */
     private fun invokeMouseEventHandlers(handlers: Iterable<CanvasEventHandler<MouseEvent>>, mouse: MouseEvent) {
         for (handler in handlers.sorted()) {
             if (isMouseOver(handler.frameElement, mouse)) {
@@ -42,6 +50,9 @@ class FrameEventManager(canvasNode: Node, private val scaleProperty: DoublePrope
         }
     }
 
+    /**
+     * Checks if the frame element occupy the point.
+     */
     private fun isMouseOver(frameElement: FrameElement, mouse: MouseEvent): Boolean {
         val scale = scaleProperty.value
         val mouseX = (mouse.x / scale).toInt().toShort()
