@@ -138,6 +138,24 @@ internal class FrameEventManagerTests : InteractiveTestClass() {
         assertEquals(1, handledEvents2.size)
     }
 
+    @Test
+    fun `Scale frame`(robot: FxRobot) {
+        val eventManager = FrameEventManager(node, scale)
+        val frameElement = RectangleFrameElement(0, c("FFFF00"), 5, 5)
+        val handledEvents = mutableListOf<MouseEvent>()
+        val eventHandler = CanvasEventHandler<MouseEvent>(frameElement) {
+            handledEvents.add(it)
+        }
+        val x = 6.0
+        val y = 6.0
+        val mouseButton = MouseButton.PRIMARY
+        eventManager.subscribeMouseReleased(eventHandler)
+        robot.interact {
+            node.fireMouseReleased(x, y, mouseButton)
+        }
+        assertEquals(0, handledEvents.size)
+    }
+
     private fun Node.fireMousePressed(x: Double, y: Double, button: MouseButton) =
         this.fireMouseEvent(MouseEvent.MOUSE_PRESSED, x, y, button)
 

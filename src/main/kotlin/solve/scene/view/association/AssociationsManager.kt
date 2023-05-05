@@ -6,6 +6,7 @@ import javafx.beans.property.ObjectProperty
 import javafx.scene.paint.Color
 import solve.scene.model.Landmark
 import solve.scene.model.VisualizationFrame
+import solve.utils.structures.DoublePoint
 import tornadofx.add
 import tornadofx.toObservable
 import solve.utils.structures.Size as DoubleSize
@@ -98,8 +99,8 @@ class AssociationsManager(
             AssociationLine(
                 firstFramePosition,
                 secondFramePosition,
-                firstKeypoint,
-                secondKeypoint,
+                firstKeypoint.coordinate,
+                secondKeypoint.coordinate,
                 scale,
                 colorProperty,
                 enabledProperty
@@ -117,11 +118,11 @@ class AssociationsManager(
         drawnAssociations[secondKey]?.set(firstKey.frame, lines)
     }
 
-    private fun getFramePosition(frame: VisualizationFrame): Pair<Double, Double> {
+    private fun getFramePosition(frame: VisualizationFrame): DoublePoint {
         val indexOfFrame = frames.indexOf(frame)
         val firstFrameRow = indexOfFrame / columnsNumber
         val firstFrameColumn = indexOfFrame % columnsNumber
-        return Pair(
+        return DoublePoint(
             firstFrameColumn * (frameSize.width + framesIndent),
             firstFrameRow * (frameSize.height + framesIndent)
         )
