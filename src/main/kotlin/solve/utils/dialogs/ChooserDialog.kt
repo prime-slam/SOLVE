@@ -1,4 +1,4 @@
-package solve.utils
+package solve.utils.dialogs
 
 import io.github.palexdev.materialfx.controls.MFXListView
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder
