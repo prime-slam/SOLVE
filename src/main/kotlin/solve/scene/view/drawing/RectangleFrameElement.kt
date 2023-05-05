@@ -1,9 +1,13 @@
+package solve.scene.view.drawing
+
 import javafx.scene.paint.Color
 import solve.scene.model.Point
 import solve.scene.model.PointPairs
 import solve.scene.model.Size
-import solve.scene.view.drawing.FrameElement
 
+/**
+ * Represents rectangles width x height as items which can be drawn using FrameDrawer.
+ */
 class RectangleFrameElement(
     viewOrder: Int,
     private val color: Color,
