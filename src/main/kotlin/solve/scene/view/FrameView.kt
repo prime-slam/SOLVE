@@ -23,9 +23,20 @@ import solve.scene.model.Layer
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationLine
 import solve.scene.view.association.AssociationsManager
-import solve.scene.view.drawing.*
+import solve.scene.view.drawing.BufferedImageView
+import solve.scene.view.drawing.FrameDrawer
+import solve.scene.view.drawing.FrameEventManager
+import solve.scene.view.drawing.ImageFrameElement
+import solve.scene.view.drawing.RectangleFrameElement
 import solve.scene.view.landmarks.LandmarkView
-import solve.utils.*
+import solve.utils.CacheElement
+import solve.utils.ChooserDialog
+import solve.utils.Storage
+import solve.utils.Updatable
+import solve.utils.action
+import solve.utils.item
+import solve.utils.lineSeparator
+import solve.utils.mfxContextMenu
 import tornadofx.*
 import tornadofx.add
 import solve.utils.structures.Size as DoubleSize
