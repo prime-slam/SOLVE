@@ -25,11 +25,7 @@ import solve.scene.view.association.AssociationLine
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.drawing.*
 import solve.scene.view.landmarks.LandmarkView
-import solve.utils.ChooserDialog
-import solve.utils.action
-import solve.utils.item
-import solve.utils.lineSeparator
-import solve.utils.mfxContextMenu
+import solve.utils.*
 import tornadofx.*
 import tornadofx.add
 import solve.utils.structures.Size as DoubleSize
