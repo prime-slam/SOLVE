@@ -30,10 +30,10 @@ import solve.scene.view.drawing.ImageFrameElement
 import solve.scene.view.drawing.RectangleFrameElement
 import solve.scene.view.landmarks.LandmarkView
 import solve.utils.CacheElement
-import solve.utils.dialogs.ChooserDialog
 import solve.utils.Storage
 import solve.utils.Updatable
 import solve.utils.action
+import solve.utils.dialogs.ChooserDialog
 import solve.utils.item
 import solve.utils.lineSeparator
 import solve.utils.mfxContextMenu
