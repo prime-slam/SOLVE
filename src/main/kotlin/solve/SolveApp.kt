@@ -31,7 +31,6 @@ class SolveApp : App(MainView::class, ApplicationStylesheet::class) {
 
     private fun initializeDependencies() {
         SvgImageLoaderFactory.install(SVGImageLoaderDimensionProvider())
-
         initializeStyle()
     }
 
