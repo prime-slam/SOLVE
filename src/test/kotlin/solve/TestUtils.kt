@@ -10,4 +10,3 @@ internal fun<T> testMemoryLeak(factory: () -> T, action: (T) -> Unit) {
     val item = weakReference.get()
     assertNull(item, "$item was not collected")
 }
-
