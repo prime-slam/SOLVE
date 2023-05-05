@@ -9,7 +9,8 @@ import solve.utils.structures.Size as DoubleSize
  * @param layerSettings information about layers in the project, used to determine current order of a layer.
  */
 class Scene(
-    val frames: List<VisualizationFrame>, val layerSettings: List<LayerSettings>
+    val frames: List<VisualizationFrame>,
+    val layerSettings: List<LayerSettings>
 ) : OrderManager<LayerSettings> {
     /**
      * Size of images in the project. Assumes that all images have the same size, but there is no guarantee.

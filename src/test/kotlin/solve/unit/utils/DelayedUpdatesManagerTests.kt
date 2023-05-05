@@ -1,12 +1,14 @@
 package solve.unit.utils
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import solve.utils.DelayedUpdatesManager
 import solve.utils.Updatable
 
 internal class DelayedUpdatesManagerTests {
-    private class TestUpdatable(private val updateAction: (Int) -> Unit): Updatable<Int> {
+    private class TestUpdatable(private val updateAction: (Int) -> Unit) : Updatable<Int> {
         override fun update(data: Int) {
             updateAction(data)
         }

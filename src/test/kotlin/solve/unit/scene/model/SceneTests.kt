@@ -23,7 +23,6 @@ internal class SceneTests {
     private val planeLayerSettings2 =
         LayerSettings.PlaneLayerSettings(planeLayerSettings2Name, planeLayerSettings2Name, colorManager)
 
-
     @Test
     fun `Changes layer settings if index is correct`() {
         val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2))
@@ -69,7 +68,10 @@ internal class SceneTests {
 
     @Test
     fun `Canvas layers is always above than non-canvas layers`() {
-        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2))
+        val orderManager = Scene(
+            listOf(),
+            listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2)
+        )
         assertEquals(0, orderManager.indexOf(planeLayerSettings1))
         assertEquals(1, orderManager.indexOf(planeLayerSettings2))
         assertEquals(2, orderManager.indexOf(pointLayerSettings1))
@@ -78,7 +80,10 @@ internal class SceneTests {
 
     @Test
     fun `Can't swap canvas and non-canvas layers`() {
-        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2))
+        val orderManager = Scene(
+            listOf(),
+            listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2)
+        )
         orderManager.changeLayerIndex(pointLayerSettings1, 1)
         assertEquals(3, orderManager.indexOf(pointLayerSettings1))
         assertEquals(2, orderManager.indexOf(pointLayerSettings2))
@@ -87,7 +92,10 @@ internal class SceneTests {
 
     @Test
     fun `Canvas layers count`() {
-        val scene = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2))
+        val scene = Scene(
+            listOf(),
+            listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2)
+        )
         assertEquals(2, scene.canvasLayersCount)
     }
 }

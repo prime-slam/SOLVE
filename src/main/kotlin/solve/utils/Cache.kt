@@ -26,7 +26,9 @@ interface CacheElement<T> {
  * @param factory function, that produces new elements with needed parameters
  */
 class Cache<T : CacheElement<S>, S, U>(
-    private val validate: (T) -> Boolean, val parameters: U, private val factory: (S) -> T
+    private val validate: (T) -> Boolean,
+    val parameters: U,
+    private val factory: (S) -> T
 ) : Storage<T> {
     private val storage = mutableSetOf<T>()
 
