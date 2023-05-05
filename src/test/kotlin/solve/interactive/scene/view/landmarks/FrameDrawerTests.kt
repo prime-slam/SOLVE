@@ -2,6 +2,7 @@ package solve.interactive.scene.view.landmarks
 
 import javafx.scene.image.WritableImage
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -407,5 +408,16 @@ internal class FrameDrawerTests {
         }
         val imagePixelReader = bufferedImageView.image.pixelReader
         assertEquals(0, imagePixelReader.getArgb(5, 3))
+    }
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun setUpAll() {
+            System.setProperty("testfx.robot", "glass")
+            System.setProperty("testfx.headless", "true")
+            System.setProperty("prism.order", "sw")
+            System.setProperty("prism.text", "t2k")
+        }
     }
 }

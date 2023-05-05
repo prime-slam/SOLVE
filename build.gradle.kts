@@ -54,6 +54,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterParamsVersion")
     testImplementation("org.testfx:testfx-junit5:$testfxVersion")
+    testImplementation("org.testfx:openjfx-monocle:jdk-12.0.1+2")
 }
 
 tasks {
@@ -63,6 +64,7 @@ tasks {
 }
 
 tasks.test {
+    jvmArgs = listOf("-Dheadless=true")
     useJUnitPlatform()
     testLogging {
         events(
