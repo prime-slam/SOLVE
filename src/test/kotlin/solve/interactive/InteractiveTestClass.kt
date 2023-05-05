@@ -1,11 +1,8 @@
 package solve.interactive
 
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.extension.ExtendWith
-import org.testfx.framework.junit5.ApplicationExtension
 
-@ExtendWith(ApplicationExtension::class)
-internal class InteractiveTestsSetup {
+internal open class InteractiveTestClass {
     companion object {
         @JvmStatic
         @BeforeAll
