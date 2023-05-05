@@ -1,4 +1,4 @@
-package solve.interactive.scene.view.landmarks
+package solve.interactive
 
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.extension.ExtendWith
