@@ -68,7 +68,6 @@ open class FixedSplitPane(
     }
 
     private fun initializeDividers() {
-
         dividers.forEachIndexed { index, divider ->
             val initialPosition = dividersInitialPositions[index]
             dividersInstalledPositions[index] = initialPosition

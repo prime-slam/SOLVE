@@ -27,10 +27,10 @@ import solve.settings.visualization.popover.LineLayerSettingsPopOverNode
 import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
 import solve.utils.TransparentScalingButtonStyle
 import solve.utils.createHGrowHBox
-import solve.utils.createImageViewIcon
 import solve.utils.createSnapshot
 import solve.utils.createVGrowBox
 import solve.utils.getScreenPosition
+import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
 import solve.utils.nodes.listcell.dragdrop.DragAndDropCellItemInfo
 import solve.utils.nodes.listcell.dragdrop.DragAndDropListCell
@@ -111,7 +111,7 @@ class VisualizationSettingsLayerCell(
         // Needed to set the padding and to center the imageview.
         return vbox {
             add(createVGrowBox())
-            add(createImageViewIcon(layerIcon, LayerIconWidth))
+            imageViewIcon(layerIcon, LayerIconWidth)
             add(createVGrowBox())
             paddingRight = LayerTypeIconPaddingRight
         }
@@ -124,8 +124,7 @@ class VisualizationSettingsLayerCell(
 
     private fun createLayerEditButton(layerType: LandmarkType): Node = button {
         editIconImage ?: return@button
-        val editImageViewIcon = createImageViewIcon(editIconImage, LayerFieldEditIconSize)
-        graphic = editImageViewIcon
+        graphic = imageViewIcon(editIconImage, LayerFieldEditIconSize)
         isPickOnBounds = false
 
         initializeLayerSettingsPopOver(this, this, layerType)
@@ -135,9 +134,8 @@ class VisualizationSettingsLayerCell(
     private fun createLayerVisibilityButton(): Node = hbox {
         layerVisibleIconImage ?: return@hbox
         layerInvisibleIconImage ?: return@hbox
-        val layerVisibleImageViewIcon = createImageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
-        val layerInvisibleImageViewIcon =
-            createImageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
+        val layerVisibleImageViewIcon = imageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
+        val layerInvisibleImageViewIcon = imageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
 
         fun getCurrentVisibilityImageViewIcon() =
             if (item.enabled) layerVisibleImageViewIcon else layerInvisibleImageViewIcon

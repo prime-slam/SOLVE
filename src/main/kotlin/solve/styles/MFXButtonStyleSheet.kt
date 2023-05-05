@@ -9,7 +9,7 @@ class MFXButtonStyleSheet : Stylesheet() {
     init {
         mfxButton {
             and(hover, pressed) {
-                backgroundColor += Paint.valueOf(Style.backgroundColour)
+                backgroundColor += Paint.valueOf(Style.backgroundColor)
             }
             and(pressed) {
                 backgroundColor += Paint.valueOf(Style.surfaceColor)

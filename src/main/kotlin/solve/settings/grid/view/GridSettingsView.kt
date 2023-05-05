@@ -18,8 +18,8 @@ import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.settings.createSettingsField
 import solve.settings.grid.controller.GridSettingsController
-import solve.utils.createImageViewIcon
 import solve.utils.createInsetsWithValue
+import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
 import solve.utils.scale
 import solve.utils.unscale
@@ -139,7 +139,7 @@ class GridSettingsView : View() {
         }
 
         iconImage ?: return@button
-        graphic = createImageViewIcon(iconImage, GridSettingsColumnsNumberButtonsSize)
+        graphic = imageViewIcon(iconImage, GridSettingsColumnsNumberButtonsSize)
         updateViewByActivity(isActiveProperty.value)
 
         isActiveProperty.onChange { isActive ->

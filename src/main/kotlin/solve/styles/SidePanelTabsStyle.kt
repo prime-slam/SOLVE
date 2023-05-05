@@ -32,7 +32,7 @@ class SidePanelTabsStyle : Stylesheet() {
             graphic = URI(IconsProject)
 
             and(hover) {
-                backgroundColor += Paint.valueOf(Style.backgroundColour)
+                backgroundColor += Paint.valueOf(Style.backgroundColor)
                 focusColor = Color.TRANSPARENT
             }
             and(selected) {
@@ -45,7 +45,7 @@ class SidePanelTabsStyle : Stylesheet() {
             graphic = URI(IconsLayers)
 
             and(hover) {
-                backgroundColor += Paint.valueOf(Style.backgroundColour)
+                backgroundColor += Paint.valueOf(Style.backgroundColor)
                 focusColor = Color.TRANSPARENT
             }
             and(selected) {
@@ -58,7 +58,7 @@ class SidePanelTabsStyle : Stylesheet() {
             graphic = URI(IconsGrid)
 
             and(hover) {
-                backgroundColor += Paint.valueOf(Style.backgroundColour)
+                backgroundColor += Paint.valueOf(Style.backgroundColor)
                 focusColor = Color.TRANSPARENT
             }
             and(selected) {

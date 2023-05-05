@@ -6,7 +6,7 @@ import javafx.scene.shape.Circle
 import tornadofx.*
 
 object Style {
-    const val backgroundColour = "EFF0F0"
+    const val backgroundColor = "EFF0F0"
 
     const val surfaceColor = "FFFFFF"
 
@@ -20,9 +20,15 @@ object Style {
 
     const val secondaryColor = "41497F"
 
+    const val separatorLineColor = "9DAEB7"
+
     const val fontCondensed = "'Roboto Condensed'"
 
     const val font = "Roboto"
+
+    const val listFontColor = "3E4345"
+
+    const val headerFontColor = "1A1A1A"
 
     const val fontWeightBold = "700"
 
