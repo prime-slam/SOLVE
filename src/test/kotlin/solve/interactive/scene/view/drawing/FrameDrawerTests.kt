@@ -1,4 +1,4 @@
-package solve.interactive.scene.view.landmarks
+package solve.interactive.scene.view.drawing
 
 import javafx.scene.image.WritableImage
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
+import solve.interactive.InteractiveTestClass
 import solve.scene.model.Point
 import solve.scene.view.drawing.BufferedImageView
 import solve.scene.view.drawing.FrameDrawer
@@ -15,7 +16,7 @@ import solve.scene.view.drawing.RectangleFrameElement
 import tornadofx.c
 
 @ExtendWith(ApplicationExtension::class)
-internal class FrameDrawerTests {
+internal class FrameDrawerTests : InteractiveTestClass() {
     @Test
     fun `Calculates its size`() {
         val width = 10.2
