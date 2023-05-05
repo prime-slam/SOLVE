@@ -1,13 +1,16 @@
 package solve.unit.utils
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotSame
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import solve.utils.Cache
 import solve.utils.CacheElement
 import java.lang.IllegalArgumentException
 
 internal class CacheTests {
-    private class TestCacheElement<T>(private val initAction: (T) -> Unit): CacheElement<T> {
+    private class TestCacheElement<T>(private val initAction: (T) -> Unit) : CacheElement<T> {
         var name: String? = null
         override fun init(params: T) {
             initAction(params)
@@ -77,7 +80,7 @@ internal class CacheTests {
     @Test
     fun `Validate element`() {
         val validate: (TestCacheElement<Int>) -> Boolean = { it.name != "break" }
-        val cache = Cache(validate, 1) { TestCacheElement {  } }
+        val cache = Cache(validate, 1) { TestCacheElement { } }
 
         val element = TestCacheElement<Int> { }
         assertDoesNotThrow { cache.store(element) }

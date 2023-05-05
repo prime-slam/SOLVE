@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import solve.parsers.planes.ImagePlanesParser
-import solve.unit.parsers.ImageFormat
-import solve.unit.parsers.createFileWithImageData
 import solve.parsers.planes.ImagePlanesParser.BackgroundColor
 import solve.parsers.planes.ImagePlanesParser.ColorBitsNumber
 import solve.parsers.structures.Plane
 import solve.scene.model.Point
+import solve.unit.parsers.ImageFormat
+import solve.unit.parsers.createFileWithImageData
 import java.awt.image.BufferedImage
 import java.io.File
 

@@ -3,7 +3,11 @@ package solve.unit.scene.model
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
-import solve.scene.model.*
+import solve.scene.model.ColorManager
+import solve.scene.model.Landmark
+import solve.scene.model.LayerSettings
+import solve.scene.model.LayerState
+import solve.scene.model.Point
 
 internal class LayerSettingsTests {
     @Test
