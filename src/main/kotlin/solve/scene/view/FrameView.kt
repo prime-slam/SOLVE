@@ -1,6 +1,5 @@
 package solve.scene.view
 
-import RectangleFrameElement
 import io.github.palexdev.materialfx.controls.MFXContextMenu
 import javafx.beans.InvalidationListener
 import javafx.beans.property.DoubleProperty
@@ -24,10 +23,7 @@ import solve.scene.model.Layer
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationLine
 import solve.scene.view.association.AssociationsManager
-import solve.scene.view.drawing.BufferedImageView
-import solve.scene.view.drawing.FrameDrawer
-import solve.scene.view.drawing.FrameEventManager
-import solve.scene.view.drawing.ImageFrameElement
+import solve.scene.view.drawing.*
 import solve.scene.view.landmarks.LandmarkView
 import solve.utils.ChooserDialog
 import solve.utils.action
