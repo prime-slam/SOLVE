@@ -1,5 +1,6 @@
 package solve.scene.view.association
 
+import javafx.beans.InvalidationListener
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Label
@@ -30,17 +31,28 @@ class AssociationAdorner(
      */
     val node: Node = pane
 
+    private lateinit var rectangle: Rectangle
+
+    private val scaleChangedListener = InvalidationListener {
+        pane.prefWidth = width * scale.value
+        pane.prefHeight = height * scale.value
+        pane.layoutX = framePosition.x * scale.value
+        pane.layoutY = framePosition.y * scale.value
+        rectangle.width = width * scale.value
+        rectangle.height = height * scale.value
+    }
+
     init {
         pane.prefWidth = width * scale.value
         pane.prefHeight = height * scale.value
         pane.layoutX = framePosition.x * scale.value
         pane.layoutY = framePosition.y * scale.value
 
-        val rect = Rectangle()
-        rect.width = width * scale.value
-        rect.height = height * scale.value
-        rect.fill = Paint.valueOf(Style.primaryColor)
-        rect.opacity = RectangleOpacity
+        rectangle = Rectangle()
+        rectangle.width = width * scale.value
+        rectangle.height = height * scale.value
+        rectangle.fill = Paint.valueOf(Style.primaryColor)
+        rectangle.opacity = RectangleOpacity
 
         val label = Label("Select second frame").also {
             it.textFill = Paint.valueOf(Style.surfaceColor)
@@ -48,17 +60,14 @@ class AssociationAdorner(
             it.minWidth = Region.USE_PREF_SIZE
         }
 
-        pane.add(rect)
+        pane.add(rectangle)
         pane.add(label)
 
-        scale.onChange {
-            pane.prefWidth = width * scale.value
-            pane.prefHeight = height * scale.value
-            pane.layoutX = framePosition.x * scale.value
-            pane.layoutY = framePosition.y * scale.value
-            rect.width = width * scale.value
-            rect.height = height * scale.value
-        }
+        scale.addListener(scaleChangedListener)
+    }
+
+    fun dispose() {
+        scale.removeListener(scaleChangedListener)
     }
 
     companion object {

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.framework.junit5.ApplicationExtension
 import solve.interactive.InteractiveTestClass
 import solve.scene.view.association.AssociationAdorner
+import solve.testMemoryLeak
 import solve.utils.structures.DoublePoint
 
 @ExtendWith(ApplicationExtension::class)
@@ -48,5 +49,14 @@ internal class AssociationAdornerTests : InteractiveTestClass() {
         assertEquals(position.y * scale.value, adorner.node.layoutY)
         assertEquals(width * scale.value, rect.width)
         assertEquals(height * scale.value, rect.height)
+    }
+
+    @Test
+    fun `Adorner can be garbage collected after dispose`() {
+        val scale = SimpleDoubleProperty(1.0)
+        val factory = { AssociationAdorner(100.0, 50.0, DoublePoint(10.0, 10.0), scale) }
+        testMemoryLeak(factory) { adorner ->
+            adorner.dispose()
+        }
     }
 }
