@@ -152,7 +152,7 @@ class FrameView(
     }
 
     private fun getAssociatedLayersNames(frame: VisualizationFrame): List<String> {
-        val layerNames = associationsManager.drawnAssociations.filter { it.key.frame == frame }.map { it.key.layerName }
+        val layerNames = associationsManager.drawnAssociations.filter { it.key.frame == frame && it.value.isNotEmpty() }.map { it.key.layerName }
         return layerNames.filter { layerName -> frame.layers.any { it.name == layerName && it.settings.enabled } }
     }
 
