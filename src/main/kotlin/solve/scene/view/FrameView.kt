@@ -68,7 +68,8 @@ class FrameView(
     }
 
     private val associationsUpdatedListener =
-        MapChangeListener<AssociationsManager.AssociationKey, Map<VisualizationFrame, List<AssociationLine>>> {
+        MapChangeListener<AssociationsManager.AssociationKey<VisualizationFrame>,
+            Map<VisualizationFrame, List<AssociationLine>>> {
             hasAssociations.value = getAssociatedLayersNames(currentFrame ?: return@MapChangeListener).isNotEmpty()
         }
 

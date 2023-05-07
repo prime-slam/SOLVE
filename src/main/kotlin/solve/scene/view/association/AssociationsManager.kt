@@ -4,39 +4,70 @@ import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.ObjectProperty
 import javafx.scene.paint.Color
-import solve.scene.model.Landmark
-import solve.scene.model.VisualizationFrame
 import solve.utils.structures.DoublePoint
+import solve.utils.structures.Size
 import tornadofx.add
 import tornadofx.toObservable
-import solve.utils.structures.Size as DoubleSize
 
-class AssociationsManager(
-    private val frameSize: DoubleSize,
+/**
+ * Responsible for creating associations line between keypoints from selected frames and layers.
+ *
+ * @param T type of data objects backing to frames.
+ * @param S type of objects, which will be associated, keypoints in our case.
+ *
+ * @param frameSize size of a frame on the scene without indent, used to calculate association lines positions.
+ * @param framesIndent margin between frames on the scene, used to calculate association lines positions.
+ * @param scale global scale property, used to recalculate associations lines positions when scale changed.
+ * @param frames list of frames data, used to calculate frame column and row.
+ * @param outOfFramesLayer pane, where association lines and frames adorners placed.
+ */
+class AssociationsManager<T, S : Associatable>(
+    private val frameSize: Size,
     private val framesIndent: Double,
     private val scale: DoubleProperty,
-    private val frames: List<VisualizationFrame>,
+    private val frames: List<T>,
     private val columnsNumber: Int,
     private val outOfFramesLayer: OutOfFramesLayer
 ) {
+    /**
+     * name of the current selected layer.
+     */
     val chosenLayerName
         get() = firstFrameAssociationParameters?.key?.layerName
-    private var firstFrameAssociationParameters: AssociationParameters? = null
+    private var firstFrameAssociationParameters: AssociationParameters<T, S>? = null
 
-    // Maps first frame and layer on it with a list of second frames and drawn shapes
+    /**
+     * Matches first association frame and chosen layer to a list of all associated second frames and drawn lines.
+     *
+     * Example:
+     * drawnAssociations[AssociationKey(25, "keypoints12345")][27] returns list of drawn lines between 25 and 27 frames,
+     * for landmarks in "keypoints12345" layer.
+     */
     val drawnAssociations =
-        mutableMapOf<AssociationKey, MutableMap<VisualizationFrame, List<AssociationLine>>>().toObservable()
-    private val drawnAdorners = mutableMapOf<VisualizationFrame, AssociationAdorner>()
+        mutableMapOf<AssociationKey<T>, MutableMap<T, List<AssociationLine>>>().toObservable()
+    private val drawnAdorners = mutableMapOf<T, AssociationAdorner>()
 
-    fun initAssociation(associationParameters: AssociationParameters) {
+    /**
+     * Chooses the frame to associate keypoints of the specified layer with another.
+     * Draws an adorner on top of the selected frame.
+     */
+    fun initAssociation(associationParameters: AssociationParameters<T, S>) {
         val firstFrame = firstFrameAssociationParameters?.key?.frame
         firstFrame?.apply { clearAdorner(firstFrame) }
         firstFrameAssociationParameters = associationParameters
         drawAdorner(associationParameters.key.frame)
     }
 
+    /**
+     * Draws lines between keypoints in previously selected layer on the first and second frames.
+     *
+     * The drawn adorner is cleared.
+     *
+     * @param colorProperty chosen layer color property from the settings, used to keep lines color the same to keypoints.
+     * @param enabledProperty chosen layer enabled property from the settings, used to keep visibility of lines the same to keypoints.
+     */
     fun associate(
-        secondFrameParameters: AssociationParameters,
+        secondFrameParameters: AssociationParameters<T, S>,
         colorProperty: ObjectProperty<Color>,
         enabledProperty: BooleanProperty
     ) {
@@ -63,26 +94,26 @@ class AssociationsManager(
         firstFrameAssociationParameters = null
     }
 
-    private fun isAlreadyAssociated(associationKey: AssociationKey, secondFrame: VisualizationFrame) =
+    private fun isAlreadyAssociated(associationKey: AssociationKey<T>, secondFrame: T) =
         drawnAssociations[associationKey]?.containsKey(secondFrame) == true
 
-    private fun drawAdorner(frame: VisualizationFrame) {
+    private fun drawAdorner(frame: T) {
         val framePosition = getFramePosition(frame)
         val adorner = AssociationAdorner(frameSize.width, frameSize.height, framePosition, scale)
         drawnAdorners[frame] = adorner
         outOfFramesLayer.add(adorner.node)
     }
 
-    private fun clearAdorner(frame: VisualizationFrame) {
+    private fun clearAdorner(frame: T) {
         outOfFramesLayer.children.remove(drawnAdorners[frame]?.node)
         drawnAdorners.remove(frame)
     }
 
     private fun associate(
-        firstKey: AssociationKey,
-        secondKey: AssociationKey,
-        firstLandmarks: List<Landmark>,
-        secondLandmarks: List<Landmark>,
+        firstKey: AssociationKey<T>,
+        secondKey: AssociationKey<T>,
+        firstLandmarks: List<S>,
+        secondLandmarks: List<S>,
         colorProperty: ObjectProperty<Color>,
         enabledProperty: BooleanProperty
     ) {
@@ -90,17 +121,15 @@ class AssociationsManager(
         val secondFramePosition = getFramePosition(secondKey.frame)
 
         val lines = firstLandmarks.map { firstLandmark ->
-            val firstKeypoint = firstLandmark as Landmark.Keypoint
-            val secondKeypoint = secondLandmarks.firstOrNull { landmark ->
-                val keypoint = landmark as Landmark.Keypoint
-                keypoint.uid == firstKeypoint.uid
-            } as? Landmark.Keypoint ?: return@map null
+            val secondLandmark = secondLandmarks.firstOrNull { landmark ->
+                firstLandmark.uid == landmark.uid
+            } ?: return@map null // not all keypoints are matching
 
             AssociationLine(
                 firstFramePosition,
                 secondFramePosition,
-                firstKeypoint.coordinate,
-                secondKeypoint.coordinate,
+                firstLandmark.coordinate,
+                secondLandmark.coordinate,
                 scale,
                 colorProperty,
                 enabledProperty
@@ -114,11 +143,12 @@ class AssociationsManager(
         drawnAssociations.putIfAbsent(firstKey, mutableMapOf())
         drawnAssociations[firstKey]?.set(secondKey.frame, lines)
 
+        // should save association twice to make it possible to clear association from the target frame.
         drawnAssociations.putIfAbsent(secondKey, mutableMapOf())
         drawnAssociations[secondKey]?.set(firstKey.frame, lines)
     }
 
-    private fun getFramePosition(frame: VisualizationFrame): DoublePoint {
+    private fun getFramePosition(frame: T): DoublePoint {
         val indexOfFrame = frames.indexOf(frame)
         val firstFrameRow = indexOfFrame / columnsNumber
         val firstFrameColumn = indexOfFrame % columnsNumber
@@ -128,7 +158,10 @@ class AssociationsManager(
         )
     }
 
-    fun clearAssociation(key: AssociationKey) {
+    /**
+     * Clears associations of chosen layer and frame to all another frames.
+     */
+    fun clearAssociation(key: AssociationKey<T>) {
         drawnAssociations[key]?.forEach { (frame, lines) ->
             val secondKey = AssociationKey(frame, key.layerName)
             drawnAssociations[secondKey]?.remove(key.frame)
@@ -140,10 +173,16 @@ class AssociationsManager(
         drawnAssociations.remove(key)
     }
 
-    data class AssociationKey(val frame: VisualizationFrame, val layerName: String)
+    /**
+     * Data structure aimed to address associations.
+     */
+    data class AssociationKey<T>(val frame: T, val layerName: String)
 
-    data class AssociationParameters(
-        val key: AssociationKey,
-        val landmarks: List<Landmark.Keypoint>
+    /**
+     * Data structure, which aggregates association data.
+     */
+    data class AssociationParameters<T, S : Associatable>(
+        val key: AssociationKey<T>,
+        val landmarks: List<S>
     )
 }
