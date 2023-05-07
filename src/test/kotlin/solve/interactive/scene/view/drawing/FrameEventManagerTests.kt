@@ -74,6 +74,38 @@ internal class FrameEventManagerTests : InteractiveTestClass() {
     }
 
     @Test
+    fun `Remove mouse released handler`(robot: FxRobot) {
+        val eventManager = FrameEventManager(node, scale)
+        val frameElement = RectangleFrameElement(0, c("FFFF00"), 5, 5)
+        val handledEvents = mutableListOf<MouseEvent>()
+        val eventHandler = CanvasEventHandler<MouseEvent>(frameElement) {
+            handledEvents.add(it)
+        }
+        eventManager.subscribeMouseReleased(eventHandler)
+        eventManager.unsubscribeMouseReleased(eventHandler)
+        robot.interact {
+            node.fireMouseReleased(1.0, 1.0, MouseButton.PRIMARY)
+        }
+        assertEquals(0, handledEvents.size)
+    }
+
+    @Test
+    fun `Remove mouse pressed handler`(robot: FxRobot) {
+        val eventManager = FrameEventManager(node, scale)
+        val frameElement = RectangleFrameElement(0, c("FFFF00"), 5, 5)
+        val handledEvents = mutableListOf<MouseEvent>()
+        val eventHandler = CanvasEventHandler<MouseEvent>(frameElement) {
+            handledEvents.add(it)
+        }
+        eventManager.subscribeMousePressed(eventHandler)
+        eventManager.unsubscribeMousePressed(eventHandler)
+        robot.interact {
+            node.fireMouseReleased(1.0, 1.0, MouseButton.PRIMARY)
+        }
+        assertEquals(0, handledEvents.size)
+    }
+
+    @Test
     fun `More than one subscriber for one frame element`(robot: FxRobot) {
         val eventManager = FrameEventManager(node, scale)
         val frameElement = RectangleFrameElement(0, c("FFFF00"), 5, 5)
