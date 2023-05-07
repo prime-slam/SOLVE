@@ -710,7 +710,10 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
             assertEquals(
                 1,
                 linesNodes.count {
-                    it.startX == firstFrameX + firstFrameLandmarkPosition.x && it.startY == firstFrameY + firstFrameLandmarkPosition.y && it.endX == secondFrameX + secondFrameFirstLandmarkPosition.x && it.endY == secondFrameY + secondFrameFirstLandmarkPosition.y
+                    it.startX == firstFrameX + firstFrameLandmarkPosition.x
+                            && it.startY == firstFrameY + firstFrameLandmarkPosition.y
+                            && it.endX == secondFrameX + secondFrameFirstLandmarkPosition.x
+                            && it.endY == secondFrameY + secondFrameFirstLandmarkPosition.y
                 },
                 "No line was drawn for landmark with uid: $uid"
             )
