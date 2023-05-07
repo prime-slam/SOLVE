@@ -6,6 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import solve.scene.FrameViewSettings
 import solve.scene.controller.SceneController
+import solve.scene.model.Landmark
+import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
@@ -55,7 +57,7 @@ class SceneView : View() {
         val frames = scene.frames + emptyFrames
 
         val outOfFramesLayer = OutOfFramesLayer()
-        val associationsManager = AssociationsManager(
+        val associationsManager = AssociationsManager<VisualizationFrame, Landmark.Keypoint>(
             frameSize,
             framesMargin,
             controller.scaleProperty,

@@ -1,12 +1,14 @@
 package solve.scene.model
 
+import solve.scene.view.association.Associatable
+
 sealed class Landmark(val uid: Long, open val layerSettings: LayerSettings, val layerState: LayerState) {
     class Keypoint(
         uid: Long,
         override val layerSettings: LayerSettings.PointLayerSettings,
         layerState: LayerState,
-        val coordinate: Point
-    ) : Landmark(uid, layerSettings, layerState)
+        override val coordinate: Point
+    ) : Landmark(uid, layerSettings, layerState), Associatable
 
     class Line(
         uid: Long,
