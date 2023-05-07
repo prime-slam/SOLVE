@@ -13,13 +13,15 @@ import javafx.geometry.Orientation
 import javafx.scene.Node
 import javafx.scene.input.MouseButton
 import javafx.scene.input.ScrollEvent
-import solve.scene.model.VisualizationFrame
 import solve.scene.view.Grid
 import tornadofx.onChange
 import solve.utils.structures.Size as DoubleSize
 
+/**
+ * Implementation of grid, which uses VirtualizedFXGrid.
+ */
 class VirtualizedFXGrid(
-    private val virtualGrid: VirtualGrid<VisualizationFrame?, FrameViewAdapter>,
+    private val virtualGrid: VirtualGrid<*, *>,
     private val vsp: VirtualScrollPane,
     private val scaleProperty: DoubleProperty,
     private val cellSize: DoubleSize

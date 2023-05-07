@@ -5,6 +5,9 @@ import javafx.scene.Node
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.FrameView
 
+/**
+ * Wraps FrameView with GridCell element to show it inside VirtualizedFX grid.
+ */
 class FrameViewAdapter(private val view: FrameView) : GridCell<VisualizationFrame?> {
     override fun getNode(): Node {
         return view

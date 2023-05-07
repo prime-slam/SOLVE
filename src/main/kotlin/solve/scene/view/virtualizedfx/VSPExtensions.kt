@@ -16,7 +16,10 @@ import javafx.scene.layout.Pane
 import solve.scene.view.association.OutOfFramesLayer
 import tornadofx.add
 
-// This function is identical to VSPUtils.wrap(VirtualGrid) but creates inheritor for VSP
+/**
+ * Identical to librarian VSPUtils.wrap(VirtualGrid) function, but creates an inheritor for VSP,
+ * which displays out of frames layer on top of frames.
+ */
 fun <T, C : GridCell<T>?> wrapGridWithVsp(
     grid: VirtualGrid<T, C>,
     outOfFramesLayer: OutOfFramesLayer
@@ -73,7 +76,9 @@ fun <T, C : GridCell<T>?> wrapGridWithVsp(
     return vsp
 }
 
-// This inheritor is needed to put OutOfFramesLayer into visual tree nearby VirtualGrid
+/**
+ * This inheritor is needed to put OutOfFramesLayer into visual tree nearby VirtualGrid.
+ */
 private class VirtualScrollPaneWithOutOfFramesLayer<T, C : GridCell<T>?>(
     private val virtualGrid: VirtualGrid<T, C>,
     private val outOfFramesLayer: OutOfFramesLayer
@@ -83,7 +88,9 @@ private class VirtualScrollPaneWithOutOfFramesLayer<T, C : GridCell<T>?>(
     }
 }
 
-// This inheritor is needed to put OutOfFramesLayer into visual tree nearby VirtualGrid
+/**
+ * This inheritor is needed to put OutOfFramesLayer into visual tree nearby VirtualGrid.
+ */
 private class VirtualScrollPaneWithOutOfFramesLayerSkin<T, C : GridCell<T>?>(
     vsp: VirtualScrollPane,
     virtualGrid: VirtualGrid<T, C>,

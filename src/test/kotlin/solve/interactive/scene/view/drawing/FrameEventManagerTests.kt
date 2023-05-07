@@ -1,9 +1,6 @@
 package solve.interactive.scene.view.drawing
 
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.event.Event
-import javafx.event.EventType
-import javafx.scene.Node
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import javafx.scene.shape.Rectangle
@@ -13,6 +10,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
+import solve.fireMousePressed
+import solve.fireMouseReleased
 import solve.interactive.InteractiveTestClass
 import solve.scene.view.drawing.CanvasEventHandler
 import solve.scene.view.drawing.FrameEventManager
@@ -100,7 +99,7 @@ internal class FrameEventManagerTests : InteractiveTestClass() {
         eventManager.subscribeMousePressed(eventHandler)
         eventManager.unsubscribeMousePressed(eventHandler)
         robot.interact {
-            node.fireMouseReleased(1.0, 1.0, MouseButton.PRIMARY)
+            node.fireMousePressed(1.0, 1.0, MouseButton.PRIMARY)
         }
         assertEquals(0, handledEvents.size)
     }
@@ -186,24 +185,5 @@ internal class FrameEventManagerTests : InteractiveTestClass() {
             node.fireMouseReleased(x, y, mouseButton)
         }
         assertEquals(0, handledEvents.size)
-    }
-
-    private fun Node.fireMousePressed(x: Double, y: Double, button: MouseButton) =
-        this.fireMouseEvent(MouseEvent.MOUSE_PRESSED, x, y, button)
-
-    private fun Node.fireMouseReleased(x: Double, y: Double, button: MouseButton) =
-        this.fireMouseEvent(MouseEvent.MOUSE_RELEASED, x, y, button)
-
-    private fun Node.fireMouseEvent(kind: EventType<MouseEvent>, x: Double, y: Double, button: MouseButton) {
-        Event.fireEvent(
-            this,
-            MouseEvent(
-                kind,
-                x, y, x, y, button, 1,
-                false, false, false, false,
-                true, false, false, false,
-                false, false, null
-            )
-        )
     }
 }
