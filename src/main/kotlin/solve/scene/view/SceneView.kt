@@ -25,6 +25,7 @@ class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
     private var currentGrid: Grid? = null
+    private var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
     private var frameViewCache: Cache<FrameView, FrameViewData, FrameViewSettings>? = null
 
     override val root = vbox {
@@ -39,7 +40,9 @@ class SceneView : View() {
     private fun draw() {
         unbindPositionProperties()
         currentGrid?.dispose()
+        currentAssociationsManager?.dispose()
         currentGrid = null
+        currentAssociationsManager = null
         root.children.clear()
 
         val scene = controller.sceneProperty.value
@@ -65,9 +68,10 @@ class SceneView : View() {
             framesMargin,
             controller.scaleProperty,
             scene.frames,
-            columnsNumber,
+            controller.installedColumnsNumberProperty,
             outOfFramesLayer
         )
+        currentAssociationsManager = associationsManager
 
         val frameViewParameters = FrameViewParameters(frameDataLoadingScope, associationsManager, scene)
 
@@ -154,8 +158,6 @@ class SceneView : View() {
 
         // Grid settings bindings.
         controller.installedColumnsNumberProperty.onChange { columnsNumber ->
-            columnsNumber ?: return@onChange
-
             currentGrid?.changeColumnsNumber(columnsNumber)
         }
         Platform.runLater {

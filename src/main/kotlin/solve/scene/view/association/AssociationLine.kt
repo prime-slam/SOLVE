@@ -21,8 +21,8 @@ import solve.utils.structures.DoublePoint
  * @param secondKeypointCoordinate coordinate of the second keypoint within its frame.
  */
 class AssociationLine(
-    private val firstFramePosition: DoublePoint,
-    private val secondFramePosition: DoublePoint,
+    private var firstFramePosition: DoublePoint,
+    private var secondFramePosition: DoublePoint,
     private val firstKeypointCoordinate: Point,
     private val secondKeypointCoordinate: Point,
     private val scale: DoubleProperty,
@@ -41,6 +41,12 @@ class AssociationLine(
         line.strokeProperty().bind(colorProperty)
         line.visibleProperty().bind(enabledProperty)
         scale.addListener(scaleChangedListener)
+    }
+
+    fun updateFramesPosition(firstFramePosition: DoublePoint, secondFramePosition: DoublePoint) {
+        this.firstFramePosition = firstFramePosition
+        this.secondFramePosition = secondFramePosition
+        updateLinePosition()
     }
 
     fun dispose() {

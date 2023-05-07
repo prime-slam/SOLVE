@@ -2,9 +2,11 @@ package solve.interactive.scene.view.association
 
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
@@ -31,7 +33,7 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
     private var frameIndent = 0.0
     private lateinit var scaleProperty: DoubleProperty
     private lateinit var frames: List<Int>
-    private var columnsNumber = 0
+    private lateinit var columnsNumber: IntegerProperty
     private lateinit var outOfFramesLayer: OutOfFramesLayer
     private lateinit var associationsManager: AssociationsManager<Int, TestAssociatable>
 
@@ -44,7 +46,7 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         frameIndent = 10.0
         scaleProperty = SimpleDoubleProperty(1.0)
         frames = (0 until 100).toMutableList()
-        columnsNumber = 10
+        columnsNumber = SimpleIntegerProperty(10)
         outOfFramesLayer = OutOfFramesLayer()
         associationsManager =
             AssociationsManager(frameSize, frameIndent, scaleProperty, frames, columnsNumber, outOfFramesLayer)
@@ -76,15 +78,22 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val secondFrameColumn = 7
 
         val firstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
 
         val secondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
 
         testAssociation(
-            framesRow, framesRow, firstFrameColumn, secondFrameColumn, firstFrameLandmarks, secondFrameLandmarks
+            framesRow,
+            framesRow,
+            firstFrameColumn,
+            secondFrameColumn,
+            firstFrameLandmarks,
+            secondFrameLandmarks
         )
 
         assertNull(associationsManager.chosenLayerName)
@@ -99,11 +108,13 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val secondFrameColumn = 7
 
         val firstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
 
         val secondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
 
         testAssociation(
@@ -124,11 +135,15 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val secondFrameColumn = 7
 
         val firstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2), TestAssociatable(Point(2, 2), 3)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2),
+            TestAssociatable(Point(2, 2), 3)
         )
 
         val secondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2), TestAssociatable(Point(2, 2), 4)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2),
+            TestAssociatable(Point(2, 2), 4)
         )
 
         testAssociation(
@@ -162,13 +177,16 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val thirdFrameColumn = 6
 
         val firstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
         val secondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
         val thirdFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 2), 1), TestAssociatable(Point(10, 10), 2)
+            TestAssociatable(Point(1, 2), 1),
+            TestAssociatable(Point(10, 10), 2)
         )
 
         testAssociation(
@@ -200,17 +218,21 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val secondFrameColumn = 7
 
         val firstLayerFirstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
         val secondLayerFirstFrameLandmarks = listOf(
-            TestAssociatable(Point(4, 2), 1), TestAssociatable(Point(111, 5), 2)
+            TestAssociatable(Point(4, 2), 1),
+            TestAssociatable(Point(111, 5), 2)
         )
 
         val firstLayerSecondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
         val secondLayerSecondFrameLandmarks = listOf(
-            TestAssociatable(Point(46, 21), 1), TestAssociatable(Point(11, 35), 2)
+            TestAssociatable(Point(46, 21), 1),
+            TestAssociatable(Point(11, 35), 2)
         )
 
         testAssociation(
@@ -238,21 +260,27 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val row = 2
         val firstFrameColumn = 5
         val secondFrameColumn = 6
-        val firstFrameNumber = row * columnsNumber + firstFrameColumn
-        val secondFrameNumber = row * columnsNumber + secondFrameColumn
+        val firstFrameNumber = row * columnsNumber.value + firstFrameColumn
+        val secondFrameNumber = row * columnsNumber.value + secondFrameColumn
 
         val firstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
         val secondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
 
         val layerName = "kp1"
         val firstFrameAssociationKey = AssociationsManager.AssociationKey(firstFrameNumber, layerName)
 
         associateTwoFrames(
-            firstFrameNumber, secondFrameNumber, firstFrameLandmarks, secondFrameLandmarks, layerName = layerName
+            firstFrameNumber,
+            secondFrameNumber,
+            firstFrameLandmarks,
+            secondFrameLandmarks,
+            layerName = layerName
         )
 
         associationsManager.clearAssociation(firstFrameAssociationKey)
@@ -268,21 +296,27 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val row = 2
         val firstFrameColumn = 5
         val secondFrameColumn = 6
-        val firstFrameNumber = row * columnsNumber + firstFrameColumn
-        val secondFrameNumber = row * columnsNumber + secondFrameColumn
+        val firstFrameNumber = row * columnsNumber.value + firstFrameColumn
+        val secondFrameNumber = row * columnsNumber.value + secondFrameColumn
 
         val firstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
         val secondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
 
         val layerName = "kp1"
         val secondFrameAssociationKey = AssociationsManager.AssociationKey(secondFrameNumber, layerName)
 
         associateTwoFrames(
-            firstFrameNumber, secondFrameNumber, firstFrameLandmarks, secondFrameLandmarks, layerName = layerName
+            firstFrameNumber,
+            secondFrameNumber,
+            firstFrameLandmarks,
+            secondFrameLandmarks,
+            layerName = layerName
         )
 
         associationsManager.clearAssociation(secondFrameAssociationKey)
@@ -302,21 +336,32 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val layerName = "kp1"
 
         val firstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
         val secondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
         val thirdFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 2), 1), TestAssociatable(Point(10, 10), 2)
+            TestAssociatable(Point(1, 2), 1),
+            TestAssociatable(Point(10, 10), 2)
         )
 
         val firstFrameAssociationKey = AssociationsManager.AssociationKey(firstFrameNumber, layerName)
         associateTwoFrames(
-            firstFrameNumber, secondFrameNumber, firstFrameLandmarks, secondFrameLandmarks, layerName = layerName
+            firstFrameNumber,
+            secondFrameNumber,
+            firstFrameLandmarks,
+            secondFrameLandmarks,
+            layerName = layerName
         )
         associateTwoFrames(
-            firstFrameNumber, thirdFrameNumber, firstFrameLandmarks, thirdFrameLandmarks, layerName = layerName
+            firstFrameNumber,
+            thirdFrameNumber,
+            firstFrameLandmarks,
+            thirdFrameLandmarks,
+            layerName = layerName
         )
 
         associationsManager.clearAssociation(firstFrameAssociationKey)
@@ -334,17 +379,21 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val secondFrameNumber = 27
 
         val firstLayerFirstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
         val secondLayerFirstFrameLandmarks = listOf(
-            TestAssociatable(Point(4, 2), 1), TestAssociatable(Point(111, 5), 2)
+            TestAssociatable(Point(4, 2), 1),
+            TestAssociatable(Point(111, 5), 2)
         )
 
         val firstLayerSecondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
         val secondLayerSecondFrameLandmarks = listOf(
-            TestAssociatable(Point(46, 21), 1), TestAssociatable(Point(11, 35), 2)
+            TestAssociatable(Point(46, 21), 1),
+            TestAssociatable(Point(11, 35), 2)
         )
 
         associateTwoFrames(
@@ -386,22 +435,33 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val layerName = "kp1"
 
         val firstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
         val secondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
         val thirdFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 2), 1), TestAssociatable(Point(10, 10), 2)
+            TestAssociatable(Point(1, 2), 1),
+            TestAssociatable(Point(10, 10), 2)
         )
 
         val firstFrameAssociationsKey = AssociationsManager.AssociationKey(firstFrameNumber, layerName)
         val thirdFrameAssociationsKey = AssociationsManager.AssociationKey(thirdFrameNumber, layerName)
         associateTwoFrames(
-            firstFrameNumber, secondFrameNumber, firstFrameLandmarks, secondFrameLandmarks, layerName = layerName
+            firstFrameNumber,
+            secondFrameNumber,
+            firstFrameLandmarks,
+            secondFrameLandmarks,
+            layerName = layerName
         )
         associateTwoFrames(
-            firstFrameNumber, thirdFrameNumber, firstFrameLandmarks, thirdFrameLandmarks, layerName = layerName
+            firstFrameNumber,
+            thirdFrameNumber,
+            firstFrameLandmarks,
+            thirdFrameLandmarks,
+            layerName = layerName
         )
 
         associationsManager.clearAssociation(thirdFrameAssociationsKey)
@@ -455,7 +515,12 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val finishPosition = Point(15, 25)
 
         val line = createAssociationLine(
-            firstFrameRow, secondFrameRow, firstFrameColumn, secondFrameColumn, startPosition, finishPosition
+            firstFrameRow,
+            secondFrameRow,
+            firstFrameColumn,
+            secondFrameColumn,
+            startPosition,
+            finishPosition
         )
         assertEquals((firstFramePosition.x + startPosition.x) * scaleProperty.value, line.startX)
         assertEquals((firstFramePosition.y + startPosition.y) * scaleProperty.value, line.startY)
@@ -473,12 +538,19 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
     fun `Choose second frame if the first is not selected`() {
         val secondFrameAssociationKey = AssociationsManager.AssociationKey(27, "kp1")
         val secondFrameAssociationParameters = AssociationsManager.AssociationParameters(
-            secondFrameAssociationKey, listOf(TestAssociatable(Point(1, 1), 1))
+            secondFrameAssociationKey,
+            listOf(TestAssociatable(Point(1, 1), 1))
         )
         val colorProperty = SimpleObjectProperty(c("FF00FF"))
         val enabledProperty = SimpleBooleanProperty()
 
-        assertDoesNotThrow { associationsManager.associate(secondFrameAssociationParameters, colorProperty, enabledProperty) }
+        assertDoesNotThrow {
+            associationsManager.associate(
+                secondFrameAssociationParameters,
+                colorProperty,
+                enabledProperty
+            )
+        }
     }
 
     @Test
@@ -488,18 +560,30 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         val secondFrameColumn = 7
 
         val firstFrameLandmarks = listOf(
-            TestAssociatable(Point(1, 1), 1), TestAssociatable(Point(130, 55), 2)
+            TestAssociatable(Point(1, 1), 1),
+            TestAssociatable(Point(130, 55), 2)
         )
 
         val secondFrameLandmarks = listOf(
-            TestAssociatable(Point(10, 4), 1), TestAssociatable(Point(13, 77), 2)
+            TestAssociatable(Point(10, 4), 1),
+            TestAssociatable(Point(13, 77), 2)
         )
 
         testAssociation(
-            framesRow, framesRow, firstFrameColumn, secondFrameColumn, firstFrameLandmarks, secondFrameLandmarks
+            framesRow,
+            framesRow,
+            firstFrameColumn,
+            secondFrameColumn,
+            firstFrameLandmarks,
+            secondFrameLandmarks
         )
         testAssociation(
-            framesRow, framesRow, firstFrameColumn, secondFrameColumn, firstFrameLandmarks, secondFrameLandmarks
+            framesRow,
+            framesRow,
+            firstFrameColumn,
+            secondFrameColumn,
+            firstFrameLandmarks,
+            secondFrameLandmarks
         )
     }
 
@@ -510,6 +594,39 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         testMemoryLeak(factory) {
             associationsManager.clearAssociation(AssociationsManager.AssociationKey(25, "kp1"))
             line = null
+        }
+    }
+
+    @Test
+    fun `Lines update position when columns number changed`() {
+        val firstFrameNumber = 17
+        val secondFrameNumber = 39
+        val initialColumnsNumber = columnsNumber.value
+        val line = createAssociationLine(
+            firstFrameNumber / initialColumnsNumber,
+            secondFrameNumber / initialColumnsNumber,
+            firstFrameNumber % initialColumnsNumber,
+            secondFrameNumber % initialColumnsNumber,
+            Point(0, 0),
+            Point(0, 0)
+        )
+
+        val newColumnsNumber = 5
+        columnsNumber.value = newColumnsNumber
+
+        assertEquals((firstFrameNumber / newColumnsNumber) * (frameHeight + frameIndent), line.endY)
+        assertEquals((firstFrameNumber % newColumnsNumber) * (frameWidth + frameIndent), line.endX)
+        assertEquals((secondFrameNumber / newColumnsNumber) * (frameHeight + frameIndent), line.startY)
+        assertEquals((secondFrameNumber % newColumnsNumber) * (frameWidth + frameIndent), line.startX)
+    }
+
+    @Test
+    fun `Can be garbage collected after dispose`() {
+        val factory = { associationsManager }
+        testMemoryLeak(factory) {
+            associationsManager.dispose()
+            associationsManager =
+                AssociationsManager(frameSize, frameIndent, scaleProperty, frames, columnsNumber, outOfFramesLayer)
         }
     }
 
@@ -532,8 +649,8 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         )
 
         associateTwoFrames(
-            firstFrameRow * columnsNumber + firstFrameColumn,
-            secondFrameRow * columnsNumber + secondFrameColumn,
+            firstFrameRow * columnsNumber.value + firstFrameColumn,
+            secondFrameRow * columnsNumber.value + secondFrameColumn,
             firstFrameLandmarks,
             secondFrameLandmarks,
             colorProperty = colorProperty,
@@ -553,12 +670,16 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
         alreadyAssociatedFrames: List<Int> = listOf(),
         layerName: String = "kp1"
     ) {
-        val firstFrameNumber = firstFrameRow * columnsNumber + firstFrameColumn
-        val secondFrameNumber = secondFrameRow * columnsNumber + secondFrameColumn
+        val firstFrameNumber = firstFrameRow * columnsNumber.value + firstFrameColumn
+        val secondFrameNumber = secondFrameRow * columnsNumber.value + secondFrameColumn
 
         val firstFrameAssociationKey = AssociationsManager.AssociationKey(firstFrameNumber, layerName)
         associateTwoFrames(
-            firstFrameNumber, secondFrameNumber, firstFrameLandmarks, secondFrameLandmarks, layerName = layerName
+            firstFrameNumber,
+            secondFrameNumber,
+            firstFrameLandmarks,
+            secondFrameLandmarks,
+            layerName = layerName
         )
 
         assertEquals(null, associationsManager.chosenLayerName)
@@ -587,9 +708,11 @@ internal class AssociationsManagerTests : InteractiveTestClass() {
             val secondFrameFirstLandmarkPosition = secondFrameLandmarks.single { it.uid == uid }.coordinate
 
             assertEquals(
-                1, linesNodes.count {
+                1,
+                linesNodes.count {
                     it.startX == firstFrameX + firstFrameLandmarkPosition.x && it.startY == firstFrameY + firstFrameLandmarkPosition.y && it.endX == secondFrameX + secondFrameFirstLandmarkPosition.x && it.endY == secondFrameY + secondFrameFirstLandmarkPosition.y
-                }, "No line was drawn for landmark with uid: $uid"
+                },
+                "No line was drawn for landmark with uid: $uid"
             )
         }
     }

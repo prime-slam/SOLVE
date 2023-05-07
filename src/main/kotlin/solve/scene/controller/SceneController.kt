@@ -1,6 +1,7 @@
 package solve.scene.controller
 
 import javafx.beans.property.SimpleDoubleProperty
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import solve.scene.model.Scene
 import solve.scene.view.DelayedFramesUpdatesManager
@@ -19,7 +20,7 @@ class SceneController : Controller() {
     val scene: Scene
         get() = sceneProperty.value
 
-    val installedColumnsNumberProperty = SimpleObjectProperty(0)
+    val installedColumnsNumberProperty = SimpleIntegerProperty(0)
     var installedColumnsNumber: Int
         get() = installedColumnsNumberProperty.value
         set(value) {
@@ -135,9 +136,7 @@ class SceneController : Controller() {
     }
 
     private fun addGridSettingsBindings() {
-        installedColumnsNumberProperty.onChange { installedColumnsNumber ->
-            installedColumnsNumber ?: return@onChange
-
+        installedColumnsNumberProperty.onChange {
             scale = calculateMinScaleDependingOnColumns()
         }
 
