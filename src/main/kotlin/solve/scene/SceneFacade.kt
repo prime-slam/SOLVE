@@ -20,12 +20,14 @@ import solve.scene.model.LayerState
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
 import tornadofx.find
-import java.io.FileInputStream
 
-// Interaction interface of the scene for main controller
+/**
+ * Interaction interface of the scene to another parts of the application.
+ * Transforms common application data models into scene data and applies it.
+ */
 object SceneFacade {
     val lastVisualizationKeepSettingsProperty = SimpleObjectProperty(false)
-    var lastVisualizationKeepSettings: Boolean
+    private var lastVisualizationKeepSettings: Boolean
         get() = lastVisualizationKeepSettingsProperty.value
         private set(value) {
             lastVisualizationKeepSettingsProperty.value = value
@@ -35,17 +37,26 @@ object SceneFacade {
 
     private val visualizationLayers = HashMap<String, LayerSettings>()
 
-    // Is used to set unique colors for layers where all landmarks have the same color
+    /**
+     * Assigns unique color for layers, layer color is used when all landmarks have the same color.
+     */
     private val layersColorManager = ColorManager<String>()
 
-    // Display new frames with landmarks
+    /**
+     * Transforms data and applies new project to the scene.
+     *
+     * @param layers list of used layers.
+     * @param frames list of used frames, each frame should have files in the folder for each layer.
+     * frame corresponds to an image with landmarks from different layers on top.
+     * @param keepSettings is true when scale, columns number and another should not be reinitialized.
+     */
     fun visualize(layers: List<ProjectLayer>, frames: List<ProjectFrame>, keepSettings: Boolean) {
         lastVisualizationKeepSettings = keepSettings
 
         val layersSettings = layers.map { projectLayer ->
             visualizationLayers[projectLayer.key] ?: projectLayer.toLayerSettings()
                 .also { visualizationLayers[projectLayer.key] = it }
-        }
+        } // reuse already created layer settings, it is needed mostly to keep settings on updates from catalog
 
         val layerStates = layers.map { projectLayer -> LayerState(projectLayer.name) }
         val visualizationFrames = frames.map { projectFrame -> projectFrame.toVisualizationFrame(layerStates) }
@@ -62,7 +73,12 @@ object SceneFacade {
     }
 
     private fun ProjectFrame.toVisualizationFrame(layerStates: List<LayerState>): VisualizationFrame {
-        val getImage = { Image(FileInputStream(imagePath.toFile())) }
+        val getImage = {
+            val stream = imagePath.toFile().inputStream()
+            val image = Image(stream)
+            stream.close()
+            image
+        }
 
         val layers = landmarkFiles.map { file ->
             val layerSettings = visualizationLayers[file.projectLayer.key]
