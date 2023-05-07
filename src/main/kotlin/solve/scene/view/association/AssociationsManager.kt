@@ -1,7 +1,9 @@
 package solve.scene.view.association
 
+import javafx.beans.InvalidationListener
 import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
+import javafx.beans.property.IntegerProperty
 import javafx.beans.property.ObjectProperty
 import javafx.scene.paint.Color
 import solve.utils.structures.DoublePoint
@@ -26,7 +28,7 @@ class AssociationsManager<T, S : Associatable>(
     private val framesIndent: Double,
     private val scale: DoubleProperty,
     private val frames: List<T>,
-    private val columnsNumber: Int,
+    private val columnsNumber: IntegerProperty,
     private val outOfFramesLayer: OutOfFramesLayer
 ) {
     /**
@@ -35,6 +37,14 @@ class AssociationsManager<T, S : Associatable>(
     val chosenLayerName
         get() = firstFrameAssociationParameters?.key?.layerName
     private var firstFrameAssociationParameters: AssociationParameters<T, S>? = null
+
+    private val columnsNumberChangedListener = InvalidationListener {
+        updateLinesPosition()
+    }
+
+    init {
+        columnsNumber.addListener(columnsNumberChangedListener)
+    }
 
     /**
      * Matches first association frame and chosen layer to a list of all associated second frames and drawn lines.
@@ -150,8 +160,8 @@ class AssociationsManager<T, S : Associatable>(
 
     private fun getFramePosition(frame: T): DoublePoint {
         val indexOfFrame = frames.indexOf(frame)
-        val firstFrameRow = indexOfFrame / columnsNumber
-        val firstFrameColumn = indexOfFrame % columnsNumber
+        val firstFrameRow = indexOfFrame / columnsNumber.value
+        val firstFrameColumn = indexOfFrame % columnsNumber.value
         return DoublePoint(
             firstFrameColumn * (frameSize.width + framesIndent),
             firstFrameRow * (frameSize.height + framesIndent)
@@ -171,6 +181,20 @@ class AssociationsManager<T, S : Associatable>(
             }
         }
         drawnAssociations.remove(key)
+    }
+
+    fun dispose() {
+        columnsNumber.removeListener(columnsNumberChangedListener)
+    }
+
+    private fun updateLinesPosition() {
+        drawnAssociations.forEach { (firstFrameKey, associations) ->
+            associations.forEach { (secondFrame, lines) ->
+                lines.forEach { line ->
+                    line.updateFramesPosition(getFramePosition(firstFrameKey.frame), getFramePosition(secondFrame))
+                }
+            }
+        }
     }
 
     /**

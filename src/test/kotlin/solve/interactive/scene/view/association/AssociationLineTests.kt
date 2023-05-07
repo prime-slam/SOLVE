@@ -83,6 +83,18 @@ internal class AssociationLineTests : InteractiveTestClass() {
         testMemoryLeak(factory, action)
     }
 
+    @Test
+    fun `Update frame position`() {
+        val line = associationLine.node as Line
+        firstFramePosition = DoublePoint(122.0, 22.0)
+        secondFramePosition = DoublePoint(283.0, 111.0)
+        associationLine.updateFramesPosition(firstFramePosition, secondFramePosition)
+        assertEquals(firstFramePosition.x + firstKeypointCoordinate.x, line.startX)
+        assertEquals(firstFramePosition.y + firstKeypointCoordinate.y, line.startY)
+        assertEquals(secondFramePosition.x + secondKeypointCoordinate.x, line.endX)
+        assertEquals(secondFramePosition.y + secondKeypointCoordinate.y, line.endY)
+    }
+
     private fun createAssociationLine() = AssociationLine(
         firstFramePosition,
         secondFramePosition,
