@@ -115,7 +115,9 @@ class AssociationsManager<T, S : Associatable>(
     }
 
     private fun clearAdorner(frame: T) {
-        outOfFramesLayer.children.remove(drawnAdorners[frame]?.node)
+        val adorner = drawnAdorners[frame] ?: return
+        outOfFramesLayer.children.remove(adorner.node)
+        adorner.dispose()
         drawnAdorners.remove(frame)
     }
 
