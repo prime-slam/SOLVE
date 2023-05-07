@@ -11,6 +11,11 @@ import solve.scene.view.GridProvider
 import solve.scene.view.association.OutOfFramesLayer
 import solve.utils.structures.Size as DoubleSize
 
+/**
+ * Implementation of grid provider, which uses VirtualizedFX grid.
+ *
+ * @see GridProvider
+ */
 object VirtualizedFXGridProvider : GridProvider {
     override fun createGrid(
         data: List<VisualizationFrame?>,
