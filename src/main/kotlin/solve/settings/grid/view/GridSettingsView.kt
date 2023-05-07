@@ -161,8 +161,6 @@ class GridSettingsView : View() {
         val isDecrementActive = SimpleObjectProperty(false)
         val isIncrementActive = SimpleObjectProperty(false)
         sceneController.installedColumnsNumberProperty.onChange { columnsNumber ->
-            columnsNumber ?: return@onChange
-
             isDecrementActive.value = columnsNumber > 1
             isIncrementActive.value = columnsNumber < SceneController.MaxColumnsNumber
         }
