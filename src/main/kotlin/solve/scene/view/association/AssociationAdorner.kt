@@ -4,7 +4,6 @@ import javafx.beans.InvalidationListener
 import javafx.beans.property.DoubleProperty
 import javafx.scene.Node
 import javafx.scene.control.Label
-import javafx.scene.layout.Region
 import javafx.scene.layout.StackPane
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Rectangle
@@ -56,8 +55,7 @@ class AssociationAdorner(
 
         val label = Label("Select second frame").also {
             it.textFill = Paint.valueOf(Style.surfaceColor)
-            it.font = Font.font(Style.fontCondensed, FontWeight.BOLD, 20.0)
-            it.minWidth = Region.USE_PREF_SIZE
+            it.font = Font.font(Style.fontCondensed, FontWeight.BOLD, 18.0)
         }
 
         pane.add(rectangle)
