@@ -1,9 +1,10 @@
-package solve.unit.scene
+package solve.interactive.scene
 
 import io.github.palexdev.materialfx.utils.SwingFXUtils
 import javafx.scene.image.WritableImage
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.io.TempDir
+import solve.interactive.InteractiveTestClass
 import solve.parsers.lines.createCSVFileWithData
 import solve.parsers.structures.Point
 import solve.project.model.LandmarkFile
@@ -17,7 +18,7 @@ import java.io.File
 import javax.imageio.ImageIO
 import kotlin.math.min
 
-internal open class SceneTestsBase {
+internal open class SceneTestsBase : InteractiveTestClass() {
     protected val controller = find<SceneController>()
 
     protected fun getState(frameNumber: Int, layerName: String, landmark: Long): LayerState {
