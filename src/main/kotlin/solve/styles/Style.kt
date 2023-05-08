@@ -33,7 +33,7 @@ object Style {
 
     const val buttonStyle =
         "-fx-font-family: 'Roboto Condensed'; -fx-font-size: $buttonFontSize;" +
-        " -fx-font-weight: 700; -fx-text-fill: #78909C;"
+            " -fx-font-weight: 700; -fx-text-fill: #78909C;"
 
     const val navigationRailTabSize = 70.0
 
@@ -41,7 +41,7 @@ object Style {
 
     const val tabStyle =
         "-fx-font-family: $font; -fx-font-weight:700; -fx-font-size: $buttonFontSize; " +
-        "-fx-text-fill: $primaryColorLight; -fx-background-radius: 36"
+            "-fx-text-fill: $primaryColorLight; -fx-background-radius: 36"
 
     fun circleForRipple(button: MFXButton) = Circle(button.layoutX + 36.0, button.layoutY + 36.0, 35.0)
 
