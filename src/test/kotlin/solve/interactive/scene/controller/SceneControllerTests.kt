@@ -130,6 +130,8 @@ internal class SceneControllerTests : SceneTestsBase() {
 
     @Test
     fun `Change min scale`() {
+        controller.scrollY = { it }
+        controller.scrollX = { it }
         val newMinScale = 2.0
         controller.installedMinScale = newMinScale
         assertEquals(newMinScale, controller.scale, 0.01)

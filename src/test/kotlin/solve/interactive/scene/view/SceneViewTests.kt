@@ -1,8 +1,9 @@
-package solve.interactive
+package solve.interactive.scene.view
 
 import javafx.geometry.Orientation
 import javafx.scene.control.Label
 import javafx.scene.input.MouseButton
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -15,6 +16,7 @@ import solve.fireMousePressed
 import solve.fireScrollEvent
 import solve.interactive.scene.SceneTestsBase
 import solve.scene.SceneFacade
+import solve.scene.controller.SceneController
 import solve.scene.view.SceneView
 import solve.scene.view.virtualizedfx.VirtualScrollPaneWithOutOfFramesLayer
 import solve.testMemoryLeak
@@ -119,6 +121,17 @@ internal class SceneViewTests : SceneTestsBase() {
             testMemoryLeak(factory) {
                 grid = null
             }
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        @AfterAll
+        fun tearDownAll() {
+            val controller = find<SceneController>()
+            controller.sceneWidthProperty.unbind()
+            controller.scrollX = null
+            controller.scrollY = null
         }
     }
 }
