@@ -1,11 +1,11 @@
-package solve.unit.scene.controller
+package solve.interactive.scene.controller
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import solve.scene.SceneFacade
-import solve.unit.scene.SceneTestsBase
+import solve.interactive.scene.SceneTestsBase
 import solve.utils.structures.DoublePoint
 
 internal class SceneControllerTests : SceneTestsBase() {
