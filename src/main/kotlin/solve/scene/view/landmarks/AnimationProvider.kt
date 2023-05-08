@@ -12,14 +12,28 @@ import javafx.util.Duration
  * Provides animations.
  */
 interface AnimationProvider {
+    /**
+     * Creates transition which transforms node scale to target value of scaleFactorX and scaleFactorY.
+     */
     fun createScaleTransition(node: Node, scaleFactorX: Double, scaleFactorY: Double, duration: Duration): Transition
 
+    /**
+     * Creates transition which transforms shape's color to the target value across all intermediate values.
+     */
     fun createFillTransition(shape: Shape, color: Color, duration: Duration): Transition
 
+    /**
+     * Creates transition which transforms shape's color to the target value across all intermediate values.
+     */
     fun createStrokeTransition(shape: Shape, color: Color, duration: Duration): Transition
 
     fun createWidthTransition(shape: Line, targetWidth: Double, duration: Duration): Timeline
 
+    /**
+     * Creates transition which transforms initialColor to targetColor across all intermediate values
+     * and calls colorChangedCallback with each intermediate value corresponding to percent value
+     * from 0 to 100.
+     */
     fun createColorTimeline(
         duration: Duration,
         initialColor: Color,

@@ -2,6 +2,10 @@ package solve.scene.model
 
 import solve.scene.view.association.Associatable
 
+/**
+ * Landmark data object, contains all data needed to draw landmark including common layer settings and state.
+ * Color of landmark should be got from the layerSettings object.
+ */
 sealed class Landmark(val uid: Long, open val layerSettings: LayerSettings, val layerState: LayerState) {
     class Keypoint(
         uid: Long,
