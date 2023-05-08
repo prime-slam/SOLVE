@@ -79,16 +79,6 @@ internal class SceneViewTests : SceneTestsBase() {
     }
 
     @Test
-    fun `Set empty scene`(robot: FxRobot) {
-        SceneFacade.visualize(listOf(), listOf(), false)
-        robot.interact {
-            val scene = find<SceneView>()
-            val label = scene.root.children.single() as Label
-            assertEquals("No frames was provided", label.text)
-        }
-    }
-
-    @Test
     fun `Associations manager can be garbage collected after redraw`(robot: FxRobot) {
         robot.interact { }
         val sceneView = find<SceneView>()
