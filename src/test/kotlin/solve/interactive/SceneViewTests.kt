@@ -6,6 +6,7 @@ import javafx.scene.input.MouseButton
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -14,10 +15,12 @@ import org.testfx.framework.junit5.ApplicationExtension
 import org.testfx.framework.junit5.Start
 import solve.fireMouseDragged
 import solve.fireMousePressed
+import solve.fireScrollEvent
 import solve.interactive.scene.SceneTestsBase
 import solve.scene.SceneFacade
 import solve.scene.view.SceneView
 import solve.scene.view.virtualizedfx.VirtualScrollPaneWithOutOfFramesLayer
+import solve.utils.structures.DoublePoint
 import tornadofx.*
 
 @ExtendWith(ApplicationExtension::class)
@@ -42,7 +45,6 @@ internal class SceneViewTests : SceneTestsBase() {
         }
         this.stage = stage
         stage.scene = scene
-        stage.show()
     }
 
     @BeforeEach
@@ -74,6 +76,17 @@ internal class SceneViewTests : SceneTestsBase() {
             grid.fireMouseDragged(finishX, finishY, MouseButton.PRIMARY)
             assertEquals(startX - finishX, controller.x, 0.01)
             assertEquals(startY - finishY, controller.y, 0.01)
+        }
+    }
+
+    @Test
+    fun `Zoom by mouse wheel`(robot: FxRobot) {
+        robot.interact {
+            val initialScale = controller.scale
+            val point = DoublePoint(5.0, 10.0)
+            grid.fireScrollEvent(point.x, point.y)
+            val finalScale = controller.scale
+            assertTrue(finalScale > initialScale)
         }
     }
 
