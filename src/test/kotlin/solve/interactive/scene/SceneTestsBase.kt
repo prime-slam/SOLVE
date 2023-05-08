@@ -63,6 +63,8 @@ internal open class SceneTestsBase : InteractiveTestClass() {
             keypointFiles =
                 uidsRange.map { createCSVFileWithData(tempFolder, csvTestPointsStringData, "$it.csv") }
             imageFiles = uidsRange.map { createImage(tempFolder, "$it.png") }
+
+            setUpTestDrawing()
         }
 
         private fun createImage(tempFolder: File, name: String): File {
