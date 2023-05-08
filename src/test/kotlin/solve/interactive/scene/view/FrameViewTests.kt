@@ -105,11 +105,15 @@ internal class FrameViewTests : InteractiveTestClass() {
         scale.value *= 2
         val positions = frameView.children.filterIsInstance<Ellipse>()
             .map { Point(it.centerX.toInt().toShort(), it.centerY.toInt().toShort()) }
-        assertEquals(points.map {
-            Point(
-                (it.x * scale.value).toInt().toShort(), (it.y * scale.value).toInt().toShort()
-            )
-        }.toSet(), positions.toSet())
+        assertEquals(
+            points.map {
+                Point(
+                    (it.x * scale.value).toInt().toShort(),
+                    (it.y * scale.value).toInt().toShort()
+                )
+            }.toSet(),
+            positions.toSet()
+        )
     }
 
     @Test
@@ -170,11 +174,17 @@ internal class FrameViewTests : InteractiveTestClass() {
         }
         val secondLayerName = "layer2"
         val settings = LayerSettings.PointLayerSettings(secondLayerName, secondLayerName, ColorManager())
-        val layers = listOf(Layer.PointLayer(secondLayerName, settings) { keypoints },
-            Layer.PointLayer(layerName, this.settings) { this.keypoints })
+        val layers = listOf(
+            Layer.PointLayer(secondLayerName, settings) { keypoints },
+            Layer.PointLayer(layerName, this.settings) { this.keypoints }
+        )
         frame = VisualizationFrame(1, { image }, layers)
         val scope = CoroutineScope(Dispatchers.JavaFx)
-        parameters = FrameViewParameters(scope, associationsManager, TestOrderManager(mapOf(this.settings to 0, settings to 1)))
+        parameters = FrameViewParameters(
+            scope,
+            associationsManager,
+            TestOrderManager(mapOf(this.settings to 0, settings to 1))
+        )
         robot.interact {
             frameView.init(FrameViewData(frame, parameters))
         }
