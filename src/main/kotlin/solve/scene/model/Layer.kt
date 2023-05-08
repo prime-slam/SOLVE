@@ -1,5 +1,8 @@
 package solve.scene.model
 
+/**
+ * Aggregates all landmarks from one layer and frame.
+ */
 sealed class Layer(
     val name: String,
     open val settings: LayerSettings,
