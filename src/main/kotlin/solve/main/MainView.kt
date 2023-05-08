@@ -12,7 +12,10 @@ import javafx.scene.image.ImageView
 import javafx.scene.layout.VBox
 import javafx.scene.shape.Circle
 import solve.catalogue.view.CatalogueView
-import solve.constants.*
+import solve.constants.IconsHelp
+import solve.constants.IconsImportFab
+import solve.constants.IconsPlugins
+import solve.constants.IconsSettings
 import solve.importer.controller.ImporterController
 import solve.importer.view.ImporterView
 import solve.main.splitpane.SidePanelLocation
@@ -70,7 +73,8 @@ class MainView : View() {
         SidePanelTab(
             "Layers",
             find<VisualizationSettingsView>().root
-        ), SidePanelTab(
+        ),
+        SidePanelTab(
             "Grid",
             find<GridSettingsView>().root
         )
