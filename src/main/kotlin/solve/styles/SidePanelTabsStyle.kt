@@ -2,7 +2,12 @@ package solve.styles
 
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
-import solve.constants.*
+import solve.constants.IconsGrid
+import solve.constants.IconsGridSelected
+import solve.constants.IconsLayers
+import solve.constants.IconsLayersFilled
+import solve.constants.IconsProject
+import solve.constants.IconsProjectFilled
 import solve.utils.createPxBoxWithValue
 import tornadofx.Stylesheet
 import tornadofx.cssclass
