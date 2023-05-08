@@ -14,12 +14,27 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
+/**
+ * Manages scene data, responds for interaction of scene with another components of application.
+ * Allows settings component to edit scale range and columns number properties of the scene.
+ */
 class SceneController : Controller() {
+    /**
+     * Real width of the scene visual component.
+     * Used to recalculate scale and columns number.
+     */
     val sceneWidthProperty = SimpleDoubleProperty()
+
+    /**
+     * Scene data object.
+     */
     val sceneProperty = SimpleObjectProperty(Scene(emptyList(), emptyList()))
     val scene: Scene
         get() = sceneProperty.value
 
+    /**
+     * Installed in the settings columns number.
+     */
     val installedColumnsNumberProperty = SimpleIntegerProperty(0)
     var installedColumnsNumber: Int
         get() = installedColumnsNumberProperty.value
@@ -31,10 +46,17 @@ class SceneController : Controller() {
 
             installedColumnsNumberProperty.value = value
         }
+
+    /**
+     * Real used columns number, by default calculated depending on frames count.
+     */
     val columnsNumber: Int
         get() = min(scene.frames.count(), installedColumnsNumber)
 
-    val installedMinScaleProperty = SimpleDoubleProperty(DefaultMinScale)
+    /**
+     * Editable low border of scene scale range.
+     */
+    private val installedMinScaleProperty = SimpleDoubleProperty(DefaultMinScale)
     var installedMinScale: Double
         get() = installedMinScaleProperty.value
         set(value) {
@@ -46,7 +68,10 @@ class SceneController : Controller() {
             installedMinScaleProperty.value = value
         }
 
-    val installedMaxScaleProperty = SimpleDoubleProperty(DefaultMaxScale)
+    /**
+     * Editable top border of scene scale range.
+     */
+    private val installedMaxScaleProperty = SimpleDoubleProperty(DefaultMaxScale)
     var installedMaxScale: Double
         get() = installedMaxScaleProperty.value
         set(value) {
@@ -58,6 +83,10 @@ class SceneController : Controller() {
             installedMaxScaleProperty.value = value
         }
 
+    /**
+     * Current scale value, used in all elements of the scene,
+     * which size or position depends on scale (frames, landmarks, associations, etc.)
+     */
     val scaleProperty = SimpleDoubleProperty(calculateMinScaleDependingOnColumns())
     var scale: Double
         get() = scaleProperty.value
@@ -73,8 +102,10 @@ class SceneController : Controller() {
     val xProperty = SimpleDoubleProperty(DefaultX)
     val yProperty = SimpleDoubleProperty(DefaultY)
 
-    // Scroll grid methods, controller's x and y properties can't be explicitly bound to grid's x and y properties
-    // because grid can't scroll in certain cases
+    /**
+     * Grid scroll methods,  controller's x and y properties can't be explicitly bound to grid's x and y properties,
+     * because grid can't scroll in certain cases
+     */
     var scrollX: ((Double) -> Double)? = null
     var scrollY: ((Double) -> Double)? = null
 
@@ -92,13 +123,16 @@ class SceneController : Controller() {
             scrollY(value)
         }
 
-    private val haveEmptySpace: Boolean
+    private val hasEmptySpace: Boolean
         get() = scale < calculateMinScaleDependingOnColumns()
 
     init {
         addGridSettingsBindings()
     }
 
+    /**
+     * Changes scene data object and recalculates visual properties.
+     */
     fun setScene(newScene: Scene, keepSettings: Boolean) {
         sceneProperty.value = newScene
 
@@ -112,8 +146,11 @@ class SceneController : Controller() {
 
     fun zoomOut(mousePosition: DoublePoint) = zoom(max(scale / ScaleFactor, min(minScale, scale)), mousePosition)
 
+    /**
+     * Recalculates current scale value to avoid empty space.
+     */
     fun recalculateScale(keepOldScale: Boolean) {
-        if (!keepOldScale || haveEmptySpace) {
+        if (!keepOldScale || hasEmptySpace) {
             scale = minScale
         }
     }
@@ -125,6 +162,7 @@ class SceneController : Controller() {
         DelayedFramesUpdatesManager.doLockedAction {
             scaleProperty.value = newScale
 
+            // Recalculates scroll position scroll to or from the mouse position.
             x = initialMouseX * scaleProperty.value - mousePosition.x
             y = initialMouseY * scaleProperty.value - mousePosition.y
         }
@@ -153,6 +191,10 @@ class SceneController : Controller() {
         }
     }
 
+    /**
+     * By default, scene tries to show frames on minimal possible scale
+     * and avoids empty space.
+     */
     private fun calculateMinScaleDependingOnColumns(): Double {
         return min(
             max(
