@@ -1,34 +1,18 @@
 package solve.unit.scene
 
-import io.github.palexdev.materialfx.utils.SwingFXUtils
-import javafx.scene.image.WritableImage
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertSame
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.io.TempDir
-import solve.parsers.lines.createCSVFileWithData
 import solve.parsers.structures.Point
-import solve.project.model.LandmarkFile
-import solve.project.model.LayerKind
-import solve.project.model.ProjectFrame
-import solve.project.model.ProjectLayer
 import solve.scene.SceneFacade
-import solve.scene.controller.SceneController
 import solve.scene.model.Landmark
-import solve.scene.model.LayerState
 import solve.scene.model.Scene
-import tornadofx.*
-import java.io.File
-import javax.imageio.ImageIO
 
-internal class SceneFacadeTests {
-    private val controller = find<SceneController>()
-
+internal class SceneFacadeTests : SceneTestsBase() {
     @BeforeEach
     fun setUp() {
         controller.setScene(Scene(emptyList(), emptyList()), false)
@@ -127,69 +111,5 @@ internal class SceneFacadeTests {
         val scene = controller.scene
         assertEquals(0, scene.frames.size)
         assertEquals(0, scene.layerSettings.size)
-    }
-
-    private fun getState(frameNumber: Int, layerName: String, landmark: Long): LayerState {
-        return controller.scene.frames[frameNumber].layers.single { it.name == layerName }.getLandmarks()
-            .single { it.uid == landmark }.layerState
-    }
-
-    private fun createScene(
-        layersName: List<String>,
-        projectName: String = "project1",
-        framesCount: Int = 10
-    ): SceneData {
-        val layers = layersName.map { ProjectLayer(LayerKind.Keypoint, it, projectName) }
-        val frames = (0 until framesCount).map { i ->
-            val files = layers.map { LandmarkFile(it, keypointFiles[i].toPath(), listOf(i.toLong())) }
-            ProjectFrame(
-                i.toLong(),
-                imageFiles[i].toPath(),
-                files
-            )
-        }
-        return SceneData(layers, frames)
-    }
-
-    private data class SceneData(val layers: List<ProjectLayer>, val frames: List<ProjectFrame>)
-
-    companion object {
-        @TempDir
-        lateinit var tempFolder: File
-
-        private const val framesCount = 10
-        private lateinit var imageFiles: List<File>
-        private lateinit var keypointFiles: List<File>
-
-        @JvmStatic
-        @BeforeAll
-        fun setUpAll() {
-            val uidsRange = 0 until framesCount
-            keypointFiles =
-                uidsRange.map { createCSVFileWithData(tempFolder, csvTestPointsStringData, "$it.csv") }
-            imageFiles = uidsRange.map { createImage(tempFolder, "$it.png") }
-        }
-
-        private fun createImage(tempFolder: File, name: String): File {
-            val image = WritableImage(100, 200)
-            val imageFile = File(tempFolder, name)
-            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "PNG", imageFile)
-            return imageFile
-        }
-
-        private const val CSVPointDataStringPrefix = "uid,x,y\n"
-        private val testPoints = listOf(
-            Point(1, 5.0, 7.0),
-            Point(2, 8.0, -9.0),
-            Point(3, 5.0, -7.0),
-            Point(5, 2.0, 0.0),
-            Point(4, 1.0, 3.0),
-            Point(8, 5.0, 14.0),
-            Point(9, 3.0, 5.0)
-        )
-        private val csvTestPointsStringData =
-            testPoints.joinToString(prefix = CSVPointDataStringPrefix, separator = "\n") { it.getCSVDataString() }
-
-        private fun Point.getCSVDataString() = "$uid,$x,$y"
     }
 }
