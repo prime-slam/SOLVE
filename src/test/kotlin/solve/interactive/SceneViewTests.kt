@@ -1,7 +1,6 @@
 package solve.interactive
 
 import javafx.geometry.Orientation
-import javafx.scene.Scene
 import javafx.scene.input.MouseButton
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
