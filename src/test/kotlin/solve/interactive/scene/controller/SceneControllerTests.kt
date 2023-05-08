@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import solve.scene.SceneFacade
 import solve.interactive.scene.SceneTestsBase
+import solve.scene.SceneFacade
 import solve.utils.structures.DoublePoint
 
 internal class SceneControllerTests : SceneTestsBase() {
