@@ -41,6 +41,18 @@ import tornadofx.*
 import tornadofx.add
 import solve.utils.structures.Size as DoubleSize
 
+/**
+ * Represents one frame, superimposes landmarks (canvas and non-canvas on top of the image).
+ * Also, responsible for async frame data loading.
+ * Shows loading indicator while data (image and landmarks) not loaded.
+ *
+ * @param size frame size including indent.
+ * @param scale global scene scale property.
+ * @param frameViewStorage storage, where FrameView should be placed when it no more in usage.
+ * @param canvasLayersCount number of layers, which landmarks use canvas to draw, used to init frame buffer.
+ * @param parameters parameters of FrameView which can not be shared between different scenes and should be updated on scene changes.
+ * @param frame data object which produces image and landmarks.
+ */
 class FrameView(
     val size: DoubleSize,
     private val scale: DoubleProperty,
@@ -77,6 +89,7 @@ class FrameView(
     private val hasAssociations = SimpleBooleanProperty(false)
 
     init {
+        // image should be drawn below landmarks
         canvas.viewOrder = IMAGE_VIEW_ORDER
         add(canvas)
         init(FrameViewData(frame, parameters))
@@ -84,6 +97,7 @@ class FrameView(
         addAssociationListeners()
         addChooseSecondAssociationFrameAction()
 
+        // associations context menu
         mfxContextMenu {
             addCopyTimestampAction()
             lineSeparator()
@@ -91,6 +105,10 @@ class FrameView(
         }
     }
 
+    /**
+     * Refreshes has keypoints and has associations before context menu showing to disable buttons
+     * if action can't be done.
+     */
     private fun Node.addAssociationListeners() {
         setOnContextMenuRequested {
             hasKeypoints.value = currentFrame?.hasPoints()
@@ -99,6 +117,9 @@ class FrameView(
         }
     }
 
+    /**
+     * Chooses second point layer to associate with.
+     */
     private fun Node.addChooseSecondAssociationFrameAction() {
         setOnMouseClicked { mouse ->
             if (mouse.button != MouseButton.PRIMARY) {
@@ -117,6 +138,9 @@ class FrameView(
         }
     }
 
+    /**
+     * Copies frame timestamp to clipboard.
+     */
     private fun MFXContextMenu.addCopyTimestampAction() {
         item("Copy timestamp").action {
             val timestamp = currentFrame?.timestamp ?: return@action
@@ -142,6 +166,9 @@ class FrameView(
         }
     }
 
+    /**
+     * Chooses available to clear associations layer.
+     */
     private fun chooseAssociatedPointLayer(frame: VisualizationFrame, owner: Window): Layer.PointLayer? {
         val associatedLayersNames = getAssociatedLayersNames(frame)
         val enabledAssociatedPointLayers = frame.layers
@@ -165,6 +192,9 @@ class FrameView(
         return chooseLayer(enabledPointLayers, owner)
     }
 
+    /**
+     * User chooses one layer from collection using dialog.
+     */
     private fun <T> chooseLayer(layers: List<T>, owner: Window): T? {
         if (layers.isEmpty()) {
             return null
@@ -178,6 +208,9 @@ class FrameView(
         }
     }
 
+    /**
+     * Update frame parameters when frame is reused from cache.
+     */
     override fun init(params: FrameViewData) {
         scale.addListener(scaleChangedListener)
         setFrame(params.frame)
@@ -197,7 +230,13 @@ class FrameView(
         setFrame(data)
     }
 
+    /**
+     * Update frame data.
+     *
+     * @param frame data object, null for empty frames when frames number is not multiple of columns number.
+     */
     fun setFrame(frame: VisualizationFrame?) {
+        // avoid redundant updates on zooming.
         if (DelayedFramesUpdatesManager.shouldDelay) {
             DelayedFramesUpdatesManager.delayUpdate(this, frame)
             return
@@ -205,6 +244,8 @@ class FrameView(
         if (frame == currentFrame) {
             return
         }
+
+        // new frame can be set while old frame loading
         currentJob?.cancel()
         disposeLandmarkViews()
         removeLandmarksNodes()
@@ -218,17 +259,20 @@ class FrameView(
         }
 
         currentJob = Job()
+        // fills frame with grey rectangle while data is not loaded
         drawLoadingIndicator()
 
         coroutineScope.launch(currentJob!!) {
-            if (!isActive) return@launch
+            if (!isActive) return@launch // if task cancelled
+            // load landmarks from files for all layers
             val landmarkData = frame.layers.associateWith { it.getLandmarks() }
 
-            if (!isActive) return@launch
+            if (!isActive) return@launch // if task cancelled
             val image = frame.getImage()
 
+            // Visual actions can be performed only in UI thread
             withContext(Dispatchers.JavaFx) {
-                if (!this@launch.isActive) return@withContext
+                if (!this@launch.isActive) return@withContext // if task cancelled
                 val landmarkViews = landmarkData.mapValues {
                     it.value.map { landmark ->
                         LandmarkView.create(
@@ -259,6 +303,9 @@ class FrameView(
         frameViewStorage.store(this)
     }
 
+    /**
+     * Performs all canvas drawing actions and manages landmarks view order.
+     */
     private fun draw() {
         val image = drawnImage ?: return
         frameDrawer.clear()
