@@ -79,8 +79,8 @@ fun <T, C : GridCell<T>?> wrapGridWithVsp(
 /**
  * This inheritor is needed to put OutOfFramesLayer into visual tree nearby VirtualGrid.
  */
-private class VirtualScrollPaneWithOutOfFramesLayer<T, C : GridCell<T>?>(
-    private val virtualGrid: VirtualGrid<T, C>,
+class VirtualScrollPaneWithOutOfFramesLayer<T, C : GridCell<T>?>(
+    val virtualGrid: VirtualGrid<T, C>,
     private val outOfFramesLayer: OutOfFramesLayer
 ) : VirtualScrollPane(virtualGrid) {
     override fun createDefaultSkin(): Skin<*> {
