@@ -19,9 +19,14 @@ import tornadofx.vbox
 import solve.utils.structures.DoublePoint as DoublePoint
 import solve.utils.structures.Size as DoubleSize
 
+/**
+ * Scene visual component, represents grid with frames.
+ * Set up global scene properties.
+ */
 class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
+
     var currentGrid: Grid? = null
         private set
     var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
@@ -36,6 +41,9 @@ class SceneView : View() {
         addBindings()
     }
 
+    /**
+     * Redraws scene with new frames.
+     */
     private fun redraw() {
         unbindPositionProperties()
         currentGrid?.dispose()
@@ -69,6 +77,7 @@ class SceneView : View() {
 
         val frameViewParameters = FrameViewParameters(frameDataLoadingScope, associationsManager, scene)
 
+        // if frame size or canvas layers count is not equal frame drawer buffer can not be reused.
         val canReuseCache = frameViewCache?.parameters?.size == frameSize &&
             frameViewCache?.parameters?.canvasDepth == scene.canvasLayersCount
 
@@ -77,6 +86,7 @@ class SceneView : View() {
             view.size == frameViewSettings.size
         }
 
+        // Frame view cache reduces memory allocations by reusing previously created frames with buffers.
         frameViewCache = if (canReuseCache) {
             frameViewCache!!
         } else {
