@@ -7,6 +7,11 @@ internal open class InteractiveTestClass {
         @JvmStatic
         @BeforeAll
         fun setUpAll() {
+            setUpTestDrawing()
+        }
+
+        @JvmStatic
+        protected fun setUpTestDrawing() {
             System.setProperty("testfx.robot", "glass")
             System.setProperty("testfx.headless", "true")
             System.setProperty("prism.order", "sw")
