@@ -12,11 +12,14 @@ import solve.scene.view.HIGHLIGHTING_VIEW_ORDER_GAP
 import solve.scene.view.LANDMARKS_VIEW_ORDER
 import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameEventManager
+import solve.utils.ServiceLocator
 import tornadofx.ChangeListener
 import tornadofx.visibleWhen
 
-// Responsive for creating and setting visual effects for landmarks presenting controls
-// This has access to landmark data class and its layer
+/**
+ * Represents landmark on the frame. Can be drawn both using visual tree either using canvas.
+ * Has access to landmark data class and its layer to apply common layer properties.
+ */
 sealed class LandmarkView(
     scale: Double,
     viewOrder: Int,
@@ -41,13 +44,17 @@ sealed class LandmarkView(
         val InstantAnimationDuration: Duration = Duration.millis(0.1)
     }
 
-    // When shape is created in an inheritor
-    // setUpShape() should be called to set up common features for all landmarks
+    /**
+     * When shape is created in an inheritor, setUpShape() should be called to set up common features for all landmarks.
+     *
+     */
     abstract val node: Node?
 
-    // Ensures right z-order between landmarks from different layers
-    // Landmark with greater viewOrder will be drawn above
-    // Node.viewOrder is double, and node with less viewOrder will be drawn above
+    /**
+     * Ensures right z-order between landmarks from different layers.
+     * Landmark with greater viewOrder will be drawn above.
+     * Node.viewOrder is double, and node with less viewOrder will be drawn above
+     */
     var viewOrder: Int = viewOrder.also { node?.viewOrder = LANDMARKS_VIEW_ORDER - viewOrder }
         set(value) {
             node?.viewOrder = LANDMARKS_VIEW_ORDER - viewOrder
@@ -55,7 +62,17 @@ sealed class LandmarkView(
             viewOrderChanged()
         }
 
+    /**
+     * Adds landmark as visual element to frame drawer if needed.
+     */
     abstract fun addToFrameDrawer()
+
+    /**
+     * Global service which creates visual animations.
+     * Mocked in tests.
+     */
+    protected val animationProvider
+        get() = ServiceLocator.getService<AnimationProvider>() ?: throw IllegalStateException()
 
     private val layerState = landmark.layerState
     private val layerSettings = landmark.layerSettings
@@ -66,12 +83,19 @@ sealed class LandmarkView(
 
     private var isHighlighted = false
 
+    /**
+     * Should be called when scene's scale updated.
+     */
     var scale: Double = scale
         set(value) {
             field = value
             scaleChanged()
         }
 
+    /**
+     * For cases when newly created landmark is already highlighted.
+     * Used to play instant animation to highlight landmark in common way as usual.
+     */
     private val parentChangedListener: InvalidationListener = InvalidationListener { newValue ->
         if (newValue != null && shouldHighlight) {
             highlightShapeIfNeeded(InstantAnimationDuration)
@@ -81,6 +105,9 @@ sealed class LandmarkView(
 
     private fun removeParentChangedListener() = node?.parentProperty()?.removeListener(parentChangedListener)
 
+    /**
+     * Updates highlighting state when some landmark in the layer was clicked.
+     */
     private val selectedLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
         if (e.wasAdded() && e.elementAdded == landmark.uid) {
             highlightShapeIfNeeded(HighlightingAnimationDuration)
@@ -91,6 +118,9 @@ sealed class LandmarkView(
         }
     }
 
+    /**
+     * Updates highlighting state when some landmark in the layer was hovered.
+     */
     private val hoveredLandmarksChangedEventHandler = SetChangeListener<Long> { e ->
         if (isSelected) {
             return@SetChangeListener
@@ -119,8 +149,11 @@ sealed class LandmarkView(
         removeListeners()
     }
 
-    // Set up common shape properties
-    // Can not be called during LandmarkView initialization because shape is created by inheritors
+    /**
+     * Set up common shape properties.
+     * Can not be called during LandmarkView initialization because shape is created by inheritors.
+     * Use this function only to interact with the shape.
+     */
     protected fun setUpShape(shape: Shape, uid: Long) {
         initializeCommonSettingsBindings(shape)
         shape.parentProperty().addListener(parentChangedListener)
@@ -142,10 +175,16 @@ sealed class LandmarkView(
         }
     }
 
+    /**
+     * Brings visual node to the top on highlighting.
+     */
     protected fun toFront(node: Node) {
         node.viewOrder -= HIGHLIGHTING_VIEW_ORDER_GAP
     }
 
+    /**
+     * Returns visual node back when it was unhighlighted.
+     */
     protected fun toBack(node: Node) {
         node.viewOrder += HIGHLIGHTING_VIEW_ORDER_GAP
     }
@@ -156,10 +195,14 @@ sealed class LandmarkView(
 
     protected abstract fun viewOrderChanged()
 
-    // Should be called only from highlightShapeIfNeeded
+    /**
+     * Should be called only from highlightShapeIfNeeded.
+     */
     protected abstract fun highlightShape(duration: Duration)
 
-    // Should be called only from unhighlightShapeIfNeeded
+    /**
+     * Should be called only from highlightShapeIfNeeded.
+     */
     protected abstract fun unhighlightShape(duration: Duration)
 
     protected abstract fun scaleChanged()
@@ -184,6 +227,9 @@ sealed class LandmarkView(
         layerSettings.commonColorProperty.removeListener(commonColorChangedEventHandler)
     }
 
+    /**
+     * Ensures that landmark wouldn't be highlighted twice.
+     */
     protected fun highlightShapeIfNeeded(duration: Duration) {
         if (isHighlighted) {
             return
@@ -192,6 +238,9 @@ sealed class LandmarkView(
         isHighlighted = true
     }
 
+    /**
+     * Ensures that landmark wouldn't be unhighlighted twice.
+     */
     private fun unhighlightShapeIfNeeded(duration: Duration) {
         if (!isHighlighted) {
             return

@@ -22,6 +22,7 @@ val junitJupiterEngineVersion: String by rootProject
 val junitJupiterParamsVersion: String by rootProject
 val testfxVersion: String by rootProject
 val testfxMonocleVersion: String by rootProject
+val mockkVersion: String by rootProject
 
 repositories {
     mavenCentral()
@@ -56,6 +57,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterParamsVersion")
     testImplementation("org.testfx:testfx-junit5:$testfxVersion")
     testImplementation("org.testfx:openjfx-monocle:$testfxMonocleVersion")
+    testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
 tasks {

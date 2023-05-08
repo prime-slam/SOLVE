@@ -1,5 +1,6 @@
 package solve.utils
 
+import javafx.geometry.BoundingBox
 import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.image.Image
@@ -26,7 +27,7 @@ fun Node.addSafely(node: Node?) {
     node?.let { add(it) }
 }
 
-fun Node.getScreenBounds(): Bounds = localToScreen(boundsInLocal)
+fun Node.getScreenBounds(): Bounds = localToScreen(boundsInLocal) ?: BoundingBox(1.0, 1.0, 1.0, 1.0)
 
 fun Node.getScreenPosition(): DoublePoint {
     val bounds = getScreenBounds()

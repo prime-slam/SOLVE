@@ -1,16 +1,15 @@
 package solve.scene.view.landmarks
 
-import javafx.animation.KeyFrame
-import javafx.animation.KeyValue
-import javafx.animation.Timeline
 import javafx.beans.InvalidationListener
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.util.Duration
 import solve.scene.model.Landmark
-import solve.scene.view.utils.createStrokeTransition
 import solve.utils.structures.DoublePoint
 
+/**
+ * Represents line landmark on a frame.
+ */
 class LineView(
     private val line: Landmark.Line,
     viewOrder: Int,
@@ -20,6 +19,9 @@ class LineView(
         private const val HighlightingScaleFactor: Double = 2.0
     }
 
+    /**
+     * Actual visual node width, can be affected with highlighting state and scale.
+     */
     private val width: Double
         get() {
             val scaleFactor = if (scale < 1) scale else 1.0
@@ -40,8 +42,14 @@ class LineView(
         addListeners()
     }
 
+    /**
+     * Do nothing because line doesn't use frame drawer.
+     */
     override fun addToFrameDrawer() {}
 
+    /**
+     * Actual visual coordinates within the frame.
+     */
     private val startCoordinates
         get() = DoublePoint(line.startCoordinate.x.toDouble() * scale, line.startCoordinate.y.toDouble() * scale)
 
@@ -70,9 +78,12 @@ class LineView(
 
     override fun viewOrderChanged() {}
 
+    /**
+     * Plays highlighting animation.
+     */
     override fun highlightShape(duration: Duration) {
-        val scaleTransition = Timeline(KeyFrame(duration, KeyValue(node.strokeWidthProperty(), width)))
-        val strokeTransition = createStrokeTransition(
+        val scaleTransition = animationProvider.createWidthTransition(node, width, duration)
+        val strokeTransition = animationProvider.createStrokeTransition(
             node,
             line.layerSettings.getUniqueColor(line),
             duration
@@ -84,10 +95,13 @@ class LineView(
         strokeTransition.play()
     }
 
+    /**
+     * Plays unhighlighting animation.
+     */
     override fun unhighlightShape(duration: Duration) {
         val targetWidth = line.layerSettings.selectedWidth * (if (scale < 1) scale else 1.0)
-        val scaleTransition = Timeline(KeyFrame(duration, KeyValue(node.strokeWidthProperty(), targetWidth)))
-        val strokeTransition = createStrokeTransition(
+        val scaleTransition = animationProvider.createWidthTransition(node, targetWidth, duration)
+        val strokeTransition = animationProvider.createStrokeTransition(
             node,
             line.layerSettings.getColor(line),
             duration
