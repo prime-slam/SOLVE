@@ -42,7 +42,8 @@ open class SidePanelTabsView : View() {
             styleClass.add(tab.name.lowercase())
             contentDisplay = ContentDisplay.TOP
             style =
-                "-fx-font-family: ${Style.font}; -fx-font-weight:700; -fx-font-size: ${Style.buttonFontSize}; -fx-background-radius: 36"
+                "-fx-font-family: ${Style.font}; -fx-font-weight:700;" +
+                " -fx-font-size: ${Style.buttonFontSize}; -fx-background-radius: 36"
 
             setPrefSize(72.0, 72.0)
             usePrefSize = true
