@@ -24,7 +24,8 @@ class SceneView : View() {
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
     var currentGrid: Grid? = null
         private set
-    private var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
+    var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
+        private set
     private var frameViewCache: Cache<FrameView, FrameViewData, FrameViewSettings>? = null
 
     override val root = vbox {

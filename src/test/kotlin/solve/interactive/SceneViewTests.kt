@@ -1,6 +1,7 @@
 package solve.interactive
 
 import javafx.geometry.Orientation
+import javafx.scene.control.Label
 import javafx.scene.input.MouseButton
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,6 +17,7 @@ import solve.interactive.scene.SceneTestsBase
 import solve.scene.SceneFacade
 import solve.scene.view.SceneView
 import solve.scene.view.virtualizedfx.VirtualScrollPaneWithOutOfFramesLayer
+import solve.testMemoryLeak
 import solve.utils.structures.DoublePoint
 import tornadofx.*
 
@@ -71,6 +73,52 @@ internal class SceneViewTests : SceneTestsBase() {
             grid.fireScrollEvent(point.x, point.y)
             val finalScale = controller.scale
             assertTrue(finalScale > initialScale)
+        }
+    }
+
+    @Test
+    fun `Set empty scene`(robot: FxRobot) {
+        SceneFacade.visualize(listOf(), listOf(), false)
+        robot.interact {
+            val scene = find<SceneView>()
+            val label = scene.root.children.single() as Label
+            assertEquals("No frames was provided", label.text)
+        }
+    }
+
+    @Test
+    fun `Associations manager can be garbage collected after redraw`(robot: FxRobot) {
+        robot.interact { }
+        val sceneView = find<SceneView>()
+        var associationsManager = sceneView.currentAssociationsManager
+
+        val data = createScene(listOf("layer1"), framesCount = 20)
+        SceneFacade.visualize(data.layers, data.frames, false)
+
+        robot.interact {
+            val factory = { associationsManager }
+
+            testMemoryLeak(factory) {
+                associationsManager = null
+            }
+        }
+    }
+
+    @Test
+    fun `Grid can be garbage collected after redraw`(robot: FxRobot) {
+        robot.interact { }
+        val sceneView = find<SceneView>()
+        var grid = sceneView.currentGrid
+
+        val data = createScene(listOf("layer1"), framesCount = 20)
+        SceneFacade.visualize(data.layers, data.frames, false)
+
+        robot.interact {
+            val factory = { grid }
+
+            testMemoryLeak(factory) {
+                grid = null
+            }
         }
     }
 }
