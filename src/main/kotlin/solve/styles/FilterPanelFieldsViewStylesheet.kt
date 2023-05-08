@@ -10,7 +10,7 @@ import solve.utils.createPxBoxWithValue
 import solve.utils.createPxValue
 import tornadofx.*
 
-class FilterPanelListViewStylesheet : Stylesheet() {
+class FilterPanelFieldsViewStylesheet : Stylesheet() {
     init {
         selected {
             mfxCheckbox {

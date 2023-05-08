@@ -20,10 +20,10 @@ import solve.importer.model.FrameAfterPartialParsing
 import solve.main.MainController
 import solve.main.MainView
 import solve.styles.Style
-import solve.utils.MaterialFXDialog
 import solve.utils.createAlertForError
 import solve.utils.loadResourcesImage
-import solve.utils.mfxButton
+import solve.utils.materialfx.MaterialFXDialog
+import solve.utils.materialfx.mfxButton
 import solve.utils.toStringWithoutBrackets
 import tornadofx.*
 

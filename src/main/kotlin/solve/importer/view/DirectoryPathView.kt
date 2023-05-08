@@ -14,8 +14,8 @@ import javafx.stage.DirectoryChooser
 import solve.importer.ProjectParser
 import solve.importer.controller.ImporterController
 import solve.styles.Style
-import solve.utils.mfxButton
-import solve.utils.mfxTextField
+import solve.utils.materialfx.mfxButton
+import solve.utils.materialfx.mfxTextField
 import tornadofx.*
 import java.io.File
 

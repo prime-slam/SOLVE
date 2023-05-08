@@ -1,7 +1,8 @@
-package solve.utils
+package solve.utils.materialfx
 
 import io.github.palexdev.materialfx.controls.MFXButton
 import io.github.palexdev.materialfx.controls.MFXCheckListView
+import io.github.palexdev.materialfx.controls.MFXCheckbox
 import io.github.palexdev.materialfx.controls.MFXContextMenu
 import io.github.palexdev.materialfx.controls.MFXContextMenuItem
 import io.github.palexdev.materialfx.controls.MFXTextField
@@ -11,6 +12,8 @@ import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import org.controlsfx.control.RangeSlider
+import solve.utils.materialfx.stylesheets.MFXRangeSliderStylesheet
 import tornadofx.*
 import java.util.function.Supplier
 
@@ -65,6 +68,13 @@ fun EventTarget.mfxCircleButton(
     op()
 }
 
+fun EventTarget.mfxCheckbox(text: String? = null, op: MFXCheckbox.() -> Unit = {}): MFXCheckbox {
+    val mfxCheckbox = MFXCheckbox(text)
+    mfxCheckbox.attachTo(this, op)
+
+    return mfxCheckbox
+}
+
 fun <T> EventTarget.mfxCheckListView(
     items: ObservableList<T> = observableListOf(),
     op: MFXCheckListView<T>.() -> Unit = {}
@@ -73,4 +83,18 @@ fun <T> EventTarget.mfxCheckListView(
     mfxCheckListView.attachTo(this, op)
 
     return mfxCheckListView
+}
+
+fun EventTarget.mfxRangeSlider(
+    min: Double,
+    max: Double,
+    lowValue: Double,
+    highValue: Double,
+    op: RangeSlider.() -> Unit = {}
+): RangeSlider {
+    val slider = RangeSlider(min, max, lowValue, highValue)
+    slider.addStylesheet(MFXRangeSliderStylesheet::class)
+    slider.attachTo(this, op)
+
+    return slider
 }

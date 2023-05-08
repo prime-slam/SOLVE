@@ -8,13 +8,15 @@ import solve.utils.createHGrowHBox
 import solve.utils.createPxValue
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
-import solve.utils.mfxCircleButton
+import solve.utils.materialfx.mfxCircleButton
+import solve.utils.materialfx.mfxRangeSlider
 import tornadofx.*
 
 class FilterPanelView : View() {
     private val filterPanelFieldsView: FilterPanelFieldsView by inject()
 
     override val root = vbox {
+        mfxRangeSlider(1.0, 19.0, 4.0, 8.5)
         separator {
             addStylesheet(SeparatorStylesheet::class)
         }
@@ -38,7 +40,7 @@ class FilterPanelView : View() {
                 null
             }
             hbox {
-                mfxCircleButton(addButtonGraphic)
+                mfxCircleButton(addButtonGraphic, AddFilterButtonSize)
                 paddingRight = 14.0
                 paddingTop = -6.0
             }
@@ -53,5 +55,6 @@ class FilterPanelView : View() {
         private const val HeaderFontSize = 14.0
 
         private const val FilterFieldButtonsSize = 24.0
+        private const val AddFilterButtonSize = 15.0
     }
 }

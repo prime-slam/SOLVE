@@ -10,11 +10,11 @@ import javafx.scene.layout.BorderPane
 import kotlinx.coroutines.cancel
 import solve.constants.IconsAlertError
 import solve.styles.Style
-import solve.utils.action
-import solve.utils.item
 import solve.utils.loadResourcesImage
-import solve.utils.mfxButton
-import solve.utils.mfxContextMenu
+import solve.utils.materialfx.action
+import solve.utils.materialfx.item
+import solve.utils.materialfx.mfxButton
+import solve.utils.materialfx.mfxContextMenu
 import tornadofx.*
 
 class AlertDialog(contentText: String) : View() {

@@ -22,6 +22,8 @@ object Style {
 
     const val separatorLineColor = "9DAEB7"
 
+    const val settingLightColor = "EDEEF1"
+
     const val fontCondensed = "'Roboto Condensed'"
 
     const val font = "Roboto"

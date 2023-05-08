@@ -8,7 +8,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import kotlinx.coroutines.cancel
 import solve.styles.Style
-import solve.utils.mfxButton
+import solve.utils.materialfx.mfxButton
 import tornadofx.*
 
 class LoadingScreen : View("Loading") {

@@ -6,11 +6,11 @@ import javafx.beans.binding.Bindings
 import solve.constants.IconsDeletePath
 import solve.constants.IconsEditPath
 import solve.filters.model.Filter
-import solve.styles.FilterPanelListViewStylesheet
+import solve.styles.FilterPanelFieldsViewStylesheet
 import solve.utils.createHGrowHBox
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
-import solve.utils.mfxCheckListView
+import solve.utils.materialfx.mfxCheckListView
 import tornadofx.*
 import java.util.function.Function
 
@@ -18,8 +18,8 @@ class FilterPanelFieldsView : View() {
     private val editIconImage = loadResourcesImage(IconsEditPath)
     private val deleteIconImage = loadResourcesImage(IconsDeletePath)
 
-    val filtersListView = mfxCheckListView<Filter>() {
-        addStylesheet(FilterPanelListViewStylesheet::class)
+    val filtersListView = mfxCheckListView<Filter<Any>> {
+        addStylesheet(FilterPanelFieldsViewStylesheet::class)
 
         depthLevel = DepthLevel.LEVEL0
 
