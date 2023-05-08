@@ -22,7 +22,8 @@ import solve.utils.structures.Size as DoubleSize
 class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
-    private var currentGrid: Grid? = null
+    var currentGrid: Grid? = null
+        private set
     private var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
     private var frameViewCache: Cache<FrameView, FrameViewData, FrameViewSettings>? = null
 
