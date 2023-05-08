@@ -159,9 +159,11 @@ class SceneView : View() {
             currentGrid?.changeColumnsNumber(columnsNumber)
         }
         Platform.runLater {
-            currentWindow?.widthProperty()?.onChange {
-                Platform.runLater {
-                    controller.recalculateScale(true)
+            if (this.root.scene != null) {
+                currentWindow?.widthProperty()?.onChange {
+                    Platform.runLater {
+                        controller.recalculateScale(true)
+                    }
                 }
             }
         }

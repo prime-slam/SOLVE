@@ -3,8 +3,6 @@ package solve.interactive
 import javafx.geometry.Orientation
 import javafx.scene.Scene
 import javafx.scene.input.MouseButton
-import javafx.scene.layout.VBox
-import javafx.stage.Stage
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.api.FxRobot
 import org.testfx.framework.junit5.ApplicationExtension
-import org.testfx.framework.junit5.Start
 import solve.fireMouseDragged
 import solve.fireMousePressed
 import solve.fireScrollEvent
@@ -34,21 +31,9 @@ internal class SceneViewTests : SceneTestsBase() {
     private val grid
         get() = vsp.virtualGrid
 
-    private lateinit var stage: Stage
-
-    @Start
-    fun start(stage: Stage) {
-        if (scene == null) {
-            val sceneView = find<SceneView>()
-            scene = Scene(VBox(), 1444.0, 920.0)
-            scene!!.root = sceneView.root
-        }
-        this.stage = stage
-        stage.scene = scene
-    }
-
     @BeforeEach
     fun setUp() {
+        val sceneView = find<SceneView>()
         val data = createScene(listOf("layer1"), framesCount = 20)
         SceneFacade.visualize(data.layers, data.frames, false)
     }
@@ -88,9 +73,5 @@ internal class SceneViewTests : SceneTestsBase() {
             val finalScale = controller.scale
             assertTrue(finalScale > initialScale)
         }
-    }
-
-    companion object {
-        private var scene: Scene? = null
     }
 }
