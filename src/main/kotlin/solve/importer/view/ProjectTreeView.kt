@@ -41,7 +41,8 @@ open class ProjectTreeView : View() {
         treetableview(rootTree) {
             addStylesheet(TreeTableViewStylesheet::class)
             style =
-                "-fx-font-family: ${Style.font}; -fx-text-fill: #${Style.primaryColor}; -fx-font-size: ${Style.buttonFontSize};"
+                "-fx-font-family: ${Style.font}; -fx-text-fill: #${Style.primaryColor}; " +
+                        "-fx-font-size: ${Style.buttonFontSize};"
             BorderPane.setMargin(this, Insets(0.0, 0.0, 2.0, 15.0))
 
             visibleWhen { controller.projectAfterPartialParsing.isNotNull }
@@ -84,7 +85,6 @@ open class ProjectTreeView : View() {
                                         ImageView(imageIcon).apply {
                                             fitHeight = 16.0
                                             fitWidth = 16.0
-
                                         }
                                     } else {
                                         ImageView(errorFolderIcon)
@@ -104,10 +104,14 @@ open class ProjectTreeView : View() {
                         super.updateItem(item, empty)
                         text = if (empty) {
                             null
-                        } else item?.errors?.toStringWithoutBrackets()
+                        } else {
+                            item?.errors?.toStringWithoutBrackets()
+                        }
                         if (!empty && text.isNotEmpty()) {
                             tooltip(text).apply {
-                                style = "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.tooltipFontSize}; -fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
+                                style =
+                                    "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.tooltipFontSize}; " +
+                                            "-fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
                             }
                         }
                     }
