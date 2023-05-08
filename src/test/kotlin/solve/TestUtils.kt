@@ -18,6 +18,15 @@ internal fun<T> testMemoryLeak(factory: () -> T, action: (T) -> Unit) {
     assertNull(item, "$item was not collected")
 }
 
+internal fun Node.fireMouseClicked(x: Double, y: Double, button: MouseButton) =
+    this.fireMouseEvent(MouseEvent.MOUSE_CLICKED, x, y, button)
+
+internal fun Node.fireMouseExited(x: Double, y: Double, button: MouseButton) =
+    this.fireMouseEvent(MouseEvent.MOUSE_EXITED, x, y, button)
+
+internal fun Node.fireMouseEntered(x: Double, y: Double, button: MouseButton) =
+    this.fireMouseEvent(MouseEvent.MOUSE_ENTERED, x, y, button)
+
 internal fun Node.fireMouseDragged(x: Double, y: Double, button: MouseButton) =
     this.fireMouseEvent(MouseEvent.MOUSE_DRAGGED, x, y, button)
 internal fun Node.fireMousePressed(x: Double, y: Double, button: MouseButton) =

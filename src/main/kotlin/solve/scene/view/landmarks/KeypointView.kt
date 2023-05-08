@@ -5,10 +5,11 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Ellipse
 import javafx.util.Duration
 import solve.scene.model.Landmark
-import solve.scene.view.utils.createFillTransition
-import solve.scene.view.utils.createScaleTransition
 import solve.utils.structures.DoublePoint
 
+/**
+ * Represent keypoint landmark on a frame.
+ */
 class KeypointView(
     private val keypoint: Landmark.Keypoint,
     viewOrder: Int,
@@ -19,6 +20,10 @@ class KeypointView(
     }
 
     private val keypointCoordinates = DoublePoint(keypoint.coordinate.x.toDouble(), keypoint.coordinate.y.toDouble())
+
+    /**
+     * Actual visual coordinates.
+     */
     private val coordinates: DoublePoint
         get() = keypointCoordinates * scale
 
@@ -33,8 +38,14 @@ class KeypointView(
         addListeners()
     }
 
+    /**
+     * Do nothing because keypoint drawn in visual tree.
+     */
     override fun addToFrameDrawer() {}
 
+    /**
+     * Don't change radius on zooming in.
+     */
     private val radius: Double
         get() {
             val selectedRadius = keypoint.layerSettings.selectedRadius
@@ -57,11 +68,18 @@ class KeypointView(
         }
     }
 
+    /**
+     * Do nothing, because node's view order is set in the parent class.
+     */
     override fun viewOrderChanged() {}
 
+    /**
+     * Plays highlighting animation.
+     */
     override fun highlightShape(duration: Duration) {
-        val scaleTransition = createScaleTransition(node, HighlightingScaleFactor, HighlightingScaleFactor, duration)
-        val fillTransition = createFillTransition(
+        val scaleTransition =
+            animationProvider.createScaleTransition(node, HighlightingScaleFactor, HighlightingScaleFactor, duration)
+        val fillTransition = animationProvider.createFillTransition(
             node,
             keypoint.layerSettings.getUniqueColor(keypoint),
             duration
@@ -73,9 +91,13 @@ class KeypointView(
         fillTransition.play()
     }
 
+    /**
+     * Plays unhighlighting animation.
+     */
     override fun unhighlightShape(duration: Duration) {
-        val scaleTransition = createScaleTransition(node, 1.0, 1.0, duration)
-        val fillTransition = createFillTransition(node, keypoint.layerSettings.getColor(keypoint), duration)
+        val scaleTransition = animationProvider.createScaleTransition(node, 1.0, 1.0, duration)
+        val fillTransition =
+            animationProvider.createFillTransition(node, keypoint.layerSettings.getColor(keypoint), duration)
 
         scaleTransition.setOnFinished {
             toBack(node)

@@ -14,10 +14,12 @@ import solve.scene.view.drawing.CanvasEventHandler
 import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameElement
 import solve.scene.view.drawing.FrameEventManager
-import solve.scene.view.utils.createColorTimeline
 import solve.utils.structures.DoublePoint
 import solve.utils.withReplacedOpacity
 
+/**
+ * Represents plane landmark on a frame.
+ */
 class PlaneView(
     private val plane: Landmark.Plane,
     private val frameDrawer: FrameDrawer,
@@ -25,11 +27,15 @@ class PlaneView(
     viewOrder: Int,
     scale: Double
 ) : LandmarkView(scale, viewOrder, plane) {
+    /**
+     * Represents plane as a bitmask where all points has the same color.
+     */
     private class PlaneFrameElement(viewOrder: Int, override val points: List<Point>, initialColor: Color) :
         FrameElement(viewOrder) {
         var color: Color = initialColor
 
         fun changeViewOrder(value: Int) {
+            // all landmarks should be drawn on top of the image.
             viewOrder = FrameDrawer.LANDMARKS_VIEW_ORDER + value
         }
 
@@ -50,6 +56,9 @@ class PlaneView(
         }
     )
 
+    /**
+     * Used to restore plane color when it became visible again.
+     */
     private var lastEnabledPlaneElementColor = planeElement.color
 
     private var mousePressedFramePosition: DoublePoint? = null
@@ -62,6 +71,9 @@ class PlaneView(
     }
     private val mousePressedCanvasEventHandler = CanvasEventHandler(planeElement, mousePressedHandler)
 
+    /**
+     * Checks if grid was scrolled via panning and doesn't highlight plane in that case.
+     */
     private val mouseReleasedHandler = EventHandler<MouseEvent> { mouse ->
         if (mouse.button != MouseButton.PRIMARY || !plane.layerSettings.enabled) {
             return@EventHandler
@@ -95,6 +107,12 @@ class PlaneView(
         removeListeners()
     }
 
+    /**
+     * Note that it only adds plane frame element to the frame drawer buffer
+     * and doesn't affect visual representation.
+     *
+     * Call redrawPoints to refresh the canvas.
+     */
     override fun addToFrameDrawer() {
         frameDrawer.addOrUpdateElement(planeElement)
     }
@@ -121,21 +139,28 @@ class PlaneView(
 
     private var highlightingAnimation: Timeline? = null
 
+    /**
+     * Plays highlighting animation.
+     */
     override fun highlightShape(duration: Duration) {
         planeUIDLabel.show(scale)
 
         val initialColor = getColorWithOpacity()
+        // highlighted plane is more transparent
         val targetColor = initialColor.withReplacedOpacity(initialColor.opacity * OpacityUnhighlightCoefficient)
 
-        val timeline = createColorTimeline(duration, initialColor, targetColor) { color ->
+        val timeline = animationProvider.createColorTimeline(duration, initialColor, targetColor) { color ->
             lastEnabledPlaneElementColor = color
             redrawPlaneWithColor(color)
-        }
+        } // redraws plane with intermediate values from initial color to target one from 0 % to 100%.
 
         highlightingAnimation = timeline
         timeline.play()
     }
 
+    /**
+     * Plays unhighlighting animation.
+     */
     override fun unhighlightShape(duration: Duration) {
         planeUIDLabel.hide()
 
@@ -145,10 +170,10 @@ class PlaneView(
         val initialColor = planeElement.color
         val targetColor = getColorWithOpacity()
 
-        val timeline = createColorTimeline(duration, initialColor, targetColor) { color ->
+        val timeline = animationProvider.createColorTimeline(duration, initialColor, targetColor) { color ->
             lastEnabledPlaneElementColor = color
             redrawPlaneWithColor(color)
-        }
+        } // redraws plane with intermediate values from initial color to target one from 0 % to 100%.
 
         timeline.play()
     }
