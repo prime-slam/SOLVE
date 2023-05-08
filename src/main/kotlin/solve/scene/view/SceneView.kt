@@ -37,7 +37,7 @@ class SceneView : View() {
         addBindings()
     }
 
-    private fun draw() {
+    private fun redraw() {
         unbindPositionProperties()
         currentGrid?.dispose()
         currentAssociationsManager?.dispose()
@@ -56,11 +56,6 @@ class SceneView : View() {
         val gridCellSize = DoubleSize(frameSize.width + framesMargin, frameSize.height + framesMargin)
 
         val columnsNumber = controller.columnsNumber
-
-        // VirtualizedFX Grid assumes that frames count is a divider for the columns number
-        val emptyFrames = (0 until (columnsNumber - scene.frames.count() % columnsNumber) % columnsNumber)
-            .map { null }
-        val frames = scene.frames + emptyFrames
 
         val outOfFramesLayer = OutOfFramesLayer()
         val associationsManager = AssociationsManager<VisualizationFrame, Landmark.Keypoint>(
@@ -97,8 +92,9 @@ class SceneView : View() {
                 )
             }
         }
+
         val grid = VirtualizedFXGridProvider.createGrid(
-            frames,
+            scene.frames,
             columnsNumber,
             gridCellSize,
             controller.scaleProperty,
@@ -108,11 +104,18 @@ class SceneView : View() {
         }
 
         bindPositionProperties(grid)
-
         grid.setUpPanning()
+        setUpScrollingOnMouseWheel(grid)
 
+        currentGrid = grid
+        add(grid.node)
+    }
+
+    private fun setUpScrollingOnMouseWheel(grid: Grid) {
         grid.setOnMouseWheel { event ->
-            if (event.isConsumed) { // If event is consumed by vsp
+            // If event is consumed by VSP scroll pane
+            // Allows scene scrolling by mouse wheel when mouse on the bar
+            if (event.isConsumed) {
                 return@setOnMouseWheel
             }
             if (event.deltaY == 0.0) {
@@ -125,9 +128,6 @@ class SceneView : View() {
                 controller.zoomOut(mousePosition)
             }
         }
-
-        currentGrid = grid
-        add(grid.node)
     }
 
     private fun bindPositionProperties(grid: Grid) {
@@ -151,7 +151,7 @@ class SceneView : View() {
                 frameDataLoadingScope.cancel()
                 frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
                 Platform.runLater {
-                    draw()
+                    redraw()
                 }
             }
         }
