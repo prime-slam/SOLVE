@@ -127,4 +127,26 @@ internal class SceneControllerTests : SceneTestsBase() {
         controller.recalculateScale(true)
         assertEquals(initialScale * 2, controller.scale)
     }
+
+    @Test
+    fun `Change min scale`() {
+        val newMinScale = 2.0
+        controller.installedMinScale = newMinScale
+        assertEquals(newMinScale, controller.scale, 0.01)
+        val point = DoublePoint(0.0, 0.0)
+        controller.zoomOut(point)
+        assertEquals(newMinScale, controller.scale, 0.01)
+    }
+
+    @Test
+    fun `Change max scale`() {
+        controller.scrollX = { it }
+        controller.scrollY = { it }
+        val newMaxScale = 1.0
+        controller.installedMaxScale = newMaxScale
+        assertEquals(newMaxScale, controller.scale, 0.01)
+        val point = DoublePoint(0.0, 0.0)
+        controller.zoomIn(point)
+        assertEquals(newMaxScale, controller.scale, 0.01)
+    }
 }
