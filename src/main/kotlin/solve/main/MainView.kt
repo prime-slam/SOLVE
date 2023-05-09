@@ -9,6 +9,9 @@ import javafx.geometry.Insets
 import javafx.scene.control.ContentDisplay
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
 import javafx.scene.layout.VBox
 import javafx.scene.shape.Circle
 import solve.catalogue.view.CatalogueView
@@ -43,6 +46,10 @@ class MainView : View() {
         private const val TabsViewTabsParamName = "tabs"
         private const val TabsViewInitialTabParamName = "initialTab"
 
+        const val ProjectTabName = "Project"
+        const val LayersTabName = "Layers"
+        const val GridTabName = "Grid"
+
         private val importIcon = loadResourcesImage(IconsImportFab)
         private val pluginsIcon = loadResourcesImage(IconsPlugins)
         private val settingsIcon = loadResourcesImage(IconsSettings)
@@ -64,18 +71,18 @@ class MainView : View() {
 
     private val leftSidePanelTabs = listOf(
         SidePanelTab(
-            "Project",
+            ProjectTabName,
             find<CatalogueView>().root
         )
     )
 
     private val rightSidePanelTabs = listOf(
         SidePanelTab(
-            "Layers",
+            LayersTabName,
             find<VisualizationSettingsView>().root
         ),
         SidePanelTab(
-            "Grid",
+            GridTabName,
             find<GridSettingsView>().root
         )
     )
@@ -148,6 +155,21 @@ class MainView : View() {
     }
 
     override val root = mainViewBorderPane
+
+    init {
+        accelerators[KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN)] = {
+            importAction()
+        }
+        accelerators[KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_DOWN)] = {
+            leftSidePanelViews.tabsView.selectTab(ProjectTabName)
+        }
+        accelerators[KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN)] = {
+            rightSidePanelViews.tabsView.selectTab(LayersTabName)
+        }
+        accelerators[KeyCodeCombination(KeyCode.G, KeyCombination.CONTROL_DOWN)] = {
+            rightSidePanelViews.tabsView.selectTab(GridTabName)
+        }
+    }
 
     private fun createTabButton(text: String, icon: Image?): MFXButton {
         return mfxButton(text) {

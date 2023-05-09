@@ -35,6 +35,12 @@ open class SidePanelTabsView : View() {
         initializeTabsToggle()
     }
 
+    fun selectTab(name: String) {
+        val tab = tabs.single { it.name == name }
+        val button = tabsToggleButtonsMap[tab] ?: throw RuntimeException("No toggle button for tab")
+        button.fire()
+    }
+
     private fun addTab(tab: SidePanelTab) {
         val tabButton = togglebutton(tab.name, tabsToggleGroup) {
             setPrefSize(Style.navigationRailTabSize, Style.navigationRailTabSize)
