@@ -3,6 +3,8 @@ package solve.catalogue.view
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
 import javafx.scene.layout.Border
 import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle
@@ -73,9 +75,7 @@ class CatalogueView : View() {
                         }
                     }
                     action {
-                        controller.visualizeFramesSelection(
-                            displayingFieldsView?.selectedItems?.map { it.frame } ?: emptyList()
-                        )
+                        applySelection()
                     }
                 }
                 alignment = Pos.CENTER
@@ -92,6 +92,12 @@ class CatalogueView : View() {
     }
 
     override val root = catalogueNode.also { initializeNodes() }
+
+    init {
+        accelerators[KeyCodeCombination(KeyCode.ENTER)] = {
+            applySelection()
+        }
+    }
 
     fun reinitializeView() {
         reinitializeFields()
@@ -118,6 +124,12 @@ class CatalogueView : View() {
     fun deselectAllFields() {
         displayingFieldsView?.deselectAllItems()
         nonDisplayingFieldsView?.deselectAllItems()
+    }
+
+    private fun applySelection() {
+        controller.visualizeFramesSelection(
+            displayingFieldsView?.selectedItems?.map { it.frame } ?: emptyList()
+        )
     }
 
     private fun reinitializeFields() {

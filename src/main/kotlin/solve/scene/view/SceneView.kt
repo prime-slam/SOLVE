@@ -116,8 +116,6 @@ class SceneView : View() {
 
         currentGrid = grid
         add(grid.node)
-
-        grid.node.requestFocus()
     }
 
     private fun bindPositionProperties(grid: Grid) {
