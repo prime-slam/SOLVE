@@ -61,11 +61,7 @@ class ControlPanel : View() {
                     getListOfAlgorithms(frame, listOfKind)
                 }
                 this.text = "Algorithms: " + listOfKind.toStringWithoutBrackets()
-                tooltip(listOfKind.toStringWithoutBrackets()).apply {
-                    style =
-                        "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.tooltipFontSize}; " +
-                        "-fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
-                }
+                tooltip(listOfKind.toStringWithoutBrackets())
             }
         }
     }
