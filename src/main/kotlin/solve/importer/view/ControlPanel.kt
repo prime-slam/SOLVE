@@ -3,6 +3,8 @@ package solve.importer.view
 import io.github.palexdev.materialfx.controls.MFXButton
 import javafx.geometry.Insets
 import javafx.scene.image.ImageView
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
 import javafx.scene.paint.Paint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +19,6 @@ import solve.importer.model.ButtonModel
 import solve.importer.model.FrameAfterPartialParsing
 import solve.main.MainController
 import solve.main.MainView
-import solve.project.model.Project
 import solve.styles.Style
 import solve.utils.MaterialFXDialog
 import solve.utils.createAlertForError
@@ -76,19 +77,14 @@ class ControlPanel : View() {
         style = buttonStyle
         buttonController.changeDisable(importButtonModel)
         isDisable = importButtonModel.disabled.value
+        isFocusTraversable = false
         prefWidth = ButtonWidth
         importButtonModel.disabled.onChange { disableValue ->
             disableValue?.also { isDisable = it }
         }
 
         action {
-            coroutineScope = CoroutineScope(Dispatchers.Main)
-            coroutineScope.launch {
-                showLoading()
-                val projectVal =
-                    withContext(Dispatchers.IO) { fullParseDirectory(controller.projectAfterPartialParsing.value) }
-                importAction(this@mfxButton, projectVal)
-            }
+            importAction(this@mfxButton)
         }
     }
 
@@ -97,8 +93,21 @@ class ControlPanel : View() {
         prefHeight = 23.0
         style = buttonStyle
         textFill = Paint.valueOf(Style.primaryColor)
+        isFocusTraversable = false
         prefWidth = ButtonWidth
         action {
+            cancelAction()
+        }
+    }
+
+    init {
+        accelerators[KeyCodeCombination(KeyCode.ENTER)] = handler@{
+            if (controller.projectAfterPartialParsing.value == null) {
+                return@handler
+            }
+            importAction(importButton)
+        }
+        accelerators[KeyCodeCombination(KeyCode.ESCAPE)] = {
             cancelAction()
         }
     }
@@ -167,15 +176,21 @@ class ControlPanel : View() {
         MaterialFXDialog.changeContent(mainView.content, loading.root)
     }
 
-    private fun importAction(button: MFXButton, projectVal: Project) {
-        try {
-            mainController.visualizeProject(projectVal.layers, projectVal.frames)
-            mainController.displayCatalogueFrames(projectVal.frames)
-            button.isDisable = true
+    private fun importAction(button: MFXButton) {
+        coroutineScope = CoroutineScope(Dispatchers.Main)
+        coroutineScope.launch {
+            showLoading()
+            val projectVal =
+                withContext(Dispatchers.IO) { fullParseDirectory(controller.projectAfterPartialParsing.value) }
+            try {
+                mainController.visualizeProject(projectVal.layers, projectVal.frames)
+                mainController.displayCatalogueFrames(projectVal.frames)
+                button.isDisable = true
 
-            mainView.dialog.close()
-        } catch (e: Exception) {
-            createAlertForError("Visualization error")
+                mainView.dialog.close()
+            } catch (e: Exception) {
+                createAlertForError("Visualization error")
+            }
         }
     }
 
