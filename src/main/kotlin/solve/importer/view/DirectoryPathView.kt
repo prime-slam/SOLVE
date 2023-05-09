@@ -4,6 +4,8 @@ import io.github.palexdev.materialfx.effects.DepthLevel
 import io.github.palexdev.materialfx.enums.FloatMode
 import javafx.geometry.Insets
 import javafx.geometry.Pos
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
@@ -74,11 +76,17 @@ class DirectoryPathView : View() {
         textFill = Color.valueOf(Style.primaryColor)
         alignment = Pos.CENTER
         depthLevel = DepthLevel.LEVEL1
+        isFocusTraversable = false
         prefHeight = 31.0
         prefWidth = 98.0
         action {
-            val dir = directoryChooser.showDialog(currentStage)
-            controller.directoryPath.set(dir?.absolutePath)
+            chooseDirectoryAction()
+        }
+    }
+
+    init {
+        accelerators[KeyCodeCombination(KeyCode.O, KeyCodeCombination.CONTROL_DOWN)] = {
+            chooseDirectoryAction()
         }
     }
 
@@ -114,4 +122,9 @@ class DirectoryPathView : View() {
             }
             separator().apply { visibleWhen { controller.projectAfterPartialParsing.isNotNull } }
         }
+
+    private fun chooseDirectoryAction() {
+        val dir = directoryChooser.showDialog(currentStage)
+        controller.directoryPath.set(dir?.absolutePath)
+    }
 }
