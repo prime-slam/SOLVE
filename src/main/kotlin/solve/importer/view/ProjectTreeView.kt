@@ -106,10 +106,7 @@ open class ProjectTreeView : View() {
                             null
                         } else item?.errors?.toStringWithoutBrackets()
                         if (!empty && text.isNotEmpty()) {
-                            tooltip(text).apply {
-                                style = "-fx-font-family: ${Style.Font}; -fx-font-size: ${Style.TooltipFontSize}; " +
-                                    "-fx-background-color: #${Style.SurfaceColor}; -fx-text-fill: #707070;"
-                            }
+                            tooltip(text)
                         }
                     }
                 }

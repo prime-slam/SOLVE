@@ -6,7 +6,6 @@ import javafx.scene.control.ToggleButton
 import javafx.scene.shape.Circle
 import tornadofx.*
 
-
 object Style {
     const val BackgroundColor = "EFF0F0"
 
