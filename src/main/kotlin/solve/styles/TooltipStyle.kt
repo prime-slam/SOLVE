@@ -4,7 +4,7 @@ import javafx.scene.text.FontPosture
 import tornadofx.Stylesheet
 import tornadofx.c
 
-class ToolTipStyle : Stylesheet() {
+class TooltipStyle : Stylesheet() {
     init {
         Companion.tooltip {
             fontStyle = FontPosture.REGULAR

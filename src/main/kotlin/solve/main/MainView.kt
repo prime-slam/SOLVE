@@ -31,7 +31,7 @@ import solve.sidepanel.content.SidePanelContentView
 import solve.sidepanel.tabs.SidePanelTabsView
 import solve.styles.MFXButtonStyleSheet
 import solve.styles.Style
-import solve.styles.ToolTipStyle
+import solve.styles.TooltipStyle
 import solve.utils.MaterialFXDialog
 import solve.utils.createPxBox
 import solve.utils.loadResourcesImage
@@ -163,7 +163,7 @@ class MainView : View() {
     override val root = mainViewBorderPane
 
     init {
-        root.addStylesheet(ToolTipStyle::class)
+        root.addStylesheet(TooltipStyle::class)
         accelerators[KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN)] = {
             importAction()
         }
