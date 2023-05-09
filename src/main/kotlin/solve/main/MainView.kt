@@ -100,6 +100,7 @@ class MainView : View() {
         graphic = ImageView(importIcon)
         setPrefSize(56.0, 56.0)
         style = "-fx-background-color: #${Style.secondaryColor}; -fx-background-radius: 28;"
+        isFocusTraversable = false
         action {
             importAction()
         }

@@ -51,6 +51,7 @@ open class SidePanelTabsView : View() {
                 "-fx-font-family: ${Style.font}; -fx-font-weight:700;" +
                 " -fx-font-size: ${Style.buttonFontSize}; -fx-background-radius: 36"
 
+            isFocusTraversable = false
             setPrefSize(72.0, 72.0)
             usePrefSize = true
 
