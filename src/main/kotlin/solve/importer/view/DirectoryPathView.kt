@@ -45,10 +45,7 @@ class DirectoryPathView : View() {
 
         controller.projectAfterPartialParsing.onChange {
             if (controller.projectAfterPartialParsing.value != null) {
-                tooltip(controller.directoryPath.value).apply {
-                    style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.tooltipFontSize}; " +
-                        "-fx-background-color: #${Style.surfaceColor}; -fx-text-fill: #707070;"
-                }
+                tooltip(controller.directoryPath.value)
             }
             text = if (it != null) {
                 controller.directoryPath.value
@@ -79,6 +76,7 @@ class DirectoryPathView : View() {
         isFocusTraversable = false
         prefHeight = 31.0
         prefWidth = 98.0
+        tooltip("Ctrl+O")
         action {
             chooseDirectoryAction()
         }

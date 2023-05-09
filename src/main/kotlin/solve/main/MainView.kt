@@ -31,6 +31,7 @@ import solve.sidepanel.content.SidePanelContentView
 import solve.sidepanel.tabs.SidePanelTabsView
 import solve.styles.MFXButtonStyleSheet
 import solve.styles.Style
+import solve.styles.ToolTipStyle
 import solve.utils.MaterialFXDialog
 import solve.utils.createPxBox
 import solve.utils.loadResourcesImage
@@ -72,18 +73,21 @@ class MainView : View() {
     private val leftSidePanelTabs = listOf(
         SidePanelTab(
             ProjectTabName,
-            find<CatalogueView>().root
+            find<CatalogueView>().root,
+            "Ctrl+P"
         )
     )
 
     private val rightSidePanelTabs = listOf(
         SidePanelTab(
             LayersTabName,
-            find<VisualizationSettingsView>().root
+            find<VisualizationSettingsView>().root,
+            "Ctrl+L"
         ),
         SidePanelTab(
             GridTabName,
-            find<GridSettingsView>().root
+            find<GridSettingsView>().root,
+            "Ctrl+G"
         )
     )
 
@@ -101,6 +105,7 @@ class MainView : View() {
         setPrefSize(56.0, 56.0)
         style = "-fx-background-color: #${Style.secondaryColor}; -fx-background-radius: 28;"
         isFocusTraversable = false
+        tooltip("Ctrl+I")
         action {
             importAction()
         }
@@ -158,6 +163,7 @@ class MainView : View() {
     override val root = mainViewBorderPane
 
     init {
+        root.addStylesheet(ToolTipStyle::class)
         accelerators[KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN)] = {
             importAction()
         }

@@ -3,11 +3,14 @@ package solve.styles
 import io.github.palexdev.materialfx.controls.MFXButton
 import javafx.scene.control.ToggleButton
 import javafx.scene.shape.Circle
+import tornadofx.*
 
 object Style {
     const val backgroundColour = "EFF0F0"
 
     const val surfaceColor = "FFFFFF"
+
+    const val tooltipColor = "707070"
 
     const val primaryColor = "78909C"
 
@@ -29,7 +32,7 @@ object Style {
 
     const val headerFontSize = "20px"
 
-    const val tooltipFontSize = "12px"
+    val tooltipFontSize = Dimension(12.0, Dimension.LinearUnits.px)
 
     const val buttonStyle =
         "-fx-font-family: 'Roboto Condensed'; -fx-font-size: $buttonFontSize;" +
