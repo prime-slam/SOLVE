@@ -74,10 +74,9 @@ object SceneFacade {
 
     private fun ProjectFrame.toVisualizationFrame(layerStates: List<LayerState>): VisualizationFrame {
         val getImage = {
-            val stream = imagePath.toFile().inputStream()
-            val image = Image(stream)
-            stream.close()
-            image
+            imagePath.toFile().inputStream().use {
+                Image(it)
+            }
         }
 
         val layers = landmarkFiles.map { file ->
