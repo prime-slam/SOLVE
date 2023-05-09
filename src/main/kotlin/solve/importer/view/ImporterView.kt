@@ -1,7 +1,7 @@
 package solve.importer.view
 
 import solve.styles.Style
-import solve.styles.ToolTipStyle
+import solve.styles.TooltipStyle
 import tornadofx.*
 
 class ImporterView : View() {
@@ -9,7 +9,7 @@ class ImporterView : View() {
         stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto+Condensed")
         stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700")
         stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto")
-        addStylesheet(ToolTipStyle::class)
+        addStylesheet(TooltipStyle::class)
 
         style = "-fx-background-color: #${Style.surfaceColor};"
 
