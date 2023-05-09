@@ -1,6 +1,5 @@
 # SLAM Oriented Landmark Visualizer and Editor
 
-
 [![Build Status](https://github.com/prime-slam/SOLVE/workflows/Build/badge.svg)](https://github.com/prime-slam/SOLVE/actions/workflows/build.yml)
 
 The aim of the project is to create a powerful desktop application to make debugging of SLAM frontend algorithms easier.
@@ -12,12 +11,26 @@ This tool will provide following features:
 * Editing and fine-tuning landmarks positions and association
 
 ## How do I create a project of the correct format?
-1. Create the Images folder, in which we put all the frames from the dataset. They should be numbered in order and be in jpg or png format.
-2.  Create folders based on the number of algorithms present in the project. You need to name them in the format name-algorithm_landmark (example: alg1_line)
-3. Put files with markup in each of the folders. They should be numbered according to the frames in the project
-    1. Points are represented in csv file format, where the first line is used as a header (uid,x,y), and subsequent lines contain data directly (uid, x and y coordinates separated by commas)
-    2. Lines are represented in csv file format, where the first line is used as a header (uid,x0,y0,x1,y1), and subsequent lines contain data directly (uid, coordinates of the beginning and coordinates of the end of the line, separated by commas)
-    3. The planes are represented as a png file.
+
+1. Create the ```Images``` folder, in which we put all the frames from the dataset. Images must match the following
+   criteria:
+    * 640x480 format
+    * jpg or png extension
+    * file name is timestamp
+2. For each used landmark detection algorithm create a separate folder. You need to name them in the
+   format ```name_algorithm_landmark``` (example: ```alg1_line```, ```alg1_keypoint```, ```alg1_plane```)
+3. Put files with markup in each of the folders. They should be named according to the frame they belong to (timestamp)
+    1. Points are represented file, where the first line is used as a header (uid,x,y), and subsequent lines contain
+       data directly (uid, x and y coordinates separated by
+       commas) <code>[Example](https://github.com/prime-slam/SOLVE/tree/master/testData/TestProject2/alg1_keypoint)</code>
+    2. Lines are represented file, where the first line is used as a header (uid,x0,y0,x1,y1), and subsequent lines
+       contain data directly (uid, coordinates of the beginning and coordinates of the end of the line, separated by
+       commas) <code>[Example](https://github.com/prime-slam/SOLVE/tree/master/testData/LinesAndKeyPointsProject/alg1_line)</code>
+    3. The planes are represented as a png file, where
+       the points belonging to the planes are shown in different
+       pixel colors. For points that do not belong
+       to any plane, black is used. <code>[Example](https://github.com/prime-slam/SOLVE/tree/master/testData/PlanesProject/alg1_plane)</code>
+
 ## Build
 
 Ensure you have JDK 17 to build or run this project.
