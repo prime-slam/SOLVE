@@ -6,14 +6,20 @@ import io.github.palexdev.materialfx.controls.MFXCheckbox
 import io.github.palexdev.materialfx.controls.MFXContextMenu
 import io.github.palexdev.materialfx.controls.MFXContextMenuItem
 import io.github.palexdev.materialfx.controls.MFXTextField
+import io.github.palexdev.materialfx.validation.Constraint
+import io.github.palexdev.materialfx.validation.Severity
 import javafx.application.Platform
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.scene.shape.Circle
 import org.controlsfx.control.RangeSlider
+import solve.styles.Style
+import solve.utils.createPxValue
 import solve.utils.materialfx.stylesheets.MFXRangeSliderStylesheet
+import solve.utils.materialfx.stylesheets.MFXValidationTextFieldStylesheet
 import tornadofx.*
 import java.util.function.Supplier
 
@@ -97,4 +103,55 @@ fun EventTarget.mfxRangeSlider(
     slider.attachTo(this, op)
 
     return slider
+}
+
+val MFXTextField.validationMessage: String?
+    get() {
+        val constraints = validator.validate()
+        if (constraints.isEmpty()) {
+            return null
+        }
+
+        return constraints.first().message
+    }
+
+fun EventTarget.mfxIntegerTextField(
+    notIntegerErrorMessage: String,
+    op: MFXTextField.() -> Unit = {}
+) = vbox {
+    val mfxTextField = mfxTextField {
+        addStylesheet(MFXValidationTextFieldStylesheet::class)
+        val areAllDigitsSymbols = textProperty().booleanBinding { text -> text?.all { it.isDigit() } ?: false }
+        validator.constraint(Constraint(Severity.ERROR, notIntegerErrorMessage, areAllDigitsSymbols))
+
+        fun enableBorderColorCssString(hexColor: String) =
+            "${MFXValidationTextFieldStylesheet.mfxMain.name}: #${hexColor};\n"
+
+        val enableErrorBorderColorCss = enableBorderColorCssString(MFXValidationTextFieldStylesheet.ErrorBorderColor)
+        val enableDefaultBorderColorCss =
+            enableBorderColorCssString(MFXValidationTextFieldStylesheet.DefaultBorderColor)
+        textProperty().onChange {
+            updateInvalid(this, !isValid)
+            style += if (isValid) {
+                enableDefaultBorderColorCss
+            } else {
+                enableErrorBorderColorCss
+            }
+        }
+    }
+    label {
+        style {
+            textFill = Paint.valueOf(Style.errorColor)
+            fontFamily = Style.font
+            fontSize = createPxValue(10.0)
+        }
+        visibleProperty().bind(!mfxTextField.validator.validProperty())
+        mfxTextField.textProperty().onChange {
+            text = mfxTextField.validationMessage ?: return@onChange
+        }
+
+        paddingTop = 4.0
+
+    }
+    mfxTextField.op()
 }

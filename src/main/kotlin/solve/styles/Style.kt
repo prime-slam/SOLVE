@@ -24,6 +24,10 @@ object Style {
 
     const val settingLightColor = "EDEEF1"
 
+    const val errorColor = "EF6E6B"
+
+    const val activeColor = "41497F"
+
     const val fontCondensed = "'Roboto Condensed'"
 
     const val font = "Roboto"

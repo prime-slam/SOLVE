@@ -9,6 +9,7 @@ import solve.utils.createPxValue
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
 import solve.utils.materialfx.mfxCircleButton
+import solve.utils.materialfx.mfxIntegerTextField
 import solve.utils.materialfx.mfxRangeSlider
 import tornadofx.*
 
@@ -16,7 +17,6 @@ class FilterPanelView : View() {
     private val filterPanelFieldsView: FilterPanelFieldsView by inject()
 
     override val root = vbox {
-        mfxRangeSlider(1.0, 19.0, 4.0, 8.5)
         separator {
             addStylesheet(SeparatorStylesheet::class)
         }
