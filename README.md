@@ -14,18 +14,14 @@ This tool will provide following features:
 
 1. Create the ```Images``` folder, in which we put all the frames from the dataset. Images must match the following
    criteria:
-    * 640x480 format
+    * same format for all images
     * jpg or png extension
     * file name is timestamp
 2. For each used landmark detection algorithm create a separate folder. You need to name them in the
    format ```name_algorithm_landmark``` (example: ```alg1_line```, ```alg1_keypoint```, ```alg1_plane```)
 3. Put files with markup in each of the folders. They should be named according to the frame they belong to (timestamp)
-    1. Points are represented file, where the first line is used as a header (uid,x,y), and subsequent lines contain
-       data directly (uid, x and y coordinates separated by
-       commas) <code>[Example](https://github.com/prime-slam/SOLVE/tree/master/testData/TestProject2/alg1_keypoint)</code>
-    2. Lines are represented file, where the first line is used as a header (uid,x0,y0,x1,y1), and subsequent lines
-       contain data directly (uid, coordinates of the beginning and coordinates of the end of the line, separated by
-       commas) <code>[Example](https://github.com/prime-slam/SOLVE/tree/master/testData/LinesAndKeyPointsProject/alg1_line)</code>
+    1. Points are represented in .csv file with (uid,x,y) columns. <code>[Example](https://github.com/prime-slam/SOLVE/tree/master/testData/TestProject2/alg1_keypoint)</code>
+    2. Lines are represented in .csv file with (uid,x0,y0,x1,y1) columns. <code>[Example](https://github.com/prime-slam/SOLVE/tree/master/testData/LinesAndKeyPointsProject/alg1_line)</code>
     3. The planes are represented as a png file, where
        the points belonging to the planes are shown in different
        pixel colors. For points that do not belong
