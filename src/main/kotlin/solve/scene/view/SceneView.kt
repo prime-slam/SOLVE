@@ -1,6 +1,8 @@
 package solve.scene.view
 
 import javafx.application.Platform
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -26,6 +28,7 @@ class SceneView : View() {
     }
 
     init {
+        initKeyboardNavigation()
         addBindings()
     }
 
@@ -113,6 +116,8 @@ class SceneView : View() {
 
         currentGrid = grid
         add(grid.node)
+
+        grid.node.requestFocus()
     }
 
     private fun bindPositionProperties(grid: Grid) {
@@ -156,7 +161,73 @@ class SceneView : View() {
         }
     }
 
+    private fun initKeyboardNavigation() {
+        accelerators[KeyCodeCombination(KeyCode.RIGHT)] = handler@{
+            scrollRight(currentGrid ?: return@handler)
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.KP_RIGHT)] = handler@{
+            scrollRight(currentGrid ?: return@handler)
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.LEFT)] = handler@{
+            scrollLeft(currentGrid ?: return@handler)
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.KP_LEFT)] = handler@{
+            scrollLeft(currentGrid ?: return@handler)
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.UP)] = handler@{
+            scrollUp(currentGrid ?: return@handler)
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.KP_UP)] = handler@{
+            scrollUp(currentGrid ?: return@handler)
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.DOWN)] = handler@{
+            scrollDown(currentGrid ?: return@handler)
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.KP_DOWN)] = handler@{
+            scrollDown(currentGrid ?: return@handler)
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.MINUS)] = handler@{
+            if (currentGrid == null) return@handler
+            zoomOutFromCenter()
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.SUBTRACT)] = handler@{
+            if (currentGrid == null) return@handler
+            zoomOutFromCenter()
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.EQUALS)] = handler@{
+            if (currentGrid == null) return@handler
+            zoomInToCenter()
+        }
+
+        accelerators[KeyCodeCombination(KeyCode.ADD)] = handler@{
+            if (currentGrid == null) return@handler
+            zoomInToCenter()
+        }
+    }
+
+    private fun scrollRight(grid: Grid) = grid.scrollX(grid.xProperty.value + scrollSpeed)
+
+    private fun scrollLeft(grid: Grid) = grid.scrollX(grid.xProperty.value - scrollSpeed)
+
+    private fun scrollUp(grid: Grid) = grid.scrollY(grid.yProperty.value - scrollSpeed)
+
+    private fun scrollDown(grid: Grid) = grid.scrollY(grid.yProperty.value + scrollSpeed)
+    private fun zoomOutFromCenter() = controller.zoomOut(DoublePoint(root.width / 2, root.height / 2))
+
+    private fun zoomInToCenter() = controller.zoomIn(DoublePoint(root.width / 2, root.height / 2))
+
     companion object {
         const val framesMargin = 10.0
+        const val scrollSpeed = 20.0
     }
 }
