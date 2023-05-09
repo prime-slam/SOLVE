@@ -125,7 +125,7 @@ fun EventTarget.mfxIntegerTextField(
         validator.constraint(Constraint(Severity.ERROR, notIntegerErrorMessage, areAllDigitsSymbols))
 
         fun enableBorderColorCssString(hexColor: String) =
-            "${MFXValidationTextFieldStylesheet.mfxMain.name}: #${hexColor};\n"
+            "${MFXValidationTextFieldStylesheet.mfxMain.name}: #$hexColor;\n"
 
         val enableErrorBorderColorCss = enableBorderColorCssString(MFXValidationTextFieldStylesheet.ErrorBorderColor)
         val enableDefaultBorderColorCss =
@@ -151,7 +151,6 @@ fun EventTarget.mfxIntegerTextField(
         }
 
         paddingTop = 4.0
-
     }
     mfxTextField.op()
 }

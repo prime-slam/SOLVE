@@ -3,7 +3,6 @@ package solve.filters.view
 import javafx.scene.Node
 import solve.project.model.ProjectFrame
 import solve.utils.materialfx.mfxCheckbox
-import solve.utils.materialfx.mfxRangeSlider
 import tornadofx.*
 
 class FilterSettingsView : View() {

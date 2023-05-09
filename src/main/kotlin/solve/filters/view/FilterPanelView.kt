@@ -9,8 +9,6 @@ import solve.utils.createPxValue
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
 import solve.utils.materialfx.mfxCircleButton
-import solve.utils.materialfx.mfxIntegerTextField
-import solve.utils.materialfx.mfxRangeSlider
 import tornadofx.*
 
 class FilterPanelView : View() {
