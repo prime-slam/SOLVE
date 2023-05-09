@@ -16,7 +16,7 @@ This tool will provide following features:
    criteria:
     * same format for all images
     * jpg or png extension
-    * file name is timestamp in Double format
+    * file name is timestamp in Long format
 2. For each used landmark detection algorithm create a separate folder. You need to name it in the
    format ```name_algorithm_landmark``` (example: ```alg1_line```, ```alg1_keypoint```, ```alg1_plane```)
 3. Put files with markup in each of the folders. They should be named according to the frame they belong to (timestamp)
