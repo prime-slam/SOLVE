@@ -27,7 +27,7 @@ class MFXIntegerTextField(private val invalidErrorMessage: String? = null) : MFX
 
     private fun enableBorderColorCssString(hexColor: String) =
         "${MFXValidationTextFieldStylesheet.mfxMain.name}: #$hexColor;\n" +
-                "-fx-border-color: #${hexColor};\n"
+            "-fx-border-color: #$hexColor;\n"
 
     private fun initializeIntegerTextField() {
         addStylesheet(MFXValidationTextFieldStylesheet::class)
@@ -65,7 +65,7 @@ class MFXIntegerTextField(private val invalidErrorMessage: String? = null) : MFX
         fun EventTarget.mfxIntegerTextField(
             notIntegerErrorMessage: String? = null,
             op: MFXTextField.() -> Unit = {}
-        ) : MFXIntegerTextField {
+        ): MFXIntegerTextField {
             val mfxIntegerTextField = MFXIntegerTextField(notIntegerErrorMessage)
             mfxIntegerTextField.attachTo(this, op)
 
