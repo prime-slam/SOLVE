@@ -40,4 +40,4 @@ Follow instructions in the [User Guide](https://github.com/prime-slam/SOLVE/wiki
 Ensure you have JDK 17 to build or run this project.
 
 Build: `./gradlew assemble`  
-Run: `./gradlew run`~~~~
+Run: `./gradlew run`
