@@ -2,13 +2,17 @@
 
 [![Build Status](https://github.com/prime-slam/SOLVE/workflows/Build/badge.svg)](https://github.com/prime-slam/SOLVE/actions/workflows/build.yml)
 
-The aim of the project is to create a powerful desktop application to make debugging of SLAM frontend algorithms easier.
+The aim of the project is to create a powerful desktop application to make debugging of SLAM frontend algorithms easier.~~~~
 
 This tool will provide following features:
 
 * Visualization of landmarks of three types (points, lines, planes)
 * Mapping of the same landmarks between different images based on SLAM data association
 * Editing and fine-tuning landmarks positions and association
+
+## Get started
+
+Follow instructions in the [User Guide](https://github.com/prime-slam/SOLVE/wiki/How-to-get-started)
 
 ## How do I create a project of the correct format?
 
@@ -36,4 +40,4 @@ This tool will provide following features:
 Ensure you have JDK 17 to build or run this project.
 
 Build: `./gradlew assemble`  
-Run: `./gradlew run`  
+Run: `./gradlew run`~~~~
