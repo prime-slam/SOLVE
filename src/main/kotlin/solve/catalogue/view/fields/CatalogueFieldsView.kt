@@ -13,11 +13,11 @@ import javafx.scene.input.TransferMode
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import solve.catalogue.controller.CatalogueController
-import solve.catalogue.floor
 import solve.catalogue.model.CatalogueField
 import solve.project.model.ProjectFrame
 import solve.scene.view.SceneView
 import solve.utils.deselectAllItems
+import solve.utils.floorToInt
 import solve.utils.onSelectionChanged
 import solve.utils.selectAllItems
 import solve.utils.selectedItems
@@ -115,7 +115,7 @@ abstract class CatalogueFieldsView : View() {
 
     private fun createFileNameFieldsSnapshot(fields: List<CatalogueField>): Image {
         val snapshotFields = fields.take(dragViewMaxFieldsNumber)
-        val prefSnapshotHeight = (snapshotFields.count() * listViewCellHeight).floor()
+        val prefSnapshotHeight = (snapshotFields.count() * listViewCellHeight).floorToInt()
 
         val fieldsSnapshotNode = createFieldsSnapshotNode(snapshotFields)
         fieldsListView.getChildList()?.remove(fieldsSnapshotNode)
@@ -123,8 +123,8 @@ abstract class CatalogueFieldsView : View() {
         val nodeSnapshot = fieldsSnapshotNode.snapshot(null, null)
         return WritableImage(
             nodeSnapshot.pixelReader,
-            nodeSnapshot.width.floor(),
-            min(nodeSnapshot.height.floor(), prefSnapshotHeight)
+            nodeSnapshot.width.floorToInt(),
+            min(nodeSnapshot.height.floorToInt(), prefSnapshotHeight)
         )
     }
 }

@@ -10,6 +10,7 @@ import tornadofx.App
 import tornadofx.launch
 import solve.styles.ApplicationStylesheet
 import solve.utils.SVGImageLoaderDimensionProvider
+import tornadofx.FX.Companion.stylesheets
 
 class SolveApp : App(MainView::class, ApplicationStylesheet::class) {
     override fun start(stage: Stage) {
@@ -30,6 +31,14 @@ class SolveApp : App(MainView::class, ApplicationStylesheet::class) {
 
     private fun initializeDependencies() {
         SvgImageLoaderFactory.install(SVGImageLoaderDimensionProvider())
+
+        initializeStyle()
+    }
+
+    private fun initializeStyle() {
+        stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto+Condensed")
+        stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700")
+        stylesheets.add("https://fonts.googleapis.com/css2?family=Roboto")
     }
 }
 

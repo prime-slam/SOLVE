@@ -5,7 +5,7 @@ import io.github.palexdev.materialfx.effects.DepthLevel
 import javafx.beans.binding.Bindings
 import solve.constants.IconsDeletePath
 import solve.constants.IconsEditPath
-import solve.filters.model.Filter
+import solve.filters.settings.model.FilterSetting
 import solve.styles.FilterPanelFieldsViewStylesheet
 import solve.utils.createHGrowHBox
 import solve.utils.imageViewIcon
@@ -18,7 +18,7 @@ class FilterPanelFieldsView : View() {
     private val editIconImage = loadResourcesImage(IconsEditPath)
     private val deleteIconImage = loadResourcesImage(IconsDeletePath)
 
-    val filtersListView = mfxCheckListView<Filter<Any>> {
+    val filtersListView = mfxCheckListView<FilterSetting<Any>> {
         addStylesheet(FilterPanelFieldsViewStylesheet::class)
 
         depthLevel = DepthLevel.LEVEL0

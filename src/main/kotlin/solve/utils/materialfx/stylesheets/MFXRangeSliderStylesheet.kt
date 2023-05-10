@@ -18,17 +18,17 @@ class MFXRangeSliderStylesheet : Stylesheet() {
             }
 
             rangeBar {
-                backgroundColor += Paint.valueOf(Style.primaryColor)
+                backgroundColor += Paint.valueOf(Style.PrimaryColor)
             }
             track {
-                backgroundColor += Paint.valueOf(Style.settingLightColor)
+                backgroundColor += Paint.valueOf(Style.SettingLightColor)
             }
         }
     }
 
     private fun CssSelectionBlock.initThumbStyle() {
         borderColor += createCssBoxWithValue(Color.TRANSPARENT)
-        backgroundColor += Paint.valueOf(Style.primaryColor)
+        backgroundColor += Paint.valueOf(Style.PrimaryColor)
         scale(DefaultThumbScale)
     }
 

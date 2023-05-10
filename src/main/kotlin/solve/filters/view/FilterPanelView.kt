@@ -2,6 +2,7 @@ package solve.filters.view
 
 import javafx.scene.paint.Paint
 import solve.constants.IconsFiltersAddPath
+import solve.filters.settings.view.FilterSettingsView
 import solve.styles.SeparatorStylesheet
 import solve.styles.Style
 import solve.utils.createHGrowHBox
@@ -13,6 +14,7 @@ import tornadofx.*
 
 class FilterPanelView : View() {
     private val filterPanelFieldsView: FilterPanelFieldsView by inject()
+    private val filterSettingsView: FilterSettingsView by inject()
 
     override val root = vbox {
         separator {
@@ -23,9 +25,9 @@ class FilterPanelView : View() {
 
             label("Filters") {
                 style {
-                    fontFamily = Style.font
+                    fontFamily = Style.Font
                     fontSize = createPxValue(HeaderFontSize)
-                    textFill = Paint.valueOf(Style.headerFontColor)
+                    textFill = Paint.valueOf(Style.HeaderFontColor)
                 }
 
                 paddingLeft = 15.0
@@ -38,7 +40,11 @@ class FilterPanelView : View() {
                 null
             }
             hbox {
-                mfxCircleButton(addButtonGraphic, AddFilterButtonSize)
+                mfxCircleButton(addButtonGraphic, AddFilterButtonSize) {
+                    action {
+                        filterSettingsView.showDialog(this@FilterPanelView)
+                    }
+                }
                 paddingRight = 14.0
                 paddingTop = -6.0
             }

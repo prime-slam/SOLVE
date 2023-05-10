@@ -11,9 +11,6 @@ class MFXValidationTextFieldStylesheet : Stylesheet() {
             textFill = Paint.valueOf(ErrorBorderColor)
         }
 
-        focusWithin {
-        }
-
         mfxTextField {
             mfxMain.value += Paint.valueOf(DefaultBorderColor)
             borderColor += createCssBoxWithValue(Paint.valueOf(DefaultBorderColor))
@@ -21,13 +18,11 @@ class MFXValidationTextFieldStylesheet : Stylesheet() {
     }
 
     companion object {
-        const val ErrorBorderColor = Style.errorColor
-        const val DefaultBorderColor = Style.primaryColor
+        const val ErrorBorderColor = Style.ErrorColor
+        const val DefaultBorderColor = Style.PrimaryColor
 
         val mfxTextField by cssclass()
         val invalid by csspseudoclass()
         val mfxMain by cssproperty<MultiValue<Paint>>("-mfx-main")
-
-        val focusWithin by csspseudoclass("focus-within")
     }
 }

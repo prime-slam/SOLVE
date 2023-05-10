@@ -7,7 +7,7 @@ import tornadofx.*
 class SeparatorStylesheet : Stylesheet() {
     init {
         Companion.separator {
-            backgroundColor += Paint.valueOf(Style.separatorLineColor)
+            backgroundColor += Paint.valueOf(Style.SeparatorLineColor)
             Companion.line {
                 borderWidth += createPxBoxWithValue(0.0)
             }

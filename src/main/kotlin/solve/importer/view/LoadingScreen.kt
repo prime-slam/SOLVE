@@ -3,16 +3,17 @@ package solve.importer.view
 import io.github.palexdev.materialfx.controls.MFXProgressSpinner
 import javafx.geometry.Insets
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import kotlinx.coroutines.cancel
 import solve.styles.Style
+import solve.styles.Style.headerPadding
+import solve.utils.materialfx.dialogHeaderLabel
 import solve.utils.materialfx.mfxButton
 import tornadofx.*
 
 class LoadingScreen : View("Loading") {
-    private val primaryColor: Color = Color.valueOf(Style.primaryColor)
+    private val primaryColor: Color = Color.valueOf(Style.PrimaryColor)
 
     private val controlPanel: ControlPanel by inject()
 
@@ -29,16 +30,11 @@ class LoadingScreen : View("Loading") {
             prefWidth = 453.0
             style = "-fx-background-color: #ffffff"
             top {
-                label("Import a directory") {
-                    hgrow = Priority.ALWAYS
-                    prefHeight = 0.0
-                    prefWidth = 200.0
-                    style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.headerFontSize}"
-                    BorderPane.setMargin(this, Insets(0.0, 0.0, 0.0, 24.0))
+                dialogHeaderLabel("Import a directory") {
+                    padding = headerPadding
                 }
             }
             center {
-
                 vbox(15) {
                     BorderPane.setMargin(this, Insets(200.0, 0.0, 0.0, 170.0))
                     add(
@@ -47,7 +43,7 @@ class LoadingScreen : View("Loading") {
                         }
                     )
                     label("Please, wait...") {
-                        style = "-fx-font-size: ${Style.headerFontSize}; -fx-font-family: ${Style.fontCondensed}"
+                        style = "-fx-font-size: ${Style.HeaderFontSize}; -fx-font-family: ${Style.FontCondensed}"
                     }
                 }
             }
@@ -58,7 +54,7 @@ class LoadingScreen : View("Loading") {
                             BorderPane.setMargin(this, Insets(0.0, 24.0, 24.0, 0.0))
                             maxWidth = 75.0
                             prefHeight = 23.0
-                            style = Style.buttonStyle
+                            style = Style.ButtonStyle
                             action {
                                 controlPanel.coroutineScope.cancel()
                                 close()

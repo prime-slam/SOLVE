@@ -5,7 +5,6 @@ import javafx.geometry.Bounds
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
-import solve.catalogue.floor
 import solve.utils.structures.DoublePoint
 import tornadofx.*
 
@@ -39,8 +38,8 @@ fun Node.createSnapshot(): Image {
     val nodeSnapshot = snapshot(null, null)
     return WritableImage(
         nodeSnapshot.pixelReader,
-        nodeSnapshot.width.floor(),
-        nodeSnapshot.height.floor()
+        nodeSnapshot.width.floorToInt(),
+        nodeSnapshot.height.floorToInt()
     )
 }
 

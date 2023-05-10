@@ -27,7 +27,7 @@ open class SidePanelTabsView : View() {
 
     override val root = tabsVBox.also {
         it.addStylesheet(SidePanelTabsStyle::class)
-        it.style = "-fx-background-color: #${Style.surfaceColor}"
+        it.style = "-fx-background-color: #${Style.SurfaceColor}"
     }
 
     init {
@@ -43,13 +43,13 @@ open class SidePanelTabsView : View() {
 
     private fun addTab(tab: SidePanelTab) {
         val tabButton = togglebutton(tab.name, tabsToggleGroup) {
-            setPrefSize(Style.navigationRailTabSize, Style.navigationRailTabSize)
+            setPrefSize(Style.NavigationRailTabSize, Style.NavigationRailTabSize)
             clip = Style.circleForRipple(this)
             styleClass.add(tab.name.lowercase())
             contentDisplay = ContentDisplay.TOP
             style =
-                "-fx-font-family: ${Style.font}; -fx-font-weight:700;" +
-                " -fx-font-size: ${Style.buttonFontSize}; -fx-background-radius: 36"
+                "-fx-font-family: ${Style.Font}; -fx-font-weight:700;" +
+                " -fx-font-size: ${Style.ButtonFontSize}; -fx-background-radius: 36"
 
             isFocusTraversable = false
             tooltip(tab.tooltip)

@@ -20,23 +20,23 @@ class SidePanelTabsStyle : Stylesheet() {
 
     init {
         toggleButton {
-            backgroundColor += Paint.valueOf(Style.surfaceColor)
+            backgroundColor += Paint.valueOf(Style.SurfaceColor)
             backgroundInsets += createPxBoxWithValue(0.0)
             backgroundRadius += createPxBoxWithValue(0.0)
-            textFill = Paint.valueOf(Style.primaryColorLight)
+            textFill = Paint.valueOf(Style.PrimaryColorLight)
             and(selected) {
-                textFill = Paint.valueOf(Style.primaryColor)
+                textFill = Paint.valueOf(Style.PrimaryColor)
             }
         }
         project {
             graphic = URI(IconsProject)
 
             and(hover) {
-                backgroundColor += Paint.valueOf(Style.backgroundColor)
+                backgroundColor += Paint.valueOf(Style.BackgroundColor)
                 focusColor = Color.TRANSPARENT
             }
             and(selected) {
-                backgroundColor += Paint.valueOf(Style.surfaceColor)
+                backgroundColor += Paint.valueOf(Style.SurfaceColor)
                 graphic = URI(IconsProjectFilled)
             }
         }
@@ -45,11 +45,11 @@ class SidePanelTabsStyle : Stylesheet() {
             graphic = URI(IconsLayers)
 
             and(hover) {
-                backgroundColor += Paint.valueOf(Style.backgroundColor)
+                backgroundColor += Paint.valueOf(Style.BackgroundColor)
                 focusColor = Color.TRANSPARENT
             }
             and(selected) {
-                backgroundColor += Paint.valueOf(Style.surfaceColor)
+                backgroundColor += Paint.valueOf(Style.SurfaceColor)
                 graphic = URI(IconsLayersFilled)
             }
         }
@@ -58,11 +58,11 @@ class SidePanelTabsStyle : Stylesheet() {
             graphic = URI(IconsGrid)
 
             and(hover) {
-                backgroundColor += Paint.valueOf(Style.backgroundColor)
+                backgroundColor += Paint.valueOf(Style.BackgroundColor)
                 focusColor = Color.TRANSPARENT
             }
             and(selected) {
-                backgroundColor += Paint.valueOf(Style.surfaceColor)
+                backgroundColor += Paint.valueOf(Style.SurfaceColor)
                 graphic = URI(IconsGridSelected)
             }
         }
