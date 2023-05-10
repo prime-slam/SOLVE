@@ -1,10 +1,10 @@
 package solve.styles
 
 import io.github.palexdev.materialfx.controls.MFXButton
+import javafx.geometry.Insets
 import javafx.scene.control.ToggleButton
 import javafx.scene.shape.Circle
 import tornadofx.*
-import javafx.geometry.Insets
 
 object Style {
     const val BackgroundColor = "EFF0F0"

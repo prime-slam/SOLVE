@@ -5,12 +5,12 @@ import javafx.stage.Stage
 import solve.main.MainView
 import solve.scene.view.landmarks.AnimationProvider
 import solve.scene.view.landmarks.JavaFXAnimationProvider
-import solve.utils.ServiceLocator
-import tornadofx.App
-import tornadofx.launch
 import solve.styles.ApplicationStylesheet
 import solve.utils.SVGImageLoaderDimensionProvider
+import solve.utils.ServiceLocator
+import tornadofx.App
 import tornadofx.FX.Companion.stylesheets
+import tornadofx.launch
 
 class SolveApp : App(MainView::class, ApplicationStylesheet::class) {
     override fun start(stage: Stage) {
