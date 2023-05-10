@@ -58,10 +58,10 @@ object Style {
     const val tabStyle =
         "-fx-font-family: $Font; -fx-font-weight:700; -fx-font-size: $ButtonFontSize; " +
             "-fx-text-fill: $PrimaryColorLight; -fx-background-radius: 36"
+
     fun circleForRipple(button: MFXButton) = Circle(button.layoutX + 36.0, button.layoutY + 36.0,35.0)
 
     fun circleForRipple(button: ToggleButton) = Circle(button.layoutX + 36.0, button.layoutY + 36.0, 35.0)
-
     const val HeaderFontSize = "20px"
 
     const val ControlButtonsSpacing = 10.0

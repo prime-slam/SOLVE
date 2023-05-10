@@ -1,6 +1,7 @@
 package solve.filters.model
 
 import solve.filters.settings.model.FilterSetting
+<<<<<<< HEAD
 import solve.filters.settings.model.IndicesStepFilterSetting
 import solve.filters.settings.model.TimePeriodFilterSetting
 import solve.filters.settings.model.UIDFilterSetting
@@ -45,4 +46,15 @@ class Filter(val settings: List<FilterSetting<out Any>>) {
 
         return "$prefix$indicesStepPart$timePeriodPart$uidPart"
     }
+=======
+import solve.project.model.ProjectFrame
+
+data class Filter(val settings: List<FilterSetting<Any>>) {
+    fun apply(frames: List<ProjectFrame>): List<ProjectFrame> {
+        var suitableFrames = frames
+        settings.forEach { suitableFrames = it.apply(suitableFrames) }
+
+        return suitableFrames
+    }
+>>>>>>> f6786bc (Update filter settings dialog design and add a logic)
 }

@@ -32,12 +32,10 @@ import solve.sidepanel.tabs.SidePanelTabsView
 import solve.styles.MFXButtonStyleSheet
 import solve.styles.Style
 import solve.styles.TooltipStyle
-import solve.utils.MaterialFXDialog
 import solve.utils.createPxBox
 import solve.utils.loadResourcesImage
 import solve.utils.materialfx.MaterialFXDialog
 import solve.utils.materialfx.mfxButton
-import solve.utils.mfxButton
 import tornadofx.*
 
 class MainView : View() {
