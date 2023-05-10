@@ -20,9 +20,9 @@ This tool will provide following features:
 2. For each used landmark detection algorithm create a separate folder. You need to name it in the
    format ```name_algorithm_landmark``` (example: ```alg1_line```, ```alg1_keypoint```, ```alg1_plane```)
 3. Put files with markup in each of the folders. They should be named according to the frame they belong to (timestamp)
-    1. Points are represented in .csv file with (uid,x,y) columns, where x,y is coordinates of
+    1. Points are represented in .csv file with (uid,x,y) columns, where uid is id of landmark and x,y are coordinates of
        keypoint. <code>[Example](https://github.com/prime-slam/SOLVE/tree/master/testData/TestProject2/alg1_keypoint)</code>
-    2. Lines are represented in .csv file with (uid,x0,y0,x1,y1) columns, where x0,y0,x1,y1 is coordinates of the
+    2. Lines are represented in .csv file with (uid,x0,y0,x1,y1) columns, where uid is id of landmark and x0,y0,x1,y1 are coordinates of the
        beginning and end of the
        line. <code>[Example](https://github.com/prime-slam/SOLVE/tree/master/testData/LinesAndKeyPointsProject/alg1_line)</code>
     3. The planes are represented as a png file, where
