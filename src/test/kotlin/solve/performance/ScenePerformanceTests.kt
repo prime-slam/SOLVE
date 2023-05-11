@@ -4,8 +4,8 @@ import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
 import javafx.stage.Stage
-import org.junit.Ignore
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -23,7 +23,7 @@ import java.util.stream.Stream
 import kotlin.math.pow
 
 @ExtendWith(ApplicationExtension::class)
-@Ignore
+@Disabled("Disabled until bug #2019 has been fixed!")
 internal class ScenePerformanceTests {
     companion object {
         const val keypointsTestProject = "testData/TestProject2"
