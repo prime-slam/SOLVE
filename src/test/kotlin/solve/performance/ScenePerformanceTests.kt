@@ -50,10 +50,6 @@ internal class ScenePerformanceTests {
             println("Lines zooming: ${linesZoomingResults.average()} +- ${getVariance(linesZoomingResults)}")
             println("Planes zooming: ${planesZoomingResults.average()} +- ${getVariance(planesZoomingResults)}")
 
-            keypointsScrollingResults.forEach {
-                println(it)
-            }
-
             println(
                 "Keypoints scrolling: ${keypointsScrollingResults.average()}" +
                     "+- ${getVariance(keypointsScrollingResults)}"
