@@ -38,6 +38,9 @@ class FilterPanelController : Controller() {
             return projectFrames
         }
 
-        return enabledFilters.map { it.apply(projectFrames) }.flatten().distinct()
+        val notOrderedFilteredFrames = enabledFilters.map { it.apply(projectFrames) }.flatten().distinct()
+        val projectFrameToIndexMap = projectFrames.indices.associateBy { index -> projectFrames[index] }
+
+        return notOrderedFilteredFrames.sortedBy { frame -> projectFrameToIndexMap[frame] }
     }
 }
