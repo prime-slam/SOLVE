@@ -42,7 +42,7 @@ class FilterPanelView : View() {
             hbox {
                 mfxCircleButton(addButtonGraphic, AddFilterButtonSize) {
                     action {
-                        filterSettingsView.showDialog(this@FilterPanelView)
+                        filterSettingsView.showCreationDialog(this@FilterPanelView)
                     }
                 }
                 paddingRight = 14.0

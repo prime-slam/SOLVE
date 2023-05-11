@@ -17,7 +17,9 @@ class MFXIntegerTextField(private val invalidErrorMessage: String? = null) : MFX
 
     val root: Node
         get() = vbox {
-            add(this)
+            removeFromParent()
+
+            add(this@MFXIntegerTextField)
             add(errorMessageLabel)
         }
 
@@ -31,8 +33,8 @@ class MFXIntegerTextField(private val invalidErrorMessage: String? = null) : MFX
 
     private fun initializeIntegerTextField() {
         addStylesheet(MFXValidationTextFieldStylesheet::class)
-        val areAllDigitsSymbols = textProperty().booleanBinding { text -> text?.all { it.isDigit() } ?: false }
-        validator.constraint(Constraint(Severity.ERROR, invalidErrorMessage, areAllDigitsSymbols))
+        val areAllDigitSymbols = textProperty().booleanBinding { text -> text?.all { it.isDigit() } ?: false }
+        validator.constraint(Constraint(Severity.ERROR, invalidErrorMessage, areAllDigitSymbols))
 
         val enableErrorBorderColorCss = enableBorderColorCssString(MFXValidationTextFieldStylesheet.ErrorBorderColor)
         val enableDefaultBorderColorCss =
@@ -53,7 +55,7 @@ class MFXIntegerTextField(private val invalidErrorMessage: String? = null) : MFX
                 fontSize = createPxValue(10.0)
             }
             visibleProperty().bind(!validator.validProperty())
-            textProperty().onChange {
+            this@MFXIntegerTextField.textProperty().onChange {
                 text = validationMessage ?: return@onChange
             }
 

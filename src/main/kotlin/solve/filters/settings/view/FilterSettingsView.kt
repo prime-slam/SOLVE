@@ -1,24 +1,29 @@
 package solve.filters.settings.view
 
 import io.github.palexdev.materialfx.enums.FloatMode
+import javafx.beans.InvalidationListener
 import javafx.event.EventTarget
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.CheckBox
+import javafx.scene.control.Label
+import javafx.scene.control.TextField
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.text.Font
+import solve.filters.model.Filter
 import solve.filters.settings.controller.FilterSettingsController
 import solve.filters.settings.model.FilterSetting
-import solve.filters.settings.view.controls.FilterSettingControl
-import solve.filters.settings.view.controls.IndicesStepSettingControl
-import solve.filters.settings.view.controls.TimePeriodSettingControl
-import solve.filters.settings.view.controls.UIDSettingControl
+import solve.filters.settings.view.controls.FilterSettingNodeConnector
+import solve.filters.settings.view.controls.IndicesStepSettingNodeConnector
+import solve.filters.settings.view.controls.TimePeriodSettingNodeConnector
+import solve.filters.settings.view.controls.UIDSettingNodeConnector
 import solve.project.model.ProjectFrame
 import solve.styles.Style
 import solve.styles.Style.headerPadding
+import solve.utils.getKeys
 import solve.utils.materialfx.MFXIntegerTextField
 import solve.utils.materialfx.MFXIntegerTextField.Companion.mfxIntegerTextField
 import solve.utils.materialfx.MaterialFXDialog
@@ -34,19 +39,25 @@ class FilterSettingsView : View() {
     private lateinit var stepNumberIntegerTextField: MFXIntegerTextField
     private lateinit var uidIntegerTextField: MFXIntegerTextField
 
-    private lateinit var timePeriodCheckbox: CheckBox
-    private lateinit var stepNumberCheckBox: CheckBox
-    private lateinit var uidIntegerCheckBox: CheckBox
-    private val checkboxes: List<CheckBox> by lazy {
-        listOf(timePeriodCheckbox, stepNumberCheckBox, uidIntegerCheckBox)
-    }
-
     private val checkboxToSettingNodeMap = mutableMapOf<CheckBox, Node>()
-    private val settingControlsMap = mutableMapOf<Node, FilterSettingControl<*, *>>()
+    private val nodeToNodeConnectorMap =
+        mutableMapOf<Node, FilterSettingNodeConnector<out Node, out FilterSetting<out Any>>>()
 
-    private val areAllIntegerTextFieldsValid: Boolean
-        get() = stepNumberIntegerTextField.isValid && uidIntegerTextField.isValid
-    private val selectedSettingCheckboxes = observableListOf<CheckBox>()
+    private val validTextFields = observableSetOf<TextField>()
+    private val enabledTextFields = observableSetOf<TextField>()
+    private val notEmptyTextFields = observableSetOf<TextField>()
+
+    private val settingCheckboxes = mutableListOf<CheckBox>()
+    private val selectedSettingCheckboxes = observableSetOf<CheckBox>()
+
+    private val areAllEnabledTextFieldsValid: Boolean
+        get() = validTextFields.toSet() == enabledTextFields.toSet().also { println(123) }
+    private val haveSelectedCheckboxes: Boolean
+        get() = selectedSettingCheckboxes.isNotEmpty()
+    private val areAllEnabledTextFieldsNotEmpty: Boolean
+        get() = validTextFields.toSet() == notEmptyTextFields.toSet()
+    private val canCreateFilter: Boolean
+        get() = haveSelectedCheckboxes && areAllEnabledTextFieldsValid && areAllEnabledTextFieldsNotEmpty
 
     private val filterSettingsContentNode = borderpane {
         top = vbox {
@@ -54,9 +65,9 @@ class FilterSettingsView : View() {
                 padding = headerPadding
             }
             vbox(10) {
-                timePeriodSettingField()
-                indicesStepSettingField()
-                uidSettingField()
+                add(buildTimePeriodSettingNode())
+                add(buildIndicesStepSettingNode())
+                add(buildUIDSettingField())
 
                 paddingTop = 10.0
                 paddingLeft = 30.0
@@ -70,15 +81,22 @@ class FilterSettingsView : View() {
                     this@FilterSettingsView.close()
                 }
             }
-            controlButton("CREATE") {
-                isDisable = selectedSettingCheckboxes.isEmpty()
-                selectedSettingCheckboxes.onChange {
-                    isDisable = selectedSettingCheckboxes.isEmpty()
+            val createButton = controlButton("CREATE") {
+                fun updateDisableProperty() {
+                    isDisable = !canCreateFilter
                 }
+
+                updateDisableProperty()
+                val updateDisablePropertyChangeListener = InvalidationListener { updateDisableProperty() }
+                validTextFields.addListener(updateDisablePropertyChangeListener)
+                enabledTextFields.addListener(updateDisablePropertyChangeListener)
+                selectedSettingCheckboxes.addListener(updateDisablePropertyChangeListener)
+                notEmptyTextFields.addListener(updateDisablePropertyChangeListener)
 
                 action {
                     val filterSettings = getFilterSettings()
-                    println(filterSettings)
+                    controller.createFilter(filterSettings)
+                    this@FilterSettingsView.close()
                 }
             }
 
@@ -88,7 +106,9 @@ class FilterSettingsView : View() {
     }
     override val root = filterSettingsContentNode
 
-    fun showDialog(parent: View) {
+    fun showCreationDialog(parent: View) {
+        setDialogInitialState()
+
         val content = MaterialFXDialog.createGenericDialog(root)
         val dialog = MaterialFXDialog.createStageDialog(content, parent.currentStage, parent.root as Pane)
         dialog.isDraggable = false
@@ -97,7 +117,39 @@ class FilterSettingsView : View() {
         dialog.centerOnScreen()
     }
 
-    private fun EventTarget.integerTextField(
+    fun showEditingDialog(parent: View, oldFilter: Filter) {
+
+    }
+
+    private fun setDialogInitialState() {
+        settingCheckboxes.forEach { it.isSelected = false }
+        nodeToNodeConnectorMap.forEach { (node, connector) ->
+            connector.setDefaultSettingNodeState(node)
+        }
+    }
+
+    private fun getNodeByFilterSetting(setting: FilterSetting<out Any>): Node {
+        val correspondingSettingControl = nodeToNodeConnectorMap.values.first {
+            it.filterSettingKCLass == setting::class
+        }
+
+        return nodeToNodeConnectorMap.getKeys(correspondingSettingControl).first()
+    }
+
+    private fun setControlNodesSettingsFromFilter(filter: Filter) {
+        filter.settings.forEach { setting ->
+            val correspondingNode = getNodeByFilterSetting(setting)
+            val correspondingControl = nodeToNodeConnectorMap[correspondingNode]
+
+            correspondingControl?.updateSettingNodeWithSettings(correspondingNode, setting)
+        }
+    }
+
+    private fun Node.setEnabledByCheckboxSelection(checkBox: CheckBox) {
+        enableWhen(checkBox.selectedProperty())
+    }
+
+    private fun buildIntegerTextField(
         notIntegerErrorMessage: String,
         width: Double,
         maxWidth: Double
@@ -112,10 +164,47 @@ class FilterSettingsView : View() {
         textLimit = IntegerTextFieldSymbolsLimit
         floatMode = FloatMode.ABOVE
 
-        attachTo(this@FilterSettingsView)
+        disableProperty().onChange { isDisable ->
+            if (isDisable) {
+                text = ""
+                isAllowEdit = false
+                enabledTextFields.remove(this)
+            } else {
+                isAllowEdit = true
+                enabledTextFields.add(this)
+            }
+        }
+        textProperty().onChange {
+            if (text.isEmpty()) {
+                notEmptyTextFields.remove(this)
+            } else {
+                notEmptyTextFields.add(this)
+            }
+
+            if (!isValid) {
+                validTextFields.remove(this)
+            } else {
+                validTextFields.add(this)
+            }
+        }
     }
 
-    private fun EventTarget.filterSettingField(name: String, settingNode: Node, op: HBox.() -> Unit = {}) = hbox(10) {
+    private fun EventTarget.settingLabel(
+        text: String,
+        settingCheckBox: CheckBox,
+        op: Label.() -> Unit = {}
+    ) = label(text) {
+        font = Font.font(Style.Font, FilterSettingNameFontSize)
+        setEnabledByCheckboxSelection(settingCheckBox)
+
+        attachTo(this@settingLabel, op)
+    }
+
+    private fun createSettingField(
+        name: String,
+        settingNode: Node,
+        activeNode: Node = settingNode
+    ): SettingFieldData {
         val checkBox = mfxCheckbox {
             paddingTop = -7.0
 
@@ -127,64 +216,64 @@ class FilterSettingsView : View() {
                 }
             }
         }
-        checkboxToSettingNodeMap[checkBox] = settingNode
+        settingCheckboxes.add(checkBox)
 
-        hbox {
-            add(checkBox)
-            label(name) {
-                font = Font.font(Style.Font, FilterSettingNameFontSize)
+        activeNode.setEnabledByCheckboxSelection(checkBox)
+        val settingFieldNode = hbox(10) {
+            checkboxToSettingNodeMap[checkBox] = settingNode
+            hbox {
+                add(checkBox)
+                settingLabel(name, checkBox)
+
+                paddingTop = FilterSettingNonTextFieldPaddingTop
             }
-
-            paddingTop = FilterSettingNonTextFieldPaddingTop
+            add(settingNode)
         }
-        add(settingNode)
-        attachTo(this@filterSettingField, op)
+
+        return SettingFieldData(settingFieldNode, checkBox)
     }
 
-    private fun EventTarget.timePeriodSettingField(): HBox {
+    private fun buildTimePeriodSettingNode(): HBox {
         val timePeriodRangeSlider = mfxRangeSlider(0.0, 10.0, 1.0, 9.0) {
             prefWidth = TimeLimitRangeSliderWidth
             paddingTop = FilterSettingNonTextFieldPaddingTop + 2.0
         }
-        settingControlsMap[timePeriodRangeSlider] = TimePeriodSettingControl(timePeriodRangeSlider)
+        nodeToNodeConnectorMap[timePeriodRangeSlider] = TimePeriodSettingNodeConnector
 
-        return filterSettingField(
-            "Time period",
-            timePeriodRangeSlider
-        )
+        return createSettingField("Time period:", timePeriodRangeSlider).node
     }
 
-    private fun EventTarget.indicesStepSettingField(): HBox {
-        stepNumberIntegerTextField = integerTextField("Step must be an integer number", 60.0, 145.0)
-        settingControlsMap[stepNumberIntegerTextField] = IndicesStepSettingControl(stepNumberIntegerTextField)
+    private fun buildIndicesStepSettingNode(): HBox {
+        stepNumberIntegerTextField = buildIntegerTextField("Step must be an integer number", 60.0, 145.0)
+        nodeToNodeConnectorMap[stepNumberIntegerTextField] = IndicesStepSettingNodeConnector
 
-        return filterSettingField(
-            "Show every",
-            stepNumberIntegerTextField
-        ) {
-            label("image") {
-                font = Font.font(Style.Font, FilterSettingNameFontSize)
-
+        val fieldData = createSettingField("Show every", stepNumberIntegerTextField.root, stepNumberIntegerTextField)
+        fieldData.node.add(
+            settingLabel("image", fieldData.checkBox) {
                 paddingTop = FilterSettingNonTextFieldPaddingTop
             }
-        }
-    }
-
-    private fun EventTarget.uidSettingField(): HBox {
-        uidIntegerTextField = integerTextField("UID must be an integer number", 155.0, 155.0)
-        settingControlsMap[uidIntegerTextField] = UIDSettingControl(uidIntegerTextField)
-
-        return filterSettingField(
-            "Show images with landmark:",
-            uidIntegerTextField
         )
+
+        return fieldData.node
     }
 
-    private fun getFilterSettings(): List<FilterSetting<*>> {
-        val enabledCheckboxesSettingNodes = selectedSettingCheckboxes.map { checkboxToSettingNodeMap[it] }
-        val enabledSettingsControls = enabledCheckboxesSettingNodes.map { settingControlsMap[it] }
+    private fun buildUIDSettingField(): HBox {
+        uidIntegerTextField = buildIntegerTextField("UID must be an integer number", 155.0, 155.0)
+        nodeToNodeConnectorMap[uidIntegerTextField] = UIDSettingNodeConnector
 
-        return enabledSettingsControls.mapNotNull { it?.extrudeFilterSettings() }
+        return createSettingField("Show images with landmark:", uidIntegerTextField.root, uidIntegerTextField).node
+    }
+
+    private fun getFilterSettings(): List<FilterSetting<out Any>> {
+        val enabledSettingNodes = selectedSettingCheckboxes.map { checkboxToSettingNodeMap[it] }
+
+        return enabledSettingNodes.mapNotNull { settingNode ->
+            settingNode ?: return@mapNotNull null
+
+            val correspondingControl = nodeToNodeConnectorMap[settingNode]
+
+            return@mapNotNull correspondingControl?.extractFilterSettings(settingNode)
+        }
     }
 
     private fun getFramesMinTimestamp(frames: List<ProjectFrame>) = frames.minOf { it.timestamp }
@@ -199,3 +288,5 @@ class FilterSettingsView : View() {
         private const val TimeLimitRangeSliderWidth = 300.0
     }
 }
+
+private data class SettingFieldData(val node: HBox, val checkBox: CheckBox)

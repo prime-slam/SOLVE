@@ -8,7 +8,7 @@ import tornadofx.*
 class FilterSettingsController : Controller() {
     val panelController: FilterPanelController by inject()
 
-    fun createFilter(filterSettings: List<FilterSetting<Any>>) {
+    fun createFilter(filterSettings: List<FilterSetting<out Any>>) {
         val filter = Filter(filterSettings)
         panelController.addFilter(filter)
     }
