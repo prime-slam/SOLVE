@@ -1,10 +1,12 @@
 package solve.filters.view
 
+import io.github.palexdev.materialfx.controls.MFXCheckListView
 import io.github.palexdev.materialfx.controls.cell.MFXCheckListCell
 import io.github.palexdev.materialfx.effects.DepthLevel
 import io.github.palexdev.mfxcore.utils.converters.FunctionalStringConverter
 import javafx.application.Platform
 import javafx.beans.binding.Bindings
+import javafx.collections.ListChangeListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -13,6 +15,7 @@ import kotlinx.coroutines.launch
 import solve.constants.IconsDeletePath
 import solve.constants.IconsEditPath
 import solve.filters.controller.FilterPanelController
+import solve.filters.model.Filter
 import solve.styles.FilterPanelFieldsViewStylesheet
 import solve.utils.createHGrowHBox
 import solve.utils.imageViewIcon
@@ -41,11 +44,7 @@ class FilterPanelFieldsView : View() {
             return@Function cell
         }
 
-        val itemsNumberProperty = Bindings.size(items)
-        prefHeightProperty().bind(itemsNumberProperty.multiply(35.0))
-
-        items.onChange { forceCheckboxesVisualization() }
-        Platform.runLater { currentWindow?.widthProperty()?.onChange { forceCheckboxesVisualization() } }
+        addFilterListViewBindings()
 
         paddingLeft = 1.5
         useMaxWidth = true
@@ -80,6 +79,27 @@ class FilterPanelFieldsView : View() {
                 paddingRight = 20.5
             }
         )
+    }
+
+    private fun MFXCheckListView<Filter>.addFilterListViewBindings() {
+        val itemsNumberProperty = Bindings.size(items)
+        prefHeightProperty().bind(itemsNumberProperty.multiply(35.0))
+
+        items.onChange { forceCheckboxesVisualization() }
+        Platform.runLater { currentWindow?.widthProperty()?.onChange { forceCheckboxesVisualization() } }
+
+        selectionModel.selection.onChange { change ->
+            val isFilterEnabled = change.wasAdded()
+            val filter = change.valueAdded ?: change.valueRemoved
+            filter.enabled = isFilterEnabled
+
+            filterPanelController.applyFilters()
+        }
+
+        items.onChange {
+            selectionModel.selection
+            println(123)
+        }
     }
 
     companion object {

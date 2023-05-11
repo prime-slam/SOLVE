@@ -18,6 +18,7 @@ import solve.importer.model.ButtonModel
 import solve.importer.model.FrameAfterPartialParsing
 import solve.main.MainController
 import solve.main.MainView
+import solve.project.controller.ProjectController
 import solve.styles.Style
 import solve.styles.Style.ControlButtonsSpacing
 import solve.utils.createAlertForError
@@ -34,6 +35,8 @@ class ControlPanel : View() {
     private val buttonController: ButtonController by inject()
 
     private val mainController: MainController by inject()
+
+    private val projectController: ProjectController by inject()
 
     private val importer: DirectoryPathView by inject()
 
@@ -172,8 +175,7 @@ class ControlPanel : View() {
             val projectVal =
                 withContext(Dispatchers.IO) { fullParseDirectory(controller.projectAfterPartialParsing.value) }
             try {
-                mainController.visualizeProject(projectVal.layers, projectVal.frames)
-                mainController.displayCatalogueFrames(projectVal.frames)
+                projectController.changeProject(projectVal)
                 button.isDisable = true
 
                 mainView.dialog.close()

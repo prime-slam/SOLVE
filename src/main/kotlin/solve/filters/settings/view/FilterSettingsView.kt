@@ -51,7 +51,7 @@ class FilterSettingsView : View() {
     private val selectedSettingCheckboxes = observableSetOf<CheckBox>()
 
     private val areAllEnabledTextFieldsValid: Boolean
-        get() = validTextFields.toSet() == enabledTextFields.toSet().also { println(123) }
+        get() = validTextFields.toSet() == enabledTextFields.toSet()
     private val haveSelectedCheckboxes: Boolean
         get() = selectedSettingCheckboxes.isNotEmpty()
     private val areAllEnabledTextFieldsNotEmpty: Boolean
@@ -81,7 +81,7 @@ class FilterSettingsView : View() {
                     this@FilterSettingsView.close()
                 }
             }
-            val createButton = controlButton("CREATE") {
+            controlButton("CREATE") {
                 fun updateDisableProperty() {
                     isDisable = !canCreateFilter
                 }
@@ -220,7 +220,7 @@ class FilterSettingsView : View() {
 
         activeNode.setEnabledByCheckboxSelection(checkBox)
         val settingFieldNode = hbox(10) {
-            checkboxToSettingNodeMap[checkBox] = settingNode
+            checkboxToSettingNodeMap[checkBox] = activeNode
             hbox {
                 add(checkBox)
                 settingLabel(name, checkBox)
