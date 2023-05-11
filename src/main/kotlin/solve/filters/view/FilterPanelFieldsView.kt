@@ -7,6 +7,7 @@ import io.github.palexdev.mfxcore.utils.converters.FunctionalStringConverter
 import javafx.application.Platform
 import javafx.beans.binding.Bindings
 import javafx.collections.ListChangeListener
+import javafx.collections.MapChangeListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -88,18 +89,15 @@ class FilterPanelFieldsView : View() {
         items.onChange { forceCheckboxesVisualization() }
         Platform.runLater { currentWindow?.widthProperty()?.onChange { forceCheckboxesVisualization() } }
 
-        selectionModel.selection.onChange { change ->
-            val isFilterEnabled = change.wasAdded()
-            val filter = change.valueAdded ?: change.valueRemoved
-            filter.enabled = isFilterEnabled
+        selectionModel.selectionProperty().addListener(
+            MapChangeListener { change ->
+                val isFilterEnabled = change.wasAdded()
+                val filter = change.valueAdded ?: change.valueRemoved
+                filter.enabled = isFilterEnabled
 
-            filterPanelController.applyFilters()
-        }
-
-        items.onChange {
-            selectionModel.selection
-            println(123)
-        }
+                filterPanelController.applyFilters()
+            }
+        )
     }
 
     companion object {
