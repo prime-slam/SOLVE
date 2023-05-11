@@ -67,7 +67,7 @@ tasks {
 }
 
 tasks.test {
-    jvmArgs = listOf("-Dheadless=true")
+    jvmArgs = listOf("-Dheadless=true", "-Xmx4g")
     useJUnitPlatform()
     testLogging {
         events(
