@@ -6,7 +6,6 @@ import io.github.palexdev.materialfx.effects.DepthLevel
 import io.github.palexdev.mfxcore.utils.converters.FunctionalStringConverter
 import javafx.application.Platform
 import javafx.beans.binding.Bindings
-import javafx.beans.property.SimpleIntegerProperty
 import javafx.collections.MapChangeListener
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Label
@@ -38,7 +37,7 @@ class FilterPanelFieldsView : View() {
     private val editIconImage = loadResourcesImage(IconsEditPath)
     private val deleteIconImage = loadResourcesImage(IconsDeletePath)
 
-    val filtersListView = mfxCheckListView(observableListOf<Filter>()) {
+    private val filtersListView = mfxCheckListView(observableListOf<Filter>()) {
         addStylesheet(FilterPanelFieldsViewStylesheet::class)
 
         converter = FunctionalStringConverter.to { it.preview }
