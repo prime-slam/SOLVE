@@ -7,7 +7,9 @@ object IndicesStepSettingNodeConnector : FilterSettingNodeConnector<MFXIntegerTe
     MFXIntegerTextField::class,
     IndicesStepFilterSetting::class
 ) {
-    override fun extractFilterSettingsFromTypedSettingNode(settingNode: MFXIntegerTextField): IndicesStepFilterSetting? {
+    override fun extractFilterSettingsFromTypedSettingNode(
+        settingNode: MFXIntegerTextField
+    ): IndicesStepFilterSetting? {
         if (!settingNode.isValid || settingNode.text.isEmpty()) {
             return null
         }
@@ -21,7 +23,7 @@ object IndicesStepSettingNodeConnector : FilterSettingNodeConnector<MFXIntegerTe
         settingNode: MFXIntegerTextField,
         setting: IndicesStepFilterSetting
     ) {
-       settingNode.text = setting.step.toString()
+        settingNode.text = setting.step.toString()
     }
 
     override fun setDefaultTypedSettingNodeState(settingNode: MFXIntegerTextField) {

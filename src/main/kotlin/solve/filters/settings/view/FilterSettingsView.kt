@@ -34,7 +34,6 @@ import solve.utils.materialfx.dialogHeaderLabel
 import solve.utils.materialfx.mfxCheckbox
 import solve.utils.materialfx.mfxIntegerRangeSlider
 import tornadofx.*
-import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 class FilterSettingsView : View() {

@@ -114,7 +114,7 @@ class FilterPanelFieldsView : View() {
     private fun updateItemsSelection() {
         val selection = filtersListView.selectionModel.selection
         filtersListView.items.forEach { item ->
-            if (item.enabled && ! selection.containsValue(item)) {
+            if (item.enabled && !selection.containsValue(item)) {
                 filtersListView.selectionModel.selectItem(item)
             } else if (!item.enabled && selection.containsValue(item)) {
                 filtersListView.selectionModel.deselectItem(item)
