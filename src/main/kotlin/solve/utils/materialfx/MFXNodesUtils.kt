@@ -8,17 +8,17 @@ import io.github.palexdev.materialfx.controls.MFXContextMenuItem
 import io.github.palexdev.materialfx.controls.MFXTextField
 import io.github.palexdev.materialfx.effects.ripple.RippleClipType
 import io.github.palexdev.materialfx.factories.RippleClipTypeFactory
-import javafx.application.Platform
-import javafx.beans.binding.Bindings
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.Node
 import javafx.scene.paint.Color
-import javafx.scene.shape.Circle
 import org.controlsfx.control.RangeSlider
 import solve.utils.materialfx.stylesheets.MFXRangeSliderStylesheet
 import tornadofx.*
 import java.util.function.Supplier
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToLong
 
 fun EventTarget.mfxButton(
     text: String = "",
@@ -95,6 +95,24 @@ fun EventTarget.mfxRangeSlider(
     val slider = RangeSlider(min, max, lowValue, highValue)
     slider.addStylesheet(MFXRangeSliderStylesheet::class)
     slider.attachTo(this, op)
+
+    return slider
+}
+
+fun EventTarget.mfxIntegerRangeSlider(
+    min: Double,
+    max: Double,
+    lowValue: Double,
+    highValue: Double,
+    op: RangeSlider.() -> Unit = {}
+): RangeSlider {
+    val slider = mfxRangeSlider(min, max, lowValue, highValue, op)
+    slider.lowValueProperty().onChange { newLowValue ->
+        slider.lowValue = max(slider.min, newLowValue.roundToLong().toDouble())
+    }
+    slider.highValueProperty().onChange { newHighValue ->
+        slider.highValue = min(slider.max, newHighValue.roundToLong().toDouble())
+    }
 
     return slider
 }

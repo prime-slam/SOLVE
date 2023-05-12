@@ -20,7 +20,6 @@ class ProjectController : Controller() {
 
     private fun addMainControllerBindings() {
         model.projectProperty.onChange { newProject ->
-            println(newProject)
             newProject ?: return@onChange
 
             mainController.visualizeProject(newProject.layers, newProject.frames)

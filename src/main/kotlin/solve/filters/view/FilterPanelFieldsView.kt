@@ -7,6 +7,8 @@ import io.github.palexdev.mfxcore.utils.converters.FunctionalStringConverter
 import javafx.application.Platform
 import javafx.beans.binding.Bindings
 import javafx.collections.MapChangeListener
+import javafx.scene.control.Label
+import javafx.scene.text.Font
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -18,6 +20,7 @@ import solve.filters.controller.FilterPanelController
 import solve.filters.model.Filter
 import solve.filters.settings.view.FilterSettingsView
 import solve.styles.FilterPanelFieldsViewStylesheet
+import solve.styles.Style
 import solve.utils.createHGrowHBox
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
@@ -42,7 +45,7 @@ class FilterPanelFieldsView : View() {
 
         cellFactory = Function {
             val cell = MFXCheckListCell(this, it)
-            addButtonsToCell(cell)
+            initializeCellGraphic(cell)
 
             return@Function cell
         }
@@ -62,9 +65,14 @@ class FilterPanelFieldsView : View() {
 
     override val root = filtersListView
 
-    private fun addButtonsToCell(cell: MFXCheckListCell<Filter>) {
+    private fun initializeCellGraphic(cell: MFXCheckListCell<Filter>) {
         val filter = cell.data
 
+        val cellTextLabel = cell.getChildList()?.firstOrNull { child -> child is Label }
+        cellTextLabel?.tooltip {
+            text = filter.preview
+            font = Font.font(Style.Font)
+        }
         cell.add(createHGrowHBox())
         cell.add(
             hbox {
@@ -86,7 +94,6 @@ class FilterPanelFieldsView : View() {
                         filterPanelController.removeFilter(filter)
                     }
                 }
-
                 paddingRight = 20.5
             }
         )
@@ -139,6 +146,7 @@ class FilterPanelFieldsView : View() {
     companion object {
         private const val ListFieldSpawnTimeMillis = 500L
 
+        private const val FieldLabelFontSize = 16.0
         private const val FieldButtonsIconsSize = 24.0
         private const val FieldButtonPressRippleCircleRadius = 15.0
     }

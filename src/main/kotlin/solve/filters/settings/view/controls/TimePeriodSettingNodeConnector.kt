@@ -2,14 +2,19 @@ package solve.filters.settings.view.controls
 
 import org.controlsfx.control.RangeSlider
 import solve.filters.settings.model.TimePeriodFilterSetting
+import solve.project.controller.ProjectController
+import solve.project.model.ProjectFrame
 import solve.utils.ceilToInt
 import solve.utils.floorToInt
 import solve.utils.structures.IntPoint
+import tornadofx.*
 
 object TimePeriodSettingNodeConnector : FilterSettingNodeConnector<RangeSlider, TimePeriodFilterSetting>(
     RangeSlider::class,
     TimePeriodFilterSetting::class
 ) {
+    private val projectController: ProjectController = find()
+
     override fun extractFilterSettingsFromTypedSettingNode(settingNode: RangeSlider): TimePeriodFilterSetting? {
         val fromTimePeriod = settingNode.lowValue.floorToInt()
         val toTimePeriod = settingNode.highValue.ceilToInt()
@@ -23,9 +28,15 @@ object TimePeriodSettingNodeConnector : FilterSettingNodeConnector<RangeSlider, 
     }
 
     override fun setDefaultTypedSettingNodeState(settingNode: RangeSlider) {
-        settingNode.min = 0.0
-        settingNode.max = 1.0
+        val projectFrames = projectController.model.project.frames
+
+        settingNode.min = getFramesMinTimestamp(projectFrames).toDouble()
+        settingNode.max = getFramesMaxTimestamp(projectFrames).toDouble()
         settingNode.lowValue = settingNode.min
         settingNode.highValue = settingNode.max
     }
+
+    private fun getFramesMinTimestamp(frames: List<ProjectFrame>) = frames.minOf { it.timestamp }
+
+    private fun getFramesMaxTimestamp(frames: List<ProjectFrame>) = frames.maxOf { it.timestamp }
 }

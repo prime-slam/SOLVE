@@ -14,6 +14,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.text.Font
+import org.controlsfx.control.RangeSlider
 import solve.filters.model.Filter
 import solve.filters.settings.controller.FilterSettingsController
 import solve.filters.settings.model.FilterSetting
@@ -21,9 +22,9 @@ import solve.filters.settings.view.controls.FilterSettingNodeConnector
 import solve.filters.settings.view.controls.IndicesStepSettingNodeConnector
 import solve.filters.settings.view.controls.TimePeriodSettingNodeConnector
 import solve.filters.settings.view.controls.UIDSettingNodeConnector
-import solve.project.model.ProjectFrame
 import solve.styles.Style
 import solve.styles.Style.headerPadding
+import solve.utils.createHGrowHBox
 import solve.utils.getKeys
 import solve.utils.materialfx.MFXIntegerTextField
 import solve.utils.materialfx.MFXIntegerTextField.Companion.mfxIntegerTextField
@@ -31,8 +32,10 @@ import solve.utils.materialfx.MaterialFXDialog
 import solve.utils.materialfx.controlButton
 import solve.utils.materialfx.dialogHeaderLabel
 import solve.utils.materialfx.mfxCheckbox
-import solve.utils.materialfx.mfxRangeSlider
+import solve.utils.materialfx.mfxIntegerRangeSlider
 import tornadofx.*
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 class FilterSettingsView : View() {
     private val controller: FilterSettingsController by inject()
@@ -92,7 +95,7 @@ class FilterSettingsView : View() {
                 add(buildIndicesStepSettingNode())
                 add(buildUIDSettingField())
 
-                paddingTop = 10.0
+                paddingTop = 20.0
                 paddingLeft = 30.0
             }
 
@@ -245,25 +248,48 @@ class FilterSettingsView : View() {
                 validTextFields.add(this)
             }
         }
+
+        alignment = Pos.CENTER
     }
 
-    private fun EventTarget.settingLabel(
-        text: String,
-        settingCheckBox: CheckBox,
+    private fun EventTarget.settingFieldLabel(
+        text: String = "",
+        fieldCheckbox: CheckBox,
+        fontSize: Double = FilterSettingNameFontSize,
         op: Label.() -> Unit = {}
     ) = label(text) {
-        font = Font.font(Style.Font, FilterSettingNameFontSize)
-        setEnabledByCheckboxSelection(settingCheckBox)
+        font = Font.font(Style.Font, fontSize)
+        setEnabledByCheckboxSelection(fieldCheckbox)
 
-        attachTo(this@settingLabel, op)
+        attachTo(this@settingFieldLabel, op)
     }
 
     private fun createSettingField(
         name: String,
+        checkBox: CheckBox,
         settingNode: Node,
         activeNode: Node = settingNode
-    ): SettingFieldData {
-        val checkBox = mfxCheckbox {
+    ): HBox {
+        activeNode.setEnabledByCheckboxSelection(checkBox)
+
+        val settingFieldNode = hbox(10) {
+            checkboxToSettingNodeMap[checkBox] = activeNode
+            hbox {
+                add(checkBox)
+                settingFieldLabel(name, checkBox) {
+                    alignment = Pos.BOTTOM_CENTER
+                }
+
+                paddingTop = FilterSettingNonTextFieldPaddingTop
+            }
+            add(settingNode)
+        }
+
+        return settingFieldNode
+    }
+
+    private fun createSettingFieldCheckbox(): CheckBox {
+        val checkbox = mfxCheckbox {
             paddingTop = -7.0
 
             selectedProperty().onChange { selected ->
@@ -274,52 +300,87 @@ class FilterSettingsView : View() {
                 }
             }
         }
-        settingCheckboxes.add(checkBox)
+        settingCheckboxes.add(checkbox)
 
-        activeNode.setEnabledByCheckboxSelection(checkBox)
-        val settingFieldNode = hbox(10) {
-            checkboxToSettingNodeMap[checkBox] = activeNode
-            hbox {
-                add(checkBox)
-                settingLabel(name, checkBox)
+        return checkbox
+    }
 
-                paddingTop = FilterSettingNonTextFieldPaddingTop
-            }
-            add(settingNode)
-        }
+    private fun createIntegerRangeSliderRangeInfoString(rangeSlider: RangeSlider): String {
+        val fromValue = rangeSlider.lowValue.roundToLong()
+        val toValue = rangeSlider.highValue.roundToLong()
 
-        return SettingFieldData(settingFieldNode, checkBox)
+        return "$fromValue - $toValue"
     }
 
     private fun buildTimePeriodSettingNode(): HBox {
-        val timePeriodRangeSlider = mfxRangeSlider(0.0, 10.0, 1.0, 9.0) {
+        val timePeriodRangeSlider = mfxIntegerRangeSlider(0.0, 1.0, 0.0, 1.0) {
             prefWidth = TimeLimitRangeSliderWidth
             paddingTop = FilterSettingNonTextFieldPaddingTop + 2.0
         }
         nodeToNodeConnectorMap[timePeriodRangeSlider] = TimePeriodSettingNodeConnector
 
-        return createSettingField("Time period:", timePeriodRangeSlider).node
+        val fieldCheckbox = createSettingFieldCheckbox()
+        val timePeriodSettingNode = stackpane {
+            hbox {
+                add(createHGrowHBox())
+                settingFieldLabel(fieldCheckbox = fieldCheckbox) {
+                    visibleWhen(fieldCheckbox.selectedProperty())
+                    timePeriodRangeSlider.lowValueProperty().onChange {
+                        text = createIntegerRangeSliderRangeInfoString(timePeriodRangeSlider)
+                    }
+                    timePeriodRangeSlider.highValueProperty().onChange {
+                        text = createIntegerRangeSliderRangeInfoString(timePeriodRangeSlider)
+                    }
+                }
+                add(createHGrowHBox())
+
+                paddingBottom = 30.0
+            }
+            add(timePeriodRangeSlider)
+
+            paddingBottom = 8.0
+            paddingLeft = 5.0
+        }
+
+        return createSettingField(
+            "Time period:",
+            fieldCheckbox,
+            timePeriodSettingNode,
+            timePeriodRangeSlider
+        )
     }
 
     private fun buildIndicesStepSettingNode(): HBox {
         stepNumberIntegerTextField = buildIntegerTextField("Step must be an integer number", 60.0, 145.0)
         nodeToNodeConnectorMap[stepNumberIntegerTextField] = IndicesStepSettingNodeConnector
 
-        val fieldData = createSettingField("Show every", stepNumberIntegerTextField.root, stepNumberIntegerTextField)
-        fieldData.node.add(
-            settingLabel("image", fieldData.checkBox) {
+        val fieldCheckbox = createSettingFieldCheckbox()
+
+        val fieldNode = createSettingField(
+            "Show every",
+            fieldCheckbox,
+            stepNumberIntegerTextField.root,
+            stepNumberIntegerTextField
+        )
+        fieldNode.add(
+            settingFieldLabel("image", fieldCheckbox) {
                 paddingTop = FilterSettingNonTextFieldPaddingTop
             }
         )
 
-        return fieldData.node
+        return fieldNode
     }
 
     private fun buildUIDSettingField(): HBox {
         uidIntegerTextField = buildIntegerTextField("UID must be an integer number", 155.0, 155.0)
         nodeToNodeConnectorMap[uidIntegerTextField] = UIDSettingNodeConnector
 
-        return createSettingField("Show images with landmark:", uidIntegerTextField.root, uidIntegerTextField).node
+        return createSettingField(
+            "Show images with landmark:",
+            createSettingFieldCheckbox(),
+            uidIntegerTextField.root,
+            uidIntegerTextField
+        )
     }
 
     private fun getFilterSettings(): List<FilterSetting<out Any>> {
@@ -333,10 +394,6 @@ class FilterSettingsView : View() {
             return@mapNotNull correspondingControl?.extractFilterSettings(settingNode)
         }
     }
-
-    private fun getFramesMinTimestamp(frames: List<ProjectFrame>) = frames.minOf { it.timestamp }
-
-    private fun getFramesMaxTimestamp(frames: List<ProjectFrame>) = frames.maxOf { it.timestamp }
 
     companion object {
         private const val IntegerTextFieldSymbolsLimit = Long.MIN_VALUE.toString().length
@@ -356,5 +413,3 @@ private enum class FilterSettingsDialogMode {
     CreationMode,
     EditingMode
 }
-
-private data class SettingFieldData(val node: HBox, val checkBox: CheckBox)
