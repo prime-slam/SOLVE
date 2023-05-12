@@ -1,6 +1,5 @@
 package solve.filters.settings.view
 
-import io.github.palexdev.materialfx.controls.MFXTextField
 import io.github.palexdev.materialfx.enums.FloatMode
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleObjectProperty
