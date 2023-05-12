@@ -1,5 +1,6 @@
 package solve.filters.settings.view
 
+import io.github.palexdev.materialfx.controls.MFXTextField
 import io.github.palexdev.materialfx.enums.FloatMode
 import javafx.beans.InvalidationListener
 import javafx.beans.property.SimpleObjectProperty
@@ -72,11 +73,11 @@ class FilterSettingsView : View() {
     private val selectedSettingCheckboxes = observableSetOf<CheckBox>()
 
     private val areAllEnabledTextFieldsValid: Boolean
-        get() = validTextFields.toSet() == enabledTextFields.toSet()
+        get() = validTextFields.containsAll(enabledTextFields)
     private val haveSelectedCheckboxes: Boolean
         get() = selectedSettingCheckboxes.isNotEmpty()
     private val areAllEnabledTextFieldsNotEmpty: Boolean
-        get() = validTextFields.toSet() == notEmptyTextFields.toSet()
+        get() = notEmptyTextFields.containsAll(enabledTextFields)
     private val canCreateFilter: Boolean
         get() = haveSelectedCheckboxes && areAllEnabledTextFieldsValid && areAllEnabledTextFieldsNotEmpty
 
@@ -112,6 +113,11 @@ class FilterSettingsView : View() {
                 }
 
                 fun updateDisableProperty() {
+                    println(validTextFields)
+                    println(enabledTextFields)
+                    println(selectedSettingCheckboxes)
+                    println(notEmptyTextFields)
+
                     isDisable = !canCreateFilter
                 }
 
@@ -147,6 +153,7 @@ class FilterSettingsView : View() {
         setDialogInitialState()
         setControlNodesSettingsFromFilter(editingModeOldFilter)
         enableControlNodesCheckboxesFromFilter(editingModeOldFilter)
+        initializeTextFieldListsFromFilter(editingModeOldFilter)
 
         initializeAndShowDialog(this)
     }
@@ -187,6 +194,16 @@ class FilterSettingsView : View() {
         }
 
         return nodeToNodeConnectorMap.getKeys(correspondingSettingControl).first()
+    }
+
+    private fun initializeTextFieldListsFromFilter(filter: Filter) {
+        filter.settings.forEach { setting ->
+            val settingTextField = getNodeByFilterSetting(setting) as? TextField ?: return@forEach
+
+            validTextFields.add(settingTextField)
+            enabledTextFields.add(settingTextField)
+            notEmptyTextFields.add(settingTextField)
+        }
     }
 
     private fun setControlNodesSettingsFromFilter(filter: Filter) {
