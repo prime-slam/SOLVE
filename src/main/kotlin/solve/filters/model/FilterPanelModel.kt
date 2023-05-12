@@ -5,7 +5,7 @@ import javafx.collections.ObservableList
 
 class FilterPanelModel {
     private val _filters = FXCollections.observableArrayList<Filter>()
-    val filters: ObservableList<Filter> = FXCollections.unmodifiableObservableList(_filters)
+    val filters: ObservableList<Filter> = FXCollections.synchronizedObservableList(_filters)
 
     fun addFilter(filter: Filter) {
         _filters.add(filter)

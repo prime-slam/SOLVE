@@ -6,7 +6,9 @@ import io.github.palexdev.materialfx.effects.DepthLevel
 import io.github.palexdev.mfxcore.utils.converters.FunctionalStringConverter
 import javafx.application.Platform
 import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.collections.MapChangeListener
+import javafx.scene.control.CheckBox
 import javafx.scene.control.Label
 import javafx.scene.text.Font
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +38,7 @@ class FilterPanelFieldsView : View() {
     private val editIconImage = loadResourcesImage(IconsEditPath)
     private val deleteIconImage = loadResourcesImage(IconsDeletePath)
 
-    val filtersListView = mfxCheckListView(filterPanelController.model.filters) {
+    val filtersListView = mfxCheckListView(observableListOf<Filter>()) {
         addStylesheet(FilterPanelFieldsViewStylesheet::class)
 
         converter = FunctionalStringConverter.to { it.preview }
@@ -45,7 +47,7 @@ class FilterPanelFieldsView : View() {
 
         cellFactory = Function {
             val cell = MFXCheckListCell(this, it)
-            initializeCellGraphic(cell)
+            initializeCellGraphic(cell, it)
 
             return@Function cell
         }
@@ -53,21 +55,12 @@ class FilterPanelFieldsView : View() {
         addFilterListViewBindings()
 
         paddingLeft = 1.5
-        itemsProperty().onChange {
-            paddingBottom = if (items.isEmpty()) {
-                0.0
-            } else {
-                14.0
-            }
-        }
         useMaxWidth = true
     }
 
     override val root = filtersListView
 
-    private fun initializeCellGraphic(cell: MFXCheckListCell<Filter>) {
-        val filter = cell.data
-
+    private fun initializeCellGraphic(cell: MFXCheckListCell<Filter>, filter: Filter) {
         val cellTextLabel = cell.getChildList()?.firstOrNull { child -> child is Label }
         cellTextLabel?.tooltip {
             text = filter.preview
@@ -97,28 +90,9 @@ class FilterPanelFieldsView : View() {
                 paddingRight = 20.5
             }
         )
-    }
-
-    // Needed because mfx checkboxes are invisible until the first click and before a window hiding (mfx problem).
-    private fun forceCheckboxesVisualization() {
-        CoroutineScope(Dispatchers.JavaFx).launch {
-            delay(ListFieldSpawnTimeMillis)
-
-            val visualizationForceNode = pane()
-            visualizationForceNode.isManaged = false
-            add(visualizationForceNode)
-            getChildList()?.remove(visualizationForceNode)
-        }
-    }
-
-    private fun updateItemsSelection() {
-        val selection = filtersListView.selectionModel.selection
-        filtersListView.items.forEach { item ->
-            if (item.enabled && !selection.containsValue(item)) {
-                filtersListView.selectionModel.selectItem(item)
-            } else if (!item.enabled && selection.containsValue(item)) {
-                filtersListView.selectionModel.deselectItem(item)
-            }
+        Platform.runLater {
+            val cellCheckbox = (cell.getChildList()?.firstOrNull { it is CheckBox } as? CheckBox) ?: return@runLater
+            cellCheckbox.isSelected = filter.enabled
         }
     }
 
@@ -126,28 +100,42 @@ class FilterPanelFieldsView : View() {
         val itemsNumberProperty = Bindings.size(items)
         prefHeightProperty().bind(itemsNumberProperty.multiply(35.0))
 
-        items.onChange {
-            updateItemsSelection()
-            forceCheckboxesVisualization()
-        }
-
-        Platform.runLater { currentWindow?.widthProperty()?.onChange { forceCheckboxesVisualization() } }
-
         selectionModel.selectionProperty().addListener(
             MapChangeListener { change ->
                 val filter = change.valueAdded ?: change.valueRemoved
                 filter.enabled = change.wasAdded()
-
+                filterPanelController.model.filters
                 filterPanelController.applyFilters()
             }
         )
+
+        // Needed because mfx list view does not work correct in some cases.
+        // When an element is replaced in the filter list (deletion and addition),
+        // the mfx list skips the operation of deletion of a replaced element,
+        // but adds a new element and deletes the first element in the list.
+        // Also, mfx library fully reinitialize list during the addition and removing,
+        // so it causes calls of selectionProperty changes and checkboxes selection state is incorrect.
+        filterPanelController.model.filters.onChange { change ->
+            while (change.next()) {
+                CoroutineScope(Dispatchers.JavaFx).launch {
+                    change.removed.forEach {
+                        if (it.enabled && selectionModel.selection.containsValue(it)) {
+                            selectionModel.deselectItem(it)
+                        }
+                    }
+                    filtersListView.items.removeAll(change.removed)
+
+                    delay(DelayBetweenMFXListViewChangeOperationsMillis)
+
+                    filtersListView.items.addAll(change.addedSubList)
+                }
+            }
+        }
     }
 
     companion object {
-        private const val ListFieldSpawnTimeMillis = 500L
-
-        private const val FieldLabelFontSize = 16.0
         private const val FieldButtonsIconsSize = 24.0
         private const val FieldButtonPressRippleCircleRadius = 15.0
+        private const val DelayBetweenMFXListViewChangeOperationsMillis = 50L
     }
 }
