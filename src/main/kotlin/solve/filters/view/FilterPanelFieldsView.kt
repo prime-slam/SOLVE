@@ -6,7 +6,6 @@ import io.github.palexdev.materialfx.effects.DepthLevel
 import io.github.palexdev.mfxcore.utils.converters.FunctionalStringConverter
 import javafx.application.Platform
 import javafx.beans.binding.Bindings
-import javafx.collections.ListChangeListener
 import javafx.collections.MapChangeListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,16 +16,19 @@ import solve.constants.IconsDeletePath
 import solve.constants.IconsEditPath
 import solve.filters.controller.FilterPanelController
 import solve.filters.model.Filter
+import solve.filters.settings.view.FilterSettingsView
 import solve.styles.FilterPanelFieldsViewStylesheet
 import solve.utils.createHGrowHBox
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
 import solve.utils.materialfx.mfxCheckListView
+import solve.utils.materialfx.mfxCircleButton
 import tornadofx.*
 import java.util.function.Function
 
 class FilterPanelFieldsView : View() {
     private val filterPanelController: FilterPanelController by inject()
+    private val filterPanelSettingsView: FilterSettingsView by inject()
 
     private val editIconImage = loadResourcesImage(IconsEditPath)
     private val deleteIconImage = loadResourcesImage(IconsDeletePath)
@@ -48,7 +50,46 @@ class FilterPanelFieldsView : View() {
         addFilterListViewBindings()
 
         paddingLeft = 1.5
+        itemsProperty().onChange {
+            paddingBottom = if (items.isEmpty()) {
+                0.0
+            } else {
+                14.0
+            }
+        }
         useMaxWidth = true
+    }
+
+    override val root = filtersListView
+
+    private fun addButtonsToCell(cell: MFXCheckListCell<Filter>) {
+        val filter = cell.data
+
+        cell.add(createHGrowHBox())
+        cell.add(
+            hbox {
+                mfxCircleButton(radius = FieldButtonPressRippleCircleRadius) {
+                    graphic = imageViewIcon(editIconImage ?: return@mfxCircleButton, FieldButtonsIconsSize)
+
+                    action {
+                        filterPanelSettingsView.showEditingDialog(filter)
+                    }
+                }
+                mfxCircleButton(radius = FieldButtonPressRippleCircleRadius) {
+                    imageViewIcon(deleteIconImage ?: return@mfxCircleButton, FieldButtonsIconsSize)
+                    action {
+                        // Needed because when an unselected element is removed,
+                        // the whole selection is recreated with the addition of the remaining elements,
+                        // which value changes causes changes of selectionProperty.
+                        filtersListView.selectionModel.deselectItem(filter)
+
+                        filterPanelController.removeFilter(filter)
+                    }
+                }
+
+                paddingRight = 20.5
+            }
+        )
     }
 
     // Needed because mfx checkboxes are invisible until the first click and before a window hiding (mfx problem).
@@ -63,37 +104,32 @@ class FilterPanelFieldsView : View() {
         }
     }
 
-    override val root = filtersListView
-
-    private fun <T> addButtonsToCell(cell: MFXCheckListCell<T>) {
-        cell.add(createHGrowHBox())
-        cell.add(
-            hbox {
-                hbox {
-                    imageViewIcon(editIconImage ?: return@hbox, 24.0) {
-                        paddingTop = 3.5
-                        paddingRight = 7.0
-                    }
-                }
-                imageViewIcon(deleteIconImage ?: return@hbox, 24.0)
-
-                paddingRight = 20.5
+    private fun updateItemsSelection() {
+        val selection = filtersListView.selectionModel.selection
+        filtersListView.items.forEach { item ->
+            if (item.enabled && ! selection.containsValue(item)) {
+                filtersListView.selectionModel.selectItem(item)
+            } else if (!item.enabled && selection.containsValue(item)) {
+                filtersListView.selectionModel.deselectItem(item)
             }
-        )
+        }
     }
 
     private fun MFXCheckListView<Filter>.addFilterListViewBindings() {
         val itemsNumberProperty = Bindings.size(items)
         prefHeightProperty().bind(itemsNumberProperty.multiply(35.0))
 
-        items.onChange { forceCheckboxesVisualization() }
+        items.onChange {
+            updateItemsSelection()
+            forceCheckboxesVisualization()
+        }
+
         Platform.runLater { currentWindow?.widthProperty()?.onChange { forceCheckboxesVisualization() } }
 
         selectionModel.selectionProperty().addListener(
             MapChangeListener { change ->
-                val isFilterEnabled = change.wasAdded()
                 val filter = change.valueAdded ?: change.valueRemoved
-                filter.enabled = isFilterEnabled
+                filter.enabled = change.wasAdded()
 
                 filterPanelController.applyFilters()
             }
@@ -101,6 +137,9 @@ class FilterPanelFieldsView : View() {
     }
 
     companion object {
-        private const val ListFieldSpawnTimeMillis = 20L
+        private const val ListFieldSpawnTimeMillis = 500L
+
+        private const val FieldButtonsIconsSize = 24.0
+        private const val FieldButtonPressRippleCircleRadius = 15.0
     }
 }

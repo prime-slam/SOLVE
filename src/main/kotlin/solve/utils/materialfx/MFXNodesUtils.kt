@@ -6,7 +6,10 @@ import io.github.palexdev.materialfx.controls.MFXCheckbox
 import io.github.palexdev.materialfx.controls.MFXContextMenu
 import io.github.palexdev.materialfx.controls.MFXContextMenuItem
 import io.github.palexdev.materialfx.controls.MFXTextField
+import io.github.palexdev.materialfx.effects.ripple.RippleClipType
+import io.github.palexdev.materialfx.factories.RippleClipTypeFactory
 import javafx.application.Platform
+import javafx.beans.binding.Bindings
 import javafx.collections.ObservableList
 import javafx.event.EventTarget
 import javafx.scene.Node
@@ -48,18 +51,15 @@ fun MFXContextMenu.lineSeparator() = this.addLineSeparator(MFXContextMenu.Builde
 
 fun MFXContextMenuItem.action(op: () -> Unit) = this.setOnAction { op() }
 
-fun EventTarget.mfxCircleButton(
+fun Node.mfxCircleButton(
     graphic: Node? = null,
     radius: Double = 20.0,
     text: String = "",
     op: MFXButton.() -> Unit = {}
 ) = mfxButton(text, graphic) {
     this.graphic = graphic
-    Platform.runLater {
-        val rippleCenter = boundsInLocal
-        rippleGenerator.clipSupplier = Supplier {
-            return@Supplier Circle(rippleCenter.centerX, rippleCenter.centerY, radius)
-        }
+    rippleGenerator.clipSupplier = Supplier {
+        RippleClipTypeFactory(RippleClipType.CIRCLE).setRadius(radius).build(this)
     }
     style {
         backgroundColor += Color.TRANSPARENT

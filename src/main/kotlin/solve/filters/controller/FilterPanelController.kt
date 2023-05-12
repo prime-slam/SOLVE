@@ -34,9 +34,6 @@ class FilterPanelController : Controller() {
         val projectFrames = projectController.model.project.frames
 
         val enabledFilters = model.filters.filter { it.enabled }
-        if (enabledFilters.isEmpty()) {
-            return projectFrames
-        }
 
         val notOrderedFilteredFrames = enabledFilters.map { it.apply(projectFrames) }.flatten().distinct()
         val projectFrameToIndexMap = projectFrames.indices.associateBy { index -> projectFrames[index] }

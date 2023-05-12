@@ -2,6 +2,7 @@ package solve.filters.settings.view
 
 import io.github.palexdev.materialfx.enums.FloatMode
 import javafx.beans.InvalidationListener
+import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventTarget
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -39,6 +40,24 @@ class FilterSettingsView : View() {
     private lateinit var stepNumberIntegerTextField: MFXIntegerTextField
     private lateinit var uidIntegerTextField: MFXIntegerTextField
 
+    private var currentSettingsDialogModeProperty = SimpleObjectProperty(FilterSettingsDialogMode.CreationMode)
+    private var currentSettingsDialogMode by currentSettingsDialogModeProperty
+
+    private val currentHeaderText: String
+        get() = if (currentSettingsDialogMode == FilterSettingsDialogMode.CreationMode) {
+            CreationModeDialogHeaderText
+        } else {
+            EditingModeDialogHeaderText
+        }
+    private val currentOKButtonText: String
+        get() = if (currentSettingsDialogMode == FilterSettingsDialogMode.CreationMode) {
+            CreationModeDialogOKButtonText
+        } else {
+            EditingModeDialogOKButtonText
+        }
+
+    lateinit var editingModeOldFilter: Filter
+
     private val checkboxToSettingNodeMap = mutableMapOf<CheckBox, Node>()
     private val nodeToNodeConnectorMap =
         mutableMapOf<Node, FilterSettingNodeConnector<out Node, out FilterSetting<out Any>>>()
@@ -61,7 +80,11 @@ class FilterSettingsView : View() {
 
     private val filterSettingsContentNode = borderpane {
         top = vbox {
-            dialogHeaderLabel("Create new filter") {
+            dialogHeaderLabel(currentHeaderText) {
+                currentSettingsDialogModeProperty.onChange {
+                    text = currentHeaderText
+                }
+
                 padding = headerPadding
             }
             vbox(10) {
@@ -81,7 +104,11 @@ class FilterSettingsView : View() {
                     this@FilterSettingsView.close()
                 }
             }
-            controlButton("CREATE") {
+            controlButton(currentOKButtonText) {
+                currentSettingsDialogModeProperty.onChange {
+                    text = currentOKButtonText
+                }
+
                 fun updateDisableProperty() {
                     isDisable = !canCreateFilter
                 }
@@ -94,8 +121,7 @@ class FilterSettingsView : View() {
                 notEmptyTextFields.addListener(updateDisablePropertyChangeListener)
 
                 action {
-                    val filterSettings = getFilterSettings()
-                    controller.createFilter(filterSettings)
+                    onCreateFilter()
                     this@FilterSettingsView.close()
                 }
             }
@@ -106,9 +132,34 @@ class FilterSettingsView : View() {
     }
     override val root = filterSettingsContentNode
 
-    fun showCreationDialog(parent: View) {
+    fun showCreationDialog() {
+        currentSettingsDialogMode = FilterSettingsDialogMode.CreationMode
         setDialogInitialState()
+        initializeAndShowDialog(this)
+    }
 
+    fun showEditingDialog(oldFilter: Filter) {
+        currentSettingsDialogMode = FilterSettingsDialogMode.EditingMode
+        editingModeOldFilter = oldFilter
+
+        setDialogInitialState()
+        setControlNodesSettingsFromFilter(editingModeOldFilter)
+        enableControlNodesCheckboxesFromFilter(editingModeOldFilter)
+
+        initializeAndShowDialog(this)
+    }
+
+    private fun onCreateFilter() {
+        val filterSettings = getFilterSettings()
+
+        if (currentSettingsDialogMode == FilterSettingsDialogMode.CreationMode) {
+            controller.createFilter(filterSettings)
+        } else {
+            controller.editFilter(editingModeOldFilter, filterSettings)
+        }
+    }
+
+    private fun initializeAndShowDialog(parent: View) {
         val content = MaterialFXDialog.createGenericDialog(root)
         val dialog = MaterialFXDialog.createStageDialog(content, parent.currentStage, parent.root as Pane)
         dialog.isDraggable = false
@@ -117,15 +168,15 @@ class FilterSettingsView : View() {
         dialog.centerOnScreen()
     }
 
-    fun showEditingDialog(parent: View, oldFilter: Filter) {
-
-    }
-
     private fun setDialogInitialState() {
         settingCheckboxes.forEach { it.isSelected = false }
         nodeToNodeConnectorMap.forEach { (node, connector) ->
             connector.setDefaultSettingNodeState(node)
         }
+        selectedSettingCheckboxes.clear()
+        validTextFields.clear()
+        enabledTextFields.clear()
+        notEmptyTextFields.clear()
     }
 
     private fun getNodeByFilterSetting(setting: FilterSetting<out Any>): Node {
@@ -142,6 +193,13 @@ class FilterSettingsView : View() {
             val correspondingControl = nodeToNodeConnectorMap[correspondingNode]
 
             correspondingControl?.updateSettingNodeWithSettings(correspondingNode, setting)
+        }
+    }
+
+    private fun enableControlNodesCheckboxesFromFilter(filter: Filter) {
+        filter.settings.forEach { setting ->
+            val correspondingNode = getNodeByFilterSetting(setting)
+            checkboxToSettingNodeMap.getKeys(correspondingNode).first().isSelected = true
         }
     }
 
@@ -283,10 +341,20 @@ class FilterSettingsView : View() {
     companion object {
         private const val IntegerTextFieldSymbolsLimit = Long.MIN_VALUE.toString().length
 
+        private const val CreationModeDialogHeaderText = "Create new filter"
+        private const val EditingModeDialogHeaderText = "Edit filter"
+        private const val CreationModeDialogOKButtonText = "CREATE"
+        private const val EditingModeDialogOKButtonText = "SAVE"
+
         private const val FilterSettingNameFontSize = 14.0
         private const val FilterSettingNonTextFieldPaddingTop = 8.0
         private const val TimeLimitRangeSliderWidth = 300.0
     }
+}
+
+private enum class FilterSettingsDialogMode {
+    CreationMode,
+    EditingMode
 }
 
 private data class SettingFieldData(val node: HBox, val checkBox: CheckBox)
