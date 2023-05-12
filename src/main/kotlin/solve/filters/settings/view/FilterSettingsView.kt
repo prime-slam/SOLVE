@@ -113,11 +113,6 @@ class FilterSettingsView : View() {
                 }
 
                 fun updateDisableProperty() {
-                    println(validTextFields)
-                    println(enabledTextFields)
-                    println(selectedSettingCheckboxes)
-                    println(notEmptyTextFields)
-
                     isDisable = !canCreateFilter
                 }
 
@@ -153,7 +148,6 @@ class FilterSettingsView : View() {
         setDialogInitialState()
         setControlNodesSettingsFromFilter(editingModeOldFilter)
         enableControlNodesCheckboxesFromFilter(editingModeOldFilter)
-        initializeTextFieldListsFromFilter(editingModeOldFilter)
 
         initializeAndShowDialog(this)
     }
@@ -194,16 +188,6 @@ class FilterSettingsView : View() {
         }
 
         return nodeToNodeConnectorMap.getKeys(correspondingSettingControl).first()
-    }
-
-    private fun initializeTextFieldListsFromFilter(filter: Filter) {
-        filter.settings.forEach { setting ->
-            val settingTextField = getNodeByFilterSetting(setting) as? TextField ?: return@forEach
-
-            validTextFields.add(settingTextField)
-            enabledTextFields.add(settingTextField)
-            notEmptyTextFields.add(settingTextField)
-        }
     }
 
     private fun setControlNodesSettingsFromFilter(filter: Filter) {
