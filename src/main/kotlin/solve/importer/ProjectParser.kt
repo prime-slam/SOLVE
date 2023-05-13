@@ -11,7 +11,6 @@ import solve.project.model.LayerKind
 import solve.utils.createAlertForError
 import solve.utils.toStringWithoutBrackets
 import java.io.File
-import java.nio.file.Paths
 
 object ProjectParser {
     private const val IMAGE_DIRECTORY_NAME = "images"
