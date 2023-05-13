@@ -3,13 +3,13 @@ package solve.interactive.scene.view
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
-import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.shape.Ellipse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -29,9 +29,11 @@ import solve.scene.view.FrameViewData
 import solve.scene.view.FrameViewParameters
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
+import solve.scene.view.drawing.BufferedImageView
 import solve.testMemoryLeak
 import solve.utils.Storage
 import solve.utils.structures.Size
+import tornadofx.*
 
 @ExtendWith(ApplicationExtension::class)
 internal class FrameViewTests : InteractiveTestClass() {
@@ -45,15 +47,21 @@ internal class FrameViewTests : InteractiveTestClass() {
 
     private class TestOrderManager(private val map: Map<LayerSettings, Int>) : OrderManager<LayerSettings> {
         var orderChangedListenersCount = 0
+        private val actions = mutableListOf<() -> Unit>()
 
         override fun addOrderChangedListener(action: () -> Unit) {
             orderChangedListenersCount++
+            actions.add(action)
         }
 
         override fun removeOrderChangedListener(action: () -> Unit) {}
 
         override fun indexOf(element: LayerSettings): Int {
             return map[element]!!
+        }
+
+        fun changeViewOrder() {
+            actions.forEach { it() }
         }
     }
 
@@ -63,7 +71,7 @@ internal class FrameViewTests : InteractiveTestClass() {
     private lateinit var storage: TestStorage
     private lateinit var orderManager: TestOrderManager
     private lateinit var associationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>
-    private lateinit var image: Image
+    private lateinit var image: WritableImage
     private val layerName = "keypoints"
     private lateinit var settings: LayerSettings.PointLayerSettings
     private val points = listOf(Point(1, 1), Point(2, 5))
@@ -82,6 +90,7 @@ internal class FrameViewTests : InteractiveTestClass() {
         val scope = CoroutineScope(Dispatchers.JavaFx)
         parameters = FrameViewParameters(scope, associationsManager, orderManager)
         image = WritableImage(size.width.toInt(), size.height.toInt())
+        image.pixelWriter.setColor(3, 3, c("F0F0F0"))
         val state = LayerState(layerName)
         keypoints = points.mapIndexed { index, point ->
             Landmark.Keypoint(index.toLong(), settings, state, point)
@@ -191,5 +200,37 @@ internal class FrameViewTests : InteractiveTestClass() {
         val positions = frameView.children.filterIsInstance<Ellipse>()
             .map { Point(it.centerX.toInt().toShort(), it.centerY.toInt().toShort()) }
         assertEquals((points + this.points).toSet(), positions.toSet())
+    }
+
+    @Test
+    fun `Empty frame`(robot: FxRobot) {
+        robot.interact {
+            frameView.init(FrameViewData(null, parameters))
+        }
+        val imageView = frameView.children.single() as BufferedImageView
+        val pixelReader = imageView.image.pixelReader
+        assertEquals(0, pixelReader.getArgb(3, 3))
+    }
+
+    @Test
+    fun `Empty frames still be empty when view order changed`(robot: FxRobot) {
+        robot.interact {
+            frameView.init(FrameViewData(null, parameters))
+            orderManager.changeViewOrder()
+        }
+        val imageView = frameView.children.single() as BufferedImageView
+        val pixelReader = imageView.image.pixelReader
+        assertEquals(0, pixelReader.getArgb(3, 3))
+    }
+
+    @Test
+    fun `Fill empty frame with data again`(robot: FxRobot) {
+        val imageView = frameView.children.filterIsInstance<BufferedImageView>().single()
+        val pixelReader = imageView.image.pixelReader
+        robot.interact {
+            frameView.init(FrameViewData(null, parameters))
+            frameView.init(FrameViewData(frame, parameters))
+        }
+        assertNotEquals(0, pixelReader.getArgb(3, 3))
     }
 }
