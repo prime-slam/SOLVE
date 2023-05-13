@@ -255,6 +255,8 @@ class FrameView(
         currentFrame = frame
 
         if (frame == null) {
+            drawnImage = null
+            drawnLandmarks = mapOf()
             return
         }
 
