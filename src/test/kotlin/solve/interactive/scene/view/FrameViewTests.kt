@@ -54,7 +54,9 @@ internal class FrameViewTests : InteractiveTestClass() {
             actions.add(action)
         }
 
-        override fun removeOrderChangedListener(action: () -> Unit) {}
+        override fun removeOrderChangedListener(action: () -> Unit) {
+            actions.remove(action)
+        }
 
         override fun indexOf(element: LayerSettings): Int {
             return map[element]!!
