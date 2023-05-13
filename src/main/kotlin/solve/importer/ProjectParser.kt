@@ -11,6 +11,7 @@ import solve.project.model.LayerKind
 import solve.utils.createAlertForError
 import solve.utils.toStringWithoutBrackets
 import java.io.File
+import java.nio.file.Paths
 
 object ProjectParser {
     private const val IMAGE_DIRECTORY_NAME = "images"
@@ -91,7 +92,7 @@ object ProjectParser {
                     layers.add(directoryName)
                 }
             } else {
-                errorOutputs.add(imageName)
+                errorOutputs.add(directoryName + "/" + it.name)
             }
         }
 
@@ -99,8 +100,8 @@ object ProjectParser {
             val errors = errorOutputs.toStringWithoutBrackets()
             val countErrors = errorOutputs.count()
             createAlertForError(
-                "$errors ${if (countErrors == 1) "is" else "are"} incorrect " +
-                    "${if (countErrors == 1) "name for file" else "names for files"} with markup. " +
+                "\"$errors\" ${if (countErrors == 1) "has" else "have"} incorrect " +
+                    "${if (countErrors == 1) "name of file" else "names of files"} with markup. " +
                     "File name must support conversion to Long."
             )
         }
