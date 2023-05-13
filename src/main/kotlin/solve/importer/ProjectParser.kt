@@ -39,7 +39,7 @@ object ProjectParser {
                 val missingAlgorithms = diff.toStringWithoutBrackets()
                 frame.image.errors.add(
                     "There ${if (diff.count() == 1) "is" else "are"} no $missingAlgorithms for " +
-                        "image ${frame.image.name}"
+                            "image ${frame.image.name}"
                 )
                 hasAnyErrors = true
             }
@@ -99,7 +99,9 @@ object ProjectParser {
             val errors = errorOutputs.toStringWithoutBrackets()
             val countErrors = errorOutputs.count()
             createAlertForError(
-                "$errors ${if (countErrors == 1) "is" else "are"} incorrect ${if (countErrors == 1) "name for file" else "names for files"} with markup. File name must support conversion to Long."
+                "$errors ${if (countErrors == 1) "is" else "are"} incorrect " +
+                        "${if (countErrors == 1) "name for file" else "names for files"} with markup. " +
+                        "File name must support conversion to Long."
             )
         }
     }
@@ -124,13 +126,13 @@ object ProjectParser {
             if (errorImages.isNotEmpty()) {
                 createAlertForError(
                     "Image ${
-                    if (errorImages.count() == 1) {
-                        "${errorImages.toStringWithoutBrackets()} is"
-                    } else {
-                        "${errorImages.first()} and ${errorImages.count() - 1} others are"
-                    }
+                        if (errorImages.count() == 1) {
+                            "${errorImages.toStringWithoutBrackets()} is"
+                        } else {
+                            "${errorImages.first()} and ${errorImages.count() - 1} others are"
+                        }
                     } " +
-                        "because the file name can't be converted to long"
+                            "because the file name can't be converted to long"
                 )
             }
         }
@@ -153,14 +155,14 @@ object ProjectParser {
         fun alertErrorFolderMessage() {
             createAlertForError(
                 "The directory ${
-                if (errorFolders.count() == 1) {
-                    "${errorFolders.toStringWithoutBrackets()} is"
-                } else {
-                    "${errorFolders.first()} and ${errorFolders.count() - 1} others are"
-                }
+                    if (errorFolders.count() == 1) {
+                        "${errorFolders.toStringWithoutBrackets()} is"
+                    } else {
+                        "${errorFolders.first()} and ${errorFolders.count() - 1} others are"
+                    }
                 } skipped, " +
-                    "because names of folders don't contain correct kind name. " +
-                    "The correct directory name should look like: name_kind"
+                        "because names of folders don't contain correct kind name. " +
+                        "The correct directory name should look like: name_kind"
             )
         }
 
