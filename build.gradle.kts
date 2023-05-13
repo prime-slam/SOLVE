@@ -62,6 +62,7 @@ dependencies {
 
 tasks {
     compileKotlin {
+        kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.jvmTarget = "1.8"
     }
 }
