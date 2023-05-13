@@ -96,8 +96,10 @@ object ProjectParser {
         }
 
         if (errorOutputs.isNotEmpty()) {
+            val errors = errorOutputs.toStringWithoutBrackets()
+            val countErrors = errorOutputs.count()
             createAlertForError(
-                "$errorOutputs are incorrect names of files. They can't be converted to Long"
+                "$errors ${if (countErrors == 1) "is" else "are"} incorrect ${if (countErrors == 1) "name for file" else "names for files"} with markup. File name must support conversion to Long."
             )
         }
     }
