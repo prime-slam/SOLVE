@@ -86,7 +86,7 @@ abstract class CatalogueFieldsView : View() {
         sceneView.root.addEventFilter(DragEvent.DRAG_DROPPED, ::onSceneDragDropped)
     }
 
-    private fun onSceneDragDropped(event: DragEvent) {
+    private fun onSceneDragDropped(@Suppress("UNUSED_PARAMETER") event: DragEvent) {
         if (isDragging) {
             controller.visualizeFramesSelection(selectedFrames)
         }

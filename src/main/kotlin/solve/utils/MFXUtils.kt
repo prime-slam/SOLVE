@@ -18,7 +18,6 @@ fun EventTarget.mfxButton(
 
 fun EventTarget.mfxTextField(
     text: String = "",
-    graphic: Node? = null,
     op: MFXTextField.() -> Unit = {}
 ) = MFXTextField(text).attachTo(this, op)
 
