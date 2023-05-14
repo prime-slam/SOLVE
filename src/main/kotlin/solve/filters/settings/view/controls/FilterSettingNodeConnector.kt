@@ -9,10 +9,6 @@ abstract class FilterSettingNodeConnector<T : Node, K : FilterSetting<out Any>> 
     private val nodeKClass: KClass<T>,
     val filterSettingKCLass: KClass<K>
 ) {
-    private fun isExpectedNodeType(settingNode: Node) = nodeKClass.isInstance(settingNode)
-
-    private fun castNodeToExpectedType(settingNode: Node) = nodeKClass.cast(settingNode)
-
     fun extractFilterSettings(settingNode: Node): K? {
         if (!isExpectedNodeType(settingNode)) {
             return null
@@ -20,8 +16,6 @@ abstract class FilterSettingNodeConnector<T : Node, K : FilterSetting<out Any>> 
 
         return extractFilterSettingsFromTypedSettingNode(castNodeToExpectedType(settingNode))
     }
-
-    protected abstract fun extractFilterSettingsFromTypedSettingNode(settingNode: T): K?
 
     fun updateSettingNodeWithSettings(settingNode: Node, setting: FilterSetting<out Any>) {
         if (!isExpectedNodeType(settingNode) || !filterSettingKCLass.isInstance(setting)) {
@@ -34,8 +28,6 @@ abstract class FilterSettingNodeConnector<T : Node, K : FilterSetting<out Any>> 
         )
     }
 
-    protected abstract fun updateTypedSettingNodeWithSettings(settingNode: T, setting: K)
-
     fun setDefaultSettingNodeState(settingNode: Node) {
         if (!isExpectedNodeType(settingNode)) {
             return
@@ -44,5 +36,13 @@ abstract class FilterSettingNodeConnector<T : Node, K : FilterSetting<out Any>> 
         return setDefaultTypedSettingNodeState(castNodeToExpectedType(settingNode))
     }
 
+    protected abstract fun extractFilterSettingsFromTypedSettingNode(settingNode: T): K?
+
+    protected abstract fun updateTypedSettingNodeWithSettings(settingNode: T, setting: K)
+
     protected abstract fun setDefaultTypedSettingNodeState(settingNode: T)
+
+    private fun isExpectedNodeType(settingNode: Node) = nodeKClass.isInstance(settingNode)
+
+    private fun castNodeToExpectedType(settingNode: Node) = nodeKClass.cast(settingNode)
 }
