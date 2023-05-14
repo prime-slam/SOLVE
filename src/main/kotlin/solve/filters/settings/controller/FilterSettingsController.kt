@@ -13,8 +13,8 @@ class FilterSettingsController : Controller() {
         panelController.addFilter(filter)
     }
 
-    fun editFilter(editingFilter: Filter, newFilterSettings: List<FilterSetting<out Any>>) {
-        val newFilter = Filter(newFilterSettings)
+    fun editFilter(editingFilter: Filter, editedFilterSettings: List<FilterSetting<out Any>>) {
+        val newFilter = Filter(editedFilterSettings)
         newFilter.enabled = editingFilter.enabled
 
         panelController.editFilter(editingFilter, newFilter)

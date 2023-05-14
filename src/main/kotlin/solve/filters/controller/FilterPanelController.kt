@@ -21,8 +21,8 @@ class FilterPanelController : Controller() {
         model.removeFilter(filter)
     }
 
-    fun editFilter(editingFilter: Filter, newFilter: Filter) {
-        model.replaceFilter(editingFilter, newFilter)
+    fun editFilter(editingFilter: Filter, editedFilter: Filter) {
+        model.replaceFilter(editingFilter, editedFilter)
     }
 
     fun applyFilters() {
