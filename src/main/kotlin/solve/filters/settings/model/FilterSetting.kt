@@ -2,8 +2,11 @@ package solve.filters.settings.model
 
 import solve.project.model.ProjectFrame
 
-interface FilterSetting<T> {
-    fun apply(fields: List<ProjectFrame>): List<ProjectFrame>
+abstract class FilterSetting<T>(settingValue: T) {
+    var settingValue: T = settingValue
+        protected set
 
-    fun edit(newValue: T)
+    abstract fun apply(fields: List<ProjectFrame>): List<ProjectFrame>
+
+    abstract fun edit(newValue: T)
 }

@@ -18,7 +18,7 @@ object UIDSettingNodeConnector : FilterSettingNodeConnector<MFXIntegerTextField,
     }
 
     override fun updateTypedSettingNodeWithSettings(settingNode: MFXIntegerTextField, setting: UIDFilterSetting) {
-        settingNode.text = setting.uid.toString()
+        settingNode.text = setting.settingValue.toString()
     }
 
     override fun setDefaultTypedSettingNodeState(settingNode: MFXIntegerTextField) {

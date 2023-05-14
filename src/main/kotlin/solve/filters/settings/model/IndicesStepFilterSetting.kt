@@ -2,13 +2,10 @@ package solve.filters.settings.model
 
 import solve.project.model.ProjectFrame
 
-class IndicesStepFilterSetting(step: Int) : FilterSetting<Int> {
-    var step: Int = step
-        private set
-
-    override fun apply(fields: List<ProjectFrame>) = fields.slice((step - 1)..fields.lastIndex step this.step)
+class IndicesStepFilterSetting(step: Int) : FilterSetting<Int>(step) {
+    override fun apply(fields: List<ProjectFrame>) = fields.slice((settingValue - 1)..fields.lastIndex step this.settingValue)
 
     override fun edit(newValue: Int) {
-        step = newValue
+        settingValue = newValue
     }
 }

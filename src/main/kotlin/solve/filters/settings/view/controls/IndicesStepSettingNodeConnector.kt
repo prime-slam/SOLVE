@@ -23,7 +23,7 @@ object IndicesStepSettingNodeConnector : FilterSettingNodeConnector<MFXIntegerTe
         settingNode: MFXIntegerTextField,
         setting: IndicesStepFilterSetting
     ) {
-        settingNode.text = setting.step.toString()
+        settingNode.text = setting.settingValue.toString()
     }
 
     override fun setDefaultTypedSettingNodeState(settingNode: MFXIntegerTextField) {

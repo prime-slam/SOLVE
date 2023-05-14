@@ -23,8 +23,8 @@ object TimePeriodSettingNodeConnector : FilterSettingNodeConnector<RangeSlider, 
     }
 
     override fun updateTypedSettingNodeWithSettings(settingNode: RangeSlider, setting: TimePeriodFilterSetting) {
-        settingNode.lowValue = setting.timePeriod.x.toDouble()
-        settingNode.highValue = setting.timePeriod.y.toDouble()
+        settingNode.lowValue = setting.settingValue.x.toDouble()
+        settingNode.highValue = setting.settingValue.y.toDouble()
     }
 
     override fun setDefaultTypedSettingNodeState(settingNode: RangeSlider) {

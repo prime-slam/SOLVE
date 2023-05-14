@@ -28,17 +28,17 @@ class Filter(val settings: List<FilterSetting<out Any>>) {
 
         val prefix = "Show "
         val indicesStepPart = if (indicesStepSetting != null) {
-            "every ${indicesStepSetting.step} image "
+            "every ${indicesStepSetting.settingValue} image "
         } else {
             "images "
         }
         val timePeriodPart = if (timePeriodSetting != null) {
-            "from ${timePeriodSetting.timePeriod.x} to ${timePeriodSetting.timePeriod.y} "
+            "from ${timePeriodSetting.settingValue.x} to ${timePeriodSetting.settingValue.y} "
         } else {
             ""
         }
         val uidPart = if (uidSetting != null) {
-            "with landmark ${uidSetting.uid}"
+            "with landmark ${uidSetting.settingValue}"
         } else {
             ""
         }
