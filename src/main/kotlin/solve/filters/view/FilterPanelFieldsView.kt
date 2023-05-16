@@ -20,9 +20,6 @@ import solve.constants.IconsEditPath
 import solve.filters.controller.FilterPanelController
 import solve.filters.model.Filter
 import solve.filters.settings.view.FilterSettingsView
-import solve.project.controller.ProjectController
-import solve.scene.SceneFacade
-import solve.scene.controller.SceneController
 import solve.styles.FilterPanelFieldsViewStylesheet
 import solve.styles.Style
 import solve.utils.createHGrowHBox

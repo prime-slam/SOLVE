@@ -30,7 +30,7 @@ object FullParserForImport {
                 if (!layers.contains(currentLayer)) {
                     layers.add((currentLayer))
                 }
-                val uids = when(output.kind) {
+                val uids = when (output.kind) {
                     LayerKind.Keypoint -> CSVLinesParser.extractUIDs(output.path)
                     LayerKind.Line -> CSVLinesParser.extractUIDs(output.path)
                     LayerKind.Plane -> ImagePlanesParser.extractUIDs(output.path)
