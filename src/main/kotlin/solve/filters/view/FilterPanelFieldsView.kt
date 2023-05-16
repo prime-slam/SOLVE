@@ -20,6 +20,9 @@ import solve.constants.IconsEditPath
 import solve.filters.controller.FilterPanelController
 import solve.filters.model.Filter
 import solve.filters.settings.view.FilterSettingsView
+import solve.project.controller.ProjectController
+import solve.scene.SceneFacade
+import solve.scene.controller.SceneController
 import solve.styles.FilterPanelFieldsViewStylesheet
 import solve.styles.Style
 import solve.utils.createHGrowHBox
@@ -98,10 +101,6 @@ class FilterPanelFieldsView : View() {
     private fun MFXCheckListView<Filter>.addFilterListViewBindings() {
         val itemsNumberProperty = Bindings.size(items)
         prefHeightProperty().bind(itemsNumberProperty.multiply(35.0))
-
-        filterPanelController.model.filters.onChange {
-            filterPanelController.applyFilters()
-        }
 
         selectionModel.selectionProperty().addListener(
             MapChangeListener { change ->

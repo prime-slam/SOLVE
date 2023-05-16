@@ -13,6 +13,10 @@ class FilterPanelController : Controller() {
     private val projectController: ProjectController by inject()
     private val catalogueController: CatalogueController by inject()
 
+    init {
+        addBindings()
+    }
+
     fun addFilter(filter: Filter) {
         model.addFilter(filter)
     }
@@ -25,7 +29,16 @@ class FilterPanelController : Controller() {
         model.replaceFilter(editingFilter, editedFilter)
     }
 
-    fun applyFilters() {
+    private fun addBindings() {
+        projectController.model.projectProperty.onChange {
+            applyFilters()
+        }
+        model.filters.onChange {
+            applyFilters()
+        }
+    }
+
+    private fun applyFilters() {
         val filteredFrames = getFilteredProjectFrames()
         catalogueController.setCatalogueFrames(filteredFrames)
     }
