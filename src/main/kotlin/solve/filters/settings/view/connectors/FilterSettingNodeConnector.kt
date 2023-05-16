@@ -1,4 +1,4 @@
-package solve.filters.settings.view.controls
+package solve.filters.settings.view.connectors
 
 import javafx.scene.Node
 import solve.filters.settings.model.FilterSetting

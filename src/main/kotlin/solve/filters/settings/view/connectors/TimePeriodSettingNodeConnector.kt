@@ -1,4 +1,4 @@
-package solve.filters.settings.view.controls
+package solve.filters.settings.view.connectors
 
 import org.controlsfx.control.RangeSlider
 import solve.filters.settings.model.TimePeriodFilterSetting

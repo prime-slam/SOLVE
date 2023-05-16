@@ -1,4 +1,4 @@
-package solve.filters.settings.view.controls
+package solve.filters.settings.view.connectors
 
 import solve.filters.settings.model.UIDFilterSetting
 import solve.utils.materialfx.MFXIntegerTextField

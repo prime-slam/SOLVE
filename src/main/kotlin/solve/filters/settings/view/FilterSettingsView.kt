@@ -18,10 +18,10 @@ import org.controlsfx.control.RangeSlider
 import solve.filters.model.Filter
 import solve.filters.settings.controller.FilterSettingsController
 import solve.filters.settings.model.FilterSetting
-import solve.filters.settings.view.controls.FilterSettingNodeConnector
-import solve.filters.settings.view.controls.IndicesStepSettingNodeConnector
-import solve.filters.settings.view.controls.TimePeriodSettingNodeConnector
-import solve.filters.settings.view.controls.UIDSettingNodeConnector
+import solve.filters.settings.view.connectors.FilterSettingNodeConnector
+import solve.filters.settings.view.connectors.IndicesStepSettingNodeConnector
+import solve.filters.settings.view.connectors.TimePeriodSettingNodeConnector
+import solve.filters.settings.view.connectors.UIDSettingNodeConnector
 import solve.styles.Style
 import solve.styles.Style.headerPadding
 import solve.utils.createHGrowHBox
