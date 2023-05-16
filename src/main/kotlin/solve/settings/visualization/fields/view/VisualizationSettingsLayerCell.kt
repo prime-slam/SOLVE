@@ -68,7 +68,7 @@ class VisualizationSettingsLayerCell(
         if (layerType != LandmarkType.Plane) {
             add(createLayerEditButton(layerType))
         }
-        add(createLayerVisibilityButton())
+        add(createLayerVisibilityButtonNode() ?: return@hbox)
 
         alignment = Pos.CENTER_LEFT
         paddingRight = LayerFieldHBoxPaddingRight
@@ -131,24 +131,28 @@ class VisualizationSettingsLayerCell(
         alignment = Pos.CENTER_RIGHT
     }
 
-    private fun createLayerVisibilityButton(): Node = hbox {
-        layerVisibleIconImage ?: return@hbox
-        layerInvisibleIconImage ?: return@hbox
+    private fun createLayerVisibilityButtonNode(): Node? {
+        layerVisibleIconImage ?: return null
+        layerInvisibleIconImage ?: return null
         val layerVisibleImageViewIcon = imageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
         val layerInvisibleImageViewIcon = imageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
 
-        fun getCurrentVisibilityImageViewIcon() =
-            if (item.enabled) layerVisibleImageViewIcon else layerInvisibleImageViewIcon
+        val layerVisibilityButtonNode = hbox {
+            fun getCurrentVisibilityImageViewIcon() =
+                if (item.enabled) layerVisibleImageViewIcon else layerInvisibleImageViewIcon
 
-        button {
-            graphic = getCurrentVisibilityImageViewIcon()
-            action {
-                item.enabled = !item.enabled
+            button {
                 graphic = getCurrentVisibilityImageViewIcon()
+                action {
+                    item.enabled = !item.enabled
+                    graphic = getCurrentVisibilityImageViewIcon()
+                }
             }
+            alignment = Pos.CENTER_RIGHT
+            paddingLeft = LayerVisibilityIconPaddingLeft
         }
-        alignment = Pos.CENTER_RIGHT
-        paddingLeft = LayerVisibilityIconPaddingLeft
+
+        return layerVisibilityButtonNode
     }
 
     private fun calculatePopOverShowPosition(spawnNode: Node, layerType: LandmarkType): DoublePoint {
