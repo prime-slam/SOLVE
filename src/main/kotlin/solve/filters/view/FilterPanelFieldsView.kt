@@ -99,12 +99,14 @@ class FilterPanelFieldsView : View() {
         val itemsNumberProperty = Bindings.size(items)
         prefHeightProperty().bind(itemsNumberProperty.multiply(35.0))
 
+        filterPanelController.model.filters.onChange {
+            filterPanelController.applyFilters()
+        }
+
         selectionModel.selectionProperty().addListener(
             MapChangeListener { change ->
                 val filter = change.valueAdded ?: change.valueRemoved
                 filter.enabled = change.wasAdded()
-                filterPanelController.model.filters
-                filterPanelController.applyFilters()
             }
         )
 
