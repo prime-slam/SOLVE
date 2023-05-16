@@ -226,7 +226,6 @@ class FilterSettingsView : View() {
 
         disableProperty().onChange { isDisable ->
             if (isDisable) {
-                text = ""
                 isAllowEdit = false
                 enabledTextFields.remove(this)
             } else {
