@@ -29,6 +29,11 @@ class FilterPanelController : Controller() {
         model.replaceFilter(editingFilter, editedFilter)
     }
 
+    fun applyFilters() {
+        val filteredFrames = getFilteredProjectFrames()
+        catalogueController.setCatalogueFrames(filteredFrames)
+    }
+
     private fun addBindings() {
         projectController.model.projectProperty.onChange {
             applyFilters()
@@ -36,11 +41,6 @@ class FilterPanelController : Controller() {
         model.filters.onChange {
             applyFilters()
         }
-    }
-
-    private fun applyFilters() {
-        val filteredFrames = getFilteredProjectFrames()
-        catalogueController.setCatalogueFrames(filteredFrames)
     }
 
     private fun getFilteredProjectFrames(): List<ProjectFrame> {

@@ -103,6 +103,7 @@ class FilterPanelFieldsView : View() {
             MapChangeListener { change ->
                 val filter = change.valueAdded ?: change.valueRemoved
                 filter.enabled = change.wasAdded()
+                filterPanelController.applyFilters()
             }
         )
 
