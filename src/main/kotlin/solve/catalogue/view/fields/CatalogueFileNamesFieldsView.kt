@@ -2,8 +2,10 @@ package solve.catalogue.view.fields
 
 import javafx.scene.control.Labeled
 import javafx.scene.image.ImageView
+import javafx.scene.text.Font
 import solve.catalogue.model.CatalogueField
 import solve.constants.IconsCatalogueImagePath
+import solve.styles.Style
 import solve.utils.loadResourcesImage
 import tornadofx.*
 
@@ -44,7 +46,9 @@ class CatalogueFileNamesFieldsView : CatalogueFieldsView() {
                 if (iconImageView != null) {
                     add(iconImageView)
                 }
-                label(it.fileName)
+                text(it.fileName) {
+                    font = Font.font(Style.Font, 14.0)
+                }
             }
         }
     }
