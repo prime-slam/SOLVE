@@ -1,28 +1,19 @@
 package solve.styles
 
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
-import tornadofx.MultiValue
-import tornadofx.Stylesheet
-import tornadofx.cssproperty
+import tornadofx.*
 
 class ListViewStylesheet : Stylesheet() {
-
-    companion object {
-        val fxTreeTableCellBorderColor by cssproperty<MultiValue<Paint>>("-fx-table-cell-border-color")
-
-        val backgroundColour: Color = Color.valueOf(Style.backgroundColour)
-        val surfaceColor: Color = Color.valueOf(Style.surfaceColor)
-        val primaryColor: Color = Color.valueOf(Style.primaryColor)
-    }
-
     init {
         listView {
-            backgroundColor += surfaceColor
+            backgroundColor += Color.valueOf(Style.BackgroundColor)
+        }
+        listCell {
+            backgroundColor += Color.valueOf(Style.SurfaceColor)
         }
 
-        listCell {
-            backgroundColor += surfaceColor
+        cell {
+            textFill = Color.valueOf(Style.OnBackgroundColor)
         }
     }
 }
