@@ -28,7 +28,6 @@ import solve.settings.visualization.popover.SettingsDialogNode
 import solve.styles.Style
 import solve.utils.createHGrowHBox
 import solve.utils.createSnapshot
-import solve.utils.getScreenPosition
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
 import solve.utils.materialfx.MaterialFXDialog.createGenericDialog
@@ -211,17 +210,17 @@ class VisualizationSettingsLayerCell(
         return dialog
     }
 
-    private fun getPopOverNodeSize(layerType: LandmarkType) = when (layerType) {
-        LandmarkType.Keypoint -> DoublePoint(
-            PointLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
-            PointLayerSettingsPopOverNode.LayerSettingsNodePrefHeight
-        )
-        LandmarkType.Line -> DoublePoint(
-            LineLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
-            LineLayerSettingsPopOverNode.LayerSettingsNodePrefHeight
-        )
-        LandmarkType.Plane -> null
-    }
+//    private fun getPopOverNodeSize(layerType: LandmarkType) = when (layerType) {
+//        LandmarkType.Keypoint -> DoublePoint(
+//            PointLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
+//            PointLayerSettingsPopOverNode.LayerSettingsNodePrefHeight
+//        )
+//        LandmarkType.Line -> DoublePoint(
+//            LineLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
+//            LineLayerSettingsPopOverNode.LayerSettingsNodePrefHeight
+//        )
+//        LandmarkType.Plane -> null
+//    }
 
     private fun getLayerSettingsType(layerSettings: LayerSettings) = when (layerSettings) {
         is LayerSettings.PointLayerSettings -> LandmarkType.Keypoint
@@ -253,8 +252,6 @@ class VisualizationSettingsLayerCell(
 
         private const val LayerFieldHBoxPaddingRight = -2.5
         private const val LayerVisibilityIconPaddingLeft = -5.0
-
-        private val LayerSettingsSpawnPositionOffset = DoublePoint(-135.0, 25.0)
 
         private val editIconImage = loadResourcesImage(IconsSettingsVisualizationEditPath)
         private val layerVisibleIconImage = loadResourcesImage(IconsSettingsVisualizationLayerVisiblePath)
