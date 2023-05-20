@@ -12,7 +12,6 @@ import javafx.scene.input.ClipboardContent
 import javafx.scene.input.DragEvent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.Priority
-import javafx.scene.paint.Color
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField
 import solve.project.model.ProjectFrame

@@ -25,6 +25,6 @@ fun <T> synchronizeListViewsSelections(firstListView: MFXCheckListView<T>, secon
     secondListView.setSelectionModel(firstListView.selectionModel)
 }
 
-fun Labeled.addNameTooltip() {
-    tooltip(text)
-}
+//fun Labeled.addNameTooltip() {
+//    tooltip(text)
+//}

@@ -198,8 +198,4 @@ class CatalogueView : View() {
     private fun resetNodes() {
         checkForEmptyFields()
     }
-
-    companion object {
-        private const val ApplyButtonSize = 15.0
-    }
 }
