@@ -1,7 +1,9 @@
 package solve
 
 import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory
+import javafx.scene.image.Image
 import javafx.stage.Stage
+import solve.constants.IconsApp
 import solve.main.MainView
 import solve.scene.view.landmarks.AnimationProvider
 import solve.scene.view.landmarks.JavaFXAnimationProvider
@@ -18,10 +20,13 @@ class SolveApp : App(MainView::class, ApplicationStylesheet::class) {
         registerServices()
 
         with(stage) {
+            stage.icons.add(Image(IconsApp));
             width = 1000.0
             height = 600.0
+            title = "SOLVE"
             isMaximized = true
         }
+
         super.start(stage)
     }
 
