@@ -1,7 +1,6 @@
 package solve.settings.visualization.popover
 
 import javafx.beans.value.WeakChangeListener
-import javafx.scene.Node
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.scene.model.LayerSettings.LineLayerSettings.Companion.MaxWidthValue
@@ -11,7 +10,9 @@ import tornadofx.*
 
 class LineLayerSettingsPopOverNode(
     private val lineLayerSettings: LayerSettings.LineLayerSettings,
-    private val sceneController: SceneController
+    private val sceneController: SceneController,
+    private val title: String,
+    private val dialogClosingController: DialogClosingController
 ) : LayerSettingsPopOverNode() {
     companion object {
         const val LayerSettingsNodePrefWidth = 260.0
@@ -23,10 +24,11 @@ class LineLayerSettingsPopOverNode(
     }
     private val weakWidthSliderValueChangedEventHandler = WeakChangeListener(widthSliderValueChangedEventHandler)
 
-    override fun getPopOverNode(): Node {
+    override fun getPopOverNode(): SettingsDialogNode {
         popOver.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
-        addSettingField("Color", buildLandmarkColorPicker(lineLayerSettings, sceneController))
+        addTitle(title)
+        addSettingField("Color", buildLandmarkColorPicker(lineLayerSettings, sceneController), isLabelOnLeft = true)
         addSettingField(
             "Width",
             buildSizeSlider(
@@ -34,9 +36,10 @@ class LineLayerSettingsPopOverNode(
                 MinWidthValue,
                 MaxWidthValue,
                 weakWidthSliderValueChangedEventHandler
-            )
+            ), isLabelOnLeft = true
         )
-        addSettingField("One color", buildLandmarkUseOneColorCheckBox(lineLayerSettings), Alignment.Left)
+        addSettingField("One color", buildLandmarkUseOneColorCheckBox(lineLayerSettings), Alignment.Left, isLabelOnLeft = false)
+        addCancel(dialogClosingController)
 
         return popOver
     }

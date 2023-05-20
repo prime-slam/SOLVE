@@ -1,5 +1,6 @@
 package solve.settings.visualization.fields.view
 
+import io.github.palexdev.materialfx.dialogs.MFXStageDialog
 import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -12,35 +13,37 @@ import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.input.DragEvent
 import javafx.scene.text.Font
-import javafx.util.Duration
 import org.controlsfx.control.PopOver
 import solve.constants.IconsSettingsVisualizationEditPath
 import solve.constants.IconsSettingsVisualizationLayerInvisiblePath
 import solve.constants.IconsSettingsVisualizationLayerVisiblePath
-import solve.constants.IconsSettingsVisualizationLineLayerPath
-import solve.constants.IconsSettingsVisualizationPlaneLayerPath
-import solve.constants.IconsSettingsVisualizationPointLayerPath
 import solve.scene.controller.SceneController
 import solve.scene.model.LandmarkType
 import solve.scene.model.LayerSettings
+import solve.settings.visualization.VisualizationSettingsView
+import solve.settings.visualization.popover.DialogClosingController
 import solve.settings.visualization.popover.LineLayerSettingsPopOverNode
 import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
+import solve.settings.visualization.popover.SettingsDialogNode
 import solve.styles.Style
-import solve.utils.TransparentScalingButtonStyle
 import solve.utils.createHGrowHBox
 import solve.utils.createSnapshot
-import solve.utils.createVGrowBox
 import solve.utils.getScreenPosition
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
+import solve.utils.materialfx.MaterialFXDialog.createGenericDialog
+import solve.utils.materialfx.MaterialFXDialog.createStageDialog
+import solve.utils.materialfx.mfxCircleButton
 import solve.utils.nodes.listcell.dragdrop.DragAndDropCellItemInfo
 import solve.utils.nodes.listcell.dragdrop.DragAndDropListCell
 import solve.utils.structures.DoublePoint
 import tornadofx.*
 
 class VisualizationSettingsLayerCell(
-    private val sceneController: SceneController
+    private val sceneController: SceneController,
+    private val dialogClosingController: DialogClosingController
 ) : DragAndDropListCell<LayerSettings>(LayerSettings::class) {
+    private val settings = find<VisualizationSettingsView>()
     override fun setAfterDragDropped(
         event: DragEvent,
         thisItemInfo: DragAndDropCellItemInfo<LayerSettings>,
@@ -58,14 +61,13 @@ class VisualizationSettingsLayerCell(
         val layerType = getLayerSettingsType(item)
 
         prefHeight = LayerFieldHeight
-        addStylesheet(TransparentScalingButtonStyle::class)
 
+        add(createLayerVisibilityButtonNode() ?: return@hbox)
         add(createLayerNameLabel())
         add(createHGrowHBox())
         if (layerType != LandmarkType.Plane) {
             add(createLayerEditButton(layerType))
         }
-        add(createLayerVisibilityButtonNode() ?: return@hbox)
 
         alignment = Pos.CENTER_LEFT
         paddingRight = LayerFieldHBoxPaddingRight
@@ -102,26 +104,14 @@ class VisualizationSettingsLayerCell(
         }
     }
 
-    private fun createLayerIconNode(layerType: LandmarkType): Node? {
-        val layerIcon = getLayerIcon(layerType)
-        layerIcon ?: return null
-        // Needed to set the padding and to center the imageview.
-        return vbox {
-            add(createVGrowBox())
-            imageViewIcon(layerIcon, LayerIconWidth)
-            add(createVGrowBox())
-            paddingRight = LayerTypeIconPaddingRight
-        }
-    }
-
     private fun createLayerNameLabel(): Label = label(item.layerName) {
-        style = "-fx-font-style: ${Style.FontCondensed}; -fx-font-size: ${Style.ButtonFontSize}"
+        style =
+            "-fx-font-style: ${Style.FontCondensed}; -fx-font-size: ${Style.ButtonFontSize}; -fx-text-fill: #${Style.OnBackgroundColor}"
         font = Font.font(LayerFieldNameFontSize)
-//        maxWidth = LayerFieldNameMaxWidth
     }
 
-    private fun createLayerEditButton(layerType: LandmarkType): Node = button {
-        editIconImage ?: return@button
+    private fun createLayerEditButton(layerType: LandmarkType): Node = mfxCircleButton(radius = 15.0) {
+        editIconImage ?: return@mfxCircleButton
         graphic = imageViewIcon(editIconImage, LayerFieldEditIconSize)
         isPickOnBounds = false
 
@@ -136,11 +126,10 @@ class VisualizationSettingsLayerCell(
         val layerInvisibleImageViewIcon = imageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
 
         val layerVisibilityButtonNode = hbox {
-            fun getCurrentVisibilityImageViewIcon() =
-                if (item.enabled) layerVisibleImageViewIcon else layerInvisibleImageViewIcon
+            fun getCurrentVisibilityImageViewIcon() = if (item.enabled)
+                layerVisibleImageViewIcon else layerInvisibleImageViewIcon
 
-            button {
-                graphic = getCurrentVisibilityImageViewIcon()
+            mfxCircleButton(getCurrentVisibilityImageViewIcon(), 15.0) {
                 action {
                     item.enabled = !item.enabled
                     graphic = getCurrentVisibilityImageViewIcon()
@@ -167,7 +156,8 @@ class VisualizationSettingsLayerCell(
         layerType: LandmarkType
     ) {
         val popOverTitle = "${item.layerName} (${layerType.name})"
-        val popOverNode = createLayerSettingsPopOverNode(item)
+        val popOverNode = createLayerSettingsPopOverNode(item, popOverTitle)
+
         if (popOverNode != null) {
             val popOver = createLayerSettingsPopOver(
                 popOverNode,
@@ -188,8 +178,7 @@ class VisualizationSettingsLayerCell(
             }
             layerSettingsButton.action {
                 if (!isPopOverShowing) {
-                    val showPosition = calculatePopOverShowPosition(spawnNode, layerType)
-                    showPopOver(popOver, spawnNode, showPosition)
+                    popOver.show()
                 } else {
                     popOver.hide()
                 }
@@ -197,45 +186,38 @@ class VisualizationSettingsLayerCell(
         }
     }
 
-    private fun showPopOver(popOver: PopOver, spawnNode: Node, showPosition: DoublePoint) {
-        popOver.detach()
-        popOver.show(spawnNode, showPosition.x, showPosition.y)
-    }
-
-    private fun createLayerSettingsPopOverNode(layerSettings: LayerSettings): Node? =
+    private fun createLayerSettingsPopOverNode(layerSettings: LayerSettings, title: String): SettingsDialogNode? =
         when (getLayerSettingsType(layerSettings)) {
             LandmarkType.Keypoint ->
                 PointLayerSettingsPopOverNode(
                     layerSettings as LayerSettings.PointLayerSettings,
-                    sceneController
+                    sceneController, title, dialogClosingController
                 ).getPopOverNode()
+
             LandmarkType.Line ->
                 LineLayerSettingsPopOverNode(
                     layerSettings as LayerSettings.LineLayerSettings,
-                    sceneController
+                    sceneController, title, dialogClosingController
                 ).getPopOverNode()
+
             LandmarkType.Plane -> null
         }
 
-    private fun createLayerSettingsPopOver(contentNode: Node, titleLabel: String): PopOver {
+    private fun createLayerSettingsPopOver(contentNode: Node, titleLabel: String): MFXStageDialog {
+        val content = createGenericDialog(contentNode)
+        val dialog = createStageDialog(content, settings.currentStage, settings.root)
+
         val popOver = PopOver(contentNode)
         popOver.detach()
         popOver.title = titleLabel
 
         Platform.runLater {
-            // Needed for the safe window closing.
-            listView.scene?.window?.setOnCloseRequest {
-                popOver.hide(Duration.ZERO)
+            dialogClosingController.isClosing.onChange {
+                if (it) dialog.close()
             }
         }
 
-        return popOver
-    }
-
-    private fun getLayerIcon(layerType: LandmarkType) = when (layerType) {
-        LandmarkType.Keypoint -> pointLayerIconImage
-        LandmarkType.Line -> lineLayerIconImage
-        LandmarkType.Plane -> planeLayerIconImage
+        return dialog
     }
 
     private fun getPopOverNodeSize(layerType: LandmarkType) = when (layerType) {
@@ -274,21 +256,15 @@ class VisualizationSettingsLayerCell(
 
     companion object {
         private const val LayerFieldHeight = 30.0
-        private const val LayerFieldNameMaxWidth = 80.0
         private const val LayerFieldNameFontSize = 13.0
         private const val LayerFieldEditIconSize = 18.0
         private const val LayerVisibilityIconSize = 22.0
-        private const val LayerIconWidth = 25.0
 
         private const val LayerFieldHBoxPaddingRight = -2.5
-        private const val LayerTypeIconPaddingRight = 5.0
         private const val LayerVisibilityIconPaddingLeft = -5.0
 
         private val LayerSettingsSpawnPositionOffset = DoublePoint(-135.0, 25.0)
 
-        private val pointLayerIconImage = loadResourcesImage(IconsSettingsVisualizationPointLayerPath)
-        private val lineLayerIconImage = loadResourcesImage(IconsSettingsVisualizationLineLayerPath)
-        private val planeLayerIconImage = loadResourcesImage(IconsSettingsVisualizationPlaneLayerPath)
         private val editIconImage = loadResourcesImage(IconsSettingsVisualizationEditPath)
         private val layerVisibleIconImage = loadResourcesImage(IconsSettingsVisualizationLayerVisiblePath)
         private val layerInvisibleIconImage = loadResourcesImage(IconsSettingsVisualizationLayerInvisiblePath)

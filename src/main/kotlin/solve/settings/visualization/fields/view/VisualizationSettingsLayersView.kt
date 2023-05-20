@@ -5,6 +5,7 @@ import javafx.scene.layout.Priority
 import javafx.util.Callback
 import solve.scene.controller.SceneController
 import solve.settings.visualization.fields.controller.VisualizationSettingsLayersController
+import solve.settings.visualization.popover.DialogClosingController
 import solve.styles.ListViewStylesheet
 import solve.utils.nodes.listcell.dragdrop.isListViewCellSource
 import tornadofx.*
@@ -12,13 +13,14 @@ import tornadofx.*
 class VisualizationSettingsLayersView : View() {
     private val sceneController: SceneController by inject()
     private val controller: VisualizationSettingsLayersController by inject()
+    private val dialogClosingController: DialogClosingController by inject()
 
     private val fieldListViewCells = mutableListOf<VisualizationSettingsLayerCell>()
 
     private val fieldsListView = listview(controller.model.layers) {
         addStylesheet(ListViewStylesheet::class)
         cellFactory = Callback {
-            val layerCell = VisualizationSettingsLayerCell(sceneController)
+            val layerCell = VisualizationSettingsLayerCell(sceneController, dialogClosingController)
             fieldListViewCells.add(layerCell)
 
             return@Callback layerCell
