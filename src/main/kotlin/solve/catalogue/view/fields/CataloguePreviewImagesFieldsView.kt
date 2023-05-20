@@ -1,7 +1,8 @@
 package solve.catalogue.view.fields
 
 import javafx.geometry.Pos
-import javafx.scene.control.Labeled
+import javafx.scene.control.ContentDisplay
+import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 import solve.catalogue.model.CatalogueField
 import tornadofx.*
@@ -22,17 +23,16 @@ class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
         }
     }
 
-    override fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
-        super.setListViewCellFormat(labeled, item)
+    override fun setListViewCellFormat(label: Label, item: CatalogueField?) {
+        super.setListViewCellFormat(label, item)
         if (item == null) {
             return
         }
 
-        labeled.graphic = vbox {
-            alignment = Pos.CENTER
-            add(createPreviewImageView(item))
-            text(item.fileName)
-        }
+        label.graphic = ImageView(item.loadPreviewImage(PreviewImageHeight))
+        label.paddingLeft = 90.0
+        label.contentDisplay = ContentDisplay.TOP
+        label.text = item.fileName
     }
 
     override fun createFieldsSnapshotNode(fields: List<CatalogueField>) = vbox {

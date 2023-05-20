@@ -3,15 +3,11 @@ package solve.catalogue.view
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
+import javafx.scene.control.ContentDisplay
+import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
-import javafx.scene.layout.Border
-import javafx.scene.layout.BorderStroke
-import javafx.scene.layout.BorderStrokeStyle
-import javafx.scene.layout.BorderWidths
-import javafx.scene.layout.CornerRadii
-import javafx.scene.layout.Priority
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField
@@ -20,13 +16,15 @@ import solve.catalogue.synchronizeListViewsSelections
 import solve.catalogue.view.fields.CatalogueFieldsView
 import solve.catalogue.view.fields.CatalogueFileNamesFieldsView
 import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
-import solve.constants.IconsCatalogueApplyPath
+import solve.constants.IconsCataloguePlaceholder
 import solve.filters.view.FilterPanelView
 import solve.project.model.ProjectFrame
 import solve.utils.addSafely
-import solve.utils.createInsetsWithValue
 import solve.utils.loadResourcesImage
 import solve.utils.removeSafely
+import solve.styles.CatalogueViewStylesheet
+import solve.styles.Style
+import solve.utils.*
 import tornadofx.*
 
 class CatalogueView : View() {
@@ -36,7 +34,7 @@ class CatalogueView : View() {
             node ?: return CatalogueController.initialSelectionState
 
             return when {
-                node.areSelectedAllItems -> CatalogueSettingsView.SelectionState.All
+                node.areCheckedAllItems -> CatalogueSettingsView.SelectionState.All
                 node.isSelectionEmpty -> CatalogueSettingsView.SelectionState.None
                 else -> CatalogueSettingsView.SelectionState.Part
             }
@@ -52,7 +50,7 @@ class CatalogueView : View() {
     private var nonDisplayingFieldsView: CatalogueFieldsView? = null
 
     private val selectedFrames: List<ProjectFrame>
-        get() = displayingFieldsView?.selectedFrames ?: emptyList()
+        get() = displayingFieldsView?.checkedFrames ?: emptyList()
 
     private val fieldsViewParams = Pair("fields", fields)
     private val fileNamesFieldsView = find<CatalogueFileNamesFieldsView>(fieldsViewParams)
@@ -60,46 +58,72 @@ class CatalogueView : View() {
 
     private lateinit var fieldsVBox: VBox
 
+    private val cataloguePlaceholder = loadResourcesImage(IconsCataloguePlaceholder)
+
     private val catalogueNode = hbox {
-        vbox(5) {
-            add(settingsView.root)
-            hbox(5) {
-                fieldsVBox = vbox {
-                    hgrow = Priority.ALWAYS
-                }
-                button {
-                    setPrefSize(ApplyButtonSize, ApplyButtonSize)
-                    val buttonImage = loadResourcesImage(IconsCatalogueApplyPath)
-                    if (buttonImage != null) {
-                        graphic = imageview(buttonImage) {
-                            fitHeight = ApplyButtonSize
-                            isPreserveRatio = true
-                        }
+        addStylesheet(CatalogueViewStylesheet::class)
+        borderpane {
+            style = "-fx-background-color: #${Style.SurfaceColor}"
+            top {
+                add(settingsView.root)
+            }
+            center {
+                hbox(5) {
+                    fieldsVBox = vbox {
+                        hgrow = Priority.ALWAYS
                     }
+                }
+            }
+            bottom {
+                mfxButton("ADD") {
+                    BorderPane.setMargin(this, Insets(5.0, 0.0, 0.0, 0.0))
+                    BorderPane.setAlignment(this, Pos.CENTER)
+                    setPrefSize(150.0, 31.0)
+                    style =
+                        "-fx-font-style: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold}; -fx-background-color: #${Style.PrimaryColor}; -fx-text-fill: #${Style.SurfaceColor};"
+
                     action {
                         applySelection()
                     }
                 }
-                alignment = Pos.CENTER
-                vgrow = Priority.ALWAYS
             }
+
             border = Border(
                 BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
             )
             padding = Insets(5.0, 5.0, 5.0, 10.0)
             hgrow = Priority.ALWAYS
         }
-        padding = createInsetsWithValue(5.0)
-        vgrow = Priority.ALWAYS
     }
 
-    override val root = vbox {
-        add(catalogueNode)
-        initializeNodes()
-        add(filterPanelView)
-
-        vgrow = Priority.ALWAYS
+    private val placeholder = label("Project not imported") {
+        tooltip(text)
+        padding = Insets(400.0, 50.0, 350.0, 50.0)
+        graphic = ImageView(cataloguePlaceholder)
+        contentDisplay = ContentDisplay.TOP
+        style {
+            fontFamily = Style.FontCondensed
+            fontSize = 24.px
+        }
     }
+
+    override val root =
+        vbox {
+            style = "-fx-background-color: #${Style.SurfaceColor}"
+            add(placeholder)
+            fields.onChange {
+                this.clear()
+                if (fields.isEmpty()) {
+                    this.add(placeholder)
+                } else {
+                    this.add(catalogueNode)
+                    initializeNodes()
+                    this.add(filterPanelView)
+                }
+            }
+
+            vgrow = Priority.ALWAYS
+        }
 
     init {
         accelerators[KeyCodeCombination(KeyCode.ENTER)] = {
@@ -125,13 +149,14 @@ class CatalogueView : View() {
         fieldsVBox.addSafely(displayingFieldsView?.fieldsListView)
     }
 
-    fun selectAllFields() {
-        displayingFieldsView?.selectAllItems()
-        nonDisplayingFieldsView?.selectAllItems()
+    fun checkAllFields() {
+        displayingFieldsView?.checkAllItems()
+        nonDisplayingFieldsView?.checkAllItems()
     }
-    fun deselectAllFields() {
-        displayingFieldsView?.deselectAllItems()
-        nonDisplayingFieldsView?.deselectAllItems()
+
+    fun uncheckAllFields() {
+        displayingFieldsView?.uncheckAllItems()
+        nonDisplayingFieldsView?.uncheckAllItems()
     }
 
     private fun applySelection() {
@@ -166,7 +191,7 @@ class CatalogueView : View() {
     }
 
     private fun visualizeProjectImportSelection() {
-        displayingFieldsView?.selectAllItems()
+        displayingFieldsView?.checkAllItems()
         controller.visualizeFramesSelection(selectedFrames)
     }
 

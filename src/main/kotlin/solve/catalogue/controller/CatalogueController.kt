@@ -25,9 +25,9 @@ class CatalogueController : Controller() {
         SceneFacade.visualize(layers, frames, true)
     }
 
-    fun selectAllFields() = view.selectAllFields()
+    fun checkAllFields() = view.checkAllFields()
 
-    fun deselectAllFields() = view.deselectAllFields()
+    fun uncheckAllFields() = view.uncheckAllFields()
 
     fun changeViewFormat(format: ViewFormat) = view.changeViewFormat(format)
 

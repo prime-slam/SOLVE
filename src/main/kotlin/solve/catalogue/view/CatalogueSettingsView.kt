@@ -6,11 +6,9 @@ import javafx.geometry.Pos
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
-import javafx.scene.layout.Priority
-import org.controlsfx.control.SegmentedButton
-import solve.catalogue.addNameTooltip
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.ViewFormat
+import org.controlsfx.control.SegmentedButton
 import solve.styles.CatalogueViewStylesheet
 import solve.styles.Style
 import solve.utils.mfxCheckbox
@@ -35,13 +33,7 @@ class CatalogueSettingsView : View() {
 
     private val catalogueView: CatalogueView by inject()
 
-    private var segmentedButton = SegmentedButton()
-
-    private var viewFormatToggleGroup = ToggleGroup()
-    private lateinit var fileNameViewRadioButton: ToggleButton
-    private lateinit var imagePreviewRadioButton: ToggleButton
-
-
+    private val viewFormatToggleGroup = ToggleGroup()
     private lateinit var selectionCheckBox: CheckBox
     private var checkBoxSelectionState: SelectionState by checkBoxSelectionStateDelegate()
 
@@ -53,39 +45,38 @@ class CatalogueSettingsView : View() {
     }
     private var isDisplayingInfoLabel = false
 
-    override val root = vbox {
-        addStylesheet(CatalogueViewStylesheet::class)
+    private var fileNameViewRadioButton = ToggleButton("FILES").apply {
+        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold};"
+    }
+    private var imagePreviewRadioButton = ToggleButton("IMAGES").apply {
+        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold};"
+    }
 
-        hbox(300) {
-            padding = Insets(0.0,0.0,0.0,0.0)
-            selectionCheckBox = mfxCheckbox("", isSelectionCheckBoxCheckedProperty) {
-                addNameTooltip()
-                action {
-                    if (isSelected) {
-                        controller.selectAllFields()
-                    } else {
-                        controller.deselectAllFields()
+    var segmentedButton = SegmentedButton(fileNameViewRadioButton, imagePreviewRadioButton)
+
+    override val root =
+        vbox {
+            hbox(130) {
+                addStylesheet(CatalogueViewStylesheet::class)
+                maxWidth = 500.0
+                padding = Insets(0.0, 0.0, 0.0, 0.0)
+                selectionCheckBox = mfxCheckbox("", isSelectionCheckBoxCheckedProperty) {
+                    paddingLeft = 7.0
+//                    addNameTooltip()
+                    action {
+                        if (isSelected) {
+                            controller.checkAllFields()
+                        } else {
+                            controller.uncheckAllFields()
+                        }
                     }
                 }
+                segmentedButton.toggleGroup = viewFormatToggleGroup
+
+                add(segmentedButton)
+                paddingBottom = 4
             }
-            add(segmentedButton)
-//            pane().hgrow = Priority.ALWAYS
-            fileNameViewRadioButton = togglebutton("FILES"){
-                style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold};"
-            }
-
-            imagePreviewRadioButton = togglebutton("IMAGES"){
-                style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold};"
-            }
-
-            segmentedButton.buttons.addAll(fileNameViewRadioButton, imagePreviewRadioButton)
-            paddingBottom = 4
-
-        }
-
-
-        add(infoNode)
-    }.also { initialize() }
+        }.also { initialize() }
 
     init {
         viewFormatProperty.onChange { newFormat ->
@@ -96,7 +87,7 @@ class CatalogueSettingsView : View() {
 
     fun resetSettings() {
         checkBoxSelectionState = CatalogueController.initialSelectionState
-        viewFormatToggleGroup.selectToggle(getViewFormatRadioButton(CatalogueController.initialViewFormat))
+        viewFormatToggleGroup.selectToggle(getViewFormatToggleButton(CatalogueController.initialViewFormat))
     }
 
     fun displayInfoLabel(withText: String) {
@@ -123,27 +114,24 @@ class CatalogueSettingsView : View() {
 
     private fun initialize() {
         initializeViewFormatRadioButtons()
-        viewFormatToggleGroup.selectToggle(getViewFormatRadioButton(CatalogueController.initialViewFormat))
+        viewFormatToggleGroup.selectToggle(getViewFormatToggleButton(CatalogueController.initialViewFormat))
     }
 
-    private fun getSegmentedButtonViewFormat(toggleButton: ToggleButton) =
-        when (toggleButton) {
-            fileNameViewRadioButton -> ViewFormat.FileName
-            imagePreviewRadioButton -> ViewFormat.ImagePreview
-            else -> throw IllegalArgumentException("Unexpected view format radio button!")
-        }
+    private fun getRadioButtonViewFormat(toggleButton: ToggleButton) = when (toggleButton) {
+        fileNameViewRadioButton -> ViewFormat.FileName
+        imagePreviewRadioButton -> ViewFormat.ImagePreview
+        else -> throw IllegalArgumentException("Unexpected view format toggle button!")
+    }
 
-
-    private fun getViewFormatRadioButton(viewFormat: ViewFormat) = when (viewFormat) {
+    private fun getViewFormatToggleButton(viewFormat: ViewFormat) = when (viewFormat) {
         ViewFormat.FileName -> fileNameViewRadioButton
         ViewFormat.ImagePreview -> imagePreviewRadioButton
     }
 
     private fun initializeViewFormatRadioButtons() {
-        viewFormatToggleGroup = segmentedButton.toggleGroup
         viewFormatToggleGroup.selectedToggleProperty().onChange {
             it ?: return@onChange
-            viewFormat = getSegmentedButtonViewFormat(it as ToggleButton)
+            viewFormat = getRadioButtonViewFormat(it as ToggleButton)
         }
     }
 
