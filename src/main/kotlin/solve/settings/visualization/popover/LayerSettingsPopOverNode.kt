@@ -62,7 +62,6 @@ abstract class LayerSettingsPopOverNode {
     abstract fun getPopOverNode(): SettingsDialogNode
 
     companion object {
-        private const val LayerSettingLabelFontSize = 20.0
         private const val LayerSettingsLabelPaddingLeft = 10.0
         private const val LayerSettingsFieldLabelWidth = 100.0
         private const val LayerSettingsSettingNodeWidth = 300.0

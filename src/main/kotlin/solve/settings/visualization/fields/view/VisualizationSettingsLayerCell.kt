@@ -115,7 +115,7 @@ class VisualizationSettingsLayerCell(
         graphic = imageViewIcon(editIconImage, LayerFieldEditIconSize)
         isPickOnBounds = false
 
-        initializeLayerSettingsPopOver(this, this, layerType)
+        initializeLayerSettingsPopOver(this, layerType)
         alignment = Pos.CENTER_RIGHT
     }
 
@@ -142,17 +142,8 @@ class VisualizationSettingsLayerCell(
         return layerVisibilityButtonNode
     }
 
-    private fun calculatePopOverShowPosition(spawnNode: Node, layerType: LandmarkType): DoublePoint {
-        val labelPosition = spawnNode.getScreenPosition()
-        val popOverNodeSize = getPopOverNodeSize(layerType)
-        val popOverNodeSizeOffsetVector = DoublePoint(popOverNodeSize?.x ?: 0.0, 0.0)
-
-        return labelPosition - popOverNodeSizeOffsetVector + LayerSettingsSpawnPositionOffset
-    }
-
     private fun initializeLayerSettingsPopOver(
         layerSettingsButton: Button,
-        spawnNode: Node,
         layerType: LandmarkType
     ) {
         val popOverTitle = "${item.layerName} (${layerType.name})"
