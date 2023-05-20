@@ -1,11 +1,15 @@
 package solve.scene.view
 
 import javafx.application.Platform
+import javafx.geometry.Insets
+import javafx.scene.control.ContentDisplay
+import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import solve.constants.IconsScenePlaceholder
 import solve.scene.FrameViewSettings
 import solve.scene.controller.SceneController
 import solve.scene.model.Landmark
@@ -13,14 +17,10 @@ import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
 import solve.scene.view.virtualizedfx.VirtualizedFXGridProvider
-<<<<<<< HEAD
+import solve.styles.Style
 import solve.utils.Cache
-=======
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
-import tornadofx.View
-import tornadofx.label
-import tornadofx.onChange
-import tornadofx.vbox
+import solve.utils.loadResourcesImage
+import tornadofx.*
 import solve.utils.structures.DoublePoint as DoublePoint
 import solve.utils.structures.Size as DoubleSize
 
@@ -32,6 +32,8 @@ class SceneView : View() {
     private val controller: SceneController by inject()
     private var frameDataLoadingScope = CoroutineScope(Dispatchers.Default)
 
+    private val scenePlaceholder = loadResourcesImage(IconsScenePlaceholder)
+
     var currentGrid: Grid? = null
         private set
     var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
@@ -39,7 +41,16 @@ class SceneView : View() {
     private var frameViewCache: Cache<FrameView, FrameViewData, FrameViewSettings>? = null
 
     override val root = vbox {
-        label("Empty scene placeholder")
+        label("Project not imported") {
+            tooltip(text)
+            padding = Insets(350.0,500.0,350.0,600.0)
+            graphic = ImageView(scenePlaceholder)
+            contentDisplay = ContentDisplay.TOP
+            style {
+                fontFamily = Style.FontCondensed
+                fontSize = 24.px
+            }
+        }
     }
 
     init {
@@ -71,54 +82,25 @@ class SceneView : View() {
         val columnsNumber = controller.columnsNumber
 
         val outOfFramesLayer = OutOfFramesLayer()
-<<<<<<< HEAD
         val associationsManager = AssociationsManager<VisualizationFrame, Landmark.Keypoint>(
-=======
-        val associationsManager = AssociationsManager(
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
             frameSize,
             framesMargin,
             controller.scaleProperty,
             scene.frames,
-<<<<<<< HEAD
             controller.installedColumnsNumberProperty,
-=======
-            columnsNumber,
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
             outOfFramesLayer
         )
         currentAssociationsManager = associationsManager
 
         val frameViewParameters = FrameViewParameters(frameDataLoadingScope, associationsManager, scene)
 
-<<<<<<< HEAD
         // if frame size or canvas layers count is not equal frame drawer buffer can not be reused.
         val canReuseCache = frameViewCache?.parameters?.size == frameSize &&
-            frameViewCache?.parameters?.canvasDepth == scene.canvasLayersCount
+                frameViewCache?.parameters?.canvasDepth == scene.canvasLayersCount
 
         val frameViewSettings = FrameViewSettings(frameSize, scene.canvasLayersCount)
         val validateFrameView: (FrameView) -> Boolean = { view ->
             view.size == frameViewSettings.size
-=======
-        val canReuseCache =
-            frameViewCache?.size == frameSize && frameViewCache?.canvasBufferDepth == scene.canvasLayersCount
-        frameViewCache = if (canReuseCache) {
-            frameViewCache!!
-        } else {
-            FrameViewCache(
-                frameSize,
-                scene.canvasLayersCount
-            ) { frame, parameters ->
-                FrameView(
-                    frameSize,
-                    controller.scaleProperty,
-                    frameViewCache!!,
-                    scene.canvasLayersCount,
-                    parameters,
-                    frame
-                )
-            }
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
         }
 
         // Frame view cache reduces memory allocations by reusing previously created frames with buffers.
@@ -138,11 +120,7 @@ class SceneView : View() {
         }
 
         val grid = VirtualizedFXGridProvider.createGrid(
-<<<<<<< HEAD
             scene.frames,
-=======
-            frames,
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
             columnsNumber,
             gridCellSize,
             controller.scaleProperty,
