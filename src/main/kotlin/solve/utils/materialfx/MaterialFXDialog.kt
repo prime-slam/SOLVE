@@ -4,12 +4,13 @@ import io.github.palexdev.materialfx.dialogs.MFXGenericDialog
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialogBuilder
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog
 import io.github.palexdev.materialfx.enums.ScrimPriority
+import javafx.scene.Node
 import javafx.scene.layout.Pane
 import javafx.stage.Modality
 import javafx.stage.Stage
 
 object MaterialFXDialog {
-    fun createGenericDialog(container: Pane): MFXGenericDialog {
+    fun createGenericDialog(container: Node): MFXGenericDialog {
         return MFXGenericDialogBuilder.build()
             .setContent(container)
             .setShowMinimize(false)
