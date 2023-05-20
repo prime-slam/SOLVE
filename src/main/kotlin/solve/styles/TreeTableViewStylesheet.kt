@@ -26,7 +26,7 @@ class TreeTableViewStylesheet : Stylesheet() {
 
         treeTableRowCell {
             arrow {
-                backgroundImage += URI("/icons/importer/Shape.png")
+                backgroundImage += URI("/icons/importer/list_cell_arrow.png")
 
                 prefHeight = 12.px
                 prefWidth = 7.px
