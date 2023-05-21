@@ -62,7 +62,9 @@ object Style {
     fun circleForRipple(button: MFXButton) = Circle(button.layoutX + 36.0, button.layoutY + 36.0,35.0)
 
     fun circleForRipple(button: ToggleButton) = Circle(button.layoutX + 36.0, button.layoutY + 36.0, 35.0)
-    const val HeaderFontSize = "20px"
 
     const val ControlButtonsSpacing = 10.0
+
+    const val HeaderFontSize = "20px"
+
 }

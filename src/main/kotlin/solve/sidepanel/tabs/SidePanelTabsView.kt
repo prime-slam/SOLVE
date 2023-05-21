@@ -8,6 +8,7 @@ import solve.sidepanel.SidePanelTab
 import solve.sidepanel.content.SidePanelContentController
 import solve.styles.SidePanelTabsStyle
 import solve.styles.Style
+import solve.styles.Style.circleForRipple
 import tornadofx.*
 import java.net.URI
 
@@ -45,13 +46,12 @@ open class SidePanelTabsView : View() {
     private fun addTab(tab: SidePanelTab) {
         val tabButton = togglebutton(tab.name, tabsToggleGroup) {
             setPrefSize(Style.NavigationRailTabSize, Style.NavigationRailTabSize)
-            clip = Style.circleForRipple(this)
+            clip = circleForRipple(this)
             styleClass.add(tab.name.lowercase())
             contentDisplay = ContentDisplay.TOP
             style =
                 "-fx-font-family: ${Style.Font}; -fx-font-weight:700;" +
                 " -fx-font-size: ${Style.ButtonFontSize}; -fx-background-radius: 36"
-
             isFocusTraversable = false
             tooltip(tab.tooltip)
             setPrefSize(72.0, 72.0)
