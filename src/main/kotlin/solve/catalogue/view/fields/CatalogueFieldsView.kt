@@ -16,9 +16,13 @@ import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField
 import solve.project.model.ProjectFrame
 import solve.scene.view.SceneView
-import solve.utils.floorToInt
 import solve.styles.CatalogueViewStylesheet
-import solve.utils.*
+import solve.utils.checkAllItems
+import solve.utils.checkedItems
+import solve.utils.checkedItemsCount
+import solve.utils.floorToInt
+import solve.utils.mfxCheckListView
+import solve.utils.uncheckAllItems
 import tornadofx.*
 import kotlin.math.min
 

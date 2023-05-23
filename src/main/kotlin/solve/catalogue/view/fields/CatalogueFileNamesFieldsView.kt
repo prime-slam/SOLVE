@@ -1,13 +1,7 @@
 package solve.catalogue.view.fields
 
-import javafx.scene.control.Labeled
-import javafx.scene.image.ImageView
-import javafx.scene.text.Font
-import solve.catalogue.model.CatalogueField
-import solve.constants.IconsCatalogueImagePath
-import solve.styles.Style
-import solve.utils.loadResourcesImage
 import javafx.scene.control.Label
+import solve.catalogue.model.CatalogueField
 import tornadofx.*
 
 class CatalogueFileNamesFieldsView : CatalogueFieldsView() {

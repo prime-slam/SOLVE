@@ -31,9 +31,15 @@ class PointLayerSettingsPopOverNode(
                 MinSizeValue,
                 MaxSizeValue,
                 weakRadiusSliderValueChangedEventHandler
-            ), isLabelOnLeft = true
+            ),
+            isLabelOnLeft = true
         )
-        addSettingField("One color", buildLandmarkUseOneColorCheckBox(pointLayerSettings), Alignment.Left, isLabelOnLeft = false)
+        addSettingField(
+            "One color",
+            buildLandmarkUseOneColorCheckBox(pointLayerSettings),
+            Alignment.Left,
+            isLabelOnLeft = false
+        )
         addCancel(dialogClosingController)
 
         return popOver

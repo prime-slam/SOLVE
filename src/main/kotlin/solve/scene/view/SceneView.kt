@@ -43,7 +43,7 @@ class SceneView : View() {
     override val root = vbox {
         label("Project not imported") {
             tooltip(text)
-            padding = Insets(350.0,500.0,350.0,600.0)
+            padding = Insets(350.0, 500.0, 350.0, 600.0)
             graphic = ImageView(scenePlaceholder)
             contentDisplay = ContentDisplay.TOP
             style {
@@ -96,7 +96,7 @@ class SceneView : View() {
 
         // if frame size or canvas layers count is not equal frame drawer buffer can not be reused.
         val canReuseCache = frameViewCache?.parameters?.size == frameSize &&
-                frameViewCache?.parameters?.canvasDepth == scene.canvasLayersCount
+            frameViewCache?.parameters?.canvasDepth == scene.canvasLayersCount
 
         val frameViewSettings = FrameViewSettings(frameSize, scene.canvasLayersCount)
         val validateFrameView: (FrameView) -> Boolean = { view ->

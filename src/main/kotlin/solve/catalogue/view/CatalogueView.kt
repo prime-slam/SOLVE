@@ -7,7 +7,14 @@ import javafx.scene.control.ContentDisplay
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
-import javafx.scene.layout.*
+import javafx.scene.layout.Border
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.BorderStroke
+import javafx.scene.layout.BorderStrokeStyle
+import javafx.scene.layout.BorderWidths
+import javafx.scene.layout.CornerRadii
+import javafx.scene.layout.Priority
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField
@@ -19,12 +26,12 @@ import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
 import solve.constants.IconsCataloguePlaceholder
 import solve.filters.view.FilterPanelView
 import solve.project.model.ProjectFrame
-import solve.utils.addSafely
-import solve.utils.loadResourcesImage
-import solve.utils.removeSafely
 import solve.styles.CatalogueViewStylesheet
 import solve.styles.Style
-import solve.utils.*
+import solve.utils.addSafely
+import solve.utils.loadResourcesImage
+import solve.utils.mfxButton
+import solve.utils.removeSafely
 import tornadofx.*
 
 class CatalogueView : View() {
@@ -80,7 +87,8 @@ class CatalogueView : View() {
                     BorderPane.setAlignment(this, Pos.CENTER)
                     setPrefSize(150.0, 31.0)
                     style =
-                        "-fx-font-style: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold}; -fx-background-color: #${Style.PrimaryColor}; -fx-text-fill: #${Style.SurfaceColor};"
+                        "-fx-font-style: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold}; " +
+                        "-fx-background-color: #${Style.PrimaryColor}; -fx-text-fill: #${Style.SurfaceColor};"
 
                     action {
                         applySelection()

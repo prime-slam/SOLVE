@@ -32,18 +32,16 @@ abstract class LayerSettingsPopOverNode {
         popOver.add(borderpane)
     }
 
-
     protected fun addTitle(title: String) {
         popOver.title = title
         popOver.addTitle()
-
     }
 
     protected fun addSettingField(
         name: String,
         settingNode: Node,
         settingsNodeAlignment: Alignment = Alignment.Center,
-        isLabelOnLeft: Boolean,
+        isLabelOnLeft: Boolean
     ) {
         val fieldLabel = Label(name)
         fieldLabel.paddingLeft = LayerSettingsLabelPaddingLeft

@@ -5,7 +5,12 @@ import javafx.event.EventTarget
 import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.control.Label
-import javafx.scene.layout.*
+import javafx.scene.layout.Border
+import javafx.scene.layout.BorderStroke
+import javafx.scene.layout.BorderStrokeStyle
+import javafx.scene.layout.BorderWidths
+import javafx.scene.layout.CornerRadii
+import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.text.Font
@@ -17,10 +22,15 @@ import solve.scene.controller.SceneController
 import solve.settings.createSettingsField
 import solve.settings.grid.controller.GridSettingsController
 import solve.styles.Style
-import solve.utils.*
-import tornadofx.*
+import solve.utils.createHGrowHBox
+import solve.utils.createInsetsWithValue
+import solve.utils.imageViewIcon
+import solve.utils.loadResourcesImage
 import solve.utils.materialfx.mfxCircleButton
 import solve.utils.materialfx.mfxRangeSlider
+import solve.utils.unscale
+import solve.utils.valuesDifference
+import tornadofx.*
 import kotlin.math.roundToLong
 
 class GridSettingsView : View() {
@@ -77,7 +87,6 @@ class GridSettingsView : View() {
         font = Font(GridSettingsLabelFontSize)
         prefWidth = GridSettingsLabelWidth
     }
-
 
     private fun EventTarget.settingFieldLabel(
         text: String = "",

@@ -1,7 +1,7 @@
 package solve.styles
 
-import javafx.scene.paint.Paint
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import tornadofx.*
 
 class CatalogueViewStylesheet : Stylesheet() {

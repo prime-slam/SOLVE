@@ -77,14 +77,9 @@ class KeypointView(
      * Plays highlighting animation.
      */
     override fun highlightShape(duration: Duration) {
-<<<<<<< HEAD
         val scaleTransition =
             animationProvider.createScaleTransition(node, HighlightingScaleFactor, HighlightingScaleFactor, duration)
         val fillTransition = animationProvider.createFillTransition(
-=======
-        val scaleTransition = createScaleTransition(node, HighlightingScaleFactor, HighlightingScaleFactor, duration)
-        val fillTransition = createFillTransition(
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
             node,
             keypoint.layerSettings.getUniqueColor(keypoint),
             duration

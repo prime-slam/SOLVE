@@ -26,7 +26,7 @@ class FilterPanelListViewStylesheet : Stylesheet() {
         mfxCheckbox {
             rippleContainer {
                 box {
-                    borderColor += createCssBoxWithValue(Paint.valueOf(Style.separatorLineColor))
+                    borderColor += createCssBoxWithValue(Paint.valueOf(Style.SeparatorLineColor))
                     borderWidth += createPxBoxWithValue(CheckBoxBorderWidth)
 
                     mark {
@@ -50,8 +50,8 @@ class FilterPanelListViewStylesheet : Stylesheet() {
 
                     dataLabel {
                         fontSize = createPxValue(ListFieldFontSize)
-                        fontFamily = Style.font
-                        textFill = Paint.valueOf(Style.listFontColor)
+                        fontFamily = Style.Font
+                        textFill = Paint.valueOf(Style.ListFontColor)
                     }
                 }
             }

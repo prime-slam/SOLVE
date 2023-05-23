@@ -35,7 +35,6 @@ import solve.utils.materialfx.MaterialFXDialog.createStageDialog
 import solve.utils.materialfx.mfxCircleButton
 import solve.utils.nodes.listcell.dragdrop.DragAndDropCellItemInfo
 import solve.utils.nodes.listcell.dragdrop.DragAndDropListCell
-import solve.utils.structures.DoublePoint
 import tornadofx.*
 
 class VisualizationSettingsLayerCell(
@@ -105,7 +104,8 @@ class VisualizationSettingsLayerCell(
 
     private fun createLayerNameLabel(): Label = label(item.layerName) {
         style =
-            "-fx-font-style: ${Style.FontCondensed}; -fx-font-size: ${Style.ButtonFontSize}; -fx-text-fill: #${Style.OnBackgroundColor}"
+            "-fx-font-style: ${Style.FontCondensed}; -fx-font-size: ${Style.ButtonFontSize}; " +
+            "-fx-text-fill: #${Style.OnBackgroundColor}"
         font = Font.font(LayerFieldNameFontSize)
     }
 
@@ -125,8 +125,11 @@ class VisualizationSettingsLayerCell(
         val layerInvisibleImageViewIcon = imageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
 
         val layerVisibilityButtonNode = hbox {
-            fun getCurrentVisibilityImageViewIcon() = if (item.enabled)
-                layerVisibleImageViewIcon else layerInvisibleImageViewIcon
+            fun getCurrentVisibilityImageViewIcon() = if (item.enabled) {
+                layerVisibleImageViewIcon
+            } else {
+                layerInvisibleImageViewIcon
+            }
 
             mfxCircleButton(getCurrentVisibilityImageViewIcon(), 15.0) {
                 action {
@@ -181,13 +184,17 @@ class VisualizationSettingsLayerCell(
             LandmarkType.Keypoint ->
                 PointLayerSettingsPopOverNode(
                     layerSettings as LayerSettings.PointLayerSettings,
-                    sceneController, title, dialogClosingController
+                    sceneController,
+                    title,
+                    dialogClosingController
                 ).getPopOverNode()
 
             LandmarkType.Line ->
                 LineLayerSettingsPopOverNode(
                     layerSettings as LayerSettings.LineLayerSettings,
-                    sceneController, title, dialogClosingController
+                    sceneController,
+                    title,
+                    dialogClosingController
                 ).getPopOverNode()
 
             LandmarkType.Plane -> null

@@ -82,13 +82,8 @@ class LineView(
      * Plays highlighting animation.
      */
     override fun highlightShape(duration: Duration) {
-<<<<<<< HEAD
         val scaleTransition = animationProvider.createWidthTransition(node, width, duration)
         val strokeTransition = animationProvider.createStrokeTransition(
-=======
-        val scaleTransition = Timeline(KeyFrame(duration, KeyValue(node.strokeWidthProperty(), width)))
-        val strokeTransition = createStrokeTransition(
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
             node,
             line.layerSettings.getUniqueColor(line),
             duration
@@ -105,13 +100,8 @@ class LineView(
      */
     override fun unhighlightShape(duration: Duration) {
         val targetWidth = line.layerSettings.selectedWidth * (if (scale < 1) scale else 1.0)
-<<<<<<< HEAD
         val scaleTransition = animationProvider.createWidthTransition(node, targetWidth, duration)
         val strokeTransition = animationProvider.createStrokeTransition(
-=======
-        val scaleTransition = Timeline(KeyFrame(duration, KeyValue(node.strokeWidthProperty(), targetWidth)))
-        val strokeTransition = createStrokeTransition(
->>>>>>> 13f8702 (Just an automaticly formatted codestyle)
             node,
             line.layerSettings.getColor(line),
             duration

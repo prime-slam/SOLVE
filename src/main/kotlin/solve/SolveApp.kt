@@ -20,7 +20,7 @@ class SolveApp : App(MainView::class, ApplicationStylesheet::class) {
         registerServices()
 
         with(stage) {
-            stage.icons.add(Image(IconsApp));
+            stage.icons.add(Image(IconsApp))
             width = 1000.0
             height = 600.0
             title = "SOLVE"

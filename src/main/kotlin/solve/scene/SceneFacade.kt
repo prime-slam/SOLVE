@@ -20,7 +20,6 @@ import solve.scene.model.LayerState
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
 import tornadofx.find
-import java.io.FileInputStream
 
 /**
  * Interaction interface of the scene to another parts of the application.

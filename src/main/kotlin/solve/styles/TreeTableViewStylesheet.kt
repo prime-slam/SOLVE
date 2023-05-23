@@ -71,6 +71,5 @@ class TreeTableViewStylesheet : Stylesheet() {
                 minHeight = 0.px
             }
         }
-
     }
 }

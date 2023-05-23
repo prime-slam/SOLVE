@@ -36,9 +36,15 @@ class LineLayerSettingsPopOverNode(
                 MinWidthValue,
                 MaxWidthValue,
                 weakWidthSliderValueChangedEventHandler
-            ), isLabelOnLeft = true
+            ),
+            isLabelOnLeft = true
         )
-        addSettingField("One color", buildLandmarkUseOneColorCheckBox(lineLayerSettings), Alignment.Left, isLabelOnLeft = false)
+        addSettingField(
+            "One color",
+            buildLandmarkUseOneColorCheckBox(lineLayerSettings),
+            Alignment.Left,
+            isLabelOnLeft = false
+        )
         addCancel(dialogClosingController)
 
         return popOver

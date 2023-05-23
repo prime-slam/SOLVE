@@ -2,7 +2,6 @@ package solve.main
 
 import solve.catalogue.controller.CatalogueController
 import solve.main.splitpane.SidePanelLocation
-import solve.project.controller.ProjectController
 import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
 import solve.scene.SceneFacade

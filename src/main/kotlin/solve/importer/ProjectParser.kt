@@ -178,7 +178,6 @@ object ProjectParser {
         if (!isImagesExist) {
             createAlertForError("The images folder is missing in the directory")
             return null
-
         }
 
         images.map { img ->

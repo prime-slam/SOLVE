@@ -10,7 +10,6 @@ import solve.styles.SidePanelTabsStyle
 import solve.styles.Style
 import solve.styles.Style.circleForRipple
 import tornadofx.*
-import java.net.URI
 
 open class SidePanelTabsView : View() {
     private val location: SidePanelLocation by param()

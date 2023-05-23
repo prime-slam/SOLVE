@@ -16,7 +16,6 @@ class SettingsDialogStylesheet : Stylesheet() {
         val mfxCheckBox by cssclass("mfx-checkbox")
         val rippleContainer by cssclass("ripple-container")
 
-
         val backgroundColour: Color = Color.valueOf(Style.BackgroundColor)
         val primaryColor: Color = Color.valueOf(Style.PrimaryColor)
     }
@@ -61,9 +60,7 @@ class SettingsDialogStylesheet : Stylesheet() {
 
                 mfxColor.value = backgroundColor
                 fill = backgroundColour
-
             }
-
 
             thumbContainer {
                 mfxRippleGenerator {

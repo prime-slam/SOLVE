@@ -6,12 +6,12 @@ import javafx.geometry.Pos
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ToggleButton
 import javafx.scene.control.ToggleGroup
+import org.controlsfx.control.SegmentedButton
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.ViewFormat
-import org.controlsfx.control.SegmentedButton
 import solve.styles.CatalogueViewStylesheet
 import solve.styles.Style
-import solve.utils.mfxCheckbox
+import solve.utils.materialfx.mfxCheckbox
 import tornadofx.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -60,7 +60,7 @@ class CatalogueSettingsView : View() {
                 addStylesheet(CatalogueViewStylesheet::class)
                 maxWidth = 500.0
                 padding = Insets(0.0, 0.0, 0.0, 0.0)
-                selectionCheckBox = mfxCheckbox("", isSelectionCheckBoxCheckedProperty) {
+                selectionCheckBox = mfxCheckbox {
                     paddingLeft = 7.0
 //                    addNameTooltip()
                     action {
