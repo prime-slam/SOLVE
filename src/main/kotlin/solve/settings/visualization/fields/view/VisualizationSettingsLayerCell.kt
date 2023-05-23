@@ -10,6 +10,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.Label
 import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.input.DragEvent
 import javafx.scene.text.Font
 import javafx.util.Duration
@@ -53,6 +54,33 @@ class VisualizationSettingsLayerCell(
         scene.changeLayerIndex(droppedItemInfo.item, droppedItemGroupRenderIndex)
     }
 
+    private fun createItemCellGraphicSnapshot(item: LayerSettings): Node = hbox(5) {
+        val layerType = getLayerSettingsType(item)
+
+        prefHeight = LayerFieldHeight
+        addStylesheet(TransparentScalingButtonStyle::class)
+
+        val layerIconNode = createLayerIconNode(layerType)
+        if (layerIconNode != null) {
+            add(layerIconNode)
+        }
+        add(createLayerNameLabel())
+        add(createHGrowHBox())
+        hbox(8) {
+            val editIconImageViewIcon = createEditIconImageViewIcon()
+            val visibilityImageViewIcon = createVisibilityImageViewIcon(item.enabled)
+            if (editIconImageViewIcon != null)
+                add(editIconImageViewIcon)
+            if (visibilityImageViewIcon != null)
+                add(visibilityImageViewIcon)
+
+            paddingTop = 3.0
+        }
+
+        alignment = Pos.CENTER_LEFT
+        paddingRight = LayerFieldHBoxPaddingRight
+    }
+
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
         val layerType = getLayerSettingsType(item)
 
@@ -68,14 +96,14 @@ class VisualizationSettingsLayerCell(
         if (layerType != LandmarkType.Plane) {
             add(createLayerEditButton(layerType))
         }
-        add(createLayerVisibilityButtonNode() ?: return@hbox)
+        add(createLayerVisibilityButtonNode())
 
         alignment = Pos.CENTER_LEFT
         paddingRight = LayerFieldHBoxPaddingRight
     }
 
     override fun createItemDragView(item: LayerSettings): Image {
-        val snapshotNode = createItemCellGraphic(item)
+        val snapshotNode = createItemCellGraphicSnapshot(item)
 
         children.remove(snapshotNode)
         Scene(snapshotNode as Parent)
@@ -122,30 +150,34 @@ class VisualizationSettingsLayerCell(
         maxWidth = LayerFieldNameMaxWidth
     }
 
+    private fun createEditIconImageViewIcon(): ImageView? {
+        return imageViewIcon(editIconImage ?: return null, LayerFieldEditIconSize)
+    }
+
     private fun createLayerEditButton(layerType: LandmarkType): Node = button {
         editIconImage ?: return@button
-        graphic = imageViewIcon(editIconImage, LayerFieldEditIconSize)
+        graphic = createEditIconImageViewIcon()
         isPickOnBounds = false
 
         initializeLayerSettingsPopOver(this, this, layerType)
         alignment = Pos.CENTER_RIGHT
     }
 
-    private fun createLayerVisibilityButtonNode(): Node? {
-        layerVisibleIconImage ?: return null
-        layerInvisibleIconImage ?: return null
-        val layerVisibleImageViewIcon = imageViewIcon(layerVisibleIconImage, LayerVisibilityIconSize)
-        val layerInvisibleImageViewIcon = imageViewIcon(layerInvisibleIconImage, LayerVisibilityIconSize)
+    private fun createVisibilityImageViewIcon(isVisible: Boolean): ImageView? {
+        if (isVisible) {
+            return imageViewIcon(layerVisibleIconImage ?: return null, LayerVisibilityIconSize)
+        }
 
+        return imageViewIcon(layerInvisibleIconImage ?: return null, LayerVisibilityIconSize)
+    }
+
+    private fun createLayerVisibilityButtonNode(): Node {
         val layerVisibilityButtonNode = hbox {
-            fun getCurrentVisibilityImageViewIcon() =
-                if (item.enabled) layerVisibleImageViewIcon else layerInvisibleImageViewIcon
-
             button {
-                graphic = getCurrentVisibilityImageViewIcon()
+                graphic = createVisibilityImageViewIcon(item.enabled)
                 action {
                     item.enabled = !item.enabled
-                    graphic = getCurrentVisibilityImageViewIcon()
+                    graphic = createVisibilityImageViewIcon(item.enabled)
                 }
             }
             alignment = Pos.CENTER_RIGHT
