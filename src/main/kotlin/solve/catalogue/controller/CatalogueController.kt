@@ -46,6 +46,6 @@ class CatalogueController : Controller() {
 
     companion object {
         val initialViewFormat = ViewFormat.FileName
-        val initialSelectionState = CatalogueSettingsView.SelectionState.All
+        val initialSelectionState = CatalogueSettingsView.SelectionState.None
     }
 }
