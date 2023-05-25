@@ -158,7 +158,6 @@ class CatalogueView : View() {
     }
 
     private fun visualizeProjectImportSelection() {
-        displayingFieldsView?.selectAllItems()
         controller.visualizeFramesSelection(selectedFrames)
     }
 
