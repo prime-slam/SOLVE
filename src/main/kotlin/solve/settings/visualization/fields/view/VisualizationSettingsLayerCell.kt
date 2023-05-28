@@ -69,10 +69,12 @@ class VisualizationSettingsLayerCell(
         hbox(8) {
             val editIconImageViewIcon = createEditIconImageViewIcon()
             val visibilityImageViewIcon = createVisibilityImageViewIcon(item.enabled)
-            if (editIconImageViewIcon != null)
+            if (editIconImageViewIcon != null) {
                 add(editIconImageViewIcon)
-            if (visibilityImageViewIcon != null)
+            }
+            if (visibilityImageViewIcon != null) {
                 add(visibilityImageViewIcon)
+            }
 
             paddingTop = 3.0
         }
