@@ -18,8 +18,8 @@ import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.settings.createSettingsField
 import solve.settings.grid.controller.GridSettingsController
-import solve.utils.imageViewIcon
 import solve.utils.createInsetsWithValue
+import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
 import solve.utils.scale
 import solve.utils.unscale
