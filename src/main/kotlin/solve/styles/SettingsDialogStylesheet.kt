@@ -5,24 +5,9 @@ import javafx.scene.paint.Paint
 import tornadofx.*
 
 class SettingsDialogStylesheet : Stylesheet() {
-
-    companion object {
-        private val mfxSlider by cssclass()
-        private val thumbContainer by cssclass("thumb-container")
-
-        val mfxColor by cssproperty<MultiValue<Paint>>("-mfx-color")
-        val mfxRippleGenerator by cssclass("mfx-ripple-generator")
-        val mfxRippleColor by cssproperty<MultiValue<Paint>>("-mfx-ripple-color")
-        val mfxCheckBox by cssclass("mfx-checkbox")
-        val rippleContainer by cssclass("ripple-container")
-
-        val backgroundColour: Color = Color.valueOf(Style.BackgroundColor)
-        val primaryColor: Color = Color.valueOf(Style.PrimaryColor)
-    }
-
     init {
         colorPicker {
-            backgroundColor += backgroundColour
+            backgroundColor += BackgroundColor
             borderColor += box(Color.TRANSPARENT)
             arrowButton {
                 arrow {
@@ -34,46 +19,60 @@ class SettingsDialogStylesheet : Stylesheet() {
         mfxCheckBox {
             rippleContainer {
                 mfxRippleGenerator {
-                    mfxRippleColor.value += CatalogueViewStylesheet.secondaryColor
+                    mfxRippleColor.value += CatalogueViewStylesheet.SecondaryColor
                 }
             }
             and(selected) {
                 box {
-                    backgroundColor += CatalogueViewStylesheet.secondaryColor
-                    borderColor += box(CatalogueViewStylesheet.secondaryColor)
+                    backgroundColor += CatalogueViewStylesheet.SecondaryColor
+                    borderColor += box(CatalogueViewStylesheet.SecondaryColor)
                 }
             }
             box {
-                borderColor += box(CatalogueViewStylesheet.primaryColor)
+                borderColor += box(CatalogueViewStylesheet.PrimaryColor)
             }
         }
 
         mfxSlider {
             bar {
                 mfxRippleGenerator {
-                    mfxColor.value += primaryColor
-                    mfxRippleColor.value += primaryColor
+                    mfxColor.value += PrimaryColor
+                    mfxRippleColor.value += PrimaryColor
                 }
                 fill = Color.valueOf(Style.PrimaryColor)
             }
             track {
 
                 mfxColor.value = backgroundColor
-                fill = backgroundColour
+                fill = BackgroundColor
             }
 
             thumbContainer {
                 mfxRippleGenerator {
-                    mfxRippleColor.value += primaryColor
+                    mfxRippleColor.value += PrimaryColor
                 }
 
                 thumb {
-                    mfxColor.value += primaryColor
+                    mfxColor.value += PrimaryColor
                     mfxRippleGenerator {
-                        mfxRippleColor.value += primaryColor
+                        mfxRippleColor.value += PrimaryColor
                     }
                 }
             }
         }
+    }
+
+    companion object {
+        private val mfxSlider by cssclass()
+        private val thumbContainer by cssclass("thumb-container")
+
+        val mfxColor by cssproperty<MultiValue<Paint>>("-mfx-color")
+        val mfxRippleGenerator by cssclass("mfx-ripple-generator")
+        val mfxRippleColor by cssproperty<MultiValue<Paint>>("-mfx-ripple-color")
+        val mfxCheckBox by cssclass("mfx-checkbox")
+        val rippleContainer by cssclass("ripple-container")
+
+        val BackgroundColor: Color = Color.valueOf(Style.BackgroundColor)
+        val PrimaryColor: Color = Color.valueOf(Style.PrimaryColor)
     }
 }

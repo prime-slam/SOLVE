@@ -13,15 +13,15 @@ import solve.utils.materialfx.mfxButton
 import tornadofx.*
 
 class LoadingScreen : View("Loading") {
-    private val primaryColor: Color = Color.valueOf(Style.PrimaryColor)
+    private val PrimaryColor: Color = Color.valueOf(Style.PrimaryColor)
 
     private val controlPanel: ControlPanel by inject()
 
     private val progressSpinner = MFXProgressSpinner().apply {
-        color1 = primaryColor
-        color2 = primaryColor
-        color3 = primaryColor
-        color4 = primaryColor
+        color1 = PrimaryColor
+        color2 = PrimaryColor
+        color3 = PrimaryColor
+        color4 = PrimaryColor
     }
 
     override val root =

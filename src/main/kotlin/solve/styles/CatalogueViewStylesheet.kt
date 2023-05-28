@@ -5,34 +5,17 @@ import javafx.scene.paint.Paint
 import tornadofx.*
 
 class CatalogueViewStylesheet : Stylesheet() {
-
-    companion object {
-        val mfxCheckListView by cssclass("mfx-check-list-view")
-        val mfxCheckListCell by cssclass("mfx-check-list-cell")
-        val mfxCheckBox by cssclass("mfx-checkbox")
-        val rippleContainer by cssclass("ripple-container")
-        val mfxRippleGenerator by cssclass("mfx-ripple-generator")
-        val mfxRippleColor by cssproperty<MultiValue<Paint>>("-mfx-ripple-color")
-
-        val backgroundColour: Color = Color.valueOf(Style.BackgroundColor)
-        val surfaceColor: Color = Color.valueOf(Style.SurfaceColor)
-        val primaryColor: Color = Color.valueOf(Style.PrimaryColor)
-        val secondaryColor: Color = Color.valueOf(Style.SecondaryColor)
-    }
-
-    val segmentedButton by cssclass()
-
     init {
         segmentedButton {
             toggleButton {
-                backgroundColor += surfaceColor
-                borderColor += box(primaryColor)
+                backgroundColor += SurfaceColor
+                borderColor += box(PrimaryColor)
 
                 prefWidth = 80.px
                 prefHeight = 30.px
                 and(selected, pressed) {
-                    backgroundColor += primaryColor
-                    textFill = surfaceColor
+                    backgroundColor += PrimaryColor
+                    textFill = SurfaceColor
                 }
             }
         }
@@ -45,23 +28,23 @@ class CatalogueViewStylesheet : Stylesheet() {
                         backgroundColor += Color.TRANSPARENT
                     }
                     thumb {
-                        backgroundColor += primaryColor
+                        backgroundColor += PrimaryColor
                     }
                 }
             }
 
-            backgroundColor += surfaceColor
+            backgroundColor += SurfaceColor
             mfxCheckListCell {
                 borderColor += box(Color.TRANSPARENT)
 
                 and(hover) {
-                    backgroundColor += backgroundColour
+                    backgroundColor += BackgroundColor
                 }
                 and(selected, checked) {
                     and(hover) {
-                        backgroundColor += backgroundColour
+                        backgroundColor += BackgroundColor
                     }
-                    backgroundColor += surfaceColor
+                    backgroundColor += SurfaceColor
                 }
             }
         }
@@ -69,26 +52,41 @@ class CatalogueViewStylesheet : Stylesheet() {
         mfxCheckBox {
             rippleContainer {
                 mfxRippleGenerator {
-                    mfxRippleColor.value += secondaryColor
+                    mfxRippleColor.value += SecondaryColor
                 }
             }
             and(selected) {
                 box {
-                    backgroundColor += secondaryColor
-                    borderColor += box(secondaryColor)
+                    backgroundColor += SecondaryColor
+                    borderColor += box(SecondaryColor)
                 }
             }
             box {
-                borderColor += box(primaryColor)
+                borderColor += box(PrimaryColor)
             }
         }
 
         listView {
-            backgroundColor += surfaceColor
+            backgroundColor += SurfaceColor
         }
 
         listCell {
-            backgroundColor += surfaceColor
+            backgroundColor += SurfaceColor
         }
+    }
+
+    companion object {
+        val mfxCheckListView by cssclass("mfx-check-list-view")
+        val mfxCheckListCell by cssclass("mfx-check-list-cell")
+        val mfxCheckBox by cssclass("mfx-checkbox")
+        val rippleContainer by cssclass("ripple-container")
+        val mfxRippleGenerator by cssclass("mfx-ripple-generator")
+        val mfxRippleColor by cssproperty<MultiValue<Paint>>("-mfx-ripple-color")
+        val segmentedButton by cssclass()
+
+        val BackgroundColor: Color = Color.valueOf(Style.BackgroundColor)
+        val SurfaceColor: Color = Color.valueOf(Style.SurfaceColor)
+        val PrimaryColor: Color = Color.valueOf(Style.PrimaryColor)
+        val SecondaryColor: Color = Color.valueOf(Style.SecondaryColor)
     }
 }

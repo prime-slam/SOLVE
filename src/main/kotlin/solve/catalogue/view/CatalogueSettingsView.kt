@@ -62,7 +62,6 @@ class CatalogueSettingsView : View() {
                 padding = Insets(0.0, 0.0, 0.0, 0.0)
                 selectionCheckBox = mfxCheckbox {
                     paddingLeft = 7.0
-//                    addNameTooltip()
                     action {
                         if (isSelected) {
                             controller.checkAllFields()

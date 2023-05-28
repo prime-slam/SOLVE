@@ -21,7 +21,3 @@ val ProjectFrame.layers: List<ProjectLayer>
 fun <T> synchronizeListViewsSelections(firstListView: MFXCheckListView<T>, secondListView: MFXCheckListView<T>) {
     secondListView.setSelectionModel(firstListView.selectionModel)
 }
-
-// fun Labeled.addNameTooltip() {
-//    tooltip(text)
-// }
