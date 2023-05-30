@@ -11,7 +11,7 @@ class SettingsDialogNode : VBox(10.0) {
     fun addTitle() {
         val titleLabel = label(title) {
             paddingLeft = 10.0
-            style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: 28px;"
+            style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.SettingsDialogFontSize};"
         }
 
         this.add(titleLabel)

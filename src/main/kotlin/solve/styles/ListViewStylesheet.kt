@@ -6,7 +6,7 @@ import tornadofx.*
 class ListViewStylesheet : Stylesheet() {
     init {
         listView {
-            backgroundColor += Color.valueOf(Style.BackgroundColor)
+            backgroundColor += Color.valueOf(Style.SurfaceColor)
         }
         listCell {
             backgroundColor += Color.valueOf(Style.SurfaceColor)

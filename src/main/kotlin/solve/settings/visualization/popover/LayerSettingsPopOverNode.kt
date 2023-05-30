@@ -18,7 +18,7 @@ abstract class LayerSettingsPopOverNode {
 
     protected fun addCancel(dialogClosingController: DialogClosingController) {
         val borderpane = BorderPane().apply {
-            right = mfxButton("CANCEL") {
+            right = mfxButton("OK") {
                 BorderPane.setMargin(this, Insets(0.0, 24.0, 24.0, 0.0))
                 maxWidth = 75.0
                 prefHeight = 23.0
@@ -37,6 +37,7 @@ abstract class LayerSettingsPopOverNode {
         popOver.addTitle()
     }
 
+
     protected fun addSettingField(
         name: String,
         settingNode: Node,
@@ -54,6 +55,9 @@ abstract class LayerSettingsPopOverNode {
             settingsNodeAlignment,
             isLabelOnLeft
         )
+        fieldLabel.apply {
+            style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.HeaderFontSize}"
+        }
         popOver.add(settingsField)
     }
 

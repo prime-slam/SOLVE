@@ -22,6 +22,7 @@ import solve.filters.settings.view.connectors.FilterSettingNodeConnector
 import solve.filters.settings.view.connectors.IndicesStepSettingNodeConnector
 import solve.filters.settings.view.connectors.TimePeriodSettingNodeConnector
 import solve.filters.settings.view.connectors.UIDSettingNodeConnector
+import solve.styles.CatalogueViewStylesheet
 import solve.styles.Style
 import solve.styles.Style.headerPadding
 import solve.utils.createHGrowHBox
@@ -288,6 +289,7 @@ class FilterSettingsView : View() {
 
     private fun createSettingFieldCheckbox(): CheckBox {
         val checkbox = mfxCheckbox {
+            addStylesheet(CatalogueViewStylesheet::class)
             paddingTop = -7.0
 
             selectedProperty().onChange { selected ->

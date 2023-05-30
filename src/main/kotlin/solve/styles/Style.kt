@@ -45,6 +45,8 @@ object Style {
 
     const val MainFontSize = "15px"
 
+    const val SettingsDialogFontSize = "22px"
+
     val TooltipFontSize = Dimension(12.0, Dimension.LinearUnits.px)
 
     const val ButtonStyle =

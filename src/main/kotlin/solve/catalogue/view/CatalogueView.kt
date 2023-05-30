@@ -87,7 +87,7 @@ class CatalogueView : View() {
                     BorderPane.setAlignment(this, Pos.CENTER)
                     setPrefSize(150.0, 31.0)
                     style =
-                        "-fx-font-style: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold}; " +
+                        "-fx-font-family: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold}; " +
                         "-fx-background-color: #${Style.PrimaryColor}; -fx-text-fill: #${Style.SurfaceColor};"
 
                     action {
@@ -106,13 +106,10 @@ class CatalogueView : View() {
 
     private val placeholder = label("Project not imported") {
         tooltip(text)
-        padding = Insets(400.0, 50.0, 350.0, 50.0)
+        padding = Insets(400.0, 0.0, 350.0, 80.0)
         graphic = ImageView(cataloguePlaceholder)
         contentDisplay = ContentDisplay.TOP
-        style {
-            fontFamily = Style.FontCondensed
-            fontSize = 24.px
-        }
+        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
     }
 
     override val root =

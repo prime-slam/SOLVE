@@ -20,7 +20,7 @@ import solve.constants.IconsSettingsVisualizationLayerVisiblePath
 import solve.scene.controller.SceneController
 import solve.scene.model.LandmarkType
 import solve.scene.model.LayerSettings
-import solve.settings.visualization.VisualizationSettingsView
+import solve.scene.view.SceneView
 import solve.settings.visualization.popover.DialogClosingController
 import solve.settings.visualization.popover.LineLayerSettingsPopOverNode
 import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
@@ -41,7 +41,7 @@ class VisualizationSettingsLayerCell(
     private val sceneController: SceneController,
     private val dialogClosingController: DialogClosingController
 ) : DragAndDropListCell<LayerSettings>(LayerSettings::class) {
-    private val settings = find<VisualizationSettingsView>()
+    private val sceneView = find<SceneView>()
     override fun setAfterDragDropped(
         event: DragEvent,
         thisItemInfo: DragAndDropCellItemInfo<LayerSettings>,
@@ -104,7 +104,7 @@ class VisualizationSettingsLayerCell(
 
     private fun createLayerNameLabel(): Label = label(item.layerName) {
         style =
-            "-fx-font-style: ${Style.FontCondensed}; -fx-font-size: ${Style.ButtonFontSize}; " +
+            "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.ButtonFontSize}; " +
             "-fx-text-fill: #${Style.OnBackgroundColor}"
         font = Font.font(LayerFieldNameFontSize)
     }
@@ -202,7 +202,7 @@ class VisualizationSettingsLayerCell(
 
     private fun createLayerSettingsPopOver(contentNode: Node, titleLabel: String): MFXStageDialog {
         val content = createGenericDialog(contentNode)
-        val dialog = createStageDialog(content, settings.currentStage, settings.root)
+        val dialog = createStageDialog(content, sceneView.currentStage, sceneView.root)
 
         val popOver = PopOver(contentNode)
         popOver.detach()

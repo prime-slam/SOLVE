@@ -35,7 +35,7 @@ class PointLayerSettingsPopOverNode(
             isLabelOnLeft = true
         )
         addSettingField(
-            "One color",
+            "",
             buildLandmarkUseOneColorCheckBox(pointLayerSettings),
             Alignment.Left,
             isLabelOnLeft = false

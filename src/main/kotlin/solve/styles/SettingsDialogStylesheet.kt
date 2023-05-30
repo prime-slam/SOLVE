@@ -48,6 +48,18 @@ class SettingsDialogStylesheet : Stylesheet() {
             }
 
             thumbContainer {
+                and(hover) {
+                    thumbRadius {
+                        mfxColor.value += PrimaryColor
+                    }
+                }
+
+                and(pressed) {
+                    thumbRadius {
+                        mfxColor.value += PrimaryColor
+                    }
+                }
+
                 mfxRippleGenerator {
                     mfxRippleColor.value += PrimaryColor
                 }
@@ -65,6 +77,7 @@ class SettingsDialogStylesheet : Stylesheet() {
     companion object {
         private val mfxSlider by cssclass()
         private val thumbContainer by cssclass("thumb-container")
+        private val thumbRadius by cssclass("thumb-radius")
 
         val mfxColor by cssproperty<MultiValue<Paint>>("-mfx-color")
         val mfxRippleGenerator by cssclass("mfx-ripple-generator")
@@ -74,5 +87,6 @@ class SettingsDialogStylesheet : Stylesheet() {
 
         val BackgroundColor: Color = Color.valueOf(Style.BackgroundColor)
         val PrimaryColor: Color = Color.valueOf(Style.PrimaryColor)
+        val PrimaryColorLight: Color = Color.valueOf(Style.PrimaryColorLight)
     }
 }

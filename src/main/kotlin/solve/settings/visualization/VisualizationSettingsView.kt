@@ -1,10 +1,13 @@
 package solve.settings.visualization
 
-import javafx.scene.layout.Priority
+import javafx.scene.layout.*
+import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.settings.visualization.fields.controller.VisualizationSettingsLayersController
 import solve.settings.visualization.fields.view.VisualizationSettingsLayersView
+import solve.styles.Style
 import solve.utils.createInsetsWithValue
 import tornadofx.*
 
@@ -32,6 +35,14 @@ class VisualizationSettingsView : View() {
     }
 
     override val root = vbox {
+        style {
+            backgroundColor += Paint.valueOf(Style.SurfaceColor)
+        }
+
+        border = Border(
+            BorderStroke(Color.TRANSPARENT, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+        )
+
         minWidth = VisualizationSettingsViewMinWidth
 
         add(visualizationSettingsLayersView)

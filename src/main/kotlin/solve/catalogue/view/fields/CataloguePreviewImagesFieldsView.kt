@@ -30,7 +30,7 @@ class CataloguePreviewImagesFieldsView : CatalogueFieldsView() {
         }
 
         label.graphic = ImageView(item.loadPreviewImage(PreviewImageHeight))
-        label.paddingLeft = 90.0
+        label.paddingLeft = 60.0
         label.contentDisplay = ContentDisplay.TOP
         label.text = item.fileName
     }

@@ -40,7 +40,7 @@ class LineLayerSettingsPopOverNode(
             isLabelOnLeft = true
         )
         addSettingField(
-            "One color",
+            "",
             buildLandmarkUseOneColorCheckBox(lineLayerSettings),
             Alignment.Left,
             isLabelOnLeft = false

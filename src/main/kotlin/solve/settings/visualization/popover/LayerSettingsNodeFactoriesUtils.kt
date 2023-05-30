@@ -37,10 +37,9 @@ fun buildLandmarkColorPicker(
 fun buildLandmarkUseOneColorCheckBox(
     layerSettings: LayerSettings
 ): MFXCheckbox {
-    val checkBox = MFXCheckbox()
-    checkBox.style {
-        fontFamily = Style.FontCondensed
-        fontSize = 20.0.px
+    val checkBox = MFXCheckbox("One color")
+    checkBox.apply {
+        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.HeaderFontSize}"
     }
 
     checkBox.isSelected = layerSettings.useCommonColor

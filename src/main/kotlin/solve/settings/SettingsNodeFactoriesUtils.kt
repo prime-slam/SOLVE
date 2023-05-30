@@ -4,9 +4,8 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.HBox
-import solve.styles.Style
 import solve.utils.structures.Alignment
-import tornadofx.add
+import tornadofx.*
 
 fun createSettingsField(
     fieldLabel: Label,
@@ -19,10 +18,6 @@ fun createSettingsField(
 ): HBox {
     val fieldHBox = HBox(10.0)
     val settingsNodeHBox = HBox()
-
-    fieldLabel.apply {
-        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.HeaderFontSize}"
-    }
 
     val labelHBox = HBox()
     labelHBox.add(fieldLabel)
@@ -43,6 +38,7 @@ fun createSettingsField(
         fieldHBox.add(fieldLabel)
         fieldHBox.add(settingsNodeHBox)
     } else {
+        wrappedSettingNode.paddingLeft = 10.0
         settingsNodeHBox.prefWidth = 5.0
         fieldHBox.add(settingsNodeHBox)
         fieldHBox.add(fieldLabel)

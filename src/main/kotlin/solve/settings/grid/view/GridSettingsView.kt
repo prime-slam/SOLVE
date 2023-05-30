@@ -43,11 +43,10 @@ class GridSettingsView : View() {
         get() = sceneController.installedColumnsNumber
 
     override val root = vbox {
+        style {
+            backgroundColor += Paint.valueOf(Style.SurfaceColor)
+        }
         vbox {
-            style {
-                backgroundColor += Paint.valueOf(Style.SurfaceColor)
-            }
-
             vbox {
                 minWidth = GridSettingsViewMinWidth
 
@@ -56,7 +55,7 @@ class GridSettingsView : View() {
                 add(buildScaleRangeSlider())
             }
             border = Border(
-                BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+                BorderStroke(Color.TRANSPARENT, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
             )
             padding = Insets(8.0, 10.0, 8.0, 10.0)
             vgrow = Priority.ALWAYS
@@ -228,7 +227,7 @@ class GridSettingsView : View() {
     companion object {
         private const val GridSettingsViewMinWidth = 220.0
 
-        private const val GridSettingsLabelFontSize = 16.0
+        private const val GridSettingsLabelFontSize = 14.0
 
         private const val GridSettingsLabelWidth = 100.0
         private const val GridSettingsSettingWidth = 120.0

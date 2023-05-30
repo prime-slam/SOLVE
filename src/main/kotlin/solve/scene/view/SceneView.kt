@@ -46,10 +46,7 @@ class SceneView : View() {
             padding = Insets(350.0, 500.0, 350.0, 600.0)
             graphic = ImageView(scenePlaceholder)
             contentDisplay = ContentDisplay.TOP
-            style {
-                fontFamily = Style.FontCondensed
-                fontSize = 24.px
-            }
+            style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
         }
     }
 
@@ -72,7 +69,13 @@ class SceneView : View() {
         val scene = controller.sceneProperty.value
 
         if (scene.frames.isEmpty()) {
-            label("No frames was provided")
+            label("No frames was provided") {
+                tooltip(text)
+                padding = Insets(350.0, 500.0, 350.0, 600.0)
+                graphic = ImageView(scenePlaceholder)
+                contentDisplay = ContentDisplay.TOP
+                style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
+            }
             return
         }
 
