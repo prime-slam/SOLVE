@@ -32,7 +32,7 @@ object ProjectParser {
         frames: ArrayList<FrameAfterPartialParsing>,
         layers: MutableList<String>
     ): Boolean {
-        var hasAnyErrors = false
+        val hasAnyErrors = false
         frames.forEach { frame ->
             val diff = layers.minus(frame.outputs.map { output -> output.algorithmName }.toSet())
             if (diff.isNotEmpty()) {
