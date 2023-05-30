@@ -87,6 +87,5 @@ class SettingsDialogStylesheet : Stylesheet() {
 
         val BackgroundColor: Color = Color.valueOf(Style.BackgroundColor)
         val PrimaryColor: Color = Color.valueOf(Style.PrimaryColor)
-        val PrimaryColorLight: Color = Color.valueOf(Style.PrimaryColorLight)
     }
 }

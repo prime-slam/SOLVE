@@ -27,8 +27,6 @@ object Style {
 
     const val ErrorColor = "EF6E6B"
 
-    const val ActiveColor = "41497F"
-
     const val FontCondensed = "'Roboto Condensed'"
 
     const val Font = "Roboto"

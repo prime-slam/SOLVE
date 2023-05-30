@@ -9,7 +9,6 @@ import javafx.scene.control.ColorPicker
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.styles.Style
-import tornadofx.*
 
 const val ElementWidth = 270.0
 fun buildLandmarkColorPicker(
