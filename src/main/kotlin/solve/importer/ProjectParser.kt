@@ -41,7 +41,6 @@ object ProjectParser {
                     "There ${if (diff.count() == 1) "is" else "are"} no $missingAlgorithms for " +
                         "image ${frame.image.name}"
                 )
-                hasAnyErrors = true
             }
         }
         return hasAnyErrors
