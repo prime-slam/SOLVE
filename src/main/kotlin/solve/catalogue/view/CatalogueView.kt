@@ -109,7 +109,8 @@ class CatalogueView : View() {
         padding = Insets(400.0, 0.0, 350.0, 80.0)
         graphic = ImageView(cataloguePlaceholder)
         contentDisplay = ContentDisplay.TOP
-        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
+        style = "-fx-font-family: ${Style.FontCondensed}; " +
+            "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
     }
 
     override val root =

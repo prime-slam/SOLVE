@@ -37,7 +37,6 @@ abstract class LayerSettingsPopOverNode {
         popOver.addTitle()
     }
 
-
     protected fun addSettingField(
         name: String,
         settingNode: Node,
