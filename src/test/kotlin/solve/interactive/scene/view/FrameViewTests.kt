@@ -98,7 +98,7 @@ internal class FrameViewTests : InteractiveTestClass() {
             Landmark.Keypoint(index.toLong(), settings, state, point)
         }
         val layer = Layer.PointLayer(layerName, settings) { keypoints }
-        frame = VisualizationFrame(1, { image }, listOf(layer))
+        frame = VisualizationFrame(1.0, { image }, listOf(layer))
         robot.interact {
             frameView = FrameView(size, scale, storage, 0, parameters, frame)
         }
@@ -160,7 +160,7 @@ internal class FrameViewTests : InteractiveTestClass() {
             Landmark.Keypoint(index.toLong(), settings, LayerState(layerName), point)
         }
         val layer = Layer.PointLayer(layerName, settings) { keypoints }
-        frame = VisualizationFrame(1, { image }, listOf(layer))
+        frame = VisualizationFrame(1.0, { image }, listOf(layer))
         robot.interact {
             frameView.setFrame(frame)
         }
@@ -189,7 +189,7 @@ internal class FrameViewTests : InteractiveTestClass() {
             Layer.PointLayer(secondLayerName, settings) { keypoints },
             Layer.PointLayer(layerName, this.settings) { this.keypoints }
         )
-        frame = VisualizationFrame(1, { image }, layers)
+        frame = VisualizationFrame(1.0, { image }, layers)
         val scope = CoroutineScope(Dispatchers.JavaFx)
         parameters = FrameViewParameters(
             scope,

@@ -34,7 +34,7 @@ internal class SceneFacadeTests : SceneTestsBase() {
 
         val frameNumber = 5
         val frame = scene.frames[frameNumber]
-        assertEquals(frameNumber.toLong(), frame.timestamp)
+        assertEquals(frameNumber.toDouble(), frame.timestamp)
         assertEquals(1, frame.layers.size)
 
         val frameLayer = frame.layers.single()
