@@ -18,7 +18,7 @@ class LineLayerSettingsPopOverNode(
     }
     private lateinit var widthSlider: Slider
 
-    override fun getPopOver(): Node {
+    override fun getPopOverNode(): Node {
         popOverNode.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
         addSettingField("Color", buildLandmarkColorPicker(lineLayerSettings, sceneController))

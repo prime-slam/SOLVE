@@ -18,7 +18,7 @@ class PointLayerSettingsPopOverNode(
     }
     private lateinit var radiusSlider: Slider
 
-    override fun getPopOver(): Node {
+    override fun getPopOverNode(): Node {
         popOverNode.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
         addSettingField("Color", buildLandmarkColorPicker(pointLayerSettings, sceneController))
