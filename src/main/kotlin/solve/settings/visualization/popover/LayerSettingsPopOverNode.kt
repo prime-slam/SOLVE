@@ -26,7 +26,7 @@ abstract class LayerSettingsPopOverNode {
         popOverNode.add(settingsField)
     }
 
-    abstract fun getPopOver(): Node
+    abstract fun getPopOverNode(): Node
 
     abstract fun removeBindings()
 
