@@ -4,7 +4,6 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import javafx.scene.text.Font
-import org.controlsfx.control.PopOver
 import solve.settings.createSettingsField
 import solve.utils.structures.Alignment
 import tornadofx.*
@@ -27,7 +26,7 @@ abstract class LayerSettingsPopOverNode {
         popOverNode.add(settingsField)
     }
 
-    abstract fun getPopOver(): PopOver
+    abstract fun getPopOver(): Node
 
     abstract fun removeBindings()
 
