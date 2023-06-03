@@ -1,8 +1,6 @@
 package solve.settings.visualization.fields.view
 
 import javafx.application.Platform
-import javafx.beans.InvalidationListener
-import javafx.beans.WeakInvalidationListener
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -228,8 +226,7 @@ class VisualizationSettingsLayerCell(
                 event.consume()
                 scene.window.requestFocus()
             }
-
-            val layerSettingsButtonActionEventHandler = InvalidationListener {
+            layerSettingsButton.action {
                 if (!isPopOverShowing) {
                     val showPosition = calculatePopOverShowPosition(spawnNode, layerType)
                     showPopOver(popOver, spawnNode, showPosition)
@@ -237,9 +234,6 @@ class VisualizationSettingsLayerCell(
                     popOver.hide()
                 }
             }
-            layerSettingsButton.onActionProperty().addListener(
-                WeakInvalidationListener(layerSettingsButtonActionEventHandler)
-            )
         }
     }
 
