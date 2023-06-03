@@ -4,12 +4,13 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import javafx.scene.text.Font
+import org.controlsfx.control.PopOver
 import solve.settings.createSettingsField
 import solve.utils.structures.Alignment
 import tornadofx.*
 
 abstract class LayerSettingsPopOverNode {
-    protected val popOver: VBox = VBox()
+    protected val popOverNode: VBox = VBox()
 
     fun addSettingField(name: String, settingNode: Node, settingsNodeAlignment: Alignment = Alignment.Center) {
         val fieldLabel = Label(name)
@@ -23,10 +24,12 @@ abstract class LayerSettingsPopOverNode {
             LayerSettingsSettingNodeWidth,
             settingsNodeAlignment
         )
-        popOver.add(settingsField)
+        popOverNode.add(settingsField)
     }
 
-    abstract fun getPopOverNode(): Node
+    abstract fun getPopOver(): PopOver
+
+    abstract fun removeBindings()
 
     companion object {
         private const val LayerSettingLabelFontSize = 16.0

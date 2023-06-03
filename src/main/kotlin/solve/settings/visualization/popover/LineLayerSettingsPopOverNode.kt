@@ -1,7 +1,7 @@
 package solve.settings.visualization.popover
 
-import javafx.beans.value.WeakChangeListener
 import javafx.scene.Node
+import javafx.scene.control.Slider
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.scene.model.LayerSettings.LineLayerSettings.Companion.MaxWidthValue
@@ -13,31 +13,36 @@ class LineLayerSettingsPopOverNode(
     private val lineLayerSettings: LayerSettings.LineLayerSettings,
     private val sceneController: SceneController
 ) : LayerSettingsPopOverNode() {
-    companion object {
-        const val LayerSettingsNodePrefWidth = 260.0
-        const val LayerSettingsNodePrefHeight = 90.0
-    }
-
     private val widthSliderValueChangedEventHandler = ChangeListener<Number> { _, _, widthValue ->
         lineLayerSettings.selectedWidth = widthValue as Double
     }
-    private val weakWidthSliderValueChangedEventHandler = WeakChangeListener(widthSliderValueChangedEventHandler)
+    private lateinit var widthSlider: Slider
 
-    override fun getPopOverNode(): Node {
-        popOver.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
+    override fun getPopOver(): Node {
+        popOverNode.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
         addSettingField("Color", buildLandmarkColorPicker(lineLayerSettings, sceneController))
+        widthSlider = buildSizeSlider(
+            lineLayerSettings.selectedWidth,
+            MinWidthValue,
+            MaxWidthValue,
+            widthSliderValueChangedEventHandler
+        )
         addSettingField(
             "Width",
-            buildSizeSlider(
-                lineLayerSettings.selectedWidth,
-                MinWidthValue,
-                MaxWidthValue,
-                weakWidthSliderValueChangedEventHandler
-            )
+            widthSlider
         )
         addSettingField("One color", buildLandmarkUseOneColorCheckBox(lineLayerSettings), Alignment.Left)
 
-        return popOver
+        return popOverNode
+    }
+
+    override fun removeBindings() {
+        widthSlider.valueProperty().removeListener(widthSliderValueChangedEventHandler)
+    }
+
+    companion object {
+        const val LayerSettingsNodePrefWidth = 260.0
+        const val LayerSettingsNodePrefHeight = 90.0
     }
 }
