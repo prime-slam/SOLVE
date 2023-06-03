@@ -42,9 +42,7 @@ class PlaneView(
         override fun getColor(point: Point) = color
     }
 
-    private var planeUIDLabel = PlaneUIDLabel(plane)
-
-    override val node = planeUIDLabel.uidLabelNode
+    override val node = null
 
     private val planeElement = PlaneFrameElement(
         viewOrder,
@@ -131,20 +129,12 @@ class PlaneView(
         }
     }
 
-    override fun scaleChanged() {
-        if (planeUIDLabel.isShowingLabel) {
-            planeUIDLabel.updatePosition(scale)
-        }
-    }
-
     private var highlightingAnimation: Timeline? = null
 
     /**
      * Plays highlighting animation.
      */
     override fun highlightShape(duration: Duration) {
-        planeUIDLabel.show(scale)
-
         val initialColor = getColorWithOpacity()
         // highlighted plane is more transparent
         val targetColor = initialColor.withReplacedOpacity(initialColor.opacity * OpacityUnhighlightCoefficient)
@@ -162,8 +152,6 @@ class PlaneView(
      * Plays unhighlighting animation.
      */
     override fun unhighlightShape(duration: Duration) {
-        planeUIDLabel.hide()
-
         highlightingAnimation?.stop()
         highlightingAnimation = null
 
@@ -177,6 +165,8 @@ class PlaneView(
 
         timeline.play()
     }
+
+    override fun scaleChanged() { }
 
     private fun addListeners() {
         frameEventManager.subscribeMousePressed(mousePressedCanvasEventHandler)
@@ -207,8 +197,6 @@ class PlaneView(
     private fun getDisabledPlaneColor() = getColorWithOpacity().withReplacedOpacity(LayerSettings.MinOpacity)
 
     private fun onEnabledChanged() {
-        planeUIDLabel.enabled = plane.layerSettings.enabled
-
         val planeVisibilityColor: Color = if (plane.layerSettings.enabled) {
             lastEnabledPlaneElementColor
         } else {
