@@ -1,6 +1,8 @@
 package solve.settings.visualization.fields.view
 
 import javafx.application.Platform
+import javafx.beans.InvalidationListener
+import javafx.beans.WeakInvalidationListener
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -24,6 +26,7 @@ import solve.constants.IconsSettingsVisualizationPointLayerPath
 import solve.scene.controller.SceneController
 import solve.scene.model.LandmarkType
 import solve.scene.model.LayerSettings
+import solve.settings.visualization.popover.LayerSettingsPopOverNode
 import solve.settings.visualization.popover.LineLayerSettingsPopOverNode
 import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
 import solve.utils.TransparentScalingButtonStyle
@@ -41,6 +44,8 @@ import tornadofx.*
 class VisualizationSettingsLayerCell(
     private val sceneController: SceneController
 ) : DragAndDropListCell<LayerSettings>(LayerSettings::class) {
+    private var layerSettingsPopOverNode: LayerSettingsPopOverNode? = null
+
     override fun setAfterDragDropped(
         event: DragEvent,
         thisItemInfo: DragAndDropCellItemInfo<LayerSettings>,
@@ -84,11 +89,12 @@ class VisualizationSettingsLayerCell(
     }
 
     override fun createItemCellGraphic(item: LayerSettings): Node = hbox {
-        val layerType = getLayerSettingsType(item)
+        removeCurrentPopOverBindings()
 
         prefHeight = LayerFieldHeight
         addStylesheet(TransparentScalingButtonStyle::class)
 
+        val layerType = getLayerSettingsType(item)
         val layerIconNode = createLayerIconNode(layerType)
         if (layerIconNode != null) {
             add(layerIconNode)
@@ -222,7 +228,8 @@ class VisualizationSettingsLayerCell(
                 event.consume()
                 scene.window.requestFocus()
             }
-            layerSettingsButton.action {
+
+            val layerSettingsButtonActionEventHandler = InvalidationListener {
                 if (!isPopOverShowing) {
                     val showPosition = calculatePopOverShowPosition(spawnNode, layerType)
                     showPopOver(popOver, spawnNode, showPosition)
@@ -230,6 +237,9 @@ class VisualizationSettingsLayerCell(
                     popOver.hide()
                 }
             }
+            layerSettingsButton.onActionProperty().addListener(
+                WeakInvalidationListener(layerSettingsButtonActionEventHandler)
+            )
         }
     }
 
@@ -238,20 +248,27 @@ class VisualizationSettingsLayerCell(
         popOver.show(spawnNode, showPosition.x, showPosition.y)
     }
 
-    private fun createLayerSettingsPopOverNode(layerSettings: LayerSettings): Node? =
-        when (getLayerSettingsType(layerSettings)) {
+    private fun removeCurrentPopOverBindings() {
+        layerSettingsPopOverNode?.removeBindings()
+    }
+
+    private fun createLayerSettingsPopOverNode(layerSettings: LayerSettings): Node? {
+        layerSettingsPopOverNode = when (getLayerSettingsType(layerSettings)) {
             LandmarkType.Keypoint ->
                 PointLayerSettingsPopOverNode(
                     layerSettings as LayerSettings.PointLayerSettings,
                     sceneController
-                ).getPopOverNode()
+                )
             LandmarkType.Line ->
                 LineLayerSettingsPopOverNode(
                     layerSettings as LayerSettings.LineLayerSettings,
                     sceneController
-                ).getPopOverNode()
+                )
             LandmarkType.Plane -> null
         }
+
+        return layerSettingsPopOverNode?.getPopOverNode()
+    }
 
     private fun createLayerSettingsPopOver(contentNode: Node, titleLabel: String): PopOver {
         val popOver = PopOver(contentNode)
