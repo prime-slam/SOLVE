@@ -12,7 +12,7 @@ object FullParserForImport {
     fun fullParseDirectory(
         project: ProjectAfterPartialParsing
     ): Project {
-        val landmarks = HashMap<Long, MutableList<LandmarkFile>>()
+        val landmarks = HashMap<Double, MutableList<LandmarkFile>>()
         val frames = ArrayList<ProjectFrame>()
         val layers = ArrayList<ProjectLayer>()
 
@@ -21,19 +21,19 @@ object FullParserForImport {
         }
 
         project.projectFrames.forEach {
-            val longName = it.image.name.toLong()
-            landmarks[longName] = mutableListOf()
+            val doubleName = it.image.name.toDouble()
+            landmarks[doubleName] = mutableListOf()
             it.outputs.map { output ->
                 val currentLayer = ProjectLayer(output.kind, output.algorithmName, project.currentDirectory)
                 if (!layers.contains(currentLayer)) {
                     layers.add((currentLayer))
                 }
-                landmarks[longName]?.add(
+                landmarks[doubleName]?.add(
                     LandmarkFile(currentLayer, Path(output.path), ImagePlanesParser.extractUIDs(output.path))
                 )
             }
-            landmarks[longName]?.toList()
-                ?.let { landmark -> ProjectFrame(longName, Path(it.image.path), landmark) }
+            landmarks[doubleName]?.toList()
+                ?.let { landmark -> ProjectFrame(doubleName, Path(it.image.path), landmark) }
                 ?.let { it1 -> frames.add(it1) }
         }
         return Project(Path(project.currentDirectory), frames, layers)
