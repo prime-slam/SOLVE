@@ -1,7 +1,7 @@
 package solve.settings.visualization.popover
 
-import javafx.beans.value.WeakChangeListener
 import javafx.scene.Node
+import javafx.scene.control.Slider
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.scene.model.LayerSettings.PointLayerSettings.Companion.MaxSizeValue
@@ -16,24 +16,31 @@ class PointLayerSettingsPopOverNode(
     private val radiusSliderValueChangedEventHandler = ChangeListener<Number> { _, _, radiusValue ->
         pointLayerSettings.selectedRadius = radiusValue as Double
     }
-    private val weakRadiusSliderValueChangedEventHandler = WeakChangeListener(radiusSliderValueChangedEventHandler)
+    private lateinit var radiusSlider: Slider
 
-    override fun getPopOverNode(): Node {
-        popOver.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
+    override fun getPopOver(): Node {
+        popOverNode.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
 
         addSettingField("Color", buildLandmarkColorPicker(pointLayerSettings, sceneController))
+
+        radiusSlider = buildSizeSlider(
+            pointLayerSettings.selectedRadius,
+            MinSizeValue,
+            MaxSizeValue,
+            radiusSliderValueChangedEventHandler
+        )
         addSettingField(
             "Size",
-            buildSizeSlider(
-                pointLayerSettings.selectedRadius,
-                MinSizeValue,
-                MaxSizeValue,
-                weakRadiusSliderValueChangedEventHandler
-            )
+            radiusSlider
         )
+
         addSettingField("One color", buildLandmarkUseOneColorCheckBox(pointLayerSettings), Alignment.Left)
 
-        return popOver
+        return popOverNode
+    }
+
+    override fun removeBindings() {
+        radiusSlider.valueProperty().removeListener(radiusSliderValueChangedEventHandler)
     }
 
     companion object {
