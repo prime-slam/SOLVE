@@ -20,21 +20,19 @@ class PointLayerSettingsPopOverNode(
 
     override fun getPopOverNode(): Node {
         popOverNode.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
+        val pointColorPicker = buildLandmarkColorPicker(pointLayerSettings, sceneController)
+        val useOneColorCheckBox = buildLandmarkUseOneColorCheckBox(pointLayerSettings)
 
-        addSettingField("Color", buildLandmarkColorPicker(pointLayerSettings, sceneController))
-
+        addSettingField("Color", pointColorPicker)
         radiusSlider = buildSizeSlider(
             pointLayerSettings.selectedRadius,
             MinSizeValue,
             MaxSizeValue,
             radiusSliderValueChangedEventHandler
         )
-        addSettingField(
-            "Size",
-            radiusSlider
-        )
-
-        addSettingField("One color", buildLandmarkUseOneColorCheckBox(pointLayerSettings), Alignment.Left)
+        addSettingField("Size", radiusSlider)
+        addSettingField("One color", useOneColorCheckBox, Alignment.Left)
+        pointColorPicker.disableProperty().bind(!useOneColorCheckBox.selectedProperty())
 
         return popOverNode
     }
