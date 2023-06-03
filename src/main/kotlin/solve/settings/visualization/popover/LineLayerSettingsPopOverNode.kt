@@ -20,19 +20,19 @@ class LineLayerSettingsPopOverNode(
 
     override fun getPopOverNode(): Node {
         popOverNode.setPrefSize(LayerSettingsNodePrefWidth, LayerSettingsNodePrefHeight)
+        val lineColorPicker = buildLandmarkColorPicker(lineLayerSettings, sceneController)
+        val useOneColorCheckBox = buildLandmarkUseOneColorCheckBox(lineLayerSettings)
 
-        addSettingField("Color", buildLandmarkColorPicker(lineLayerSettings, sceneController))
+        addSettingField("Color", lineColorPicker)
         widthSlider = buildSizeSlider(
             lineLayerSettings.selectedWidth,
             MinWidthValue,
             MaxWidthValue,
             widthSliderValueChangedEventHandler
         )
-        addSettingField(
-            "Width",
-            widthSlider
-        )
-        addSettingField("One color", buildLandmarkUseOneColorCheckBox(lineLayerSettings), Alignment.Left)
+        addSettingField("Width", widthSlider)
+        addSettingField("One color", useOneColorCheckBox, Alignment.Left)
+        lineColorPicker.disableProperty().bind(!useOneColorCheckBox.selectedProperty())
 
         return popOverNode
     }
