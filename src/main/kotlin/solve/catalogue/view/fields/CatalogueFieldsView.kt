@@ -30,7 +30,7 @@ abstract class CatalogueFieldsView : View() {
     private val fields: ObservableList<CatalogueField> by param()
 
     val fieldsListView = mfxCheckListView(fields) {
-        padding = Insets(0.0, 0.0, 0.0, 0.0)
+        paddingAll = 0.0
 
         addStylesheet(CatalogueViewStylesheet::class)
 
@@ -76,7 +76,7 @@ abstract class CatalogueFieldsView : View() {
 
     fun uncheckAllItems() = fieldsListView.uncheckAllItems()
 
-    protected fun setCellHeight(cell: MFXCheckListCell<CatalogueField>) {
+    private fun setCellHeight(cell: MFXCheckListCell<CatalogueField>) {
         cell.prefHeight = listViewCellHeight
     }
 

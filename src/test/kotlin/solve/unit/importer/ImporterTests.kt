@@ -18,14 +18,14 @@ class ImporterTests {
     fun treeCreateTest() {
         val initTree = TreeItem(FileInTree(FileInfo()))
 
-        val project = partialParseDirectory(pathTestProject)
+        val project = partialParseDirectory(PathTestProject)
         val result = project?.let { createTreeWithFiles(it, initTree) }
 
-        val image1 = TreeItem(FileInTree(FileInfo(image1)))
-        val image2 = TreeItem(FileInTree(FileInfo(image2)))
+        val image1 = TreeItem(FileInTree(FileInfo(Image1)))
+        val image2 = TreeItem(FileInTree(FileInfo(Image2)))
 
-        image1.children.add(TreeItem(FileInTree(FileInfo(layer))))
-        image2.children.add(TreeItem(FileInTree(FileInfo(layer))))
+        image1.children.add(TreeItem(FileInTree(FileInfo(Layer))))
+        image2.children.add(TreeItem(FileInTree(FileInfo(Layer))))
 
         initTree.children.addAll(image1, image2)
 
@@ -34,19 +34,19 @@ class ImporterTests {
 
     @Test
     fun partialParseDirectoryTest() {
-        val result = partialParseDirectory(pathTestProject)
+        val result = partialParseDirectory(PathTestProject)
 
         val frame1 = FrameAfterPartialParsing(
             ImageAfterPartialParsing(
-                image1,
-                pathImage1,
+                Image1,
+                PathImage1,
                 mutableListOf()
             ),
             listOf(
                 OutputAfterPartialParsing(
-                    image1,
-                    pathOutput1,
-                    layer,
+                    Image1,
+                    PathOutput1,
+                    Layer,
                     LayerKind.Keypoint,
                     mutableListOf()
                 )
@@ -55,34 +55,34 @@ class ImporterTests {
 
         val frame2 = FrameAfterPartialParsing(
             ImageAfterPartialParsing(
-                image2,
-                pathImage2,
+                Image2,
+                PathImage2,
                 mutableListOf()
             ),
             listOf(
                 OutputAfterPartialParsing(
-                    image2,
-                    pathOutput2,
-                    layer,
+                    Image2,
+                    PathOutput2,
+                    Layer,
                     LayerKind.Keypoint,
                     mutableListOf()
                 )
             )
         )
 
-        val expected = ProjectAfterPartialParsing(pathTestProject, listOf(frame1, frame2))
+        val expected = ProjectAfterPartialParsing(PathTestProject, listOf(frame1, frame2))
 
         Assertions.assertEquals(expected, result)
     }
 
     companion object {
-        const val pathTestProject = "testData/TestProject1"
-        const val image1 = "123456789"
-        const val image2 = "987654321"
-        const val layer = "alg1_keypoint"
-        const val pathImage1 = "testData/TestProject1/images/123456789.jpg"
-        const val pathImage2 = "testData/TestProject1/images/987654321.jpg"
-        const val pathOutput1 = "testData/TestProject1/alg1_keypoint/123456789.csv"
-        const val pathOutput2 = "testData/TestProject1/alg1_keypoint/987654321.csv"
+        const val PathTestProject = "testData/TestProject1"
+        const val Image1 = "123456789"
+        const val Image2 = "987654321"
+        const val Layer = "alg1_keypoint"
+        const val PathImage1 = "testData/TestProject1/images/123456789.jpg"
+        const val PathImage2 = "testData/TestProject1/images/987654321.jpg"
+        const val PathOutput1 = "testData/TestProject1/alg1_keypoint/123456789.csv"
+        const val PathOutput2 = "testData/TestProject1/alg1_keypoint/987654321.csv"
     }
 }

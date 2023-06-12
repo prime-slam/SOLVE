@@ -1,5 +1,6 @@
 package solve.settings.visualization.popover
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.value.WeakChangeListener
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
@@ -12,7 +13,7 @@ class LineLayerSettingsPopOverNode(
     private val lineLayerSettings: LayerSettings.LineLayerSettings,
     private val sceneController: SceneController,
     private val title: String,
-    private val dialogClosingController: DialogClosingController
+    private val dialogIsClosing: SimpleBooleanProperty
 ) : LayerSettingsPopOverNode() {
     companion object {
         const val LayerSettingsNodePrefWidth = 260.0
@@ -45,7 +46,7 @@ class LineLayerSettingsPopOverNode(
             Alignment.Left,
             isLabelOnLeft = false
         )
-        addCancel(dialogClosingController)
+        addCancel(dialogIsClosing)
 
         return popOver
     }

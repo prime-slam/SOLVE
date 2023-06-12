@@ -1,5 +1,6 @@
 package solve.settings.visualization.popover
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.control.Label
@@ -16,7 +17,12 @@ abstract class LayerSettingsPopOverNode {
         addStylesheet(SettingsDialogStylesheet::class)
     }
 
-    protected fun addCancel(dialogClosingController: DialogClosingController) {
+    private fun changeIsClosing(dialogIsClosing: SimpleBooleanProperty) {
+        dialogIsClosing.value = true
+        dialogIsClosing.value = false
+    }
+
+    protected fun addCancel(dialogIsClosing: SimpleBooleanProperty) {
         val borderpane = BorderPane().apply {
             right = mfxButton("OK") {
                 BorderPane.setMargin(this, Insets(0.0, 24.0, 24.0, 0.0))
@@ -24,8 +30,7 @@ abstract class LayerSettingsPopOverNode {
                 prefHeight = 23.0
                 style = Style.ButtonStyle
                 action {
-                    dialogClosingController.isClosing.value = true
-                    dialogClosingController.isClosing.value = false
+                    changeIsClosing(dialogIsClosing)
                 }
             }
         }

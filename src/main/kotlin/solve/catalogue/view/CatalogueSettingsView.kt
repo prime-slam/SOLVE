@@ -52,14 +52,14 @@ class CatalogueSettingsView : View() {
         style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-weight: ${Style.FontWeightBold};"
     }
 
-    var segmentedButton = SegmentedButton(fileNameViewRadioButton, imagePreviewRadioButton)
+    private var segmentedButton = SegmentedButton(fileNameViewRadioButton, imagePreviewRadioButton)
 
     override val root =
         vbox {
             hbox(130) {
                 addStylesheet(CatalogueViewStylesheet::class)
                 maxWidth = 500.0
-                padding = Insets(0.0, 0.0, 0.0, 0.0)
+                paddingAll = 0.0
                 selectionCheckBox = mfxCheckbox {
                     paddingLeft = 7.0
                     action {

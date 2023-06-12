@@ -10,7 +10,7 @@ import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
 import solve.styles.Style
 
-const val ElementWidth = 270.0
+const val InteractiveElementWidth = 270.0
 fun buildLandmarkColorPicker(
     layerSettings: LayerSettings,
     sceneController: SceneController
@@ -18,7 +18,7 @@ fun buildLandmarkColorPicker(
     val colorPicker = ColorPicker()
 
     colorPicker.value = layerSettings.commonColor
-    colorPicker.prefWidth = ElementWidth
+    colorPicker.prefWidth = InteractiveElementWidth
     colorPicker.setOnAction {
         layerSettings.commonColor = colorPicker.value
     }
@@ -66,7 +66,7 @@ fun buildSizeSlider(
     slider.min = minValue
     slider.max = maxValue
     slider.value = initialSizeValue
-    slider.prefWidth = ElementWidth
+    slider.prefWidth = InteractiveElementWidth
 
     slider.valueProperty().addListener(changeListener)
 

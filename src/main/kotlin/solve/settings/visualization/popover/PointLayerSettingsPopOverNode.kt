@@ -1,5 +1,6 @@
 package solve.settings.visualization.popover
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.value.WeakChangeListener
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
@@ -12,7 +13,7 @@ class PointLayerSettingsPopOverNode(
     private val pointLayerSettings: LayerSettings.PointLayerSettings,
     private val sceneController: SceneController,
     private val title: String,
-    private val dialogClosingController: DialogClosingController
+    private val dialogIsClosing: SimpleBooleanProperty
 ) : LayerSettingsPopOverNode() {
     private val radiusSliderValueChangedEventHandler = ChangeListener<Number> { _, _, radiusValue ->
         pointLayerSettings.selectedRadius = radiusValue as Double
@@ -40,7 +41,7 @@ class PointLayerSettingsPopOverNode(
             Alignment.Left,
             isLabelOnLeft = false
         )
-        addCancel(dialogClosingController)
+        addCancel(dialogIsClosing)
 
         return popOver
     }

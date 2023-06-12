@@ -2,6 +2,7 @@ package solve.settings.visualization.fields.view
 
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog
 import javafx.application.Platform
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -39,7 +40,7 @@ import tornadofx.*
 
 class VisualizationSettingsLayerCell(
     private val sceneController: SceneController,
-    private val dialogClosingController: DialogClosingController
+    private val dialogIsClosing: SimpleBooleanProperty
 ) : DragAndDropListCell<LayerSettings>(LayerSettings::class) {
     private val sceneView = find<SceneView>()
     override fun setAfterDragDropped(
@@ -186,7 +187,7 @@ class VisualizationSettingsLayerCell(
                     layerSettings as LayerSettings.PointLayerSettings,
                     sceneController,
                     title,
-                    dialogClosingController
+                    dialogIsClosing
                 ).getPopOverNode()
 
             LandmarkType.Line ->
@@ -194,7 +195,7 @@ class VisualizationSettingsLayerCell(
                     layerSettings as LayerSettings.LineLayerSettings,
                     sceneController,
                     title,
-                    dialogClosingController
+                    dialogIsClosing
                 ).getPopOverNode()
 
             LandmarkType.Plane -> null
@@ -209,25 +210,13 @@ class VisualizationSettingsLayerCell(
         popOver.title = titleLabel
 
         Platform.runLater {
-            dialogClosingController.isClosing.onChange {
+            dialogIsClosing.onChange {
                 if (it) dialog.close()
             }
         }
 
         return dialog
     }
-
-//    private fun getPopOverNodeSize(layerType: LandmarkType) = when (layerType) {
-//        LandmarkType.Keypoint -> DoublePoint(
-//            PointLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
-//            PointLayerSettingsPopOverNode.LayerSettingsNodePrefHeight
-//        )
-//        LandmarkType.Line -> DoublePoint(
-//            LineLayerSettingsPopOverNode.LayerSettingsNodePrefWidth,
-//            LineLayerSettingsPopOverNode.LayerSettingsNodePrefHeight
-//        )
-//        LandmarkType.Plane -> null
-//    }
 
     private fun getLayerSettingsType(layerSettings: LayerSettings) = when (layerSettings) {
         is LayerSettings.PointLayerSettings -> LandmarkType.Keypoint

@@ -34,6 +34,15 @@ class SceneView : View() {
 
     private val scenePlaceholder = loadResourcesImage(IconsScenePlaceholder)
 
+    private fun placeholderLabel(text: String) = label(text) {
+        tooltip(getText())
+        padding = Insets(350.0, 500.0, 350.0, 600.0)
+        graphic = ImageView(scenePlaceholder)
+        contentDisplay = ContentDisplay.TOP
+        style = "-fx-font-family: ${Style.FontCondensed}; " +
+                "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
+    }
+
     var currentGrid: Grid? = null
         private set
     var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
@@ -41,14 +50,7 @@ class SceneView : View() {
     private var frameViewCache: Cache<FrameView, FrameViewData, FrameViewSettings>? = null
 
     override val root = vbox {
-        label("Project not imported") {
-            tooltip(text)
-            padding = Insets(350.0, 500.0, 350.0, 600.0)
-            graphic = ImageView(scenePlaceholder)
-            contentDisplay = ContentDisplay.TOP
-            style = "-fx-font-family: ${Style.FontCondensed}; " +
-                "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
-        }
+        placeholderLabel("Project not imported")
     }
 
     init {
@@ -70,14 +72,7 @@ class SceneView : View() {
         val scene = controller.sceneProperty.value
 
         if (scene.frames.isEmpty()) {
-            label("No frames was provided") {
-                tooltip(text)
-                padding = Insets(350.0, 500.0, 350.0, 600.0)
-                graphic = ImageView(scenePlaceholder)
-                contentDisplay = ContentDisplay.TOP
-                style = "-fx-font-family: ${Style.FontCondensed}; " +
-                    "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
-            }
+            placeholderLabel("No frames was provided")
             return
         }
 
