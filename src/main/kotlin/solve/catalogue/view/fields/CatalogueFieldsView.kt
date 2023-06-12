@@ -3,7 +3,6 @@ package solve.catalogue.view.fields
 import io.github.palexdev.materialfx.controls.cell.MFXCheckListCell
 import io.github.palexdev.materialfx.effects.DepthLevel
 import javafx.collections.ObservableList
-import javafx.geometry.Insets
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.image.Image

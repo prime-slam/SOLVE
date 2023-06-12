@@ -6,7 +6,6 @@ import javafx.scene.layout.Priority
 import javafx.util.Callback
 import solve.scene.controller.SceneController
 import solve.settings.visualization.fields.controller.VisualizationSettingsLayersController
-import solve.settings.visualization.popover.DialogClosingController
 import solve.styles.ListViewStylesheet
 import solve.utils.nodes.listcell.dragdrop.isListViewCellSource
 import tornadofx.*

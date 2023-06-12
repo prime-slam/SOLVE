@@ -1,6 +1,5 @@
 package solve.settings.visualization.popover
 
-import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import solve.styles.Style
 import tornadofx.*

@@ -22,7 +22,6 @@ import solve.scene.controller.SceneController
 import solve.scene.model.LandmarkType
 import solve.scene.model.LayerSettings
 import solve.scene.view.SceneView
-import solve.settings.visualization.popover.DialogClosingController
 import solve.settings.visualization.popover.LineLayerSettingsPopOverNode
 import solve.settings.visualization.popover.PointLayerSettingsPopOverNode
 import solve.settings.visualization.popover.SettingsDialogNode

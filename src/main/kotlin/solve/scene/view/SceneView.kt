@@ -40,7 +40,7 @@ class SceneView : View() {
         graphic = ImageView(scenePlaceholder)
         contentDisplay = ContentDisplay.TOP
         style = "-fx-font-family: ${Style.FontCondensed}; " +
-                "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
+            "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
     }
 
     var currentGrid: Grid? = null
