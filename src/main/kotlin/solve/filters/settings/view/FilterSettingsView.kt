@@ -201,7 +201,7 @@ class FilterSettingsView : View() {
     private fun enableControlNodesCheckboxesFromFilter(filter: Filter) {
         filter.settings.forEach { setting ->
             val correspondingNode = getNodeByFilterSetting(setting)
-            checkboxToSettingNodeMap.getKeys(correspondingNode).first().isSelected = true
+            checkboxToSettingNodeMap.getKeys(correspondingNode).first().isSelected = setting.enabled
         }
     }
 
@@ -381,17 +381,16 @@ class FilterSettingsView : View() {
         )
     }
 
-    private fun getFilterSettings(): List<FilterSetting<out Any>> {
-        val enabledSettingNodes = selectedSettingCheckboxes.map { checkboxToSettingNodeMap[it] }
-
-        return enabledSettingNodes.mapNotNull { settingNode ->
+    private fun getFilterSettings(): List<FilterSetting<out Any>> =
+        settingCheckboxes.mapNotNull { settingCheckbox ->
+            val settingNode = checkboxToSettingNodeMap[settingCheckbox]
             settingNode ?: return@mapNotNull null
 
             val correspondingControl = nodeToNodeConnectorMap[settingNode]
+            val enabledSetting = settingCheckbox.isSelected
 
-            return@mapNotNull correspondingControl?.extractFilterSettings(settingNode)
+            return@mapNotNull correspondingControl?.extractFilterSettings(settingNode, enabledSetting)
         }
-    }
 
     companion object {
         private const val IntegerTextFieldSymbolsLimit = Long.MIN_VALUE.toString().length

@@ -9,12 +9,15 @@ abstract class FilterSettingNodeConnector<T : Node, K : FilterSetting<out Any>> 
     private val nodeKClass: KClass<T>,
     val filterSettingKCLass: KClass<K>
 ) {
-    fun extractFilterSettings(settingNode: Node): K? {
+    fun extractFilterSettings(settingNode: Node, enabled: Boolean): K? {
         if (!isExpectedNodeType(settingNode)) {
             return null
         }
 
-        return extractFilterSettingsFromTypedSettingNode(castNodeToExpectedType(settingNode))
+        val filterSetting = extractFilterSettingsFromTypedSettingNode(castNodeToExpectedType(settingNode))
+        filterSetting?.enabled = enabled
+
+        return filterSetting
     }
 
     fun updateSettingNodeWithSettings(settingNode: Node, setting: FilterSetting<out Any>) {
