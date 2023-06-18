@@ -46,7 +46,7 @@ class FilterPanelController : Controller() {
     private fun getFilteredProjectFrames(): List<ProjectFrame> {
         val projectFrames = projectController.model.project.frames
 
-        if (model.filters.isEmpty()) {
+        if (model.filters.isEmpty() || model.filters.all { !it.enabled }) {
             return projectFrames
         }
 
