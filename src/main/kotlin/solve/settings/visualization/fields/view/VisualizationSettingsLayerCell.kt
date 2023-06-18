@@ -69,18 +69,6 @@ class VisualizationSettingsLayerCell(
         }
         add(createLayerNameLabel())
         add(createHGrowHBox())
-        hbox(8) {
-            val editIconImageViewIcon = createEditIconImageViewIcon()
-            val visibilityImageViewIcon = createVisibilityImageViewIcon(item.enabled)
-            if (editIconImageViewIcon != null) {
-                add(editIconImageViewIcon)
-            }
-            if (visibilityImageViewIcon != null) {
-                add(visibilityImageViewIcon)
-            }
-
-            paddingTop = 3.0
-        }
 
         alignment = Pos.CENTER_LEFT
         paddingRight = LayerFieldHBoxPaddingRight
