@@ -11,7 +11,11 @@ import tornadofx.*
 abstract class LayerSettingsPopOverNode {
     protected val popOver: VBox = VBox()
 
-    fun addSettingField(name: String, settingNode: Node, settingsNodeAlignment: Alignment = Alignment.Center) {
+    protected fun addSettingField(
+        name: String,
+        settingNode: Node,
+        settingsNodeAlignment: Alignment = Alignment.Center
+    ) {
         val fieldLabel = Label(name)
         fieldLabel.font = Font.font(LayerSettingLabelFontSize)
         fieldLabel.paddingLeft = LayerSettingsLabelPaddingLeft

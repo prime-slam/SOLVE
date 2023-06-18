@@ -1,8 +1,10 @@
 package solve.importer
 
 import solve.importer.model.ProjectAfterPartialParsing
+import solve.parsers.lines.CSVLinesParser
 import solve.parsers.planes.ImagePlanesParser
 import solve.project.model.LandmarkFile
+import solve.project.model.LayerKind
 import solve.project.model.Project
 import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
@@ -28,8 +30,13 @@ object FullParserForImport {
                 if (!layers.contains(currentLayer)) {
                     layers.add((currentLayer))
                 }
+                val uids = when (output.kind) {
+                    LayerKind.Keypoint -> CSVLinesParser.extractUIDs(output.path)
+                    LayerKind.Line -> CSVLinesParser.extractUIDs(output.path)
+                    LayerKind.Plane -> ImagePlanesParser.extractUIDs(output.path)
+                }
                 landmarks[longName]?.add(
-                    LandmarkFile(currentLayer, Path(output.path), ImagePlanesParser.extractUIDs(output.path))
+                    LandmarkFile(currentLayer, Path(output.path), uids)
                 )
             }
             landmarks[longName]?.toList()

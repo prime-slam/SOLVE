@@ -27,3 +27,9 @@ const val IconsLayers = "/icons/sidepanel/Layers.png"
 const val IconsLayersFilled = "/icons/sidepanel/LayersFilled.png"
 const val IconsGrid = "/icons/sidepanel/Grid.png"
 const val IconsGridSelected = "/icons/sidepanel/GridSelected.png"
+const val IconsFiltersAddPath = "icons/filters/add.svg"
+const val IconsFiltersOrCheckBoxPath = "icons/filters/or_checkbox.svg"
+
+// Common icons.
+const val IconsEditPath = "icons/common/edit.svg"
+const val IconsDeletePath = "icons/common/delete.svg"

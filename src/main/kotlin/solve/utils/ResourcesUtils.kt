@@ -51,4 +51,4 @@ fun loadBufferedImage(filePath: String): BufferedImage? {
     return image
 }
 
-private fun getResource(resourcesPath: String) = Any::class::class.java.getResource("/$resourcesPath")
+fun getResource(resourcesPath: String) = Any::class::class.java.getResource("/$resourcesPath")

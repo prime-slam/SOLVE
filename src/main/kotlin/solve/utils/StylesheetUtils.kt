@@ -1,6 +1,7 @@
 package solve.utils
 
 import javafx.geometry.Insets
+import javafx.scene.layout.BackgroundSize
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
@@ -10,6 +11,8 @@ import kotlin.math.pow
 
 val DarkLightGrayColor: Color = Color.web("#AAAAAA")
 
+fun <T> createCssBoxWithValue(value: T) = CssBox(value, value, value, value)
+
 fun createLinearUnitsBox(top: Double, right: Double, bottom: Double, left: Double, unitsType: Dimension.LinearUnits) =
     CssBox(
         Dimension(top, unitsType),
@@ -17,6 +20,11 @@ fun createLinearUnitsBox(top: Double, right: Double, bottom: Double, left: Doubl
         Dimension(bottom, unitsType),
         Dimension(left, unitsType)
     )
+
+fun createLinearUnitsBoxWithLeft(left: Double, unitsType: Dimension.LinearUnits) =
+    createLinearUnitsBox(0.0, 0.0, 0.0, left, unitsType)
+
+fun createPxValue(value: Double) = Dimension(value, Dimension.LinearUnits.px)
 
 fun createPxBox(top: Double, right: Double, bottom: Double, left: Double) =
     createLinearUnitsBox(top, right, bottom, left, Dimension.LinearUnits.px)
@@ -55,3 +63,15 @@ fun getBlackOrWhiteContrastingTo(color: Color): Color {
 }
 
 fun Color.withReplacedOpacity(opacity: Double): Color = Color(red, green, blue, opacity)
+
+fun CssSelectionBlock.addBackgroundImage(path: String) {
+    backgroundImage += getResource(path)?.toURI() ?: return
+    backgroundSize += BackgroundSize(
+        100.0,
+        100.0,
+        true,
+        true,
+        true,
+        true
+    )
+}

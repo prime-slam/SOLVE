@@ -10,11 +10,11 @@ import javafx.scene.layout.BorderPane
 import kotlinx.coroutines.cancel
 import solve.constants.IconsAlertError
 import solve.styles.Style
-import solve.utils.action
-import solve.utils.item
 import solve.utils.loadResourcesImage
-import solve.utils.mfxButton
-import solve.utils.mfxContextMenu
+import solve.utils.materialfx.action
+import solve.utils.materialfx.item
+import solve.utils.materialfx.mfxButton
+import solve.utils.materialfx.mfxContextMenu
 import tornadofx.*
 
 class AlertDialog(contentText: String) : View() {
@@ -28,19 +28,19 @@ class AlertDialog(contentText: String) : View() {
                     graphic = ImageView(errorIcon)
                     BorderPane.setMargin(this, Insets(0.0, 0.0, 0.0, 14.0))
                     prefHeight = 0.0
-                    style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.headerFontSize};"
+                    style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.HeaderFontSize};"
                 }
             }
             center {
                 label(contentText) {
                     mfxContextMenu {
-                        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
+                        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.MainFontSize};"
                         copyError(text)
                     }
 
                     BorderPane.setMargin(this, Insets(0.0, 14.0, 0.0, 14.0))
                     style =
-                        "-fx-font-family: ${Style.font}; -fx-font-size: ${Style.mainFontSize};  -fx-text-fill: #000000;"
+                        "-fx-font-family: ${Style.Font}; -fx-font-size: ${Style.MainFontSize};  -fx-text-fill: #000000;"
                     BorderPane.setAlignment(this, Pos.CENTER_LEFT)
                     isWrapText = true
                     prefWidth = 300.0
@@ -53,8 +53,8 @@ class AlertDialog(contentText: String) : View() {
                     maxWidth = 40.0
                     prefHeight = 23.0
                     style =
-                        "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.buttonFontSize}; " +
-                        "-fx-font-weight: ${Style.fontWeightBold}; -fx-text-fill: #78909C;"
+                        "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.ButtonFontSize}; " +
+                        "-fx-font-weight: ${Style.FontWeightBold}; -fx-text-fill: #78909C;"
                     BorderPane.setAlignment(this, Pos.TOP_RIGHT)
                     prefWidth = 180.0
                     action {

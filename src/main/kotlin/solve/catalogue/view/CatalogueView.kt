@@ -21,6 +21,7 @@ import solve.catalogue.view.fields.CatalogueFieldsView
 import solve.catalogue.view.fields.CatalogueFileNamesFieldsView
 import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
 import solve.constants.IconsCatalogueApplyPath
+import solve.filters.view.FilterPanelView
 import solve.project.model.ProjectFrame
 import solve.utils.addSafely
 import solve.utils.createInsetsWithValue
@@ -42,6 +43,7 @@ class CatalogueView : View() {
         }
 
     private val settingsView: CatalogueSettingsView by inject()
+    private val filterPanelView: FilterPanelView by inject()
     private val controller: CatalogueController by inject()
 
     private val fields = FXCollections.observableArrayList<CatalogueField>()
@@ -91,7 +93,13 @@ class CatalogueView : View() {
         vgrow = Priority.ALWAYS
     }
 
-    override val root = catalogueNode.also { initializeNodes() }
+    override val root = vbox {
+        add(catalogueNode)
+        initializeNodes()
+        add(filterPanelView)
+
+        vgrow = Priority.ALWAYS
+    }
 
     init {
         accelerators[KeyCodeCombination(KeyCode.ENTER)] = {

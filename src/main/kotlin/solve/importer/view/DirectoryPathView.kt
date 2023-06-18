@@ -14,8 +14,8 @@ import javafx.stage.DirectoryChooser
 import solve.importer.ProjectParser
 import solve.importer.controller.ImporterController
 import solve.styles.Style
-import solve.utils.mfxButton
-import solve.utils.mfxTextField
+import solve.utils.materialfx.mfxButton
+import solve.utils.materialfx.mfxTextField
 import tornadofx.*
 import java.io.File
 
@@ -30,15 +30,15 @@ class DirectoryPathView : View() {
         isAllowEdit = false
 
         isDisable = true
-        textFill = Color.valueOf(Style.onBackgroundColor)
+        textFill = Color.valueOf(Style.OnBackgroundColor)
 
         prefHeight = 48.0
         prefWidth = 280.0
         BorderPane.setAlignment(this, Pos.CENTER)
         BorderPane.setMargin(this, Insets(16.0, 0.0, 0.0, 0.0))
 
-        style = "-fx-border-color: #${Style.primaryColorLight}; -fx-font-size: ${Style.mainFontSize}; " +
-            "-fx-font-family: ${Style.fontCondensed}"
+        style = "-fx-border-color: #${Style.PrimaryColorLight}; -fx-font-size: ${Style.MainFontSize}; " +
+            "-fx-font-family: ${Style.FontCondensed}"
 
         floatMode = FloatMode.BORDER
         floatingText = "Project directory"
@@ -60,17 +60,18 @@ class DirectoryPathView : View() {
         prefHeight = 0.0
         prefWidth = 200.0
 
-        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.headerFontSize}; "
+        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.HeaderFontSize}; "
+
         VBox.setMargin(this, Insets(0.0, 0.0, 0.0, 0.0))
     }
 
     private val selectButton = mfxButton("SELECT") {
-        style = "-fx-border-color: #${Style.primaryColor};  -fx-font-size: ${Style.buttonFontSize}; " +
-            "-fx-font-family: ${Style.fontCondensed}; -fx-font-weight:700; -fx-border-radius: 4px; " +
-            "-fx-text-fill: #${Style.primaryColor};"
+        style = "-fx-border-color: #${Style.PrimaryColor};  -fx-font-size: ${Style.ButtonFontSize}; " +
+            "-fx-font-family: ${Style.FontCondensed}; -fx-font-weight:700; -fx-border-radius: 4px; " +
+            "-fx-text-fill: #${Style.PrimaryColor};"
         BorderPane.setAlignment(this, Pos.CENTER)
         BorderPane.setMargin(this, Insets(15.0, 0.0, 0.0, 0.0))
-        textFill = Color.valueOf(Style.primaryColor)
+        textFill = Color.valueOf(Style.PrimaryColor)
         alignment = Pos.CENTER
         depthLevel = DepthLevel.LEVEL1
         isFocusTraversable = false
@@ -103,7 +104,7 @@ class DirectoryPathView : View() {
                     }
                 }
             }
-            style = "-fx-background-color: #${Style.surfaceColor}"
+            style = "-fx-background-color: #${Style.SurfaceColor}"
             BorderPane.setAlignment(this, Pos.CENTER)
             add(labelName)
             borderpane {

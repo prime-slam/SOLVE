@@ -40,9 +40,8 @@ open class ProjectTreeView : View() {
     override val root =
         treetableview(rootTree) {
             addStylesheet(TreeTableViewStylesheet::class)
-            style =
-                "-fx-font-family: ${Style.font}; -fx-text-fill: #${Style.primaryColor}; " +
-                "-fx-font-size: ${Style.buttonFontSize};"
+            style = "-fx-font-family: ${Style.Font}; -fx-text-fill: #${Style.PrimaryColor}; " +
+                "-fx-font-size: ${Style.ButtonFontSize};"
             BorderPane.setMargin(this, Insets(0.0, 0.0, 2.0, 15.0))
 
             visibleWhen { controller.projectAfterPartialParsing.isNotNull }
@@ -60,7 +59,7 @@ open class ProjectTreeView : View() {
             filesColumn.cellValueFactory = TreeItemPropertyValueFactory("file")
             errorsColumn.cellValueFactory = TreeItemPropertyValueFactory("file")
 
-            filesColumn.setCellFactory { _ ->
+            filesColumn.setCellFactory {
                 object : TreeTableCell<FileInTree, FileInfo?>() {
                     private val imageIcon = loadResourcesImage(IconsImporterPhotoPath)
                     private val fileIcon = loadResourcesImage(IconsImporterDescriptionPath)

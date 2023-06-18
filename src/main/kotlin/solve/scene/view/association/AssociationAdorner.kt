@@ -50,12 +50,12 @@ class AssociationAdorner(
         rectangle = Rectangle()
         rectangle.width = width * scale.value
         rectangle.height = height * scale.value
-        rectangle.fill = Paint.valueOf(Style.primaryColor)
+        rectangle.fill = Paint.valueOf(Style.PrimaryColor)
         rectangle.opacity = RectangleOpacity
 
         val label = Label("Select second frame").also {
-            it.textFill = Paint.valueOf(Style.surfaceColor)
-            it.font = Font.font(Style.fontCondensed, FontWeight.BOLD, 18.0)
+            it.textFill = Paint.valueOf(Style.SurfaceColor)
+            it.font = Font.font(Style.FontCondensed, FontWeight.BOLD, 18.0)
         }
 
         pane.add(rectangle)

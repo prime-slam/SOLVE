@@ -32,11 +32,11 @@ import solve.scene.view.landmarks.LandmarkView
 import solve.utils.CacheElement
 import solve.utils.Storage
 import solve.utils.Updatable
-import solve.utils.action
 import solve.utils.dialogs.ChooserDialog
-import solve.utils.item
-import solve.utils.lineSeparator
-import solve.utils.mfxContextMenu
+import solve.utils.materialfx.action
+import solve.utils.materialfx.item
+import solve.utils.materialfx.lineSeparator
+import solve.utils.materialfx.mfxContextMenu
 import tornadofx.*
 import tornadofx.add
 import solve.utils.structures.Size as DoubleSize

@@ -5,7 +5,6 @@ import javafx.geometry.Insets
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
-import javafx.scene.paint.Paint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,11 +18,14 @@ import solve.importer.model.ButtonModel
 import solve.importer.model.FrameAfterPartialParsing
 import solve.main.MainController
 import solve.main.MainView
+import solve.project.controller.ProjectController
 import solve.styles.Style
-import solve.utils.MaterialFXDialog
+import solve.styles.Style.ControlButtonsSpacing
 import solve.utils.createAlertForError
 import solve.utils.loadResourcesImage
-import solve.utils.mfxButton
+import solve.utils.materialfx.ControlButtonWidth
+import solve.utils.materialfx.MaterialFXDialog
+import solve.utils.materialfx.controlButton
 import solve.utils.toStringWithoutBrackets
 import tornadofx.*
 
@@ -34,13 +36,13 @@ class ControlPanel : View() {
 
     private val mainController: MainController by inject()
 
+    private val projectController: ProjectController by inject()
+
     private val importer: DirectoryPathView by inject()
 
     private val mainView: MainView by inject()
 
     private val loading: LoadingScreen by inject()
-
-    private val buttonStyle = Style.buttonStyle
 
     private val importButtonModel = ButtonModel()
 
@@ -52,8 +54,7 @@ class ControlPanel : View() {
     private val algorithmsLabel = label {
         val listOfKind = mutableListOf<String>()
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
-
-        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
+        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.MainFontSize};"
 
         controller.projectAfterPartialParsing.onChange {
             it?.let {
@@ -61,36 +62,31 @@ class ControlPanel : View() {
                     getListOfAlgorithms(frame, listOfKind)
                 }
                 this.text = "Algorithms: " + listOfKind.toStringWithoutBrackets()
+
                 tooltip(listOfKind.toStringWithoutBrackets())
             }
         }
     }
 
-    private val importButton = mfxButton("IMPORT") {
+    private val importButton = controlButton("IMPORT") {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
-        maxWidth = 75.0
-        prefHeight = 23.0
-        style = buttonStyle
         buttonController.changeDisable(importButtonModel)
         isDisable = importButtonModel.disabled.value
         isFocusTraversable = false
-        prefWidth = ButtonWidth
+        prefWidth = ControlButtonWidth
+
         importButtonModel.disabled.onChange { disableValue ->
             disableValue?.also { isDisable = it }
         }
 
         action {
-            importAction(this@mfxButton)
+            importAction(this)
         }
     }
 
-    private val cancelButton = mfxButton("CANCEL") {
-        maxWidth = 75.0
-        prefHeight = 23.0
-        style = buttonStyle
-        textFill = Paint.valueOf(Style.primaryColor)
+    private val cancelButton = controlButton("CANCEL") {
         isFocusTraversable = false
-        prefWidth = ButtonWidth
+
         action {
             cancelAction()
         }
@@ -111,7 +107,7 @@ class ControlPanel : View() {
     private val countImagesLabel = label {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
 
-        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
+        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.MainFontSize};"
         controller.projectAfterPartialParsing.onChange {
             val countFiles = it?.projectFrames?.count()
             this.text = "$countFiles images found"
@@ -122,7 +118,7 @@ class ControlPanel : View() {
     private val countErrorsLabel = label {
         visibleWhen { controller.projectAfterPartialParsing.isNotNull }
 
-        style = "-fx-font-family: ${Style.fontCondensed}; -fx-font-size: ${Style.mainFontSize};"
+        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.MainFontSize};"
         controller.projectAfterPartialParsing.onChange {
             var countErrors = 0
             it?.projectFrames?.forEach { frame ->
@@ -148,7 +144,7 @@ class ControlPanel : View() {
             }
         }
         right {
-            hbox(10) {
+            hbox(ControlButtonsSpacing) {
                 add(cancelButton)
                 controller.projectAfterPartialParsing.onChange {
                     this.clear()
@@ -179,8 +175,7 @@ class ControlPanel : View() {
             val projectVal =
                 withContext(Dispatchers.IO) { fullParseDirectory(controller.projectAfterPartialParsing.value) }
             try {
-                mainController.visualizeProject(projectVal.layers, projectVal.frames)
-                mainController.displayCatalogueFrames(projectVal.frames)
+                projectController.changeProject(projectVal)
                 button.isDisable = true
 
                 mainView.dialog.close()
@@ -198,9 +193,5 @@ class ControlPanel : View() {
                 listOfKind.add(algName)
             }
         }
-    }
-
-    companion object {
-        private const val ButtonWidth = 180.0
     }
 }

@@ -6,7 +6,7 @@ import javafx.geometry.Insets
 import solve.importer.controller.ImporterController
 import solve.importer.view.ImporterView
 import solve.main.MainView
-import solve.utils.MaterialFXDialog
+import solve.utils.materialfx.MaterialFXDialog
 import tornadofx.View
 import tornadofx.action
 import tornadofx.button

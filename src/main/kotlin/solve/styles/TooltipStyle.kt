@@ -6,10 +6,10 @@ import tornadofx.c
 class TooltipStyle : Stylesheet() {
     init {
         Companion.tooltip {
-            fontFamily = Style.fontCondensed
-            fontSize = Style.tooltipFontSize
-            backgroundColor += c(Style.surfaceColor)
-            textFill = c(Style.tooltipColor)
+            fontFamily = Style.FontCondensed
+            fontSize = Style.TooltipFontSize
+            backgroundColor += c(Style.SurfaceColor)
+            textFill = c(Style.TooltipColor)
         }
     }
 }

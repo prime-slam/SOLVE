@@ -52,6 +52,7 @@ dependencies {
     implementation("junit:junit:$junitVersion")
     implementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     implementation("org.controlsfx:controlsfx:$controlsfxVersion")
+    implementation("de.codecentric.centerdevice:javafxsvg:1.3.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterParamsVersion")

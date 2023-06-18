@@ -32,31 +32,13 @@ import solve.sidepanel.tabs.SidePanelTabsView
 import solve.styles.MFXButtonStyleSheet
 import solve.styles.Style
 import solve.styles.TooltipStyle
-import solve.utils.MaterialFXDialog
 import solve.utils.createPxBox
 import solve.utils.loadResourcesImage
-import solve.utils.mfxButton
+import solve.utils.materialfx.MaterialFXDialog
+import solve.utils.materialfx.mfxButton
 import tornadofx.*
 
 class MainView : View() {
-    companion object {
-        private const val LeftSidePanelAndSceneDividerPosition = 0.25
-        private const val RightSidePanelAndSceneDividerPosition = 0.88
-
-        private const val TabsViewLocationParamName = "location"
-        private const val TabsViewTabsParamName = "tabs"
-        private const val TabsViewInitialTabParamName = "initialTab"
-
-        const val ProjectTabName = "Project"
-        const val LayersTabName = "Layers"
-        const val GridTabName = "Grid"
-
-        private val importIcon = loadResourcesImage(IconsImportFab)
-        private val pluginsIcon = loadResourcesImage(IconsPlugins)
-        private val settingsIcon = loadResourcesImage(IconsSettings)
-        private val helpIcon = loadResourcesImage(IconsHelp)
-    }
-
     val importer: ImporterView by inject()
 
     private val mainView: MainView by inject()
@@ -103,7 +85,7 @@ class MainView : View() {
         clip = circle
         graphic = ImageView(importIcon)
         setPrefSize(56.0, 56.0)
-        style = "-fx-background-color: #${Style.secondaryColor}; -fx-background-radius: 28;"
+        style = "-fx-background-color: #${Style.SecondaryColor}; -fx-background-radius: 28;"
         isFocusTraversable = false
         tooltip("Ctrl+I")
         action {
@@ -118,13 +100,13 @@ class MainView : View() {
     private val helpButton = createTabButton("Help", helpIcon)
 
     private val nameApp = label("SOLVE") {
-        style = "-fx-font-family: ${Style.font}; -fx-font-weight:700; -fx-font-size: 18px"
+        style = "-fx-font-family: ${Style.Font}; -fx-font-weight:700; -fx-font-size: 18px"
         VBox.setMargin(this, Insets(0.0, 6.0, 0.0, 6.0))
     }
 
     private val leftPanel = vbox(7) {
         addStylesheet(MFXButtonStyleSheet::class)
-        style = "-fx-background-color: #${Style.surfaceColor}"
+        style = "-fx-background-color: #${Style.SurfaceColor}"
         add(nameApp)
         add(importFab)
         add(leftSidePanelViews.tabsView.root)
@@ -132,7 +114,7 @@ class MainView : View() {
 
     private val rightPanel = vbox(7) {
         addStylesheet(MFXButtonStyleSheet::class)
-        style = "-fx-background-color: #${Style.surfaceColor}"
+        style = "-fx-background-color: #${Style.SurfaceColor}"
         add(rightSidePanelViews.tabsView.root)
     }
 
@@ -182,7 +164,7 @@ class MainView : View() {
         return mfxButton(text) {
             clip = Style.circleForRipple(this)
             styleClass.add("mfxButton")
-            setPrefSize(Style.navigationRailTabSize, Style.navigationRailTabSize)
+            setPrefSize(Style.NavigationRailTabSize, Style.NavigationRailTabSize)
             paddingAll = 0.0
             contentDisplay = ContentDisplay.TOP
             graphic = ImageView(icon)
@@ -232,6 +214,24 @@ class MainView : View() {
     }
 
     private data class SidePanelViews(val tabsView: SidePanelTabsView, val contentView: SidePanelContentView)
+
+    companion object {
+        private const val LeftSidePanelAndSceneDividerPosition = 0.20
+        private const val RightSidePanelAndSceneDividerPosition = 0.82
+
+        private const val TabsViewLocationParamName = "location"
+        private const val TabsViewTabsParamName = "tabs"
+        private const val TabsViewInitialTabParamName = "initialTab"
+
+        const val ProjectTabName = "Project"
+        const val LayersTabName = "Layers"
+        const val GridTabName = "Grid"
+
+        private val importIcon = loadResourcesImage(IconsImportFab)
+        private val pluginsIcon = loadResourcesImage(IconsPlugins)
+        private val settingsIcon = loadResourcesImage(IconsSettings)
+        private val helpIcon = loadResourcesImage(IconsHelp)
+    }
 }
 
 class MainSplitPaneStyle : Stylesheet() {
