@@ -1,38 +1,55 @@
 package solve.catalogue.view.fields
 
+import io.github.palexdev.materialfx.controls.cell.MFXCheckListCell
+import io.github.palexdev.materialfx.effects.DepthLevel
 import javafx.collections.ObservableList
 import javafx.scene.Node
-import javafx.scene.control.Labeled
-import javafx.scene.control.ListView
-import javafx.scene.control.SelectionMode
+import javafx.scene.control.Label
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.DragEvent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.Priority
-import javafx.scene.paint.Color
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField
 import solve.project.model.ProjectFrame
 import solve.scene.view.SceneView
-import solve.utils.deselectAllItems
+import solve.styles.CatalogueViewStylesheet
+import solve.utils.checkAllItems
+import solve.utils.checkedItems
+import solve.utils.checkedItemsCount
 import solve.utils.floorToInt
-import solve.utils.onSelectionChanged
-import solve.utils.selectAllItems
-import solve.utils.selectedItems
-import solve.utils.selectedItemsCount
+import solve.utils.mfxCheckListView
+import solve.utils.uncheckAllItems
 import tornadofx.*
 import kotlin.math.min
 
 abstract class CatalogueFieldsView : View() {
     private val fields: ObservableList<CatalogueField> by param()
-    val fieldsListView: ListView<CatalogueField> = listview(fields) {
-        addStylesheet(CatalogueFieldsStyle::class)
-        selectionModel.selectionMode = SelectionMode.MULTIPLE
-        cellFormat {
-            setListViewCellFormat(this, it)
+
+    val fieldsListView = mfxCheckListView(fields) {
+        paddingAll = 0.0
+
+        addStylesheet(CatalogueViewStylesheet::class)
+
+        depthLevel = DepthLevel.LEVEL0
+
+        setCellFactory {
+            val cell =
+                object : MFXCheckListCell<CatalogueField>(this, it) {
+                    override fun updateItem(item: CatalogueField?) {
+                        super.updateItem(item)
+                        setListViewCellFormat(label, item)
+                    }
+                }
+
+            setCellHeight(cell)
+            return@setCellFactory cell
         }
+        prefHeight = 3000.0
+        prefWidth = 500.0
+
         vgrow = Priority.ALWAYS
         hgrow = Priority.ALWAYS
     }
@@ -43,23 +60,30 @@ abstract class CatalogueFieldsView : View() {
     private val controller: CatalogueController by inject()
     private val sceneView: SceneView by inject()
 
-    val areSelectedAllItems: Boolean
-        get() = fieldsListView.selectedItemsCount == controller.model.frames.count()
+    val areCheckedAllItems: Boolean
+        get() = fieldsListView.checkedItemsCount == controller.model.frames.count()
     val isSelectionEmpty: Boolean
-        get() = fieldsListView.selectedItems.isEmpty()
-    val selectedItems: List<CatalogueField>
-        get() = fieldsListView.selectedItems
-    val selectedFrames: List<ProjectFrame>
-        get() = fieldsListView.selectedItems.map { it.frame }
+        get() = fieldsListView.checkedItems.isEmpty()
+    val checkedItems: List<CatalogueField>
+        get() = fieldsListView.checkedItems
+    val checkedFrames: List<ProjectFrame>
+        get() = fieldsListView.checkedItems.map { it.frame }
 
     private var isDragging = false
 
-    fun selectAllItems() = fieldsListView.selectAllItems()
+    fun checkAllItems() = fieldsListView.checkAllItems()
 
-    fun deselectAllItems() = fieldsListView.deselectAllItems()
+    fun uncheckAllItems() = fieldsListView.uncheckAllItems()
 
-    protected open fun setListViewCellFormat(labeled: Labeled, item: CatalogueField?) {
-        labeled.prefHeight = listViewCellHeight
+    private fun setCellHeight(cell: MFXCheckListCell<CatalogueField>) {
+        cell.prefHeight = listViewCellHeight
+    }
+
+    protected open fun setListViewCellFormat(
+        label: Label,
+        item: CatalogueField?
+    ) {
+        label.textProperty().unbind()
     }
 
     protected abstract fun createFieldsSnapshotNode(fields: List<CatalogueField>): Node
@@ -71,9 +95,6 @@ abstract class CatalogueFieldsView : View() {
 
     private fun initializeInteractionEvent() {
         fieldsListView.setOnMouseClicked {
-            controller.onFieldsSelectionChanged()
-        }
-        fieldsListView.onSelectionChanged {
             controller.onFieldsSelectionChanged()
         }
     }
@@ -88,7 +109,7 @@ abstract class CatalogueFieldsView : View() {
 
     private fun onSceneDragDropped(@Suppress("UNUSED_PARAMETER") event: DragEvent) {
         if (isDragging) {
-            controller.visualizeFramesSelection(selectedFrames)
+            controller.visualizeFramesSelection(checkedFrames)
         }
 
         isDragging = false
@@ -101,7 +122,7 @@ abstract class CatalogueFieldsView : View() {
     }
 
     private fun onCatalogueDragDetected() {
-        val selectedFields = fieldsListView.selectedItems
+        val selectedFields = fieldsListView.checkedItems
         if (selectedFields.isEmpty()) {
             return
         }
@@ -109,7 +130,7 @@ abstract class CatalogueFieldsView : View() {
         val dragboard = root.startDragAndDrop(TransferMode.MOVE)
         val clipboardContent = ClipboardContent().apply { putString("") }
         dragboard.setContent(clipboardContent)
-        dragboard.dragView = createFileNameFieldsSnapshot(fieldsListView.selectedItems)
+        dragboard.dragView = createFileNameFieldsSnapshot(fieldsListView.checkedItems)
         isDragging = true
     }
 
@@ -126,21 +147,5 @@ abstract class CatalogueFieldsView : View() {
             nodeSnapshot.width.floorToInt(),
             min(nodeSnapshot.height.floorToInt(), prefSnapshotHeight)
         )
-    }
-}
-
-class CatalogueFieldsStyle : Stylesheet() {
-    init {
-        listView {
-            cell {
-                and(selected) {
-                    backgroundColor += SelectedFieldColor
-                }
-            }
-        }
-    }
-
-    companion object {
-        private val SelectedFieldColor = Color.valueOf("#0096c9")
     }
 }

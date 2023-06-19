@@ -1,8 +1,10 @@
 package solve.settings.grid.view
 
 import javafx.beans.property.SimpleObjectProperty
+import javafx.event.EventTarget
 import javafx.geometry.Insets
 import javafx.scene.Node
+import javafx.scene.control.Label
 import javafx.scene.layout.Border
 import javafx.scene.layout.BorderStroke
 import javafx.scene.layout.BorderStrokeStyle
@@ -10,6 +12,7 @@ import javafx.scene.layout.BorderWidths
 import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.scene.text.Font
 import org.controlsfx.control.RangeSlider
 import solve.constants.IconsSettingsGridDecrementPath
@@ -18,39 +21,41 @@ import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.settings.createSettingsField
 import solve.settings.grid.controller.GridSettingsController
+import solve.styles.Style
+import solve.utils.createHGrowHBox
 import solve.utils.createInsetsWithValue
 import solve.utils.imageViewIcon
 import solve.utils.loadResourcesImage
-import solve.utils.scale
+import solve.utils.materialfx.mfxCircleButton
+import solve.utils.materialfx.mfxRangeSlider
 import solve.utils.unscale
 import solve.utils.valuesDifference
 import tornadofx.*
+import kotlin.math.roundToLong
 
 class GridSettingsView : View() {
     private val controller: GridSettingsController by inject()
     private val sceneController: SceneController by inject()
 
-    private lateinit var scaleRangeSlider: RangeSlider
+    private var scaleRangeSlider = RangeSlider()
 
     private val columnsNumber: Int
         get() = sceneController.installedColumnsNumber
 
     override val root = vbox {
+        style {
+            backgroundColor += Paint.valueOf(Style.SurfaceColor)
+        }
         vbox {
-            style {
-                backgroundColor += Color.WHITE
-            }
-
             vbox {
                 minWidth = GridSettingsViewMinWidth
 
                 add(createGridSettingsField("Columns", buildColumnsNumberCounter()))
-
-                scaleRangeSlider = buildScaleRangeSlider()
-                add(createGridSettingsField("Scale range", scaleRangeSlider))
+                add(createGridSettingsField("Scale range", hbox()))
+                add(buildScaleRangeSlider())
             }
             border = Border(
-                BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+                BorderStroke(Color.TRANSPARENT, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
             )
             padding = Insets(8.0, 10.0, 8.0, 10.0)
             vgrow = Priority.ALWAYS
@@ -73,7 +78,8 @@ class GridSettingsView : View() {
             createSettingLabel(name),
             GridSettingsLabelWidth,
             settingNode,
-            GridSettingsSettingWidth
+            GridSettingsSettingWidth,
+            isLabelOnLeft = true
         )
 
     private fun createSettingLabel(name: String) = label(name) {
@@ -81,14 +87,28 @@ class GridSettingsView : View() {
         prefWidth = GridSettingsLabelWidth
     }
 
-    private fun buildScaleRangeSlider(): RangeSlider {
-        val rangeSlider = RangeSlider(
-            SceneController.DefaultMinScale,
-            SceneController.DefaultMaxScale,
-            SceneController.DefaultMinScale,
-            SceneController.DefaultMaxScale
-        )
-        rangeSlider.isShowTickLabels = true
+    private fun EventTarget.settingFieldLabel(
+        text: String = "",
+        fontSize: Double = 14.0,
+        op: Label.() -> Unit = {}
+    ) = label(text) {
+        font = Font.font(Style.Font, fontSize)
+
+        attachTo(this@settingFieldLabel, op)
+    }
+
+    private fun createIntegerRangeSliderRangeInfoString(rangeSlider: RangeSlider): String {
+        val fromValue = rangeSlider.lowValue.roundToLong()
+        val toValue = rangeSlider.highValue.roundToLong()
+
+        return "$fromValue - $toValue"
+    }
+
+    private fun buildScaleRangeSlider(): Node {
+        val rangeSlider =
+            mfxRangeSlider(0.2, 20.0, 0.2, 20.0) {
+            }
+        rangeSlider.prefWidth = 130.0
 
         fun isSmallerThanAllowedDifference() = rangeSlider.valuesDifference < GridSettingsScaleRangeMinDifference
 
@@ -109,53 +129,68 @@ class GridSettingsView : View() {
             controller.setSceneMaxScale(newMaxScale)
         }
 
-        return rangeSlider
+        val scaleRangeSettingNode = stackpane {
+            hbox {
+                add(createHGrowHBox())
+                settingFieldLabel {
+                    text = createIntegerRangeSliderRangeInfoString(rangeSlider)
+                    rangeSlider.lowValueProperty().onChange {
+                        text = createIntegerRangeSliderRangeInfoString(rangeSlider)
+                    }
+                    rangeSlider.highValueProperty().onChange {
+                        text = createIntegerRangeSliderRangeInfoString(rangeSlider)
+                    }
+                }
+                add(createHGrowHBox())
+
+                paddingBottom = 30.0
+            }
+            add(rangeSlider)
+
+            paddingBottom = 8.0
+            paddingLeft = 5.0
+        }
+
+        return scaleRangeSettingNode
     }
 
     private fun createColumnsNumberButton(
         iconPath: String,
         isActiveProperty: SimpleObjectProperty<Boolean>,
         action: () -> Unit
-    ) = button {
-        style {
-            backgroundColor += Color.TRANSPARENT
-        }
+    ): Node =
+        mfxCircleButton(radius = 12.0) {
+            style {
+                backgroundColor += Color.TRANSPARENT
+            }
 
-        val iconImage = loadResourcesImage(iconPath)
+            val iconImage = loadResourcesImage(iconPath)
 
-        action {
-            if (isActiveProperty.value) {
-                action()
+            action {
+                if (isActiveProperty.value) {
+                    action()
+                }
+            }
+
+            fun updateViewByActivity(isActive: Boolean) {
+                if (!isActive) {
+                    unscale()
+                    graphic.opacity = GridSettingsColumnsNumberButtonInactiveOpacity
+                } else {
+                    graphic.opacity = 1.0
+                }
+            }
+
+            iconImage ?: return@mfxCircleButton
+            graphic = imageViewIcon(iconImage, GridSettingsColumnsNumberButtonsSize)
+            updateViewByActivity(isActiveProperty.value)
+
+            isActiveProperty.onChange { isActive ->
+                isActive ?: return@onChange
+
+                updateViewByActivity(isActive)
             }
         }
-
-        fun updateViewByActivity(isActive: Boolean) {
-            if (!isActive) {
-                unscale()
-                graphic.opacity = GridSettingsColumnsNumberButtonInactiveOpacity
-            } else {
-                graphic.opacity = 1.0
-            }
-        }
-
-        iconImage ?: return@button
-        graphic = imageViewIcon(iconImage, GridSettingsColumnsNumberButtonsSize)
-        updateViewByActivity(isActiveProperty.value)
-
-        isActiveProperty.onChange { isActive ->
-            isActive ?: return@onChange
-
-            updateViewByActivity(isActive)
-        }
-        setOnMouseEntered {
-            if (isActiveProperty.value) {
-                scale(GridSettingsColumnsNumberButtonHoveredScale)
-            }
-        }
-        setOnMouseExited {
-            unscale()
-        }
-    }
 
     private fun buildColumnsNumberCounter() = hbox(5) {
         val isDecrementActive = SimpleObjectProperty(false)
@@ -193,14 +228,13 @@ class GridSettingsView : View() {
     companion object {
         private const val GridSettingsViewMinWidth = 220.0
 
-        private const val GridSettingsLabelFontSize = 16.0
+        private const val GridSettingsLabelFontSize = 14.0
 
         private const val GridSettingsLabelWidth = 100.0
         private const val GridSettingsSettingWidth = 120.0
 
         private const val GridSettingsColumnsNumberButtonsSize = 18.0
         private const val GridSettingsColumnsNumberCounterFontSize = 18.0
-        private const val GridSettingsColumnsNumberButtonHoveredScale = 1.25
         private const val GridSettingsColumnsNumberButtonInactiveOpacity = 0.6
 
         // Minimal allow difference between the min and max scale values.

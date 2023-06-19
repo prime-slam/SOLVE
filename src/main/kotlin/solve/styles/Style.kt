@@ -27,8 +27,6 @@ object Style {
 
     const val ErrorColor = "EF6E6B"
 
-    const val ActiveColor = "41497F"
-
     const val FontCondensed = "'Roboto Condensed'"
 
     const val Font = "Roboto"
@@ -44,6 +42,8 @@ object Style {
     const val ButtonFontSize = "14px"
 
     const val MainFontSize = "15px"
+
+    const val SettingsDialogFontSize = "22px"
 
     val TooltipFontSize = Dimension(12.0, Dimension.LinearUnits.px)
 
@@ -63,7 +63,7 @@ object Style {
 
     fun circleForRipple(button: ToggleButton) = Circle(button.layoutX + 36.0, button.layoutY + 36.0, 35.0)
 
-    const val HeaderFontSize = "20px"
-
     const val ControlButtonsSpacing = 10.0
+
+    const val HeaderFontSize = "20px"
 }

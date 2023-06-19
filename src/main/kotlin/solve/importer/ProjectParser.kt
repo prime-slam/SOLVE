@@ -32,7 +32,7 @@ object ProjectParser {
         frames: ArrayList<FrameAfterPartialParsing>,
         layers: MutableList<String>
     ): Boolean {
-        var hasAnyErrors = false
+        val hasAnyErrors = false
         frames.forEach { frame ->
             val diff = layers.minus(frame.outputs.map { output -> output.algorithmName }.toSet())
             if (diff.isNotEmpty()) {
@@ -41,7 +41,6 @@ object ProjectParser {
                     "There ${if (diff.count() == 1) "is" else "are"} no $missingAlgorithms for " +
                         "image ${frame.image.name}"
                 )
-                hasAnyErrors = true
             }
         }
         return hasAnyErrors

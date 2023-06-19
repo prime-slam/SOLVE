@@ -51,7 +51,7 @@ fun MFXContextMenu.lineSeparator() = this.addLineSeparator(MFXContextMenu.Builde
 
 fun MFXContextMenuItem.action(op: () -> Unit) = this.setOnAction { op() }
 
-fun Node.mfxCircleButton(
+fun EventTarget.mfxCircleButton(
     graphic: Node? = null,
     radius: Double = 20.0,
     text: String = "",

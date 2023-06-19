@@ -1,22 +1,26 @@
 package solve.settings.visualization.fields.view
 
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.Priority
 import javafx.util.Callback
 import solve.scene.controller.SceneController
 import solve.settings.visualization.fields.controller.VisualizationSettingsLayersController
+import solve.styles.ListViewStylesheet
 import solve.utils.nodes.listcell.dragdrop.isListViewCellSource
 import tornadofx.*
 
 class VisualizationSettingsLayersView : View() {
     private val sceneController: SceneController by inject()
     private val controller: VisualizationSettingsLayersController by inject()
+    private val dialogIsClosing = SimpleBooleanProperty(false)
 
     private val fieldListViewCells = mutableListOf<VisualizationSettingsLayerCell>()
 
     private val fieldsListView = listview(controller.model.layers) {
+        addStylesheet(ListViewStylesheet::class)
         cellFactory = Callback {
-            val layerCell = VisualizationSettingsLayerCell(sceneController)
+            val layerCell = VisualizationSettingsLayerCell(sceneController, dialogIsClosing)
             fieldListViewCells.add(layerCell)
 
             return@Callback layerCell

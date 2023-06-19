@@ -1,14 +1,16 @@
 package solve.settings.visualization.popover
 
+import io.github.palexdev.materialfx.controls.MFXCheckbox
+import io.github.palexdev.materialfx.controls.MFXSlider
 import javafx.beans.InvalidationListener
 import javafx.beans.WeakInvalidationListener
 import javafx.beans.value.ChangeListener
-import javafx.scene.control.CheckBox
 import javafx.scene.control.ColorPicker
-import javafx.scene.control.Slider
 import solve.scene.controller.SceneController
 import solve.scene.model.LayerSettings
+import solve.styles.Style
 
+const val InteractiveElementWidth = 270.0
 fun buildLandmarkColorPicker(
     layerSettings: LayerSettings,
     sceneController: SceneController
@@ -16,6 +18,7 @@ fun buildLandmarkColorPicker(
     val colorPicker = ColorPicker()
 
     colorPicker.value = layerSettings.commonColor
+    colorPicker.prefWidth = InteractiveElementWidth
     colorPicker.setOnAction {
         layerSettings.commonColor = colorPicker.value
     }
@@ -32,8 +35,11 @@ fun buildLandmarkColorPicker(
 
 fun buildLandmarkUseOneColorCheckBox(
     layerSettings: LayerSettings
-): CheckBox {
-    val checkBox = CheckBox()
+): MFXCheckbox {
+    val checkBox = MFXCheckbox("One color")
+    checkBox.apply {
+        style = "-fx-font-family: ${Style.FontCondensed}; -fx-font-size: ${Style.HeaderFontSize}"
+    }
 
     checkBox.isSelected = layerSettings.useCommonColor
 
@@ -51,8 +57,8 @@ fun buildSizeSlider(
     minValue: Double,
     maxValue: Double,
     changeListener: ChangeListener<Number>
-): Slider {
-    val slider = Slider()
+): MFXSlider {
+    val slider = MFXSlider()
 
     if (initialSizeValue !in minValue..maxValue) {
         throw IllegalArgumentException("The initial selected size value is out of selection range!")
@@ -60,7 +66,7 @@ fun buildSizeSlider(
     slider.min = minValue
     slider.max = maxValue
     slider.value = initialSizeValue
-    slider.isShowTickLabels = true
+    slider.prefWidth = InteractiveElementWidth
 
     slider.valueProperty().addListener(changeListener)
 

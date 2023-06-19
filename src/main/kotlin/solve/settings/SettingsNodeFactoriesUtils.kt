@@ -4,9 +4,8 @@ import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.HBox
-import solve.utils.createHGrowHBox
 import solve.utils.structures.Alignment
-import tornadofx.add
+import tornadofx.*
 
 fun createSettingsField(
     fieldLabel: Label,
@@ -14,16 +13,15 @@ fun createSettingsField(
     settingNode: Node,
     settingNodeWidth: Double,
     settingsNodeAlignment: Alignment = Alignment.Center,
+    isLabelOnLeft: Boolean,
     fieldHeight: Double = 35.0
 ): HBox {
-    val fieldHBox = HBox()
+    val fieldHBox = HBox(10.0)
     val settingsNodeHBox = HBox()
 
     val labelHBox = HBox()
     labelHBox.add(fieldLabel)
     labelHBox.alignment = Pos.CENTER
-    fieldHBox.add(fieldLabel)
-
     fieldLabel.prefWidth = fieldLabelWidth
     fieldHBox.prefHeight = fieldHeight
 
@@ -36,8 +34,16 @@ fun createSettingsField(
     settingsNodeHBox.add(wrappedSettingNode)
     settingsNodeHBox.prefWidth = settingNodeWidth
 
-    fieldHBox.add(createHGrowHBox())
-    fieldHBox.add(settingsNodeHBox)
+    if (isLabelOnLeft) {
+        fieldHBox.add(fieldLabel)
+        fieldHBox.add(settingsNodeHBox)
+    } else {
+        wrappedSettingNode.paddingLeft = 10.0
+        settingsNodeHBox.prefWidth = 5.0
+        fieldHBox.add(settingsNodeHBox)
+        fieldHBox.add(fieldLabel)
+        fieldHBox.spacing = 0.0
+    }
 
     return fieldHBox
 }

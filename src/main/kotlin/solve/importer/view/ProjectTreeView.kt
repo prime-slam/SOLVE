@@ -75,7 +75,10 @@ open class ProjectTreeView : View() {
                             if (item != null) {
                                 if (item.isLeaf) {
                                     if (item.errors.isEmpty()) {
-                                        ImageView(fileIcon)
+                                        ImageView(fileIcon).apply {
+                                            fitHeight = 20.0
+                                            fitWidth = 16.0
+                                        }
                                     } else {
                                         ImageView(errorFileIcon)
                                     }

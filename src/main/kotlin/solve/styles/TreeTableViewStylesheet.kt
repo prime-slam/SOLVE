@@ -11,13 +11,6 @@ import tornadofx.*
 import java.net.URI
 
 class TreeTableViewStylesheet : Stylesheet() {
-    companion object {
-        val fxTreeTableCellBorderColor by cssproperty<MultiValue<Paint>>("-fx-table-cell-border-color")
-        val backgroundColour: Color = valueOf(Style.BackgroundColor)
-        val surfaceColor: Color = valueOf(Style.SurfaceColor)
-        val primaryColor: Color = valueOf(Style.PrimaryColor)
-    }
-
     init {
         treeTableCell {
             textFill = BLACK
@@ -26,18 +19,18 @@ class TreeTableViewStylesheet : Stylesheet() {
 
         treeTableRowCell {
             arrow {
-                backgroundImage += URI("/icons/importer/Shape.png")
+                backgroundImage += URI("/icons/importer/list_cell_arrow.svg")
 
                 prefHeight = 12.px
                 prefWidth = 7.px
                 backgroundColor += TRANSPARENT
             }
             fxTreeTableCellBorderColor.value += TRANSPARENT
-            backgroundColor += surfaceColor
+            backgroundColor += SurfaceColor
             and(hover) {
-                backgroundColor += backgroundColour
+                backgroundColor += BackgroundColor
                 and(empty) {
-                    backgroundColor += surfaceColor
+                    backgroundColor += SurfaceColor
                 }
             }
         }
@@ -54,16 +47,16 @@ class TreeTableViewStylesheet : Stylesheet() {
                 }
 
                 prefWidth = 10.0.px
-                backgroundColor += surfaceColor
+                backgroundColor += SurfaceColor
                 thumb {
-                    backgroundColor += primaryColor
+                    backgroundColor += PrimaryColor
                 }
             }
             and(focused) {
                 borderWidth += box(0.px, 0.px, 0.px, 0.px)
             }
 
-            backgroundColor += surfaceColor
+            backgroundColor += SurfaceColor
             columnHeaderBackground {
                 borderColor += box(WHITE)
                 maxHeight = 0.px
@@ -71,5 +64,13 @@ class TreeTableViewStylesheet : Stylesheet() {
                 minHeight = 0.px
             }
         }
+    }
+
+    companion object {
+        val fxTreeTableCellBorderColor by cssproperty<MultiValue<Paint>>("-fx-table-cell-border-color")
+
+        val BackgroundColor: Color = valueOf(Style.BackgroundColor)
+        val SurfaceColor: Color = valueOf(Style.SurfaceColor)
+        val PrimaryColor: Color = valueOf(Style.PrimaryColor)
     }
 }
