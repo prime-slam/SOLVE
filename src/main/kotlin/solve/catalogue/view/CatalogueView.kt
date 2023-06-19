@@ -24,7 +24,7 @@ import solve.catalogue.synchronizeListViewsSelections
 import solve.catalogue.view.fields.CatalogueFieldsView
 import solve.catalogue.view.fields.CatalogueFileNamesFieldsView
 import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
-import solve.constants.*
+import solve.constants.IconsCataloguePlaceholder
 import solve.filters.view.FilterPanelView
 import solve.project.model.ProjectFrame
 import solve.styles.CatalogueViewStylesheet
@@ -112,7 +112,7 @@ class CatalogueView : View() {
         graphic = ImageView(cataloguePlaceholder)
         contentDisplay = ContentDisplay.TOP
         style = "-fx-font-family: ${Style.FontCondensed}; " +
-                "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
+            "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
     }
 
     override val root = vbox {

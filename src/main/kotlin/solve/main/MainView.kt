@@ -85,7 +85,8 @@ class MainView : View() {
         clip = circle
         graphic = ImageView(importIcon)
         setPrefSize(54.0, 54.0)
-        style = "-fx-background-color: #${Style.SecondaryColor}; -fx-background-radius: 28; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 0.0, 10.0)"
+        style = "-fx-background-color: #${Style.SecondaryColor}; -fx-background-radius: 28; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 0.0, 10.0)"
         isFocusTraversable = false
         tooltip("Ctrl+I")
         action {
