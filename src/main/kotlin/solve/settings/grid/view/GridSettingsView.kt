@@ -132,7 +132,8 @@ class GridSettingsView : View() {
         val scaleRangeSettingNode = stackpane {
             hbox {
                 add(createHGrowHBox())
-                settingFieldLabel() {
+                settingFieldLabel {
+                    text = createIntegerRangeSliderRangeInfoString(rangeSlider)
                     rangeSlider.lowValueProperty().onChange {
                         text = createIntegerRangeSliderRangeInfoString(rangeSlider)
                     }

@@ -64,7 +64,7 @@ abstract class CatalogueFieldsView : View() {
         get() = fieldsListView.checkedItemsCount == controller.model.frames.count()
     val isSelectionEmpty: Boolean
         get() = fieldsListView.checkedItems.isEmpty()
-    val selectedItems: List<CatalogueField>
+    val checkedItems: List<CatalogueField>
         get() = fieldsListView.checkedItems
     val checkedFrames: List<ProjectFrame>
         get() = fieldsListView.checkedItems.map { it.frame }

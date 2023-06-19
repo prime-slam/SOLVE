@@ -55,7 +55,7 @@ class CatalogueViewStylesheet : Stylesheet() {
                     mfxRippleColor.value += SecondaryColor
                 }
             }
-            and(selected) {
+            and(selected, indeterminate) {
                 box {
                     backgroundColor += SecondaryColor
                     borderColor += box(SecondaryColor)

@@ -16,6 +16,7 @@ import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import solve.catalogue.controller.CatalogueController
 import solve.catalogue.model.CatalogueField
 import solve.catalogue.model.ViewFormat
@@ -23,7 +24,7 @@ import solve.catalogue.synchronizeListViewsSelections
 import solve.catalogue.view.fields.CatalogueFieldsView
 import solve.catalogue.view.fields.CatalogueFileNamesFieldsView
 import solve.catalogue.view.fields.CataloguePreviewImagesFieldsView
-import solve.constants.IconsCataloguePlaceholder
+import solve.constants.*
 import solve.filters.view.FilterPanelView
 import solve.project.model.ProjectFrame
 import solve.styles.CatalogueViewStylesheet
@@ -105,31 +106,41 @@ class CatalogueView : View() {
     }
 
     private val placeholder = label("Project not imported") {
+        isWrapText = true
         tooltip(text)
         padding = Insets(400.0, 0.0, 350.0, 80.0)
         graphic = ImageView(cataloguePlaceholder)
         contentDisplay = ContentDisplay.TOP
         style = "-fx-font-family: ${Style.FontCondensed}; " +
-            "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
+                "-fx-font-size: 24px; -fx-text-fill: ${Style.PrimaryColorLight}"
     }
 
-    override val root =
+    override val root = vbox {
+        style {
+            backgroundColor += Paint.valueOf(Style.SurfaceColor)
+        }
         vbox {
-            style = "-fx-background-color: #${Style.SurfaceColor}"
-            add(placeholder)
-            fields.onChange {
-                this.clear()
-                if (fields.isEmpty()) {
-                    this.add(placeholder)
-                } else {
-                    this.add(catalogueNode)
-                    initializeNodes()
-                    this.add(filterPanelView)
+            vbox {
+                minWidth = CatalogueWidth
+                maxWidth = CatalogueWidth
+                add(placeholder)
+                fields.onChange {
+                    this.clear()
+                    if (fields.isEmpty()) {
+                        this.add(placeholder)
+                    } else {
+                        this.add(catalogueNode)
+                        initializeNodes()
+                        this.add(filterPanelView)
+                    }
                 }
             }
-
-            vgrow = Priority.ALWAYS
+            border = Border(
+                BorderStroke(Color.TRANSPARENT, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)
+            )
         }
+        vgrow = Priority.ALWAYS
+    }
 
     init {
         accelerators[KeyCodeCombination(KeyCode.ENTER)] = {
@@ -167,7 +178,7 @@ class CatalogueView : View() {
 
     private fun applySelection() {
         controller.visualizeFramesSelection(
-            displayingFieldsView?.selectedItems?.map { it.frame } ?: emptyList()
+            displayingFieldsView?.checkedItems?.map { it.frame } ?: emptyList()
         )
     }
 
@@ -203,5 +214,9 @@ class CatalogueView : View() {
 
     private fun resetNodes() {
         checkForEmptyFields()
+    }
+
+    companion object {
+        private const val CatalogueWidth = 350.0
     }
 }
