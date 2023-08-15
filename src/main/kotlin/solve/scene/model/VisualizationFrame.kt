@@ -6,7 +6,7 @@ import javafx.scene.image.Image
  * Frame data object.
  */
 data class VisualizationFrame(
-    val timestamp: Long,
+    val timestamp: Double,
     val getImage: () -> Image,
     val layers: List<Layer>
 )

@@ -77,7 +77,7 @@ object ProjectParser {
         folder.listFiles()?.forEach {
             val imageName = it.nameWithoutExtension
 
-            if (imageName.toLongOrNull() != null) {
+            if (imageName.toDoubleOrNull() != null) {
                 outputs.add(
                     OutputAfterPartialParsing(
                         imageName,
@@ -101,7 +101,7 @@ object ProjectParser {
             createAlertForError(
                 "\"$errors\" ${if (countErrors == 1) "has" else "have"} incorrect " +
                     "${if (countErrors == 1) "name of file" else "names of files"} with markup. " +
-                    "File name must support conversion to Long."
+                    "File name must support conversion to Double."
             )
         }
     }
@@ -111,7 +111,7 @@ object ProjectParser {
         folder.listFiles()?.forEach {
             val imageName = it.nameWithoutExtension
 
-            if (imageName.toLongOrNull() != null) {
+            if (imageName.toDoubleOrNull() != null) {
                 images.add(
                     ImageAfterPartialParsing(imageName, it.invariantSeparatorsPath, mutableListOf()).apply {
                         incorrectExtensionError(it, errors)
@@ -132,7 +132,7 @@ object ProjectParser {
                         "${errorImages.first()} and ${errorImages.count() - 1} others are"
                     }
                     } " +
-                        "because the file name can't be converted to long"
+                        "because the file name can't be converted to double"
                 )
             }
         }
@@ -188,7 +188,7 @@ object ProjectParser {
 
         hasAnyErrors = hasAnyErrors || noSomeAlgorithmError(frames, layers)
 
-        frames.sortWith(compareBy { it.image.name.toLong() })
+        frames.sortWith(compareBy { it.image.name.toDouble() })
 
         if (errorFolders.isNotEmpty()) {
             alertErrorFolderMessage()

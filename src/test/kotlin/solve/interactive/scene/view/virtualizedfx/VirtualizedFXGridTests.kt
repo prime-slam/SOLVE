@@ -220,7 +220,7 @@ internal class VirtualizedFXGridTests : InteractiveTestClass() {
         val framesCount = 100
         val columnsNumber = 3
         val outOfFramesLayer = OutOfFramesLayer()
-        val data = (0 until framesCount).map { VisualizationFrame(it.toLong(), { image }, listOf()) }
+        val data = (0 until framesCount).map { VisualizationFrame(it.toDouble(), { image }, listOf()) }
         val scene = solve.scene.model.Scene(listOf(), listOf())
         val cache = TestStorage()
         val associationsManager = AssociationsManager<VisualizationFrame, Landmark.Keypoint>(

@@ -35,7 +35,7 @@ internal open class SceneTestsBase : InteractiveTestClass() {
         val frames = (0 until framesCount).map { i ->
             val files = layers.map { LandmarkFile(it, keypointFiles[min(i, 9)].toPath(), listOf(i.toLong())) }
             ProjectFrame(
-                i.toLong(),
+                i.toDouble(),
                 imageFiles[min(i, 9)].toPath(),
                 files
             )
