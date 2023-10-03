@@ -27,6 +27,7 @@ val mockkVersion: String by rootProject
 repositories {
     mavenCentral()
     maven(uri("https://oss.sonatype.org/content/repositories/snapshots"))
+    maven(uri("https://jitpack.io"))
 }
 
 application {
@@ -52,6 +53,8 @@ dependencies {
     implementation("junit:junit:$junitVersion")
     implementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     implementation("org.controlsfx:controlsfx:$controlsfxVersion")
+    implementation("com.github.husker-dev.openglfx:core:3.0.5")
+    implementation("com.github.husker-dev.openglfx:lwjgl:3.0.5")
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterParamsVersion")
