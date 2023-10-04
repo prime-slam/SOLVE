@@ -87,6 +87,8 @@ dependencies {
     runtimeOnly("org.lwjgl", "lwjgl-opengl", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-stb", classifier = lwjglNatives)
 
+    implementation("org.joml:joml:1.9.2")
+
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterParamsVersion")
     testImplementation("org.testfx:testfx-junit5:$testfxVersion")

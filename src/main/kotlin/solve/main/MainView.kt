@@ -3,6 +3,7 @@ package solve.main
 import com.huskerdev.openglfx.GLCanvasAnimator
 import com.huskerdev.openglfx.OpenGLCanvas
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
+import engine.util.AssetPool
 import io.github.palexdev.materialfx.controls.MFXButton
 import io.github.palexdev.materialfx.css.themes.MFXThemeManager
 import io.github.palexdev.materialfx.css.themes.Themes
@@ -60,7 +61,7 @@ class MainView : View() {
         private val settingsIcon = loadResourcesImage(IconsSettings)
         private val helpIcon = loadResourcesImage(IconsHelp)
     }
-
+    
     val importer: ImporterView by inject()
 
     private val mainView: MainView by inject()
