@@ -1,5 +1,8 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
+val lwjglVersion = "3.3.3"
+val lwjglNatives = "natives-windows"
+
 plugins {
     kotlin("jvm") version "1.7.20"
     id("org.openjfx.javafxplugin") version "0.0.10"
@@ -32,12 +35,25 @@ repositories {
 
 application {
     mainClass.set("solve.SolveApp")
-    applicationDefaultJvmArgs = listOf("--add-opens", "javafx.graphics/javafx.scene=ALL-UNNAMED", "-Xms2g", "-Xmx4g")
+    applicationDefaultJvmArgs = listOf(
+        "--add-opens", "javafx.graphics/javafx.scene=ALL-UNNAMED",
+        "--add-opens", "javafx.base/com.sun.javafx=ALL-UNNAMED",
+        "--add-opens", "javafx.graphics/com.sun.prism=ALL-UNNAMED",
+        "--add-opens", "javafx.graphics/com.sun.prism.d3d=ALL-UNNAMED",
+        "--add-opens", "javafx.graphics/com.sun.javafx.scene.layout=ALL-UNNAMED",
+        "--add-opens", "javafx.graphics/com.sun.javafx.sg.prism=ALL-UNNAMED",
+        "--add-opens", "javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED",
+        "--add-opens", "javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
+        "--add-opens", "javafx.graphics/javafx.scene.image=ALL-UNNAMED",
+        "--add-exports", "javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+        "-Xms2g",
+        "-Xmx4g",
+    )
 }
 
 javafx {
     version = "17"
-    modules("javafx.controls")
+    modules("javafx.controls", "javafx.graphics")
 }
 
 dependencies {
@@ -55,6 +71,21 @@ dependencies {
     implementation("org.controlsfx:controlsfx:$controlsfxVersion")
     implementation("com.github.husker-dev.openglfx:core:3.0.5")
     implementation("com.github.husker-dev.openglfx:lwjgl:3.0.5")
+
+    implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
+
+    implementation("org.lwjgl", "lwjgl")
+    implementation("org.lwjgl", "lwjgl-assimp")
+    implementation("org.lwjgl", "lwjgl-glfw")
+    implementation("org.lwjgl", "lwjgl-openal")
+    implementation("org.lwjgl", "lwjgl-opengl")
+    implementation("org.lwjgl", "lwjgl-stb")
+    runtimeOnly("org.lwjgl", "lwjgl", classifier = lwjglNatives)
+    runtimeOnly("org.lwjgl", "lwjgl-assimp", classifier = lwjglNatives)
+    runtimeOnly("org.lwjgl", "lwjgl-glfw", classifier = lwjglNatives)
+    runtimeOnly("org.lwjgl", "lwjgl-openal", classifier = lwjglNatives)
+    runtimeOnly("org.lwjgl", "lwjgl-opengl", classifier = lwjglNatives)
+    runtimeOnly("org.lwjgl", "lwjgl-stb", classifier = lwjglNatives)
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterParamsVersion")

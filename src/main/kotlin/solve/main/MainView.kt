@@ -1,5 +1,8 @@
 package solve.main
 
+import com.huskerdev.openglfx.GLCanvasAnimator
+import com.huskerdev.openglfx.OpenGLCanvas
+import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
 import io.github.palexdev.materialfx.controls.MFXButton
 import io.github.palexdev.materialfx.css.themes.MFXThemeManager
 import io.github.palexdev.materialfx.css.themes.Themes
@@ -12,6 +15,7 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
 import javafx.scene.input.KeyCombination
+import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
 import javafx.scene.shape.Circle
 import solve.catalogue.view.CatalogueView
@@ -137,6 +141,7 @@ class MainView : View() {
     }
 
     private val mainViewBorderPane = borderpane {
+        top = createGL()
         right = rightPanel
         left = leftPanel
 
@@ -158,6 +163,18 @@ class MainView : View() {
         )
         mainViewSplitPane.addStylesheet(MainSplitPaneStyle::class)
         center = mainViewSplitPane
+    }
+
+    private fun createGL(): Region {
+        val canvas = OpenGLCanvas.create(LWJGLExecutor.LWJGL_MODULE)
+        canvas.animator = GLCanvasAnimator(200.0)
+        canvas.minWidth = 100.0
+        canvas.minHeight = 200.0
+
+        canvas.addOnReshapeEvent(ExampleRenderer::reshape)
+        canvas.addOnRenderEvent(ExampleRenderer::render)
+
+        return canvas
     }
 
     override val root = mainViewBorderPane
