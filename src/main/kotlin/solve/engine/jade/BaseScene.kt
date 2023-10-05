@@ -46,8 +46,8 @@ class BaseScene : Scene() {
 
     override fun update(dt: Float) {
         time += dt
-        camera!!.position.x = 100 * sin(time)
-        camera!!.position.y = 100 * cos(time)
+        camera?.position?.x = 100 * sin(time)
+        camera?.position?.y = 100 * cos(time)
         for (go in gameObjects) {
             go.update(dt)
         }

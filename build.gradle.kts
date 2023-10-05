@@ -31,11 +31,13 @@ repositories {
     mavenCentral()
     maven(uri("https://oss.sonatype.org/content/repositories/snapshots"))
     maven(uri("https://jitpack.io"))
+    maven(uri("https://repo.eclipse.org/content/groups/efxclipse"))
 }
 
 application {
     mainClass.set("solve.SolveApp")
     applicationDefaultJvmArgs = listOf(
+        "--add-modules", "javafx.controls",
         "--add-opens", "javafx.graphics/javafx.scene=ALL-UNNAMED",
         "--add-opens", "javafx.base/com.sun.javafx=ALL-UNNAMED",
         "--add-opens", "javafx.graphics/com.sun.prism=ALL-UNNAMED",
@@ -69,11 +71,10 @@ dependencies {
     implementation("junit:junit:$junitVersion")
     implementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     implementation("org.controlsfx:controlsfx:$controlsfxVersion")
+
     implementation("com.github.husker-dev.openglfx:core:3.0.5")
     implementation("com.github.husker-dev.openglfx:lwjgl:3.0.5")
-
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
-
     implementation("org.lwjgl", "lwjgl")
     implementation("org.lwjgl", "lwjgl-assimp")
     implementation("org.lwjgl", "lwjgl-glfw")
@@ -86,8 +87,9 @@ dependencies {
     runtimeOnly("org.lwjgl", "lwjgl-openal", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-opengl", classifier = lwjglNatives)
     runtimeOnly("org.lwjgl", "lwjgl-stb", classifier = lwjglNatives)
-
     implementation("org.joml:joml:1.9.2")
+
+    implementation("org.eclipse.fx:org.eclipse.fx.drift:1.0.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterParamsVersion")
