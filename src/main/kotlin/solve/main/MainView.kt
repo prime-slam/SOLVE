@@ -3,7 +3,6 @@ package solve.main
 import com.huskerdev.openglfx.GLCanvasAnimator
 import com.huskerdev.openglfx.OpenGLCanvas
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
-import engine.util.AssetPool
 import io.github.palexdev.materialfx.controls.MFXButton
 import io.github.palexdev.materialfx.css.themes.MFXThemeManager
 import io.github.palexdev.materialfx.css.themes.Themes
@@ -170,10 +169,11 @@ class MainView : View() {
         val canvas = OpenGLCanvas.create(LWJGLExecutor.LWJGL_MODULE)
         canvas.animator = GLCanvasAnimator(200.0)
         canvas.minWidth = 100.0
-        canvas.minHeight = 200.0
+        canvas.minHeight = 1000.0
 
         canvas.addOnReshapeEvent(ExampleRenderer::reshape)
         canvas.addOnRenderEvent(ExampleRenderer::render)
+        canvas.addOnInitEvent(ExampleRenderer::canvasInit)
 
         return canvas
     }
