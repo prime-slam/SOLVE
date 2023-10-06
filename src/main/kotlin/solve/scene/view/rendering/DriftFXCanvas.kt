@@ -14,8 +14,11 @@ import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL32
 import solve.scene.view.rendering.engine.jade.BaseScene
 import java.nio.ByteBuffer
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 
-class DriftFXCanvas(private val prefWidth: Double = 1000.0, private val prefHeight: Double = 1000.0) : TestCanvas() {
+class DriftFXCanvas() : TestCanvas() {
     val canvas = DriftFXSurface()
 
     private lateinit var renderer: Renderer
@@ -27,8 +30,6 @@ class DriftFXCanvas(private val prefWidth: Double = 1000.0, private val prefHeig
     private var swapchain: Swapchain? = null
 
     override fun initCanvas() {
-        canvas.prefWidth = prefWidth
-        canvas.prefHeight = prefHeight
         renderer = GLRenderer.getRenderer(canvas)
         baseScene = BaseScene()
 
@@ -72,7 +73,7 @@ class DriftFXCanvas(private val prefWidth: Double = 1000.0, private val prefHeig
                             size,
                             2,
                             PresentationMode.MAILBOX,
-                            StandardTransferTypes.NVDXInterop
+                            StandardTransferTypes.MainMemory
                         )
                     )
                 }
@@ -133,9 +134,10 @@ class DriftFXCanvas(private val prefWidth: Double = 1000.0, private val prefHeig
             }
 
             println("Measurements number: $TestMeasurementsNumber")
-            val averageDeltaTime = deltaTimes.subList(InitialUnaccountedMeasurementsNumber, deltaTimes.lastIndex).average()
-            println("DriftFX average deltaTime: $averageDeltaTime")
-            println("DriftFX average fps: ${1f / averageDeltaTime}")
+            val accountedMeasurements = deltaTimes.subList(InitialUnaccountedMeasurementsNumber, deltaTimes.lastIndex)
+            val averageDeltaTime = accountedMeasurements.average()
+            val standardDeviation = sqrt(accountedMeasurements.map { (it - averageDeltaTime).pow(2) }.average())
+            println("DriftFX average deltaTime: $averageDeltaTime += $standardDeviation")
         }
         catch (error: Exception) {
             println("DriftFX loop error!")

@@ -10,14 +10,14 @@ import kotlin.math.sin
 
 class BaseScene : Scene() {
     companion object {
-        private const val TestSceneColumnsNumber = 100
-        private const val TestSceneRowsNumber = 100
+        private const val TestSceneColumnsNumber = 500
+        private const val TestSceneRowsNumber = 500
         private const val ImagesNumber = 39
 
         private const val ImageWidth = 1034f
         private const val ImageHeight = 768f
 
-        private const val ImageScale = 0.02f
+        private const val ImageScale = 0.01f
 
         private const val ImagesOffset = 5f
     }
@@ -60,8 +60,8 @@ class BaseScene : Scene() {
 
     override fun update(dt: Float) {
         time += dt
-        camera?.position?.x = sceneWidth / 2.5f * sin(time)
-        camera?.position?.y = sceneHeight / 3f + sceneHeight / 2.5f * cos(time)
+        camera?.position?.x = sceneWidth / 3f + sceneWidth / 2.2f * sin(time)
+        camera?.position?.y = sceneHeight / 2.5f + sceneHeight / 2.2f * cos(time)
         for (go in gameObjects) {
             go.update(dt)
         }

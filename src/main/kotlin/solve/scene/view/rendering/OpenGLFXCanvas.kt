@@ -9,8 +9,10 @@ import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import solve.scene.view.rendering.engine.jade.BaseScene
+import kotlin.math.pow
+import kotlin.math.sqrt
 
-class OpenGLFXCanvas(private val prefWidth: Double = 1000.0, private val prefHeight: Double = 1000.0) : TestCanvas() {
+class OpenGLFXCanvas() : TestCanvas() {
     lateinit var canvas: OpenGLCanvas
 
     private val deltaTimes = mutableListOf<Double>()
@@ -26,8 +28,6 @@ class OpenGLFXCanvas(private val prefWidth: Double = 1000.0, private val prefHei
 
         canvas = OpenGLCanvas.create(LWJGLExecutor.LWJGL_MODULE)
         canvas.animator = GLCanvasAnimator(200.0)
-        canvas.prefHeight = prefHeight
-        canvas.prefWidth = prefWidth
 
         canvas.addOnReshapeEvent(this::reshape)
         canvas.addOnRenderEvent(this::render)
@@ -54,10 +54,10 @@ class OpenGLFXCanvas(private val prefWidth: Double = 1000.0, private val prefHei
             ++measurementsNumber
         } else if (!measured) {
             println("Measurements number: $TestMeasurementsNumber")
-            val averageDeltaTime =
-                deltaTimes.subList(InitialUnaccountedMeasurementsNumber, deltaTimes.lastIndex).average()
-            println("OpenGLFX average deltaTime: $averageDeltaTime")
-            println("OpenGLFX average fps: ${1f / averageDeltaTime}")
+            val accountedMeasurements = deltaTimes.subList(InitialUnaccountedMeasurementsNumber, deltaTimes.lastIndex)
+            val averageDeltaTime = accountedMeasurements.average()
+            val standardDeviation = sqrt(accountedMeasurements.map { (it - averageDeltaTime).pow(2) }.average())
+            println("OpenGLFX average deltaTime: $averageDeltaTime += $standardDeviation")
 
             measured = true
         }

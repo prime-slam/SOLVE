@@ -67,7 +67,7 @@ class MainView : View() {
     // Choose canvas for testing:
     private val driftFXCanvas = DriftFXCanvas()
     private val openGLFXCanvas = OpenGLFXCanvas()
-    private val testCanvas = openGLFXCanvas
+    private val testCanvas = driftFXCanvas
 
     init {
         testCanvas.initCanvas()
