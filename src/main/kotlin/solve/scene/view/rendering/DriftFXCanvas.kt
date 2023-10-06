@@ -12,13 +12,14 @@ import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL32
-import solve.scene.view.rendering.ExampleRenderer.Companion.baseScene
+import solve.scene.view.rendering.engine.jade.BaseScene
 import java.nio.ByteBuffer
 
 class DriftFXCanvas(private val prefWidth: Double = 1000.0, private val prefHeight: Double = 1000.0) : TestCanvas() {
     val canvas = DriftFXSurface()
 
     private lateinit var renderer: Renderer
+    private lateinit var baseScene: BaseScene
 
     private var glContextID: Long = 0L
     private var depthTextureID: Int = 0
@@ -29,6 +30,7 @@ class DriftFXCanvas(private val prefWidth: Double = 1000.0, private val prefHeig
         canvas.prefWidth = prefWidth
         canvas.prefHeight = prefHeight
         renderer = GLRenderer.getRenderer(canvas)
+        baseScene = BaseScene()
 
         startRenderLoop()
     }
