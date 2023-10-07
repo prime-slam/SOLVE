@@ -1,5 +1,6 @@
 package solve
 
+import com.huskerdev.openglfx.OpenGLCanvas
 import javafx.stage.Stage
 import solve.main.MainView
 import solve.scene.view.landmarks.AnimationProvider
@@ -16,6 +17,8 @@ class SolveApp : App(MainView::class) {
             isMaximized = true
         }
         registerServices()
+        System.setProperty("prism.vsync", "false")
+        OpenGLCanvas.forceUniversal = true
         super.start(stage)
     }
 

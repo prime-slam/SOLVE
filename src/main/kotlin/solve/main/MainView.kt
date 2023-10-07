@@ -23,7 +23,8 @@ import solve.importer.controller.ImporterController
 import solve.importer.view.ImporterView
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
-import solve.scene.view.SceneView
+import solve.scene.view.rendering.DriftFXCanvas
+import solve.scene.view.rendering.OpenGLFXCanvas
 import solve.settings.grid.view.GridSettingsView
 import solve.settings.visualization.VisualizationSettingsView
 import solve.sidepanel.SidePanelTab
@@ -56,14 +57,21 @@ class MainView : View() {
         private val settingsIcon = loadResourcesImage(IconsSettings)
         private val helpIcon = loadResourcesImage(IconsHelp)
     }
-
+    
     val importer: ImporterView by inject()
 
     private val mainView: MainView by inject()
 
     val controller: ImporterController by inject()
 
-    private val sceneView: SceneView by inject()
+    // Choose canvas for testing:
+    private val driftFXCanvas = DriftFXCanvas()
+    private val openGLFXCanvas = OpenGLFXCanvas()
+    private val testCanvas = driftFXCanvas
+
+    init {
+        testCanvas.initCanvas()
+    }
 
     var content = MFXGenericDialog()
     var dialog = MFXStageDialog()
@@ -146,7 +154,7 @@ class MainView : View() {
         )
         val splitPaneContainedNodes = listOf(
             leftSidePanelViews.contentView.root,
-            sceneView.root,
+            testCanvas.canvas,
             rightSidePanelViews.contentView.root
         )
 
