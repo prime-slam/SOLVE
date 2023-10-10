@@ -62,16 +62,18 @@ class ShaderProgram {
     }
 
     fun use() {
-        if (isUsed)
+        if (isUsed) {
             return
+        }
 
         glUseProgram(shaderProgramID)
         isUsed = true
     }
 
     fun detach() {
-        if (!isUsed)
+        if (!isUsed) {
             return
+        }
 
         glUseProgram(0)
         isUsed = false
@@ -79,8 +81,9 @@ class ShaderProgram {
 
     fun cleanup() {
         detach()
-        if (shaderProgramID != GL_FALSE)
+        if (shaderProgramID != GL_FALSE) {
             glDeleteProgram(shaderProgramID)
+        }
     }
 
     private fun printShaderProgramInfoLog() {
@@ -88,7 +91,6 @@ class ShaderProgram {
         val infoLog = glGetProgramInfoLog(infoLogLength, infoLogLength)
         println(infoLog)
     }
-
 
     private fun compileShader(shaderText: String, shaderType: ShaderType) {
         val shaderID = glCreateShader(getShaderTypeID(shaderType))
