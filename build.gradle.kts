@@ -55,7 +55,7 @@ application {
         "--add-opens", "javafx.graphics/javafx.scene.image=ALL-UNNAMED",
         "--add-exports", "javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
         "-Xms2g",
-        "-Xmx4g",
+        "-Xmx4g"
     )
 }
 
