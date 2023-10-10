@@ -1,5 +1,12 @@
 package solve.rendering.engine.shader
 
+import org.joml.Matrix2f
+import org.joml.Matrix3f
+import org.joml.Matrix4f
+import org.joml.Vector2f
+import org.joml.Vector3f
+import org.joml.Vector4f
+import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL20.GL_COMPILE_STATUS
 import org.lwjgl.opengl.GL20.GL_FALSE
 import org.lwjgl.opengl.GL20.GL_INFO_LOG_LENGTH
@@ -18,7 +25,15 @@ import org.lwjgl.opengl.GL20.glGetUniformLocation
 import org.lwjgl.opengl.GL20.glLinkProgram
 import org.lwjgl.opengl.GL20.glShaderSource
 import org.lwjgl.opengl.GL20.glUniform1f
+import org.lwjgl.opengl.GL20.glUniform1fv
 import org.lwjgl.opengl.GL20.glUniform1i
+import org.lwjgl.opengl.GL20.glUniform1iv
+import org.lwjgl.opengl.GL20.glUniform2f
+import org.lwjgl.opengl.GL20.glUniform3f
+import org.lwjgl.opengl.GL20.glUniform4f
+import org.lwjgl.opengl.GL20.glUniformMatrix2fv
+import org.lwjgl.opengl.GL20.glUniformMatrix3fv
+import org.lwjgl.opengl.GL20.glUniformMatrix4fv
 import org.lwjgl.opengl.GL20.glUseProgram
 import org.lwjgl.opengl.GL20.glValidateProgram
 import solve.rendering.engine.shader.ShaderType.Companion.getShaderTypeID
@@ -90,18 +105,68 @@ class ShaderProgram {
     }
 
     fun uploadInt(variableName: String, value: Int) {
-        val variableLocation = getVariableLocation(variableName)
-        use()
+        val variableLocation = getVariableLocationWithUse(variableName)
         glUniform1i(variableLocation, value)
     }
 
     fun uploadFloat(variableName: String, value: Float) {
-        val variableLocation = getVariableLocation(variableName)
-        use()
+        val variableLocation = getVariableLocationWithUse(variableName)
         glUniform1f(variableLocation, value)
     }
 
-    private fun getVariableLocation(variableName: String) = glGetUniformLocation(shaderProgramID, variableName)
+    fun uploadVector2f(variableName: String, vector: Vector2f) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        glUniform2f(variableLocation, vector.x, vector.y)
+    }
+
+    fun uploadVector3f(variableName: String, vector: Vector3f) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        glUniform3f(variableLocation, vector.x, vector.y, vector.z)
+    }
+
+    fun uploadVector4f(variableName: String, vector: Vector4f) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        glUniform4f(variableLocation, vector.x, vector.y, vector.z, vector.w)
+    }
+
+    fun uploadMatrix2f(variableName: String, matrix: Matrix2f) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        val matrixBuffer = createMatrixFloatBuffer(2)
+        matrix.get(matrixBuffer)
+        glUniformMatrix2fv(variableLocation, false, matrixBuffer)
+    }
+    fun uploadMatrix3f(variableName: String, matrix: Matrix3f) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        val matrixBuffer = createMatrixFloatBuffer(3)
+        matrix.get(matrixBuffer)
+        glUniformMatrix3fv(variableLocation, false, matrixBuffer)
+    }
+
+    fun uploadMatrix4f(variableName: String, matrix: Matrix4f) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        val matrixBuffer = createMatrixFloatBuffer(4)
+        matrix.get(matrixBuffer)
+        glUniformMatrix4fv(variableLocation, false, matrixBuffer)
+    }
+
+    fun uploadTexture(variableName: String, textureID: Int) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        glUniform1i(variableLocation, textureID)
+    }
+
+    fun uploadIntArray(variableName: String, array: IntArray) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        glUniform1iv(variableLocation, array)
+    }
+
+    fun uploadFloatArray(variableName: String, array: FloatArray) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        glUniform1fv(variableLocation, array)
+    }
+
+    private fun createMatrixFloatBuffer(matrixSize: Int) = BufferUtils.createFloatBuffer(matrixSize * matrixSize)
+    private fun getVariableLocationWithUse(variableName: String) =
+        glGetUniformLocation(shaderProgramID, variableName).also { use() }
 
     private fun printShaderProgramInfoLog() {
         val infoLogLength = glGetProgrami(shaderProgramID, GL_INFO_LOG_LENGTH)
