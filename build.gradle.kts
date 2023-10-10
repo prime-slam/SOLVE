@@ -33,16 +33,23 @@ when {
     OperatingSystem.current().isLinux -> {
         val archProperty = System.getProperty("os.arch")
         if (archProperty.startsWith("arm") || archProperty.startsWith("aarch64")) {
-            val postfix = if (archProperty.contains("64") || archProperty.startsWith("armv8")) "arm64"
-                else "arm32"
+            val postfix = if (archProperty.contains("64") || archProperty.startsWith("armv8")) {
+                "arm64"
+            } else {
+                "arm32"
+            }
             lwjglNativesClassifier = "natives-linux-$postfix"
         } else {
             lwjglNativesClassifier = "natives-linux"
         }
     }
-    OperatingSystem.current().isWindows -> lwjglNativesClassifier =
-        if (System.getProperty("os.arch").contains("64")) "natives-windows"
-        else "natives-windows-x86"
+    OperatingSystem.current().isWindows ->
+        lwjglNativesClassifier =
+            if (System.getProperty("os.arch").contains("64")) {
+                "natives-windows"
+            } else {
+                "natives-windows-x86"
+            }
     OperatingSystem.current().isMacOsX -> lwjglNativesClassifier = "natives-macos"
     else -> throw IllegalArgumentException("Unexpected OS type!")
 }
