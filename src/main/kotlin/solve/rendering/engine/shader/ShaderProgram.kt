@@ -165,6 +165,7 @@ class ShaderProgram {
     }
 
     private fun createMatrixFloatBuffer(matrixSize: Int) = BufferUtils.createFloatBuffer(matrixSize * matrixSize)
+    
     private fun getVariableLocationWithUse(variableName: String) =
         glGetUniformLocation(shaderProgramID, variableName).also { use() }
 
