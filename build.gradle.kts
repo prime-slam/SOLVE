@@ -24,14 +24,27 @@ val junitJupiterParamsVersion: String by rootProject
 val testfxVersion: String by rootProject
 val testfxMonocleVersion: String by rootProject
 val mockkVersion: String by rootProject
-val openglfxVerson: String by rootProject
+val openglfxVersion: String by rootProject
 val lwjglVersion: String by rootProject
+val jomlVersion: String by rootProject
 
-val lwjglNativesParam: String = when (OperatingSystem.current()) {
-    OperatingSystem.LINUX -> "natives-linux"
-    OperatingSystem.WINDOWS -> "natives-windows"
-    OperatingSystem.MAC_OS -> "natives-macos"
-    else -> ""
+var lwjglNativesClassifier: String = ""
+when {
+    OperatingSystem.current().isLinux -> {
+        val archProperty = System.getProperty("os.arch")
+        if (archProperty.startsWith("arm") || archProperty.startsWith("aarch64")) {
+            val postfix = if (archProperty.contains("64") || archProperty.startsWith("armv8")) "arm64"
+                else "arm32"
+            lwjglNativesClassifier = "natives-linux-$postfix"
+        } else {
+            lwjglNativesClassifier = "natives-linux"
+        }
+    }
+    OperatingSystem.current().isWindows -> lwjglNativesClassifier =
+        if (System.getProperty("os.arch").contains("64")) "natives-windows"
+        else "natives-windows-x86"
+    OperatingSystem.current().isMacOsX -> lwjglNativesClassifier = "natives-macos"
+    else -> throw IllegalArgumentException("Unexpected OS type!")
 }
 
 repositories {
@@ -84,21 +97,22 @@ dependencies {
     testImplementation("org.testfx:openjfx-monocle:$testfxMonocleVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
 
-    implementation("com.github.husker-dev.openglfx:core:3.0.5")
-    implementation("com.github.husker-dev.openglfx:lwjgl:3.0.5")
+    implementation("com.github.husker-dev.openglfx:core:$openglfxVersion")
+    implementation("com.github.husker-dev.openglfx:lwjgl:$openglfxVersion")
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
-    implementation("org.lwjgl", "lwjgl")
-    implementation("org.lwjgl", "lwjgl-assimp")
-    implementation("org.lwjgl", "lwjgl-glfw")
-    implementation("org.lwjgl", "lwjgl-openal")
-    implementation("org.lwjgl", "lwjgl-opengl")
-    implementation("org.lwjgl", "lwjgl-stb")
-    runtimeOnly("org.lwjgl", "lwjgl", classifier = lwjglNativesParam)
-    runtimeOnly("org.lwjgl", "lwjgl-assimp", classifier = lwjglNativesParam)
-    runtimeOnly("org.lwjgl", "lwjgl-glfw", classifier = lwjglNativesParam)
-    runtimeOnly("org.lwjgl", "lwjgl-openal", classifier = lwjglNativesParam)
-    runtimeOnly("org.lwjgl", "lwjgl-opengl", classifier = lwjglNativesParam)
-    runtimeOnly("org.lwjgl", "lwjgl-stb", classifier = lwjglNativesParam)
+    implementation("org.lwjgl:lwjgl:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-assimp:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-glfw:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-openal:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-opengl:$lwjglVersion")
+    implementation("org.lwjgl:lwjgl-stb:$lwjglVersion")
+    runtimeOnly("org.lwjgl:lwjgl:$lwjglVersion:$lwjglNativesClassifier")
+    runtimeOnly("org.lwjgl:lwjgl-assimp:$lwjglVersion:$lwjglNativesClassifier")
+    runtimeOnly("org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNativesClassifier")
+    runtimeOnly("org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNativesClassifier")
+    runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNativesClassifier")
+    runtimeOnly("org.lwjgl:lwjgl:$lwjglVersion:$lwjglNativesClassifier")
+    implementation("org.joml:joml:$jomlVersion")
 }
 
 tasks {
