@@ -14,8 +14,11 @@ import org.lwjgl.opengl.GL20.glGetProgramInfoLog
 import org.lwjgl.opengl.GL20.glGetProgrami
 import org.lwjgl.opengl.GL20.glGetShaderInfoLog
 import org.lwjgl.opengl.GL20.glGetShaderi
+import org.lwjgl.opengl.GL20.glGetUniformLocation
 import org.lwjgl.opengl.GL20.glLinkProgram
 import org.lwjgl.opengl.GL20.glShaderSource
+import org.lwjgl.opengl.GL20.glUniform1f
+import org.lwjgl.opengl.GL20.glUniform1i
 import org.lwjgl.opengl.GL20.glUseProgram
 import org.lwjgl.opengl.GL20.glValidateProgram
 import solve.rendering.engine.shader.ShaderType.Companion.getShaderTypeID
@@ -85,6 +88,20 @@ class ShaderProgram {
             glDeleteProgram(shaderProgramID)
         }
     }
+
+    fun uploadInt(variableName: String, value: Int) {
+        val variableLocation = getVariableLocation(variableName)
+        use()
+        glUniform1i(variableLocation, value)
+    }
+
+    fun uploadFloat(variableName: String, value: Float) {
+        val variableLocation = getVariableLocation(variableName)
+        use()
+        glUniform1f(variableLocation, value)
+    }
+
+    private fun getVariableLocation(variableName: String) = glGetUniformLocation(shaderProgramID, variableName)
 
     private fun printShaderProgramInfoLog() {
         val infoLogLength = glGetProgrami(shaderProgramID, GL_INFO_LOG_LENGTH)
