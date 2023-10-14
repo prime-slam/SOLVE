@@ -7,13 +7,25 @@ import com.huskerdev.openglfx.events.GLReshapeEvent
 import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
 import org.lwjgl.opengl.GL
+import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT
+import org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT
+import org.lwjgl.opengl.GL11.GL_DEPTH_TEST
+import org.lwjgl.opengl.GL11.GL_LEQUAL
+import org.lwjgl.opengl.GL11.GL_PROJECTION
+import org.lwjgl.opengl.GL11.glClear
+import org.lwjgl.opengl.GL11.glDepthFunc
+import org.lwjgl.opengl.GL11.glEnable
+import org.lwjgl.opengl.GL11.glFrustum
+import org.lwjgl.opengl.GL11.glLoadIdentity
+import org.lwjgl.opengl.GL11.glMatrixMode
+import org.lwjgl.opengl.GL11.glTranslatef
 
 class OpenGLCanvas {
-    lateinit var canvas: OpenGLFXCanvas
+    val canvas: OpenGLFXCanvas = OpenGLFXCanvas.create(LWJGLExecutor.LWJGL_MODULE)
 
     init {
-        canvas = OpenGLFXCanvas.create(LWJGLExecutor.LWJGL_MODULE)
         canvas.animator = GLCanvasAnimator(OpenGLCanvasFPS)
 
         canvas.addOnReshapeEvent(this::reshape)
@@ -27,28 +39,28 @@ class OpenGLCanvas {
 
     private fun canvasInit(event: GLInitializeEvent) {
         event.toString()
-        GL.createCapabilities()
+        createCapabilities()
     }
 
     private fun render(event: GLRenderEvent) {
-        GL11.glEnable(GL11.GL_DEPTH_TEST)
-        GL11.glDepthFunc(GL11.GL_LEQUAL)
+        glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LEQUAL)
 
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
         draw()
     }
 
     private fun reshape(event: GLReshapeEvent){
-        GL11.glMatrixMode(GL11.GL_PROJECTION)
-        GL11.glLoadIdentity()
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
 
         val aspect = event.height.toDouble() / event.width
-        GL11.glFrustum(-1.0, 1.0, -aspect, aspect, 5.0, 60.0)
-        GL11.glMatrixMode(GL11.GL_MODELVIEW)
-        GL11.glLoadIdentity()
+        glFrustum(-1.0, 1.0, -aspect, aspect, 5.0, 60.0)
+        glMatrixMode(GL11.GL_MODELVIEW)
+        glLoadIdentity()
 
-        GL11.glTranslatef(0.0f, 0.0f, -40.0f)
+        glTranslatef(0.0f, 0.0f, -40.0f)
     }
 
     companion object {
