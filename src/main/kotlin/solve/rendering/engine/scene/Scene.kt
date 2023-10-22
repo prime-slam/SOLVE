@@ -39,8 +39,9 @@ class Scene(sceneData: SceneData) {
             return
         }
         _gameObjects.add(gameObject)
-        if (isStarted)
+        if (isStarted) {
             gameObject.start()
+        }
     }
 
     fun removeGameObject(gameObject: GameObject) {

@@ -8,7 +8,6 @@ import solve.rendering.engine.rendering.texture.Texture
 import solve.rendering.engine.scene.GameObject
 import solve.rendering.engine.shader.ShaderProgram
 
-
 abstract class Renderer(protected val window: Window) {
     protected abstract val maxBatchSize: Int
 
@@ -49,8 +48,9 @@ abstract class Renderer(protected val window: Window) {
                 return batch
             }
 
-            if (batch.isTexturesFull && batch.containsTexture(texture) && batch.zIndex == requiredZIndex)
+            if (batch.isTexturesFull && batch.containsTexture(texture) && batch.zIndex == requiredZIndex) {
                 return batch
+            }
         }
 
         val batch = createNewBatch(requiredZIndex)

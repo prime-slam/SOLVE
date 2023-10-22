@@ -103,13 +103,14 @@ class Texture(private val resourcesPath: String) {
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is Texture)
+        if (other !is Texture) {
             return false
+        }
 
         return width == other.width &&
-                height == other.height &&
-                textureID == other.textureID &&
-                resourcesPath == other.resourcesPath
+            height == other.height &&
+            textureID == other.textureID &&
+            resourcesPath == other.resourcesPath
     }
 
     override fun hashCode(): Int {

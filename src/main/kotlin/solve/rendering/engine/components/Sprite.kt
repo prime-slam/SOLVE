@@ -21,7 +21,6 @@ class Sprite(val texture: Texture, uvCoordinates: List<Vector2f> = defaultUVCoor
     }
 
     fun setTexture(texture: Texture) {
-
     }
 
     companion object {

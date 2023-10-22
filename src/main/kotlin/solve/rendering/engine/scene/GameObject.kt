@@ -1,7 +1,6 @@
 package solve.rendering.engine.scene
 
 import solve.rendering.engine.components.Component
-import kotlin.reflect.KClass
 
 class GameObject(private val name: String) {
     val transform = Transform()
@@ -34,7 +33,7 @@ class GameObject(private val name: String) {
 
     fun hasComponent(component: Component) = components.contains(component)
 
-    inline fun <reified T: Component> getComponentOfType(): T? {
+    inline fun <reified T : Component> getComponentOfType(): T? {
         return components.firstOrNull { it is T } as? T?
     }
 

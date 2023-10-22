@@ -4,7 +4,6 @@ import com.huskerdev.openglfx.GLCanvasAnimator
 import com.huskerdev.openglfx.events.GLInitializeEvent
 import com.huskerdev.openglfx.events.GLRenderEvent
 import com.huskerdev.openglfx.events.GLReshapeEvent
-import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
@@ -20,6 +19,7 @@ import org.lwjgl.opengl.GL11.glFrustum
 import org.lwjgl.opengl.GL11.glLoadIdentity
 import org.lwjgl.opengl.GL11.glMatrixMode
 import org.lwjgl.opengl.GL11.glTranslatef
+import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 
 class OpenGLCanvas {
     val canvas: OpenGLFXCanvas = OpenGLFXCanvas.create(LWJGLExecutor.LWJGL_MODULE)
@@ -33,7 +33,6 @@ class OpenGLCanvas {
     }
 
     fun draw() {
-
     }
 
     private fun canvasInit(event: GLInitializeEvent) {
@@ -50,7 +49,7 @@ class OpenGLCanvas {
         draw()
     }
 
-    private fun reshape(event: GLReshapeEvent){
+    private fun reshape(event: GLReshapeEvent) {
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
 
