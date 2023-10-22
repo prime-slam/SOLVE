@@ -1,6 +1,5 @@
 package solve.rendering.engine.rendering.batch
 
-import org.joml.Matrix2f
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector4f
@@ -80,8 +79,9 @@ open class RenderBatch(
             textures.add(texture)
             textureID = textures.lastIndex + 1
 
-            if (textures.count() >= MaxTexturesNumber)
+            if (textures.count() >= MaxTexturesNumber) {
                 isTexturesFull = true
+            }
         }
 
         return textureID
@@ -94,11 +94,14 @@ open class RenderBatch(
     fun containsTexture(texture: Texture) = textures.contains(texture)
 
     fun getVerticesNumber(): Int {
-        if (verticesDataBufferIndexPointer % attributesNumber != 0)
+        if (verticesDataBufferIndexPointer % attributesNumber != 0) {
             println("The vertices data buffer seems to not have correct amount of data!")
+        }
 
-        return (verticesDataBufferIndexPointer * primitiveType.drawingOrderElementsNumber /
-                (attributesNumber * primitiveType.verticesNumber))
+        return (
+            verticesDataBufferIndexPointer * primitiveType.drawingOrderElementsNumber /
+                (attributesNumber * primitiveType.verticesNumber)
+            )
     }
 
     private fun initializeBuffers() {

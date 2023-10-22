@@ -1,6 +1,5 @@
 package solve.rendering.engine
 
-import org.joml.Matrix4f
 import org.joml.Vector2f
 import solve.rendering.engine.camera.Camera
 import solve.rendering.engine.scene.Scene

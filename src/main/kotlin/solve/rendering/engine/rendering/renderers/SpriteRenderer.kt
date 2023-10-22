@@ -8,10 +8,10 @@ import solve.rendering.engine.Window
 import solve.rendering.engine.components.SpriteRenderer
 import solve.rendering.engine.rendering.batch.PrimitiveType
 import solve.rendering.engine.rendering.batch.RenderBatch
+import solve.rendering.engine.scene.GameObject
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
-import solve.rendering.engine.scene.GameObject
 
 class SpriteRenderer(
     window: Window

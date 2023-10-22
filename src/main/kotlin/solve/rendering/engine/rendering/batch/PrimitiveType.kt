@@ -1,7 +1,6 @@
 package solve.rendering.engine.rendering.batch
 
 import org.lwjgl.opengl.GL11.GL_LINES
-
 import org.lwjgl.opengl.GL11.GL_POINTS
 import org.lwjgl.opengl.GL11.GL_TRIANGLES
 
