@@ -1,5 +1,9 @@
 package solve.rendering.engine.rendering.batch
 
+import org.joml.Matrix2f
+import org.joml.Vector2f
+import org.joml.Vector3f
+import org.joml.Vector4f
 import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
 import org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW
 import org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER
@@ -16,6 +20,8 @@ import org.lwjgl.opengl.GL30.glDeleteVertexArrays
 import org.lwjgl.opengl.GL30.glGenVertexArrays
 import solve.rendering.engine.rendering.texture.Texture
 import solve.rendering.engine.shader.ShaderAttributeType
+import solve.rendering.engine.utils.toList
+import java.nio.ByteBuffer
 
 open class RenderBatch(
     private val maxBatchSize: Int,
@@ -25,12 +31,13 @@ open class RenderBatch(
 ) {
     var isFull = false
         private set
+    var isTexturesFull = false
+        private set
 
     private var vboID = 0
     private var vaoID = 0
     private var eboID = 0
 
-    private val textureIDs = mutableListOf<Int>()
     private val textures = mutableListOf<Texture>()
 
     private val attributesNumber = attributes.sumOf { it.number }
@@ -73,12 +80,14 @@ open class RenderBatch(
             textures.add(texture)
             textureID = textures.lastIndex + 1
 
-            if (textures.count() >= maxBatchSize)
-                isFull = true
+            if (textures.count() >= MaxTexturesNumber)
+                isTexturesFull = true
         }
 
         return textureID
     }
+
+    fun getTextureLocalID(texture: Texture) = textures.indexOf(texture) + 1
 
     fun removeTexture(texture: Texture): Boolean = textures.remove(texture)
 
@@ -132,5 +141,33 @@ open class RenderBatch(
         }
 
         return elementsBuffer
+    }
+
+    fun pushFloat(value: Float) {
+        verticesDataBuffer[verticesDataBufferIndexPointer++] = value
+    }
+
+    fun pushVector2f(vector: Vector2f) {
+        vector.toList().forEach { pushFloat(it) }
+    }
+
+    fun pushVector3f(vector: Vector3f) {
+        vector.toList().forEach { pushFloat(it) }
+    }
+
+    fun pushVector4f(vector: Vector4f) {
+        vector.toList().forEach { pushFloat(it) }
+    }
+
+    fun pushInt(value: Int) {
+        val byteArray = ByteBuffer.allocate(Int.SIZE_BYTES).putInt(value).array()
+        val buffer = ByteBuffer.wrap(byteArray)
+        val floatValue = buffer.float
+
+        pushFloat(floatValue)
+    }
+
+    companion object {
+        private const val MaxTexturesNumber = 8
     }
 }
