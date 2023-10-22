@@ -61,7 +61,7 @@ class ShaderProgram {
         compileShader(shaderText, shaderType)
     }
 
-    fun compile() {
+    fun link() {
         glLinkProgram(shaderProgramID)
 
         val linkStatus = glGetProgrami(shaderProgramID, GL_LINK_STATUS)

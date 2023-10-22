@@ -1,6 +1,8 @@
-package solve.rendering.engine.structure
+package solve.rendering.engine.components
 
-open class Component(private val gameObject: GameObject) {
+import solve.rendering.engine.scene.GameObject
+
+abstract class Component(val gameObject: GameObject) {
     open fun start() { }
 
     open fun update(deltaTime: Float) { }

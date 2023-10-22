@@ -1,4 +1,4 @@
-package solve.rendering.engine.structure
+package solve.rendering.engine.scene
 
 import solve.rendering.engine.camera.Camera
 
