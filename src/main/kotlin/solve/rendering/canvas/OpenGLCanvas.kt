@@ -40,6 +40,7 @@ class OpenGLCanvas {
         createCapabilities()
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun render(event: GLRenderEvent) {
         glEnable(GL_DEPTH_TEST)
         glDepthFunc(GL_LEQUAL)

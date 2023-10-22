@@ -12,6 +12,7 @@ import solve.rendering.engine.scene.GameObject
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
+import solve.rendering.engine.utils.plus
 
 class SpriteRenderer(
     window: Window
@@ -68,10 +69,9 @@ class SpriteRenderer(
             val uvCoordinates = sprite.uvCoordinates
 
             spriteLocalVerticesPositions.forEachIndexed { index, vertexPosition ->
-                val scaledX = vertexPosition.x * scale.x
-                val scaleY = vertexPosition.y * scale.y
+                val scaleVector = Vector2f(vertexPosition.x * scale.x, vertexPosition.y * scale.y)
 
-                batch.pushVector2f(position)
+                batch.pushVector2f(position + scaleVector)
                 batch.pushVector4f(color.toVector4f())
                 batch.pushVector2f(uvCoordinates[index])
                 batch.pushInt(textureID)

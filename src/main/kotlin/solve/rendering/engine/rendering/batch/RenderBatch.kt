@@ -72,7 +72,7 @@ open class RenderBatch(
     }
 
     fun addTexture(texture: Texture): Int {
-        var textureID = 0
+        val textureID: Int
         if (textures.contains(texture)) {
             textureID = textures.indexOf(texture) + 1
         } else {
