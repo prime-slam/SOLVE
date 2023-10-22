@@ -2,6 +2,7 @@ package solve.rendering.engine.camera
 
 import org.joml.Matrix4f
 import org.joml.Vector2f
+import org.joml.Vector3f
 import solve.utils.times
 
 class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
@@ -42,5 +43,8 @@ class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
     companion object {
         private const val ProjectionOrthoZNear = 0.01f
         private const val ProjectionOrthoZFar = 100f
+
+        private val cameraFrontVector = Vector3f(0f, 0f, -1f)
+        private val cameraUpVector = Vector3f(0f, 1f, 0f)
     }
 }

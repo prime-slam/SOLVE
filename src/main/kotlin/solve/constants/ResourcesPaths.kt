@@ -1,5 +1,6 @@
 package solve.constants
 
+// Application icons.
 const val IconsCatalogueApplyPath = "icons/catalogue/apply.png"
 const val IconsCatalogueImagePath = "icons/catalogue/image.png"
 const val IconsImporterCheckCirclePath = "icons/importer/check_circle.png"
@@ -27,3 +28,7 @@ const val IconsLayers = "/icons/sidepanel/Layers.png"
 const val IconsLayersFilled = "/icons/sidepanel/LayersFilled.png"
 const val IconsGrid = "/icons/sidepanel/Grid.png"
 const val IconsGridSelected = "/icons/sidepanel/GridSelected.png"
+
+// Engine shaders.
+const val ShadersDefaultVertexPath = "engine/shaders/default/default.vert"
+const val ShadersDefaultFragmentPath = "engine/shaders/default/default.frag"

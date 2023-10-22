@@ -1,8 +1,13 @@
-package solve.rendering.engine.structure
+package solve.rendering.engine.scene
+
+import solve.rendering.engine.components.Component
+import kotlin.reflect.KClass
 
 class GameObject(private val name: String) {
     private val transform = Transform()
-    private val components = mutableListOf<Component>()
+    private val _components = mutableListOf<Component>()
+    val components: List<Component>
+        get() = _components
 
     var isDestroyed = false
         private set
@@ -20,11 +25,17 @@ class GameObject(private val name: String) {
     }
 
     fun addComponent(component: Component) {
-        components.add(component)
+        _components.add(component)
     }
 
     fun removeComponent(component: Component) {
-        components.remove(component)
+        _components.remove(component)
+    }
+
+    fun hasComponent(component: Component) = components.contains(component)
+
+    inline fun <reified T: Component> getComponentOfType(): T? {
+        return components.firstOrNull { it is T } as? T?
     }
 
     fun enable() {

@@ -6,7 +6,6 @@ import com.huskerdev.openglfx.events.GLRenderEvent
 import com.huskerdev.openglfx.events.GLReshapeEvent
 import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
-import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT
