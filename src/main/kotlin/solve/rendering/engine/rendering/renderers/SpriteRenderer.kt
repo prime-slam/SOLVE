@@ -1,6 +1,7 @@
 package solve.rendering.engine.rendering.renderers
 
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import solve.constants.ShadersDefaultFragmentPath
 import solve.constants.ShadersDefaultVertexPath
 import solve.rendering.engine.Window
@@ -12,7 +13,11 @@ import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.scene.GameObject
 
-class SpriteRenderer(window: Window) : Renderer(window) {
+class SpriteRenderer(
+    window: Window
+) : Renderer(window) {
+    override val maxBatchSize = 1000
+
     private var modelsCommonMatrix: Matrix4f = Matrix4f().identity()
     private val spriteRenderers = mutableListOf<SpriteRenderer>()
 
@@ -38,7 +43,7 @@ class SpriteRenderer(window: Window) : Renderer(window) {
         )
 
         return RenderBatch(
-            MaxBatchSize,
+            maxBatchSize,
             zIndex,
             PrimitiveType.Quad,
             shaderAttributesTypes
@@ -51,7 +56,27 @@ class SpriteRenderer(window: Window) : Renderer(window) {
     }
 
     override fun updateBatchesData() {
-        
+        spriteRenderers.forEach { spriteRenderer ->
+            val sprite = spriteRenderer.sprite ?: return@forEach
+
+            val texture = sprite.texture
+            val batch = getAvailableBatch(texture, spriteRenderer.gameObject.transform.zIndex)
+            val textureID = batch.getTextureLocalID(texture)
+            val scale = spriteRenderer.gameObject.transform.scale
+            val position = spriteRenderer.gameObject.transform.position
+            val color = spriteRenderer.color
+            val uvCoordinates = sprite.uvCoordinates
+
+            spriteLocalVerticesPositions.forEachIndexed { index, vertexPosition ->
+                val scaledX = vertexPosition.x * scale.x
+                val scaleY = vertexPosition.y * scale.y
+
+                batch.pushVector2f(position)
+                batch.pushVector4f(color.toVector4f())
+                batch.pushVector2f(uvCoordinates[index])
+                batch.pushInt(textureID)
+            }
+        }
     }
 
     override fun addGameObject(gameObject: GameObject) {
@@ -70,9 +95,14 @@ class SpriteRenderer(window: Window) : Renderer(window) {
     }
 
     companion object {
-        private const val MaxBatchSize = 1000
-
         private const val projectionUniformName = "uProjection"
         private const val modelUniformName = "uModel"
+
+        private val spriteLocalVerticesPositions = listOf(
+            Vector2f(1f, 1f),
+            Vector2f(1f, 0f),
+            Vector2f(0f, 0f),
+            Vector2f(0f, 1f)
+        )
     }
 }

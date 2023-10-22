@@ -10,6 +10,9 @@ class SpriteRenderer(gameObject: GameObject) : Component(gameObject) {
     var sprite: Sprite? = null
         private set
 
+    val texture: Texture?
+        get() = sprite?.texture
+
     fun setColor(color: Color) {
         this.color = color
     }

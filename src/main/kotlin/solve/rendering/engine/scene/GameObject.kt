@@ -4,7 +4,7 @@ import solve.rendering.engine.components.Component
 import kotlin.reflect.KClass
 
 class GameObject(private val name: String) {
-    private val transform = Transform()
+    val transform = Transform()
     private val _components = mutableListOf<Component>()
     val components: List<Component>
         get() = _components
