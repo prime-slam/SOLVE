@@ -2,20 +2,15 @@ package solve.rendering.engine.scene
 
 import solve.rendering.engine.camera.Camera
 
-class Scene(sceneData: SceneData) {
-    var camera: Camera
+class Scene(camera: Camera = Camera(), gameObjects: List<GameObject> = emptyList()) {
+    var camera: Camera = camera
         private set
 
-    private val _gameObjects: MutableList<GameObject>
+    private val _gameObjects = gameObjects.toMutableList()
     val gameObjects: List<GameObject>
         get() = _gameObjects
 
     private var isStarted = false
-
-    init {
-        _gameObjects = sceneData.gameObjects.toMutableList()
-        camera = sceneData.camera
-    }
 
     fun start() {
         _gameObjects.forEach { it.start() }

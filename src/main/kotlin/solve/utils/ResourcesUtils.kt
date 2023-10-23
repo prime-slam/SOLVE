@@ -13,6 +13,11 @@ fun loadResourcesImage(resourcesPath: String): Image? {
     return Image(imageFileStream)
 }
 
+fun readResourcesFileText(resourcesPath: String): String? {
+    val fileAbsolutePath = getResourceAbsolutePath(resourcesPath) ?: return null
+    return readFileText(fileAbsolutePath)
+}
+
 // Reads a text of the file at the given path.
 fun readFileText(filePath: String): String? {
     val file = File(filePath)
@@ -51,6 +56,12 @@ fun loadBufferedImage(filePath: String): BufferedImage? {
     return image
 }
 
-fun getResourceAbsolutePath(resourcesPath: String) = getResource(resourcesPath)?.path
+fun getResourceAbsolutePath(resourcesPath: String): String? {
+    val resourceAbsolutePath = getResource(resourcesPath)?.path
+    if (resourceAbsolutePath.isNullOrEmpty())
+        return null
+
+    return resourceAbsolutePath.substring(1 .. resourceAbsolutePath.lastIndex)
+}
 
 private fun getResource(resourcesPath: String) = Any::class::class.java.getResource("/$resourcesPath")

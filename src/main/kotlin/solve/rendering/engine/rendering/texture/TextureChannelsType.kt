@@ -1,7 +1,7 @@
 package solve.rendering.engine.rendering.texture
 
-import com.huskerdev.openglfx.core.GL_RGBA
 import org.lwjgl.opengl.GL11.GL_RGB
+import org.lwjgl.opengl.GL11.GL_RGBA
 
 enum class TextureChannelsType(val channelsNumber: Int, val openGLType: Int) {
     RGB(3, GL_RGB),

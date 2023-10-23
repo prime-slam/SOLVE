@@ -118,7 +118,7 @@ dependencies {
     runtimeOnly("org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNativesClassifier")
     runtimeOnly("org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNativesClassifier")
     runtimeOnly("org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNativesClassifier")
-    runtimeOnly("org.lwjgl:lwjgl:$lwjglVersion:$lwjglNativesClassifier")
+    runtimeOnly("org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNativesClassifier")
     implementation("org.joml:joml:$jomlVersion")
 }
 

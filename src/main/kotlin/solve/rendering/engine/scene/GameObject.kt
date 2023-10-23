@@ -2,9 +2,12 @@ package solve.rendering.engine.scene
 
 import solve.rendering.engine.components.Component
 
-class GameObject(private val name: String) {
-    val transform = Transform()
-    private val _components = mutableListOf<Component>()
+class GameObject(
+    val name: String,
+    val transform: Transform = Transform(),
+    components: List<Component> = emptyList()
+) {
+    private val _components = components.toMutableList()
     val components: List<Component>
         get() = _components
 
@@ -13,6 +16,7 @@ class GameObject(private val name: String) {
 
     init {
         _gameObjects.add(this)
+        _components.forEach { it.addToGameObject(this) }
     }
 
     fun start() {
@@ -24,6 +28,9 @@ class GameObject(private val name: String) {
     }
 
     fun addComponent(component: Component) {
+        if (_components.contains(component))
+            return
+
         _components.add(component)
     }
 

@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL15.glBufferData
 import org.lwjgl.opengl.GL15.glBufferSubData
 import org.lwjgl.opengl.GL15.glDeleteBuffers
 import org.lwjgl.opengl.GL15.glGenBuffers
+import org.lwjgl.opengl.GL20.glDisableVertexAttribArray
 import org.lwjgl.opengl.GL20.glEnableVertexAttribArray
 import org.lwjgl.opengl.GL20.glVertexAttribPointer
 import org.lwjgl.opengl.GL30.glBindVertexArray
@@ -50,12 +51,21 @@ open class RenderBatch(
         initializeAttributes()
     }
 
+    open fun cleanupData() {
+        verticesDataBufferIndexPointer = 0
+        isTexturesFull = false
+        isFull = false
+        textures.clear()
+    }
+
     fun bind() {
         glBindVertexArray(vaoID)
-        textures.forEachIndexed { index, texture -> texture.bindToSlot(index + 1) }
+        attributes.forEachIndexed { index, _ -> glEnableVertexAttribArray(index) }
+        textures.forEachIndexed { index, texture -> texture.bindToSlot(index) }
     }
 
     fun unbind() {
+        attributes.forEachIndexed { index, _ -> glDisableVertexAttribArray(index) }
         textures.forEach { it.unbind() }
         glBindVertexArray(0)
     }
@@ -98,10 +108,8 @@ open class RenderBatch(
             println("The vertices data buffer seems to not have correct amount of data!")
         }
 
-        return (
-            verticesDataBufferIndexPointer * primitiveType.drawingOrderElementsNumber /
-                (attributesNumber * primitiveType.verticesNumber)
-            )
+        return verticesDataBufferIndexPointer / attributesNumber / primitiveType.verticesNumber *
+                primitiveType.drawingOrderElementsNumber
     }
 
     private fun initializeBuffers() {
@@ -120,26 +128,27 @@ open class RenderBatch(
 
     private fun initializeAttributes() {
         var attributesSizeOffset = 0L
-        for (i in 0 until attributes.count()) {
-            val attribute = attributes[i]
+        attributes.forEachIndexed { index, attribute ->
             glVertexAttribPointer(
-                i,
+                index,
                 attribute.number,
                 attribute.openGLType,
                 false,
                 attributesTotalSize,
                 attributesSizeOffset
             )
-            glEnableVertexAttribArray(i)
+            glEnableVertexAttribArray(index)
             attributesSizeOffset += attribute.size
         }
     }
 
     private fun generateElementsIndices(): IntArray {
-        val elementsBuffer = IntArray(maxBatchSize * primitiveType.verticesNumber)
+        val elementsBuffer = IntArray(maxBatchSize * primitiveType.drawingOrderElementsNumber)
         for (i in 0 until maxBatchSize) {
-            primitiveType.verticesDrawingOrder.forEach { vertexIndex ->
-                elementsBuffer[i * primitiveType.verticesNumber] = i + vertexIndex
+            val elementFirstVertexIndex = i * primitiveType.verticesNumber
+            val bufferIndexPointer = i * primitiveType.drawingOrderElementsNumber
+            primitiveType.verticesDrawingOrder.forEachIndexed { index, vertexIndex ->
+                elementsBuffer[bufferIndexPointer + index] = elementFirstVertexIndex + vertexIndex
             }
         }
 

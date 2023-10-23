@@ -37,7 +37,7 @@ import org.lwjgl.opengl.GL20.glUniformMatrix4fv
 import org.lwjgl.opengl.GL20.glUseProgram
 import org.lwjgl.opengl.GL20.glValidateProgram
 import solve.rendering.engine.shader.ShaderType.Companion.getShaderTypeID
-import solve.utils.readFileText
+import solve.utils.readResourcesFileText
 
 class ShaderProgram {
     private val shaderProgramID: Int = glCreateProgram()
@@ -51,7 +51,7 @@ class ShaderProgram {
     }
 
     fun addShader(resourcesFilePath: String, shaderType: ShaderType) {
-        val shaderText = readFileText(resourcesFilePath)
+        val shaderText = readResourcesFileText(resourcesFilePath)
 
         if (shaderText == null) {
             println("The shader file ($resourcesFilePath) cannot be read!")

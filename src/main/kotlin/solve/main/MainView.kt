@@ -23,6 +23,7 @@ import solve.importer.controller.ImporterController
 import solve.importer.view.ImporterView
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
+import solve.rendering.canvas.OpenGLCanvas
 import solve.scene.view.SceneView
 import solve.settings.grid.view.GridSettingsView
 import solve.settings.visualization.VisualizationSettingsView
@@ -91,6 +92,8 @@ class MainView : View() {
         )
     )
 
+    private val canvas = OpenGLCanvas()
+
     private val leftSidePanelViews =
         createSidePanelsViews(leftSidePanelTabs, SidePanelLocation.Left, leftSidePanelTabs.first())
     private val rightSidePanelViews =
@@ -158,6 +161,8 @@ class MainView : View() {
         )
         mainViewSplitPane.addStylesheet(MainSplitPaneStyle::class)
         center = mainViewSplitPane
+        bottom = canvas.canvas
+        canvas.canvas.setMinSize(600.0, 600.0)
     }
 
     override val root = mainViewBorderPane
