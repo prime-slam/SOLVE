@@ -25,6 +25,7 @@ abstract class Renderer(protected val window: Window) {
         uploadUniforms(shaderProgram)
 
         if (needToRebuffer) {
+            cleanupBatchesData()
             updateBatchesData()
             rebufferBatches()
         }
@@ -40,6 +41,10 @@ abstract class Renderer(protected val window: Window) {
     fun cleanup() {
         batches.forEach { it.deleteBuffers() }
     }
+
+    abstract fun addGameObject(gameObject: GameObject)
+
+    abstract fun removeGameObject(gameObject: GameObject): Boolean
 
     protected fun getAvailableBatch(texture: Texture, requiredZIndex: Int): RenderBatch {
         batches.forEach { batch ->
@@ -70,12 +75,12 @@ abstract class Renderer(protected val window: Window) {
 
     protected abstract fun updateBatchesData()
 
-    protected abstract fun addGameObject(gameObject: GameObject)
-
-    protected abstract fun removeGameObject(gameObject: GameObject): Boolean
-
     private fun initialize() {
         shaderProgram = createShaderProgram()
+    }
+
+    private fun cleanupBatchesData() {
+        batches.forEach { it.cleanupData() }
     }
 
     private fun rebufferBatches() {

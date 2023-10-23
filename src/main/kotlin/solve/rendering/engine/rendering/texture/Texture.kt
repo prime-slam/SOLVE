@@ -1,13 +1,13 @@
 package solve.rendering.engine.rendering.texture
 
-import com.huskerdev.openglfx.core.GL_NEAREST
-import com.huskerdev.openglfx.core.GL_TEXTURE_MIN_FILTER
-import com.huskerdev.openglfx.core.GL_UNSIGNED_BYTE
+import org.lwjgl.opengl.GL11.GL_NEAREST
 import org.lwjgl.opengl.GL11.GL_REPEAT
 import org.lwjgl.opengl.GL11.GL_TEXTURE_2D
 import org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER
+import org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER
 import org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S
 import org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T
+import org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE
 import org.lwjgl.opengl.GL11.glBindTexture
 import org.lwjgl.opengl.GL11.glGenTextures
 import org.lwjgl.opengl.GL11.glTexImage2D
