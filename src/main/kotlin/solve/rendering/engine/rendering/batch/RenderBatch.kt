@@ -43,7 +43,8 @@ open class RenderBatch(
     private val attributesNumber = attributes.sumOf { it.number }
     private val attributesTotalSize = attributes.sumOf { it.size }
 
-    private val verticesDataBuffer = FloatArray(maxBatchSize * primitiveType.verticesNumber * attributesNumber)
+    private val verticesDataBufferSize = maxBatchSize * primitiveType.verticesNumber * attributesNumber
+    private val verticesDataBuffer = FloatArray(verticesDataBufferSize)
     private var verticesDataBufferIndexPointer = 0
 
     init {
@@ -61,7 +62,7 @@ open class RenderBatch(
     fun bind() {
         glBindVertexArray(vaoID)
         attributes.forEachIndexed { index, _ -> glEnableVertexAttribArray(index) }
-        textures.forEachIndexed { index, texture -> texture.bindToSlot(index) }
+        textures.forEachIndexed { index, texture -> texture.bindToSlot(index + 1) }
     }
 
     fun unbind() {
@@ -112,6 +113,11 @@ open class RenderBatch(
                 primitiveType.drawingOrderElementsNumber
     }
 
+    private fun checkIfFull() {
+        if (verticesDataBufferIndexPointer == verticesDataBufferSize)
+            isFull = true
+    }
+
     private fun initializeBuffers() {
         vaoID = glGenVertexArrays()
         glBindVertexArray(vaoID)
@@ -156,7 +162,13 @@ open class RenderBatch(
     }
 
     fun pushFloat(value: Float) {
+        if (isFull) {
+            println("Cannot push a float value! The vertices data buffer is full!")
+            return
+        }
+
         verticesDataBuffer[verticesDataBufferIndexPointer++] = value
+        checkIfFull()
     }
 
     fun pushVector2f(vector: Vector2f) {
@@ -172,11 +184,7 @@ open class RenderBatch(
     }
 
     fun pushInt(value: Int) {
-        val byteArray = ByteBuffer.allocate(Int.SIZE_BYTES).putInt(value).array()
-        val buffer = ByteBuffer.wrap(byteArray)
-        val floatValue = buffer.float
-
-        pushFloat(floatValue)
+        pushFloat(value.toFloat())
     }
 
     companion object {

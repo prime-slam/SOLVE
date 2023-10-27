@@ -20,9 +20,9 @@ abstract class Renderer(protected val window: Window) {
     }
 
     open fun render() {
-        beforeRender()
         shaderProgram.use()
         uploadUniforms(shaderProgram)
+        beforeRender()
 
         if (needToRebuffer) {
             cleanupBatchesData()
@@ -35,6 +35,7 @@ abstract class Renderer(protected val window: Window) {
             glDrawElements(batch.primitiveType.openGLPrimitive, batch.getVerticesNumber(), GL_UNSIGNED_INT, 0)
             batch.unbind()
         }
+
         shaderProgram.detach()
     }
 
@@ -42,24 +43,29 @@ abstract class Renderer(protected val window: Window) {
         batches.forEach { it.deleteBuffers() }
     }
 
-    abstract fun addGameObject(gameObject: GameObject)
+    open fun addGameObject(gameObject: GameObject) { }
 
-    abstract fun removeGameObject(gameObject: GameObject): Boolean
+    open fun removeGameObject(gameObject: GameObject): Boolean = false
 
-    protected fun getAvailableBatch(texture: Texture, requiredZIndex: Int): RenderBatch {
+    protected fun getAvailableBatch(texture: Texture?, requiredZIndex: Int): RenderBatch {
         batches.forEach { batch ->
-            if (!batch.isFull && !batch.isTexturesFull && batch.zIndex == requiredZIndex) {
-                batch.addTexture(texture)
-                return batch
-            }
+            if (batch.isFull || batch.zIndex != requiredZIndex)
+                return@forEach
 
-            if (batch.isTexturesFull && batch.containsTexture(texture) && batch.zIndex == requiredZIndex) {
+            if (texture == null)
+                return batch
+
+            if (batch.containsTexture(texture))
+                return batch
+
+            if (!batch.isTexturesFull) {
+                batch.addTexture(texture)
                 return batch
             }
         }
 
         val batch = createNewBatch(requiredZIndex)
-        batch.addTexture(texture)
+        texture?.let { batch.addTexture(texture) }
         batches.add(batch)
 
         return batch

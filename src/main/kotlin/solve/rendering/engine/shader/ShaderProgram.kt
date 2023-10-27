@@ -4,8 +4,11 @@ import org.joml.Matrix2f
 import org.joml.Matrix3f
 import org.joml.Matrix4f
 import org.joml.Vector2f
+import org.joml.Vector2i
 import org.joml.Vector3f
+import org.joml.Vector3i
 import org.joml.Vector4f
+import org.joml.Vector4i
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL20.GL_COMPILE_STATUS
 import org.lwjgl.opengl.GL20.GL_FALSE
@@ -29,8 +32,11 @@ import org.lwjgl.opengl.GL20.glUniform1fv
 import org.lwjgl.opengl.GL20.glUniform1i
 import org.lwjgl.opengl.GL20.glUniform1iv
 import org.lwjgl.opengl.GL20.glUniform2f
+import org.lwjgl.opengl.GL20.glUniform2i
 import org.lwjgl.opengl.GL20.glUniform3f
+import org.lwjgl.opengl.GL20.glUniform3i
 import org.lwjgl.opengl.GL20.glUniform4f
+import org.lwjgl.opengl.GL20.glUniform4i
 import org.lwjgl.opengl.GL20.glUniformMatrix2fv
 import org.lwjgl.opengl.GL20.glUniformMatrix3fv
 import org.lwjgl.opengl.GL20.glUniformMatrix4fv
@@ -127,6 +133,21 @@ class ShaderProgram {
     fun uploadVector4f(variableName: String, vector: Vector4f) {
         val variableLocation = getVariableLocationWithUse(variableName)
         glUniform4f(variableLocation, vector.x, vector.y, vector.z, vector.w)
+    }
+
+    fun uploadVector2i(variableName: String, vector: Vector2i) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        glUniform2i(variableLocation, vector.x, vector.y)
+    }
+
+    fun uploadVector3i(variableName: String, vector: Vector3i) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        glUniform3i(variableLocation, vector.x, vector.y, vector.z)
+    }
+
+    fun uploadVector4i(variableName: String, vector: Vector4i) {
+        val variableLocation = getVariableLocationWithUse(variableName)
+        glUniform4i(variableLocation, vector.x, vector.y, vector.z, vector.w)
     }
 
     fun uploadMatrix2f(variableName: String, matrix: Matrix2f) {
