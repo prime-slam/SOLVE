@@ -2,7 +2,6 @@ package solve.rendering.engine.camera
 
 import org.joml.Matrix4f
 import org.joml.Vector2f
-import org.joml.Vector3f
 import solve.utils.times
 
 class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
@@ -22,13 +21,13 @@ class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
         return orthoMatrix * zoomMatrix
     }
 
-    private fun calculateZoomMatrix(): Matrix4f = Matrix4f().scale(zoom)
+    private fun calculateZoomMatrix(): Matrix4f = Matrix4f().scale(zoom * DefaultCameraScaleCoefficient)
 
     private fun calculateOrthoMatrix(projectionSize: Vector2f): Matrix4f {
         val projectionLeft = position.x - projectionSize.x / 2f
         val projectionRight = position.x + projectionSize.x / 2f
-        val projectionTop = position.y - projectionSize.y / 2f
-        val projectionBottom = position.y + projectionSize.y / 2f
+        val projectionTop = position.y + projectionSize.y / 2f
+        val projectionBottom = position.y - projectionSize.y / 2f
 
         return Matrix4f().ortho(
             projectionLeft,
@@ -41,10 +40,8 @@ class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
     }
 
     companion object {
-        private const val ProjectionOrthoZNear = 0.01f
+        private const val DefaultCameraScaleCoefficient = 1f
+        private const val ProjectionOrthoZNear = -100f
         private const val ProjectionOrthoZFar = 100f
-
-        private val cameraFrontVector = Vector3f(0f, 0f, -1f)
-        private val cameraUpVector = Vector3f(0f, 1f, 0f)
     }
 }

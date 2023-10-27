@@ -2,9 +2,6 @@ package solve.rendering.engine.rendering.renderers
 
 import org.joml.Matrix4f
 import org.joml.Vector2f
-import org.joml.Vector3f
-import org.lwjgl.opengl.GL13.GL_TEXTURE0
-import org.lwjgl.opengl.GL13.glActiveTexture
 import solve.constants.ShadersDefaultFragmentPath
 import solve.constants.ShadersDefaultVertexPath
 import solve.rendering.engine.Window
@@ -22,7 +19,7 @@ class DefaultRenderer(
 ) : Renderer(window) {
     override val maxBatchSize = 1000
 
-    private var modelsCommonMatrix: Matrix4f = Matrix4f().identity()
+    private var modelsCommonMatrix = Matrix4f().identity()
     private val spriteRenderers = mutableListOf<SpriteRenderer>()
 
     fun changeModelsCommonMatrix(newMatrix: Matrix4f) {
@@ -55,10 +52,8 @@ class DefaultRenderer(
     }
 
     override fun uploadUniforms(shaderProgram: ShaderProgram) {
-        shaderProgram.uploadMatrix4f(ProjectionUniformName, Matrix4f().identity().scale(0.001f))
-        shaderProgram.uploadTexture("uTex", 0)
-        glActiveTexture(GL_TEXTURE0)
-        //shaderProgram.uploadMatrix4f(modelUniformName, modelsCommonMatrix)
+        shaderProgram.uploadMatrix4f(ProjectionUniformName, window.calculateProjectionMatrix())
+        shaderProgram.uploadMatrix4f(ModelUniformName, modelsCommonMatrix)
     }
 
     override fun updateBatchesData() {
@@ -97,6 +92,7 @@ class DefaultRenderer(
 
     override fun removeGameObject(gameObject: GameObject): Boolean {
         val spriteRenderer = gameObject.getComponentOfType<SpriteRenderer>() ?: return false
+
         return spriteRenderers.remove(spriteRenderer)
     }
 

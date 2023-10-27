@@ -1,6 +1,6 @@
 package solve.rendering.engine.rendering.texture
 
-import org.lwjgl.opengl.GL11.GL_NEAREST
+import org.lwjgl.opengl.GL11.GL_LINEAR
 import org.lwjgl.opengl.GL11.GL_REPEAT
 import org.lwjgl.opengl.GL11.GL_TEXTURE_2D
 import org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER
@@ -57,36 +57,26 @@ class Texture(private val resourcesPath: String) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     }
 
     private fun loadTexture() {
-        val absoluteImagePath = getResourceAbsolutePath(resourcesPath)
-        if (absoluteImagePath == null) {
+        val absolutePath = getResourceAbsolutePath(resourcesPath)
+        if (absolutePath == null) {
             println("The path of the reading texture is null!")
             return
         }
 
-        val widthBuffer = IntArray(1)
-        val heightBuffer = IntArray(1)
-        val channelsNumberBuffer = IntArray(1)
-
-        stbi_set_flip_vertically_on_load(true)
-        val image = stbi_load(absoluteImagePath, widthBuffer, heightBuffer, channelsNumberBuffer, 0)
-
-        if (image == null) {
-            println("The image of the read texture is null!")
+        val textureData = loadData(absolutePath)
+        if (textureData == null) {
+            println("The read texture data is null!")
             return
         }
 
-        width = widthBuffer.first()
-        height = heightBuffer.first()
-        val imageChannelsType = TextureChannelsType.getTextureChannelsType(channelsNumberBuffer.first())
-        if (imageChannelsType == null) {
-            println("Wrong type of the texture image channels!")
-            return
-        }
+        width = textureData.width
+        height = textureData.height
+        channelsType = textureData.channelsType
 
         glTexImage2D(
             GL_TEXTURE_2D,
@@ -97,9 +87,8 @@ class Texture(private val resourcesPath: String) {
             0,
             channelsType.openGLType,
             GL_UNSIGNED_BYTE,
-            image
+            textureData.data
         )
-        stbi_image_free(image)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -122,5 +111,32 @@ class Texture(private val resourcesPath: String) {
         result = primeNumber * result + channelsType.hashCode()
 
         return result
+    }
+
+    companion object {
+        fun loadData(path: String): TextureData? {
+            val widthBuffer = IntArray(1)
+            val heightBuffer = IntArray(1)
+            val channelsNumberBuffer = IntArray(1)
+
+            stbi_set_flip_vertically_on_load(true)
+            val data = stbi_load(path, widthBuffer, heightBuffer, channelsNumberBuffer, 0)
+
+            if (data == null) {
+                println("The data of the read texture is null!")
+                return null
+            }
+
+            val width = widthBuffer.first()
+            val height = heightBuffer.first()
+            val imageChannelsType = TextureChannelsType.getTextureChannelsType(channelsNumberBuffer.first())
+            if (imageChannelsType == null) {
+                println("Wrong type of the texture image channels!")
+                return null
+            }
+            stbi_image_free(data)
+
+            return TextureData(data, width, height, imageChannelsType)
+        }
     }
 }

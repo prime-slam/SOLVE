@@ -5,6 +5,10 @@ import com.huskerdev.openglfx.events.GLInitializeEvent
 import com.huskerdev.openglfx.events.GLRenderEvent
 import com.huskerdev.openglfx.events.GLReshapeEvent
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
+import javafx.application.Platform
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.lwjgl.BufferUtils
@@ -15,6 +19,7 @@ import org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT
 import org.lwjgl.opengl.GL11.GL_DEPTH_TEST
 import org.lwjgl.opengl.GL11.GL_FLOAT
 import org.lwjgl.opengl.GL11.GL_LEQUAL
+import org.lwjgl.opengl.GL11.GL_LINE_SMOOTH
 import org.lwjgl.opengl.GL11.GL_PROJECTION
 import org.lwjgl.opengl.GL11.GL_TRIANGLES
 import org.lwjgl.opengl.GL11.GL_UNSIGNED_INT
@@ -52,6 +57,7 @@ import solve.rendering.engine.scene.Transform
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.structures.Color
+import kotlin.math.sin
 import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 
 class OpenGLCanvas {
@@ -67,6 +73,10 @@ class OpenGLCanvas {
 
     private lateinit var window: Window
     private lateinit var renderer: DefaultRenderer
+    private lateinit var gameObject: GameObject
+    private var gs = mutableListOf<GameObject>()
+
+    var time = 0f
 
     /*private lateinit var shaderProgram: ShaderProgram
     private lateinit var camera: Camera
@@ -77,8 +87,11 @@ class OpenGLCanvas {
     private var vboID = 0
     private var eboID = 0*/
 
-    fun draw() {
+    fun draw(deltaTime: Float) {
+        println(1/deltaTime)
         renderer.render()
+        time += deltaTime
+        gameObject.transform.position.x = sin(time) * 100
 
         /*shaderProgram.use()
         shaderProgram.uploadTexture("uTex", 0)
@@ -157,33 +170,44 @@ class OpenGLCanvas {
 
         texture = Texture("icons/img.png")*/
 
-        window = Window(600, 600, Camera(Vector2f(), 1f))
+        window = Window(1920, 600, Camera(Vector2f(), 1f))
         val scene = Scene(Camera())
         val texture1 = Texture("icons/img.png")
-        val gameObject1 = GameObject(
+        gameObject = GameObject(
             "gameObject1",
-            Transform(Vector2f(500f, 500f), 0f, Vector2f(10f, 10f)),
+            Transform(Vector2f(), 0f, Vector2f(1000f, 1000f)),
             listOf(SpriteRenderer(texture1))
         )
-        val gameObject2 = GameObject(
+
+        /*val gameObject2 = GameObject(
             "gameObject2",
-            Transform(Vector2f(0f, 0f), 0f, Vector2f(100f , 100f)),
+            Transform(Vector2f(1f, 0f)),
             listOf(SpriteRenderer(texture1).also { it.setColor(Color.black) })
         )
         val gameObject3 = GameObject(
             "gameObject3",
-            Transform(Vector2f(-500f, -500f), 0f, Vector2f(50f, 50f)),
+            Transform(Vector2f(300f, 300f)),
             listOf(SpriteRenderer(texture1))
-        )
-        scene.addGameObject(gameObject1)
-        scene.addGameObject(gameObject2)
-        scene.addGameObject(gameObject3)
+        )*/
+        scene.addGameObject(gameObject)
+        //scene.addGameObject(gameObject2)
+        //scene.addGameObject(gameObject3)
         window.changeScene(scene)
 
         renderer = DefaultRenderer(window)
-        renderer.addGameObject(gameObject1)
-        renderer.addGameObject(gameObject2)
-        renderer.addGameObject(gameObject3)
+        renderer.addGameObject(gameObject)
+        //renderer.addGameObject(gameObject2)
+        //renderer.addGameObject(gameObject3)
+
+
+        for (i in -20 until 20)
+            for (j in -20 until 20) {
+            renderer.addGameObject(            GameObject(
+                "gameObject1",
+                Transform(Vector2f(i * 10f, j * 10f), 0f, Vector2f(100f, 100f)),
+                listOf(SpriteRenderer(texture1))
+            ))
+        }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -193,7 +217,7 @@ class OpenGLCanvas {
 
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        draw()
+        draw(event.delta.toFloat())
     }
 
     private fun reshape(event: GLReshapeEvent) {

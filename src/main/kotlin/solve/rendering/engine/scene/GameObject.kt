@@ -3,10 +3,13 @@ package solve.rendering.engine.scene
 import solve.rendering.engine.components.Component
 
 class GameObject(
-    val name: String,
+    name: String,
     val transform: Transform = Transform(),
     components: List<Component> = emptyList()
 ) {
+    var name = name
+        private set
+
     private val _components = components.toMutableList()
     val components: List<Component>
         get() = _components
@@ -36,6 +39,10 @@ class GameObject(
 
     fun removeComponent(component: Component) {
         _components.remove(component)
+    }
+
+    fun setName(name: String) {
+        this.name = name
     }
 
     fun hasComponent(component: Component) = components.contains(component)
