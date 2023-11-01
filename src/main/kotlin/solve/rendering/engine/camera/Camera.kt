@@ -2,7 +2,7 @@ package solve.rendering.engine.camera
 
 import org.joml.Matrix4f
 import org.joml.Vector2f
-import solve.utils.times
+import solve.rendering.engine.utils.times
 
 class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
     var zoom: Float = zoom
