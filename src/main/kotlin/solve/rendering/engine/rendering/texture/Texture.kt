@@ -89,6 +89,8 @@ class Texture(private val resourcesPath: String) {
             GL_UNSIGNED_BYTE,
             textureData.data
         )
+
+        freeData(textureData)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -134,9 +136,12 @@ class Texture(private val resourcesPath: String) {
                 println("Wrong type of the texture image channels!")
                 return null
             }
-            stbi_image_free(data)
 
             return TextureData(data, width, height, imageChannelsType)
+        }
+
+        fun freeData(textureData: TextureData) {
+            stbi_image_free(textureData.data)
         }
     }
 }

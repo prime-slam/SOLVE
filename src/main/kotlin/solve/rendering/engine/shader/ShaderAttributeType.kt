@@ -1,5 +1,6 @@
 package solve.rendering.engine.shader
 
+import org.lwjgl.opengl.GL11.GL_BYTE
 import org.lwjgl.opengl.GL11.GL_FLOAT
 import org.lwjgl.opengl.GL11.GL_INT
 

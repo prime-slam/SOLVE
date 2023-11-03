@@ -46,10 +46,12 @@ import org.lwjgl.opengl.GL30.glDisableVertexAttribArray
 import org.lwjgl.opengl.GL30.glEnableVertexAttribArray
 import solve.constants.ShadersDefaultFragmentPath
 import solve.constants.ShadersDefaultVertexPath
+import solve.project.model.ProjectFrame
 import solve.rendering.engine.Window
 import solve.rendering.engine.camera.Camera
 import solve.rendering.engine.components.SpriteRenderer
 import solve.rendering.engine.rendering.renderers.DefaultRenderer
+import solve.rendering.engine.rendering.renderers.FramesRenderer
 import solve.rendering.engine.rendering.texture.Texture
 import solve.rendering.engine.scene.GameObject
 import solve.rendering.engine.scene.Scene
@@ -57,6 +59,8 @@ import solve.rendering.engine.scene.Transform
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.structures.Color
+import solve.utils.getResourceAbsolutePath
+import java.nio.file.Path
 import kotlin.math.sin
 import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 
@@ -72,9 +76,7 @@ class OpenGLCanvas {
     }
 
     private lateinit var window: Window
-    private lateinit var renderer: DefaultRenderer
-    private lateinit var gameObject: GameObject
-    private var gs = mutableListOf<GameObject>()
+    private lateinit var renderer: FramesRenderer
 
     var time = 0f
 
@@ -91,7 +93,6 @@ class OpenGLCanvas {
         println(1/deltaTime)
         renderer.render()
         time += deltaTime
-        gameObject.transform.position.x = sin(time) * 100
 
         /*shaderProgram.use()
         shaderProgram.uploadTexture("uTex", 0)
@@ -170,44 +171,12 @@ class OpenGLCanvas {
 
         texture = Texture("icons/img.png")*/
 
-        window = Window(1920, 600, Camera(Vector2f(), 1f))
-        val scene = Scene(Camera())
-        val texture1 = Texture("icons/img.png")
-        gameObject = GameObject(
-            "gameObject1",
-            Transform(Vector2f(), 0f, Vector2f(1000f, 1000f)),
-            listOf(SpriteRenderer(texture1))
-        )
-
-        /*val gameObject2 = GameObject(
-            "gameObject2",
-            Transform(Vector2f(1f, 0f)),
-            listOf(SpriteRenderer(texture1).also { it.setColor(Color.black) })
-        )
-        val gameObject3 = GameObject(
-            "gameObject3",
-            Transform(Vector2f(300f, 300f)),
-            listOf(SpriteRenderer(texture1))
-        )*/
-        scene.addGameObject(gameObject)
-        //scene.addGameObject(gameObject2)
-        //scene.addGameObject(gameObject3)
+        window = Window(1920, 600, Camera(Vector2f(0f, 0f), 5f))
+        val scene = Scene()
         window.changeScene(scene)
-
-        renderer = DefaultRenderer(window)
-        renderer.addGameObject(gameObject)
-        //renderer.addGameObject(gameObject2)
-        //renderer.addGameObject(gameObject3)
-
-
-        for (i in -20 until 20)
-            for (j in -20 until 20) {
-            renderer.addGameObject(            GameObject(
-                "gameObject1",
-                Transform(Vector2f(i * 10f, j * 10f), 0f, Vector2f(100f, 100f)),
-                listOf(SpriteRenderer(texture1))
-            ))
-        }
+        val frames = List<ProjectFrame>(100000) { ProjectFrame(0L, Path.of(getResourceAbsolutePath("icons/img.png")!!), emptyList()) }
+        renderer = FramesRenderer(window)
+        renderer.setSceneFrames(frames)
     }
 
     @Suppress("UNUSED_PARAMETER")

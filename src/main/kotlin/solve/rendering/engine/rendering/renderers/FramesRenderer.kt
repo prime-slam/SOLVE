@@ -1,10 +1,13 @@
 package solve.rendering.engine.rendering.renderers
 
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import org.joml.Vector2i
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE
 import org.lwjgl.opengl.GL11.glBindTexture
 import org.lwjgl.opengl.GL11.glGenTextures
+import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY
 import org.lwjgl.opengl.GL45.glTextureStorage3D
 import org.lwjgl.opengl.GL45.glTextureSubImage3D
@@ -44,12 +47,19 @@ class FramesRenderer(
 
     private var cameraLastGridCellPosition = Vector2i(0)
 
+    val texture = Texture("icons/img.png")
+
     fun changeModelsCommonMatrix(newMatrix: Matrix4f) {
         modelsCommonMatrix = newMatrix
     }
 
     fun setSceneFrames(frames: List<ProjectFrame>) {
+        if (frames.isEmpty())
+            return
+
         this.frames = frames
+        initializeTexturesBuffers(frames)
+
         needToRebuffer = true
     }
 
@@ -68,19 +78,24 @@ class FramesRenderer(
         shaderProgram.uploadMatrix4f(ModelUniformName, modelsCommonMatrix)
         shaderProgram.uploadInt(GridWidthUniformName, gridWidth)
         shaderProgram.uploadVector2i(BuffersSizeUniformName, buffersSize)
+        shaderProgram.uploadInt(TexturesArrayUniformName, buffersTexturesArrayID)
     }
 
     override fun createNewBatch(zIndex: Int) =
-        RenderBatch(maxBatchSize, zIndex, PrimitiveType.Point, listOf(ShaderAttributeType.FLOAT2))
+        RenderBatch(maxBatchSize, zIndex, PrimitiveType.Point, listOf(ShaderAttributeType.FLOAT))
 
 
     override fun updateBatchesData() {
-        frames.forEach {
-           // val
+        frames.forEachIndexed { index, _ ->
+            val batch = getAvailableBatch(null, 0)
+            //val frameGridCellPosition = Vector2f((1..5).random().toFloat(), (1..5).random().toFloat())
+            batch.pushInt(index % 1000);
         }
     }
 
     override fun beforeRender() {
+        texture.bindToSlot(1)
+
         val cameraGridCellPosition = getCameraGridCellPosition()
         if (cameraGridCellPosition != cameraLastGridCellPosition) {
             updateBuffersTextures(cameraGridCellPosition)
@@ -106,7 +121,7 @@ class FramesRenderer(
     private fun getFramesAtRect(rect: IntRect): List<List<ProjectFrame>> {
         val framesRect = mutableListOf<List<ProjectFrame>>()
         for (y in rect.y0 until rect.y0 + rect.height) {
-            framesRect.add(frames.subList(rect.x0, rect.x0 + rect.width - 1))
+            framesRect.add(frames.subList(rect.x0, rect.x0 + rect.width))
         }
 
         return framesRect
@@ -117,15 +132,13 @@ class FramesRenderer(
             return
 
         val buffersOffset = Vector2i(framesRect.x0 % buffersSize.x, framesRect.y0 % buffersSize.y)
-        val framesWidth = rectFrames.first().count()
-        val framesHeight = rectFrames.count()
-        if (framesWidth + buffersOffset.x > buffersSize.x || framesHeight + buffersOffset.y > buffersSize.y) {
+        if (framesRect.width + buffersOffset.x > buffersSize.x || framesRect.height + buffersOffset.y > buffersSize.y) {
             println("The size of the loading frames is out of buffers bounds!")
             return
         }
 
-        for (y in 0 until framesHeight) {
-            for (x in 0 until framesWidth) {
+        for (y in 0 until framesRect.height) {
+            for (x in 0 until framesRect.width) {
                 val textureBuffersIndex = (y + buffersOffset.y) * buffersSize.x + x + buffersOffset.x
                 uploadFrameToBuffer(rectFrames[y][x], textureBuffersIndex)
             }
@@ -149,20 +162,16 @@ class FramesRenderer(
         }
     }
 
-    private fun initializeTexturesBuffers(
-        framesWidth: Int,
-        framesHeight: Int,
-        framesChannelsType: TextureChannelsType
-    ) {
+    private fun initializeTexturesBuffers(frames: List<ProjectFrame>) {
         val firstTextureData = Texture.loadData(frames.first().imagePath.toString())
         if (firstTextureData == null) {
             println("The read texture is null!")
             return
         }
 
-        this.framesWidth = framesWidth
-        this.framesHeight = framesHeight
-        this.framesChannelsType = framesChannelsType
+        framesWidth = firstTextureData.width
+        framesHeight = firstTextureData.height
+        framesChannelsType = firstTextureData.channelsType
 
         buffersTexturesArrayID = glGenTextures()
         glBindTexture(GL_TEXTURE_2D_ARRAY, buffersTexturesArrayID)
@@ -196,6 +205,8 @@ class FramesRenderer(
             GL_UNSIGNED_BYTE,
             textureData.data
         )
+
+        Texture.freeData(textureData)
     }
 
     companion object {
@@ -203,9 +214,9 @@ class FramesRenderer(
         private const val ModelUniformName = "uModel"
         private const val GridWidthUniformName = "uGridWidth"
         private const val BuffersSizeUniformName = "uBuffersSize"
-        private const val TexturesUniformName = "uTextures"
+        private const val TexturesArrayUniformName = "uTextures"
 
-        private const val DefaultGridWidth = 5
+        private const val DefaultGridWidth = 50
 
         private val defaultBuffersSize = Vector2i(10, 10)
     }

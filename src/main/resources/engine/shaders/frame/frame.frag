@@ -1,13 +1,12 @@
 #version 330 core
 
 in vec2 fTexCoords;
-in int fTexID;
 
-uniform sampler2DArray uTextures;
+uniform sampler2D uTextures[2];
 
 out vec4 color;
 
 void main()
 {
-    color = texture(uTextures, vec3(fTexCoords, fTexID));
+    color = texture(uTextures[1], fTexCoords);
 }
