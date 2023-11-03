@@ -5,63 +5,28 @@ import com.huskerdev.openglfx.events.GLInitializeEvent
 import com.huskerdev.openglfx.events.GLRenderEvent
 import com.huskerdev.openglfx.events.GLReshapeEvent
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
-import javafx.application.Platform
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import org.joml.Matrix4f
 import org.joml.Vector2f
-import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT
 import org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT
 import org.lwjgl.opengl.GL11.GL_DEPTH_TEST
-import org.lwjgl.opengl.GL11.GL_FLOAT
 import org.lwjgl.opengl.GL11.GL_LEQUAL
-import org.lwjgl.opengl.GL11.GL_LINE_SMOOTH
 import org.lwjgl.opengl.GL11.GL_PROJECTION
-import org.lwjgl.opengl.GL11.GL_TRIANGLES
-import org.lwjgl.opengl.GL11.GL_UNSIGNED_INT
 import org.lwjgl.opengl.GL11.glClear
 import org.lwjgl.opengl.GL11.glDepthFunc
-import org.lwjgl.opengl.GL11.glDrawElements
 import org.lwjgl.opengl.GL11.glEnable
 import org.lwjgl.opengl.GL11.glFrustum
 import org.lwjgl.opengl.GL11.glLoadIdentity
 import org.lwjgl.opengl.GL11.glMatrixMode
 import org.lwjgl.opengl.GL11.glTranslatef
-import org.lwjgl.opengl.GL13.GL_TEXTURE0
-import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
-import org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER
-import org.lwjgl.opengl.GL15.GL_STATIC_DRAW
-import org.lwjgl.opengl.GL15.glActiveTexture
-import org.lwjgl.opengl.GL15.glBindBuffer
-import org.lwjgl.opengl.GL15.glBufferData
-import org.lwjgl.opengl.GL15.glGenBuffers
-import org.lwjgl.opengl.GL20C
-import org.lwjgl.opengl.GL30
-import org.lwjgl.opengl.GL30.glBindVertexArray
-import org.lwjgl.opengl.GL30.glDisableVertexAttribArray
-import org.lwjgl.opengl.GL30.glEnableVertexAttribArray
-import solve.constants.ShadersDefaultFragmentPath
-import solve.constants.ShadersDefaultVertexPath
 import solve.project.model.ProjectFrame
 import solve.rendering.engine.Window
 import solve.rendering.engine.camera.Camera
-import solve.rendering.engine.components.SpriteRenderer
-import solve.rendering.engine.rendering.renderers.DefaultRenderer
 import solve.rendering.engine.rendering.renderers.FramesRenderer
-import solve.rendering.engine.rendering.texture.Texture
-import solve.rendering.engine.scene.GameObject
 import solve.rendering.engine.scene.Scene
-import solve.rendering.engine.scene.Transform
-import solve.rendering.engine.shader.ShaderProgram
-import solve.rendering.engine.shader.ShaderType
-import solve.rendering.engine.structures.Color
 import solve.utils.getResourceAbsolutePath
 import java.nio.file.Path
-import kotlin.math.sin
 import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 
 class OpenGLCanvas {
@@ -90,7 +55,7 @@ class OpenGLCanvas {
     private var eboID = 0*/
 
     fun draw(deltaTime: Float) {
-        println(1/deltaTime)
+        println(1 / deltaTime)
         renderer.render()
         time += deltaTime
 
@@ -174,7 +139,13 @@ class OpenGLCanvas {
         window = Window(1920, 600, Camera(Vector2f(0f, 0f), 5f))
         val scene = Scene()
         window.changeScene(scene)
-        val frames = List<ProjectFrame>(100000) { ProjectFrame(0L, Path.of(getResourceAbsolutePath("icons/img.png")!!), emptyList()) }
+        val frames = List<ProjectFrame>(100000) {
+            ProjectFrame(
+                0L,
+                Path.of(getResourceAbsolutePath("icons/img.png")!!),
+                emptyList()
+            )
+        }
         renderer = FramesRenderer(window)
         renderer.setSceneFrames(frames)
     }

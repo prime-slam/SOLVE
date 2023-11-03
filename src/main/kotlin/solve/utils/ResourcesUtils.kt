@@ -58,10 +58,11 @@ fun loadBufferedImage(filePath: String): BufferedImage? {
 
 fun getResourceAbsolutePath(resourcesPath: String): String? {
     val resourceAbsolutePath = getResource(resourcesPath)?.path
-    if (resourceAbsolutePath.isNullOrEmpty())
+    if (resourceAbsolutePath.isNullOrEmpty()) {
         return null
+    }
 
-    return resourceAbsolutePath.substring(1 .. resourceAbsolutePath.lastIndex)
+    return resourceAbsolutePath.substring(1..resourceAbsolutePath.lastIndex)
 }
 
 private fun getResource(resourcesPath: String) = Any::class::class.java.getResource("/$resourcesPath")

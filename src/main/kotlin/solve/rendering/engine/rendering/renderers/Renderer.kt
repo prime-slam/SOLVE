@@ -49,14 +49,17 @@ abstract class Renderer(protected val window: Window) {
 
     protected fun getAvailableBatch(texture: Texture?, requiredZIndex: Int): RenderBatch {
         batches.forEach { batch ->
-            if (batch.isFull || batch.zIndex != requiredZIndex)
+            if (batch.isFull || batch.zIndex != requiredZIndex) {
                 return@forEach
+            }
 
-            if (texture == null)
+            if (texture == null) {
                 return batch
+            }
 
-            if (batch.containsTexture(texture))
+            if (batch.containsTexture(texture)) {
                 return batch
+            }
 
             if (!batch.isTexturesFull) {
                 batch.addTexture(texture)

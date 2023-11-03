@@ -31,8 +31,9 @@ class GameObject(
     }
 
     fun addComponent(component: Component) {
-        if (_components.contains(component))
+        if (_components.contains(component)) {
             return
+        }
 
         _components.add(component)
     }
