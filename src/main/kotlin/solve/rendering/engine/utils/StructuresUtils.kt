@@ -52,7 +52,6 @@ operator fun Vector4i.times(value: Int): Vector4i = Vector4i(this).mul(value)
 
 operator fun Matrix4f.times(otherMatrix: Matrix4f): Matrix4f = this.mul(otherMatrix)
 
-
 fun Vector2f.toList() = listOf(x, y)
 
 fun Vector3f.toList() = listOf(x, y, z)

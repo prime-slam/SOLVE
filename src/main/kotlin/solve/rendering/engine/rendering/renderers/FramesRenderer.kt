@@ -1,13 +1,10 @@
 package solve.rendering.engine.rendering.renderers
 
 import org.joml.Matrix4f
-import org.joml.Vector2f
 import org.joml.Vector2i
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE
 import org.lwjgl.opengl.GL11.glBindTexture
 import org.lwjgl.opengl.GL11.glGenTextures
-import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY
 import org.lwjgl.opengl.GL45.glTextureStorage3D
 import org.lwjgl.opengl.GL45.glTextureSubImage3D
@@ -54,8 +51,9 @@ class FramesRenderer(
     }
 
     fun setSceneFrames(frames: List<ProjectFrame>) {
-        if (frames.isEmpty())
+        if (frames.isEmpty()) {
             return
+        }
 
         this.frames = frames
         initializeTexturesBuffers(frames)
@@ -84,12 +82,11 @@ class FramesRenderer(
     override fun createNewBatch(zIndex: Int) =
         RenderBatch(maxBatchSize, zIndex, PrimitiveType.Point, listOf(ShaderAttributeType.FLOAT))
 
-
     override fun updateBatchesData() {
         frames.forEachIndexed { index, _ ->
             val batch = getAvailableBatch(null, 0)
-            //val frameGridCellPosition = Vector2f((1..5).random().toFloat(), (1..5).random().toFloat())
-            batch.pushInt(index % 1000);
+            // val frameGridCellPosition = Vector2f((1..5).random().toFloat(), (1..5).random().toFloat())
+            batch.pushInt(index % 1000)
         }
     }
 
@@ -105,13 +102,22 @@ class FramesRenderer(
 
     private fun updateBuffersTextures(cameraGridCellPosition: Vector2i) {
         val gridCellPositionDelta = cameraGridCellPosition - cameraLastGridCellPosition
-        if (gridCellPositionDelta == Vector2i(0))
+        if (gridCellPositionDelta == Vector2i(0)) {
             return
+        }
 
         val newFramesRect = IntRect(
-            if (gridCellPositionDelta.x > 0) cameraGridCellPosition.x + buffersSize.x - gridCellPositionDelta.x else cameraGridCellPosition.x,
+            if (gridCellPositionDelta.x > 0) {
+                cameraGridCellPosition.x + buffersSize.x - gridCellPositionDelta.x
+            } else {
+                cameraGridCellPosition.x
+            },
+            if (gridCellPositionDelta.y > 0) {
+                cameraGridCellPosition.y + buffersSize.y - gridCellPositionDelta.y
+            } else {
+                cameraGridCellPosition.y
+            },
             gridCellPositionDelta.x,
-            if (gridCellPositionDelta.y > 0) cameraGridCellPosition.y + buffersSize.y - gridCellPositionDelta.y else cameraGridCellPosition.y,
             gridCellPositionDelta.y
         )
         val rectFramesToLoad = getFramesAtRect(newFramesRect)
@@ -128,8 +134,9 @@ class FramesRenderer(
     }
 
     private fun loadRectFramesToBuffers(rectFrames: List<List<ProjectFrame>>, framesRect: IntRect) {
-        if (rectFrames.isEmpty())
+        if (rectFrames.isEmpty()) {
             return
+        }
 
         val buffersOffset = Vector2i(framesRect.x0 % buffersSize.x, framesRect.y0 % buffersSize.y)
         if (framesRect.width + buffersOffset.x > buffersSize.x || framesRect.height + buffersOffset.y > buffersSize.y) {
@@ -146,8 +153,9 @@ class FramesRenderer(
     }
 
     private fun getCameraGridCellPosition(): Vector2i {
-        if (frames.isEmpty())
+        if (frames.isEmpty()) {
             return Vector2i(0)
+        }
 
         val cameraPosition = window.camera.position
         val gridCellXPosition = (cameraPosition.x / framesWidth).toInt()

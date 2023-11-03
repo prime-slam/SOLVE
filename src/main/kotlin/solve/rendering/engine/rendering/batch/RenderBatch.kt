@@ -3,7 +3,6 @@ package solve.rendering.engine.rendering.batch
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector4f
-import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
 import org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW
 import org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER
@@ -22,7 +21,6 @@ import org.lwjgl.opengl.GL30.glGenVertexArrays
 import solve.rendering.engine.rendering.texture.Texture
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.utils.toList
-import java.nio.ByteBuffer
 
 open class RenderBatch(
     private val maxBatchSize: Int,
@@ -111,12 +109,13 @@ open class RenderBatch(
         }
 
         return verticesDataBufferIndexPointer / attributesNumber / primitiveType.verticesNumber *
-                primitiveType.drawingOrderElementsNumber
+            primitiveType.drawingOrderElementsNumber
     }
 
     private fun checkIfFull() {
-        if (verticesDataBufferIndexPointer == verticesDataBufferSize)
+        if (verticesDataBufferIndexPointer == verticesDataBufferSize) {
             isFull = true
+        }
     }
 
     private fun initializeBuffers() {

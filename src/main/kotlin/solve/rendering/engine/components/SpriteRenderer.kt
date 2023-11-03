@@ -1,7 +1,6 @@
 package solve.rendering.engine.components
 
 import solve.rendering.engine.rendering.texture.Texture
-import solve.rendering.engine.scene.GameObject
 import solve.rendering.engine.structures.Color
 
 class SpriteRenderer() : Component() {
@@ -13,11 +12,11 @@ class SpriteRenderer() : Component() {
     val texture: Texture?
         get() = sprite?.texture
 
-    constructor(texture: Texture): this() {
+    constructor(texture: Texture) : this() {
         setTexture(texture)
     }
 
-    constructor(sprite: Sprite): this() {
+    constructor(sprite: Sprite) : this() {
         setSprite(sprite)
     }
 
