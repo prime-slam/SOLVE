@@ -26,12 +26,6 @@ operator fun Vector3f.times(value: Float): Vector3f = Vector3f(this).mul(value)
 
 operator fun Vector4f.times(value: Float): Vector4f = Vector4f(this).mul(value)
 
-operator fun Vector2f.div(value: Float): Vector2f = this * (1 / value)
-
-operator fun Vector3f.div(value: Float): Vector3f = this * (1 / value)
-
-operator fun Vector4f.div(value: Float): Vector4f = this * (1 / value)
-
 fun Vector2f.toIntVector(): Vector2i = Vector2i(x.toInt(), y.toInt())
 
 fun Vector3f.toIntVector(): Vector3i = Vector3i(x.toInt(), y.toInt(), z.toInt())

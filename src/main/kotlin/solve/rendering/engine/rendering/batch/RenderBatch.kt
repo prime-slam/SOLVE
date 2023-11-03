@@ -3,6 +3,7 @@ package solve.rendering.engine.rendering.batch
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector4f
+import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
 import org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW
 import org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER
@@ -185,6 +186,10 @@ open class RenderBatch(
 
     fun pushInt(value: Int) {
         pushFloat(value.toFloat())
+    }
+
+    fun pushNone() {
+        ++verticesDataBufferIndexPointer
     }
 
     companion object {
