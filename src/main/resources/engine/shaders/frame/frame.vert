@@ -12,11 +12,9 @@ out VS_OUT {
 
 void main()
 {
-    int i = gl_VertexID;
-
     int index = int(aIndex);
     int xPos = index % uGridWidth;
     int yPos = index / uGridWidth;
     gl_Position = vec4(xPos, yPos, 0.0, 1.0);
-    vs_out.frameID = i;
+    vs_out.frameID = index;
 }

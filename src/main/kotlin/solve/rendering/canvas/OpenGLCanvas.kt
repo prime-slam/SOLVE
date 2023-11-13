@@ -5,6 +5,10 @@ import com.huskerdev.openglfx.events.GLInitializeEvent
 import com.huskerdev.openglfx.events.GLRenderEvent
 import com.huskerdev.openglfx.events.GLReshapeEvent
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
+import javafx.application.Platform
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 import org.joml.Vector2f
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
@@ -25,19 +29,46 @@ import solve.rendering.engine.Window
 import solve.rendering.engine.camera.Camera
 import solve.rendering.engine.rendering.renderers.FramesRenderer
 import solve.rendering.engine.scene.Scene
+import solve.rendering.engine.utils.plus
+import solve.rendering.engine.utils.times
 import solve.utils.getResourceAbsolutePath
+import java.lang.Math.sin
 import java.nio.file.Path
 import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 
 class OpenGLCanvas {
     val canvas: OpenGLFXCanvas = OpenGLFXCanvas.create(LWJGLExecutor.LWJGL_MODULE)
-
+    var direction = Vector2f()
     init {
         canvas.animator = GLCanvasAnimator(OpenGLCanvasFPS)
 
         canvas.addOnReshapeEvent(this::reshape)
         canvas.addOnRenderEvent(this::render)
         canvas.addOnInitEvent(this::canvasInit)
+
+        Platform.runLater {
+            canvas.scene.addEventFilter(KeyEvent.KEY_PRESSED) { e ->
+                if (e.code == KeyCode.W)
+                    direction.y = -1f
+                else if (e.code == KeyCode.S)
+                    direction.y = 1f
+                else
+                    direction.y = 0f
+
+                if (e.code == KeyCode.D)
+                    direction.x = 1f
+                else if (e.code == KeyCode.A)
+                    direction.x = -1f
+                else
+                    direction.x = 0f
+
+                direction.normalize()
+            }
+
+            canvas.scene.addEventFilter(KeyEvent.KEY_RELEASED) {
+                direction = Vector2f(0f, 0f)
+            }
+        }
     }
 
     private lateinit var window: Window
@@ -55,9 +86,9 @@ class OpenGLCanvas {
     private var eboID = 0*/
 
     fun draw(deltaTime: Float) {
-        println(1 / deltaTime)
         renderer.render()
         time += deltaTime
+        window.camera.position += direction * 10f * deltaTime
 
         /*shaderProgram.use()
         shaderProgram.uploadTexture("uTex", 0)
@@ -139,15 +170,20 @@ class OpenGLCanvas {
         window = Window(1920, 600, Camera(Vector2f(0f, 0f), 5f))
         val scene = Scene()
         window.changeScene(scene)
-        val frames = List<ProjectFrame>(100000) {
-            ProjectFrame(
-                0L,
-                Path.of(getResourceAbsolutePath("icons/img.png")!!),
-                emptyList()
+        val frames = mutableListOf<ProjectFrame>()
+        for (i in 0 until 100) {
+            val imagePath = getResourceAbsolutePath("parsed_images/image_$i.jpg") ?: continue
+            frames.add(
+                ProjectFrame(
+                    0L,
+                    Path.of(imagePath),
+                    emptyList()
+                )
             )
         }
         renderer = FramesRenderer(window)
         renderer.setSceneFrames(frames)
+        window.camera.zoom = 90f
     }
 
     @Suppress("UNUSED_PARAMETER")

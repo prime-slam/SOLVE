@@ -20,7 +20,7 @@ import org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load
 import solve.utils.getResourceAbsolutePath
 
 class Texture(private val resourcesPath: String) {
-    val textureID = glGenTextures()
+    val textureID: Int = glGenTextures()
     var width = 0
         private set
     var height = 0
