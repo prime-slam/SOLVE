@@ -187,10 +187,6 @@ open class RenderBatch(
         pushFloat(value.toFloat())
     }
 
-    fun pushNone() {
-        ++verticesDataBufferIndexPointer
-    }
-
     companion object {
         private const val MaxTexturesNumber = 8
     }

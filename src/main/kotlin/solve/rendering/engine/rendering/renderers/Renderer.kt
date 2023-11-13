@@ -21,8 +21,9 @@ abstract class Renderer(protected val window: Window) {
 
     open fun render() {
         shaderProgram.use()
-        uploadUniforms(shaderProgram)
         beforeRender()
+
+        uploadUniforms(shaderProgram)
 
         if (needToRebuffer) {
             cleanupBatchesData()
@@ -36,6 +37,7 @@ abstract class Renderer(protected val window: Window) {
             batch.unbind()
         }
 
+        afterRender()
         shaderProgram.detach()
     }
 
@@ -75,6 +77,8 @@ abstract class Renderer(protected val window: Window) {
     }
 
     protected open fun beforeRender() { }
+
+    protected open fun afterRender() { }
 
     protected abstract fun createShaderProgram(): ShaderProgram
 

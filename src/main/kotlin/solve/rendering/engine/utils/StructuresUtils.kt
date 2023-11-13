@@ -50,7 +50,18 @@ operator fun Vector3i.times(value: Int): Vector3i = Vector3i(this).mul(value)
 
 operator fun Vector4i.times(value: Int): Vector4i = Vector4i(this).mul(value)
 
-operator fun Matrix4f.times(otherMatrix: Matrix4f): Matrix4f = this.mul(otherMatrix)
+operator fun Matrix4f.times(otherMatrix: Matrix4f): Matrix4f = Matrix4f(this).mul(otherMatrix)
+
+operator fun Matrix4f.times(vector: Vector4f): Vector4f {
+    val resultVectorValues = FloatArray(4)
+    val currentRow = Vector4f()
+    for (i in 0 until 4) {
+        this.getRow(i, currentRow)
+        resultVectorValues[i] = currentRow.dot(vector)
+    }
+
+    return Vector4f(resultVectorValues)
+}
 
 fun Vector2f.toList() = listOf(x, y)
 
