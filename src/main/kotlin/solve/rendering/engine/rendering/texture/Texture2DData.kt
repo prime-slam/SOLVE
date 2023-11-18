@@ -2,7 +2,7 @@ package solve.rendering.engine.rendering.texture
 
 import java.nio.ByteBuffer
 
-class TextureData(
+class Texture2DData(
     val data: ByteBuffer,
     val width: Int,
     val height: Int,
