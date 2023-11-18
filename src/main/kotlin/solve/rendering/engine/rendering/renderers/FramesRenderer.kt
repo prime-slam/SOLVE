@@ -1,5 +1,8 @@
 package solve.rendering.engine.rendering.renderers
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.joml.Matrix4f
 import org.joml.Vector2i
 import solve.constants.ShadersFrameFragmentPath
@@ -11,6 +14,7 @@ import solve.rendering.engine.rendering.batch.PrimitiveType
 import solve.rendering.engine.rendering.batch.RenderBatch
 import solve.rendering.engine.rendering.texture.ArrayTexture
 import solve.rendering.engine.rendering.texture.Texture2D
+import solve.rendering.engine.rendering.texture.Texture2DData
 import solve.rendering.engine.rendering.texture.TextureChannelsType
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
@@ -25,6 +29,8 @@ import kotlin.math.abs
 class FramesRenderer(
     window: Window
 ) : Renderer(window) {
+    private data class LoadedBufferFrameData(val textureData: Texture2DData, val bufferIndex: Int)
+
     override val maxBatchSize = 1000
     private var modelsCommonMatrix = Matrix4f().identity()
     private var gridWidth = DefaultGridWidth
@@ -40,6 +46,9 @@ class FramesRenderer(
     private var framesChannelsType = TextureChannelsType.RGBA
 
     private var cameraLastGridCellPosition = Vector2i(0)
+
+    private val bufferFramesToUpload = mutableListOf<LoadedBufferFrameData>()
+    private val framesLoadingCoroutineScope = CoroutineScope(Dispatchers.Default)
 
     fun changeModelsCommonMatrix(newMatrix: Matrix4f) {
         modelsCommonMatrix = newMatrix
@@ -84,16 +93,28 @@ class FramesRenderer(
         }
     }
 
-
     override fun beforeRender() {
+        uploadLoadedFramesToBuffers()
+        updateBuffersTextures()
+    }
+
+    private fun uploadLoadedFramesToBuffers() {
+        bufferFramesToUpload.toList().forEach { frame ->
+            bufferFramesArrayTexture.uploadTexture(frame.textureData, frame.bufferIndex)
+            bufferFramesToUpload.remove(frame)
+            Texture2D.freeData(frame.textureData)
+        }
+    }
+
+    private fun updateBuffersTextures() {
         val cameraGridCellPosition = getCameraGridCellPosition()
         if (cameraGridCellPosition != cameraLastGridCellPosition) {
-            updateBuffersTextures(cameraGridCellPosition)
+            loadNewTexturesToBuffers(cameraGridCellPosition)
         }
         cameraLastGridCellPosition = cameraGridCellPosition
     }
 
-    private fun updateBuffersTextures(cameraGridCellPosition: Vector2i) {
+    private fun loadNewTexturesToBuffers(cameraGridCellPosition: Vector2i) {
         val cameraPosition = Vector2i(cameraGridCellPosition)
         cameraPosition.x.coerceIn(0 until gridWidth)
         cameraPosition.y.coerceIn(0 until gridHeight)
@@ -188,15 +209,15 @@ class FramesRenderer(
     }
 
     private fun uploadFrameToBuffersArray(frame: ProjectFrame, index: Int) {
-        val textureData = Texture2D.loadData(frame.imagePath.toString())
-        if (textureData == null) {
-            println("The read texture is null!")
-            return
+        framesLoadingCoroutineScope.launch {
+            val textureData = Texture2D.loadData(frame.imagePath.toString())
+            if (textureData == null) {
+                println("The read texture is null!")
+                return@launch
+            }
+
+            bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index))
         }
-
-        bufferFramesArrayTexture.uploadTexture(textureData, index)
-
-        Texture2D.freeData(textureData)
     }
 
     companion object {
