@@ -171,8 +171,8 @@ class OpenGLCanvas {
         val scene = Scene()
         window.changeScene(scene)
         val frames = mutableListOf<ProjectFrame>()
-        for (i in 0 until 100) {
-            val imagePath = getResourceAbsolutePath("parsed_images/image_$i.jpg") ?: continue
+        for (i in 0 until 40) {
+            val imagePath = "testData/TestProject3/images/$i.png"
             frames.add(
                 ProjectFrame(
                     0L,

@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11.GL_UNSIGNED_INT
 import org.lwjgl.opengl.GL11.glDrawElements
 import solve.rendering.engine.Window
 import solve.rendering.engine.rendering.batch.RenderBatch
-import solve.rendering.engine.rendering.texture.Texture
+import solve.rendering.engine.rendering.texture.Texture2D
 import solve.rendering.engine.scene.GameObject
 import solve.rendering.engine.shader.ShaderProgram
 
@@ -49,7 +49,7 @@ abstract class Renderer(protected val window: Window) {
 
     open fun removeGameObject(gameObject: GameObject): Boolean = false
 
-    protected fun getAvailableBatch(texture: Texture?, requiredZIndex: Int): RenderBatch {
+    protected fun getAvailableBatch(texture: Texture2D?, requiredZIndex: Int): RenderBatch {
         batches.forEach { batch ->
             if (batch.isFull || batch.zIndex != requiredZIndex) {
                 return@forEach

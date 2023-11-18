@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL20.glVertexAttribPointer
 import org.lwjgl.opengl.GL30.glBindVertexArray
 import org.lwjgl.opengl.GL30.glDeleteVertexArrays
 import org.lwjgl.opengl.GL30.glGenVertexArrays
-import solve.rendering.engine.rendering.texture.Texture
+import solve.rendering.engine.rendering.texture.Texture2D
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.utils.toList
 
@@ -37,7 +37,7 @@ open class RenderBatch(
     private var vaoID = 0
     private var eboID = 0
 
-    private val textures = mutableListOf<Texture>()
+    private val textures = mutableListOf<Texture2D>()
 
     private val attributesNumber = attributes.sumOf { it.number }
     private val attributesTotalSize = attributes.sumOf { it.size }
@@ -81,7 +81,7 @@ open class RenderBatch(
         glDeleteVertexArrays(vaoID)
     }
 
-    fun addTexture(texture: Texture): Int {
+    fun addTexture(texture: Texture2D): Int {
         val textureID: Int
         if (textures.contains(texture)) {
             textureID = textures.indexOf(texture) + 1
@@ -97,11 +97,11 @@ open class RenderBatch(
         return textureID
     }
 
-    fun getTextureLocalID(texture: Texture) = textures.indexOf(texture) + 1
+    fun getTextureLocalID(texture: Texture2D) = textures.indexOf(texture) + 1
 
-    fun removeTexture(texture: Texture): Boolean = textures.remove(texture)
+    fun removeTexture(texture: Texture2D): Boolean = textures.remove(texture)
 
-    fun containsTexture(texture: Texture) = textures.contains(texture)
+    fun containsTexture(texture: Texture2D) = textures.contains(texture)
 
     fun getVerticesNumber(): Int {
         if (verticesDataBufferIndexPointer % attributesNumber != 0) {

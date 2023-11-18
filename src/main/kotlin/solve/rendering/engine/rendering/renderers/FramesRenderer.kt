@@ -1,25 +1,7 @@
 package solve.rendering.engine.rendering.renderers
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import org.joml.Matrix4f
 import org.joml.Vector2i
-import org.lwjgl.opengl.GL11.GL_LINEAR
-import org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER
-import org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER
-import org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S
-import org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T
-import org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE
-import org.lwjgl.opengl.GL11.glBindTexture
-import org.lwjgl.opengl.GL11.glGenTextures
-import org.lwjgl.opengl.GL11.glTexParameteri
-import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
-import org.lwjgl.opengl.GL12.glTexImage3D
-import org.lwjgl.opengl.GL12.glTexSubImage3D
-import org.lwjgl.opengl.GL30.GL_TEXTURE0
-import org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY
-import org.lwjgl.opengl.GL30.glActiveTexture
-import org.lwjgl.opengl.GL30.glGenerateMipmap
 import solve.constants.ShadersFrameFragmentPath
 import solve.constants.ShadersFrameGeometryPath
 import solve.constants.ShadersFrameVertexPath
@@ -27,7 +9,8 @@ import solve.project.model.ProjectFrame
 import solve.rendering.engine.Window
 import solve.rendering.engine.rendering.batch.PrimitiveType
 import solve.rendering.engine.rendering.batch.RenderBatch
-import solve.rendering.engine.rendering.texture.Texture
+import solve.rendering.engine.rendering.texture.ArrayTexture
+import solve.rendering.engine.rendering.texture.Texture2D
 import solve.rendering.engine.rendering.texture.TextureChannelsType
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
@@ -36,9 +19,8 @@ import solve.rendering.engine.structures.IntRect
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.toIntVector
 import solve.utils.ceilToInt
-import java.nio.ByteBuffer
 import kotlin.math.abs
-import kotlin.math.max
+
 
 class FramesRenderer(
     window: Window
@@ -50,20 +32,14 @@ class FramesRenderer(
         get() = (frames.count().toFloat() / gridWidth).ceilToInt()
     private var buffersSize = defaultBuffersSize
 
-    private var buffersTexturesArrayID = 0
+    private lateinit var bufferFramesArrayTexture: ArrayTexture
 
     private var frames = emptyList<ProjectFrame>()
     private var framesWidth = 1
     private var framesHeight = 1
     private var framesChannelsType = TextureChannelsType.RGBA
-    private var cameraFramesOffset = Vector2i(0)
-
-    private var visibleFramesData = emptyMap<ProjectFrame, ByteBuffer>()
 
     private var cameraLastGridCellPosition = Vector2i(0)
-
-    private var textures = mutableListOf<Texture>()
-    private var frameBufferIDs = mutableListOf<Int>()
 
     fun changeModelsCommonMatrix(newMatrix: Matrix4f) {
         modelsCommonMatrix = newMatrix
@@ -150,7 +126,6 @@ class FramesRenderer(
             rectWidth,
             rectHeight
         )
-        println(newFramesRect)
         loadRectFramesToBuffers(newFramesRect)
     }
 
@@ -168,7 +143,6 @@ class FramesRenderer(
 
     private fun loadRectFramesToBuffers(framesRect: IntRect) {
         val rectFrames = getFramesAtRect(framesRect)
-        println(rectFrames)
 
         if (rectFrames.isEmpty() || rectFrames.first().isEmpty()) {
             return
@@ -180,10 +154,11 @@ class FramesRenderer(
             return
         }
 
-        for (y in 0 until framesRect.height) {
-            for (x in 0 until framesRect.width) {
-                val textureBuffersIndex = ((buffersOffset.y + y) % buffersSize.y) * buffersSize.x + (buffersOffset.x + x) % buffersSize.x
-                uploadFrameToBuffer(rectFrames[y][x], textureBuffersIndex)
+        for (y in 0 until rectFrames.count()) {
+            for (x in 0 until rectFrames[y].count()) {
+                val textureBuffersIndex =
+                    ((buffersOffset.y + y) % buffersSize.y) * buffersSize.x + (buffersOffset.x + x) % buffersSize.x
+                uploadFrameToBuffersArray(rectFrames[y][x], textureBuffersIndex)
             }
         }
     }
@@ -192,18 +167,12 @@ class FramesRenderer(
         return window.camera.position.toIntVector()
     }
 
-    private fun uploadAllFramesToBuffer(frames: List<ProjectFrame>) {
-        frames.forEachIndexed { index, frame ->
-            uploadFrameToBuffer(frame, index)
-        }
-    }
-
     private fun uploadInitialFramesToBuffer() {
         loadRectFramesToBuffers(IntRect(0, 0, buffersSize.x, buffersSize.y))
     }
 
     private fun initializeTexturesBuffers(frames: List<ProjectFrame>) {
-        val firstTextureData = Texture.loadData(frames.first().imagePath.toString())
+        val firstTextureData = Texture2D.loadData(frames.first().imagePath.toString())
         if (firstTextureData == null) {
             println("The read texture is null!")
             return
@@ -213,60 +182,21 @@ class FramesRenderer(
         framesHeight = firstTextureData.height
         framesChannelsType = firstTextureData.channelsType
 
-        buffersTexturesArrayID = glGenTextures()
-        glBindTexture(GL_TEXTURE_2D_ARRAY, buffersTexturesArrayID)
-        glTexImage3D(
-            GL_TEXTURE_2D_ARRAY,
-            0,
-            framesChannelsType.openGLType,
-            framesWidth,
-            framesHeight,
-            100,
-            0,
-            framesChannelsType.openGLType,
-            GL_UNSIGNED_BYTE,
-            null as ByteBuffer?
-        )
-
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glGenerateMipmap(GL_TEXTURE_2D_ARRAY)
-
-        /*for (i in 0 until buffersSize.x * buffersSize.y) {
-            val frameBufferID = glGenFramebuffers()
-            glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID)
-            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, buffersTexturesArrayID, 0, i)
-            frameBufferIDs.add(frameBufferID)
-        }
-        glBindFramebuffer(GL_FRAMEBUFFER, 0)*/
+        bufferFramesArrayTexture = ArrayTexture(framesWidth, framesHeight, framesChannelsType, maxBatchSize)
 
         uploadInitialFramesToBuffer()
     }
 
-    private fun uploadFrameToBuffer(frame: ProjectFrame, index: Int) {
-        val textureData = Texture.loadData(frame.imagePath.toString())
+    private fun uploadFrameToBuffersArray(frame: ProjectFrame, index: Int) {
+        val textureData = Texture2D.loadData(frame.imagePath.toString())
         if (textureData == null) {
             println("The read texture is null!")
             return
         }
 
-        glTexSubImage3D(
-            GL_TEXTURE_2D_ARRAY,
-            0,
-            0,
-            0,
-            index,
-            textureData.width,
-            textureData.height,
-            1,
-            textureData.channelsType.openGLType,
-            GL_UNSIGNED_BYTE,
-            textureData.data
-        )
+        bufferFramesArrayTexture.uploadTexture(textureData, index)
 
-        Texture.freeData(textureData)
+        Texture2D.freeData(textureData)
     }
 
     companion object {
