@@ -15,7 +15,7 @@ import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load
 import solve.utils.getResourceAbsolutePath
 
-class Texture2D(private val resourcesPath: String): Texture() {
+class Texture2D(private val resourcesPath: String) : Texture() {
     override val textureOpenGLType: Int = GL_TEXTURE_2D
 
     init {

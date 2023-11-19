@@ -23,7 +23,6 @@ import solve.importer.controller.ImporterController
 import solve.importer.view.ImporterView
 import solve.main.splitpane.SidePanelLocation
 import solve.main.splitpane.SidePanelSplitPane
-import solve.rendering.canvas.OpenGLCanvas
 import solve.scene.view.SceneView
 import solve.settings.grid.view.GridSettingsView
 import solve.settings.visualization.VisualizationSettingsView

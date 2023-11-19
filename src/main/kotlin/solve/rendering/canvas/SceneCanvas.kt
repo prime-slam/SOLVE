@@ -7,7 +7,7 @@ import solve.rendering.engine.utils.unaryMinus
 import solve.scene.controller.SceneController
 import solve.utils.ServiceLocator
 
-class SceneCanvas: OpenGLCanvas() {
+class SceneCanvas : OpenGLCanvas() {
     private var sceneController: SceneController? = null
     private var framesRenderer: FramesRenderer? = null
     private var canvasScene: Scene? = null
