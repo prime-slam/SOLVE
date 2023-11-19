@@ -24,12 +24,8 @@ import solve.scene.model.LayerState
 import solve.scene.model.OrderManager
 import solve.scene.model.Point
 import solve.scene.model.VisualizationFrame
-import solve.scene.view.FrameView
-import solve.scene.view.FrameViewData
-import solve.scene.view.FrameViewParameters
 import solve.scene.view.association.AssociationsManager
 import solve.scene.view.association.OutOfFramesLayer
-import solve.scene.view.drawing.BufferedImageView
 import solve.testMemoryLeak
 import solve.utils.Storage
 import solve.utils.structures.Size

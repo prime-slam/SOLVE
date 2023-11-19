@@ -3,7 +3,6 @@ package solve.unit.scene.view.drawing
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import solve.scene.model.Point
-import solve.scene.view.drawing.BufferedImageView
 
 internal class BufferedImageViewTests {
     @Test

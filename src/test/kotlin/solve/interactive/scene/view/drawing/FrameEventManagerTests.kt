@@ -13,9 +13,7 @@ import org.testfx.framework.junit5.ApplicationExtension
 import solve.fireMousePressed
 import solve.fireMouseReleased
 import solve.interactive.InteractiveTestClass
-import solve.scene.view.drawing.CanvasEventHandler
 import solve.scene.view.drawing.FrameEventManager
-import solve.scene.view.drawing.RectangleFrameElement
 import tornadofx.*
 
 @ExtendWith(ApplicationExtension::class)

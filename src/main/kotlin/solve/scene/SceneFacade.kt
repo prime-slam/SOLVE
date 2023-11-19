@@ -1,7 +1,6 @@
 package solve.scene
 
 import javafx.beans.property.SimpleObjectProperty
-import javafx.scene.image.Image
 import solve.parsers.factories.LineFactory
 import solve.parsers.factories.PlaneFactory
 import solve.parsers.factories.PointFactory
@@ -73,12 +72,6 @@ object SceneFacade {
     }
 
     private fun ProjectFrame.toVisualizationFrame(layerStates: List<LayerState>): VisualizationFrame {
-        val getImage = {
-            imagePath.toFile().inputStream().use {
-                Image(it)
-            }
-        }
-
         val layers = landmarkFiles.map { file ->
             val layerSettings = visualizationLayers[file.projectLayer.key]
                 ?: throw IllegalStateException("No visualization layer is created for ${file.projectLayer.key}")
@@ -86,7 +79,7 @@ object SceneFacade {
             createLayer(file, layerSettings, layerState)
         }
 
-        return VisualizationFrame(this.timestamp, getImage, layers)
+        return VisualizationFrame(this.timestamp, imagePath, layers)
     }
 
     private fun createLayer(file: LandmarkFile, layerSettings: LayerSettings, layerState: LayerState): Layer {

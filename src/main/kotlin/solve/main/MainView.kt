@@ -92,8 +92,6 @@ class MainView : View() {
         )
     )
 
-    private val canvas = OpenGLCanvas()
-
     private val leftSidePanelViews =
         createSidePanelsViews(leftSidePanelTabs, SidePanelLocation.Left, leftSidePanelTabs.first())
     private val rightSidePanelViews =
@@ -161,8 +159,6 @@ class MainView : View() {
         )
         mainViewSplitPane.addStylesheet(MainSplitPaneStyle::class)
         center = mainViewSplitPane
-        bottom = canvas.canvas
-        canvas.canvas.setMinSize(600.0, 600.0)
     }
 
     override val root = mainViewBorderPane

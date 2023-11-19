@@ -4,8 +4,8 @@ import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
 import solve.scene.model.Scene
-import solve.scene.view.DelayedFramesUpdatesManager
 import solve.scene.view.SceneView
+import solve.utils.ServiceLocator
 import solve.utils.ceilToInt
 import solve.utils.structures.DoublePoint
 import tornadofx.Controller
@@ -19,6 +19,10 @@ import kotlin.math.sqrt
  * Allows settings component to edit scale range and columns number properties of the scene.
  */
 class SceneController : Controller() {
+    init {
+        ServiceLocator.registerService(this)
+    }
+
     /**
      * Real width of the scene visual component.
      * Used to recalculate scale and columns number.
@@ -159,13 +163,10 @@ class SceneController : Controller() {
         val initialMouseX = (xProperty.value + mousePosition.x) / scale
         val initialMouseY = (yProperty.value + mousePosition.y) / scale
 
-        DelayedFramesUpdatesManager.doLockedAction {
-            scaleProperty.value = newScale
-
-            // Recalculates scroll position scroll to or from the mouse position.
-            x = initialMouseX * scaleProperty.value - mousePosition.x
-            y = initialMouseY * scaleProperty.value - mousePosition.y
-        }
+        // TODO
+        initialMouseX.toString()
+        initialMouseY.toString()
+        newScale.toString()
     }
 
     private fun reinitializeSettings(newScene: Scene) {
