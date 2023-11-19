@@ -4,11 +4,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.joml.Matrix4f
+import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.constants.ShadersFrameFragmentPath
 import solve.constants.ShadersFrameGeometryPath
 import solve.constants.ShadersFrameVertexPath
-import solve.project.model.ProjectFrame
 import solve.rendering.engine.Window
 import solve.rendering.engine.rendering.batch.PrimitiveType
 import solve.rendering.engine.rendering.batch.RenderBatch
@@ -22,12 +22,15 @@ import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.structures.IntRect
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.toIntVector
+import solve.scene.controller.SceneController
+import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
+import tornadofx.*
 import kotlin.math.abs
 
-
 class FramesRenderer(
-    window: Window
+    window: Window,
+    sceneController: SceneController
 ) : Renderer(window) {
     private data class LoadedBufferFrameData(val textureData: Texture2DData, val bufferIndex: Int)
 
@@ -40,29 +43,28 @@ class FramesRenderer(
 
     private lateinit var bufferFramesArrayTexture: ArrayTexture
 
-    private var frames = emptyList<ProjectFrame>()
+    private var frames = emptyList<VisualizationFrame>()
     private var framesWidth = 1
     private var framesHeight = 1
     private var framesChannelsType = TextureChannelsType.RGBA
 
-    private var cameraLastGridCellPosition = Vector2i(0)
+    private var cameraLastGridCellPosition = getCameraGridCellPosition()
 
     private val bufferFramesToUpload = mutableListOf<LoadedBufferFrameData>()
     private val framesLoadingCoroutineScope = CoroutineScope(Dispatchers.Default)
 
-    fun changeModelsCommonMatrix(newMatrix: Matrix4f) {
-        modelsCommonMatrix = newMatrix
+    private var needToReinitializeBuffers = false
+
+    // TODO: change scene frames from another class.
+    init {
+        sceneController.sceneProperty.onChange { scene ->
+            scene ?: return@onChange
+            changeSceneFrames(scene.frames)
+        }
     }
 
-    fun setSceneFrames(frames: List<ProjectFrame>) {
-        if (frames.isEmpty()) {
-            return
-        }
-
-        this.frames = frames
-        initializeTexturesBuffers(frames)
-
-        needToRebuffer = true
+    fun changeModelsCommonMatrix(newMatrix: Matrix4f) {
+        modelsCommonMatrix = newMatrix
     }
 
     override fun createShaderProgram(): ShaderProgram {
@@ -94,8 +96,25 @@ class FramesRenderer(
     }
 
     override fun beforeRender() {
+        if (frames.isEmpty())
+            return
+
+        if (needToReinitializeBuffers) {
+            initializeTexturesBuffers(frames)
+            needToReinitializeBuffers = false
+        }
+
         uploadLoadedFramesToBuffers()
         updateBuffersTextures()
+    }
+
+    private fun changeSceneFrames(frames: List<VisualizationFrame>) {
+        if (frames.isEmpty()) {
+            return
+        }
+
+        this.frames = frames
+        needToReinitializeBuffers = true
     }
 
     private fun uploadLoadedFramesToBuffers() {
@@ -150,8 +169,8 @@ class FramesRenderer(
         loadRectFramesToBuffers(newFramesRect)
     }
 
-    private fun getFramesAtRect(rect: IntRect): List<List<ProjectFrame>> {
-        val framesRect = mutableListOf<List<ProjectFrame>>()
+    private fun getFramesAtRect(rect: IntRect): List<List<VisualizationFrame>> {
+        val framesRect = mutableListOf<List<VisualizationFrame>>()
         for (y in rect.y0 until rect.y0 + rect.height) {
             val framesFromIndex = (gridWidth * y + rect.x0).coerceIn(0..frames.lastIndex)
             val framesToIndex = (framesFromIndex + rect.width).coerceIn(0..frames.lastIndex)
@@ -185,14 +204,14 @@ class FramesRenderer(
     }
 
     private fun getCameraGridCellPosition(): Vector2i {
-        return window.camera.position.toIntVector()
+        return (window.camera.position - Vector2f(buffersSize) / 2f).toIntVector()
     }
 
     private fun uploadInitialFramesToBuffer() {
         loadRectFramesToBuffers(IntRect(0, 0, buffersSize.x, buffersSize.y))
     }
 
-    private fun initializeTexturesBuffers(frames: List<ProjectFrame>) {
+    private fun initializeTexturesBuffers(frames: List<VisualizationFrame>) {
         val firstTextureData = Texture2D.loadData(frames.first().imagePath.toString())
         if (firstTextureData == null) {
             println("The read texture is null!")
@@ -208,7 +227,7 @@ class FramesRenderer(
         uploadInitialFramesToBuffer()
     }
 
-    private fun uploadFrameToBuffersArray(frame: ProjectFrame, index: Int) {
+    private fun uploadFrameToBuffersArray(frame: VisualizationFrame, index: Int) {
         framesLoadingCoroutineScope.launch {
             val textureData = Texture2D.loadData(frame.imagePath.toString())
             if (textureData == null) {
@@ -229,6 +248,6 @@ class FramesRenderer(
 
         private const val DefaultGridWidth = 10
 
-        private val defaultBuffersSize = Vector2i(3, 3)
+        private val defaultBuffersSize = Vector2i(4, 4)
     }
 }

@@ -17,8 +17,8 @@ class Scene(
      */
     val frameSize: DoubleSize by lazy {
         frames.firstOrNull()?.let {
-            val image = it.getImage()
-            DoubleSize(image.width, image.height)
+            // TODO
+            DoubleSize(0.0, 0.0)
         } ?: DoubleSize(0.0, 0.0)
     }
 

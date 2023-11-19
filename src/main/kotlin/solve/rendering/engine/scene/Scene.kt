@@ -1,21 +1,15 @@
 package solve.rendering.engine.scene
 
-import solve.rendering.engine.camera.Camera
+import solve.rendering.engine.rendering.renderers.Renderer
 
-class Scene(camera: Camera = Camera(), gameObjects: List<GameObject> = emptyList()) {
-    var camera: Camera = camera
-        private set
-
-    private val _gameObjects = gameObjects.toMutableList()
+class Scene(renderers: List<Renderer> = emptyList()) {
+    private val _gameObjects = mutableListOf<GameObject>()
     val gameObjects: List<GameObject>
         get() = _gameObjects
 
-    private var isStarted = false
-
-    fun start() {
-        _gameObjects.forEach { it.start() }
-        isStarted = true
-    }
+    private val _renderers = renderers
+    val renderers: List<Renderer>
+        get() = _renderers
 
     fun update(deltaTime: Float) {
         _gameObjects.forEach { gameObject ->
@@ -25,6 +19,7 @@ class Scene(camera: Camera = Camera(), gameObjects: List<GameObject> = emptyList
             }
 
             gameObject.update(deltaTime)
+            _renderers.forEach { it.render() }
         }
     }
 
@@ -34,12 +29,11 @@ class Scene(camera: Camera = Camera(), gameObjects: List<GameObject> = emptyList
             return
         }
         _gameObjects.add(gameObject)
-        if (isStarted) {
-            gameObject.start()
-        }
+        _renderers.forEach { it.addGameObject(gameObject) }
     }
 
     fun removeGameObject(gameObject: GameObject) {
         _gameObjects.remove(gameObject)
+        _renderers.forEach { it.removeGameObject(gameObject) }
     }
 }

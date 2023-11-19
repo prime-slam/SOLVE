@@ -22,7 +22,6 @@ import solve.scene.model.Landmark
 import solve.scene.model.LayerSettings
 import solve.scene.model.LayerState
 import solve.scene.model.Point
-import solve.scene.view.landmarks.AnimationProvider
 import solve.scene.view.landmarks.KeypointView
 import solve.testMemoryLeak
 import solve.utils.ServiceLocator

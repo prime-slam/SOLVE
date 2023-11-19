@@ -5,11 +5,6 @@ import com.huskerdev.openglfx.events.GLInitializeEvent
 import com.huskerdev.openglfx.events.GLRenderEvent
 import com.huskerdev.openglfx.events.GLReshapeEvent
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
-import javafx.application.Platform
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
-import org.joml.Vector2f
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT
@@ -24,176 +19,44 @@ import org.lwjgl.opengl.GL11.glFrustum
 import org.lwjgl.opengl.GL11.glLoadIdentity
 import org.lwjgl.opengl.GL11.glMatrixMode
 import org.lwjgl.opengl.GL11.glTranslatef
-import solve.project.model.ProjectFrame
 import solve.rendering.engine.Window
-import solve.rendering.engine.camera.Camera
-import solve.rendering.engine.rendering.renderers.FramesRenderer
-import solve.rendering.engine.scene.Scene
-import solve.rendering.engine.utils.plus
-import solve.rendering.engine.utils.times
-import solve.utils.getResourceAbsolutePath
-import java.lang.Math.sin
-import java.nio.file.Path
 import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 
-class OpenGLCanvas {
+abstract class OpenGLCanvas {
     val canvas: OpenGLFXCanvas = OpenGLFXCanvas.create(LWJGLExecutor.LWJGL_MODULE)
-    var direction = Vector2f()
+
+    protected lateinit var window: Window
+
     init {
         canvas.animator = GLCanvasAnimator(OpenGLCanvasFPS)
+    }
 
+    open fun onInit() { }
+
+    open fun onDraw(deltaTime: Float) { }
+
+    protected fun initializeCanvasEvents() {
         canvas.addOnReshapeEvent(this::reshape)
         canvas.addOnRenderEvent(this::render)
         canvas.addOnInitEvent(this::canvasInit)
-
-        Platform.runLater {
-            canvas.scene.addEventFilter(KeyEvent.KEY_PRESSED) { e ->
-                if (e.code == KeyCode.W)
-                    direction.y = -1f
-                else if (e.code == KeyCode.S)
-                    direction.y = 1f
-                else
-                    direction.y = 0f
-
-                if (e.code == KeyCode.D)
-                    direction.x = 1f
-                else if (e.code == KeyCode.A)
-                    direction.x = -1f
-                else
-                    direction.x = 0f
-
-                direction.normalize()
-            }
-
-            canvas.scene.addEventFilter(KeyEvent.KEY_RELEASED) {
-                direction = Vector2f(0f, 0f)
-            }
-        }
-    }
-
-    private lateinit var window: Window
-    private lateinit var renderer: FramesRenderer
-
-    var time = 0f
-
-    /*private lateinit var shaderProgram: ShaderProgram
-    private lateinit var camera: Camera
-    private lateinit var vertices: FloatArray
-    private lateinit var elements: IntArray
-    private lateinit var texture: Texture
-    private var vaoID = 0
-    private var vboID = 0
-    private var eboID = 0*/
-
-    fun draw(deltaTime: Float) {
-        renderer.render()
-        time += deltaTime
-        window.camera.position += direction * 10f * deltaTime
-
-        /*shaderProgram.use()
-        shaderProgram.uploadTexture("uTex", 0)
-
-        glActiveTexture(GL_TEXTURE0)
-        texture.bind()
-
-
-        shaderProgram.uploadMatrix4f("uProjection", Matrix4f().identity().scale(0.001f))
-
-        glBindVertexArray(vaoID)
-
-        glEnableVertexAttribArray(0)
-        glEnableVertexAttribArray(1)
-        glEnableVertexAttribArray(2)
-
-        glDrawElements(GL_TRIANGLES, elements.size, GL_UNSIGNED_INT, 0)
-
-        glDisableVertexAttribArray(0)
-        glDisableVertexAttribArray(1)
-        glEnableVertexAttribArray(2)
-
-        glBindVertexArray(0)
-
-        shaderProgram.detach()*/
-    }
-
-    private fun canvasInit(event: GLInitializeEvent) {
-        event.toString()
-        createCapabilities()
-
-        /*shaderProgram = ShaderProgram()
-        shaderProgram.addShader(ShadersDefaultVertexPath, ShaderType.VERTEX)
-        shaderProgram.addShader(ShadersDefaultFragmentPath, ShaderType.FRAGMENT)
-        shaderProgram.link()
-
-        camera = Camera()
-
-        vertices = floatArrayOf(
-            100f, 0f, 0f,                1f, 0f, 0f, 1f,   1f, 1f,
-            0f, 100f, 0f,                0f, 1f, 0f, 1f,   0f, 0f,
-            100f, 100f, 0f,              1f, 0f, 1f, 1f,   1f, 0f,
-            0f, 0f, 0f,                  1f, 1f, 0f, 1f,   0f, 1f
-        )
-
-        elements = intArrayOf(2, 1, 0, 0, 1, 3)
-        vaoID = GL30.glGenVertexArrays()
-        GL30.glBindVertexArray(vaoID)
-
-        val verticesBuffer = BufferUtils.createFloatBuffer(vertices.size)
-        verticesBuffer.put(vertices).flip()
-
-        vboID = glGenBuffers()
-        glBindBuffer(GL_ARRAY_BUFFER, vboID)
-        glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW)
-
-        val elementsBuffer = BufferUtils.createIntBuffer(elements.size)
-        elementsBuffer.put(elements).flip()
-
-        val eboID = glGenBuffers()
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID)
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer, GL_STATIC_DRAW)
-
-        val posSize = 3
-        val colorSize = 4
-        val uvSize = 2
-        val verticesSizeBytes = (posSize + colorSize + uvSize) * Float.SIZE_BYTES
-        GL20C.glVertexAttribPointer(0, posSize, GL_FLOAT, false, verticesSizeBytes, 0L)
-        GL20C.glEnableVertexAttribArray(0)
-
-        GL20C.glVertexAttribPointer(1, colorSize, GL_FLOAT, false, verticesSizeBytes, (posSize * Float.SIZE_BYTES).toLong())
-        GL20C.glEnableVertexAttribArray(1)
-
-        GL20C.glVertexAttribPointer(2, uvSize, GL_FLOAT, false, verticesSizeBytes, ((posSize + colorSize) * Float.SIZE_BYTES).toLong())
-        GL20C.glEnableVertexAttribArray(2)
-
-        texture = Texture("icons/img.png")*/
-
-        window = Window(1920, 600, Camera(Vector2f(0f, 0f), 5f))
-        val scene = Scene()
-        window.changeScene(scene)
-        val frames = mutableListOf<ProjectFrame>()
-        for (i in 0 until 40) {
-            val imagePath = "testData/TestProject3/images/$i.png"
-            frames.add(
-                ProjectFrame(
-                    0L,
-                    Path.of(imagePath),
-                    emptyList()
-                )
-            )
-        }
-        renderer = FramesRenderer(window)
-        renderer.setSceneFrames(frames)
-        window.camera.zoom = 90f
     }
 
     @Suppress("UNUSED_PARAMETER")
+    private fun canvasInit(event: GLInitializeEvent) {
+        window = Window(canvas.width.toInt(), canvas.height.toInt())
+        println(canvas.width)
+        println(canvas.height)
+        createCapabilities()
+
+        onInit()
+    }
+
     private fun render(event: GLRenderEvent) {
         glEnable(GL_DEPTH_TEST)
         glDepthFunc(GL_LEQUAL)
-
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        draw(event.delta.toFloat())
+        onDraw(event.delta.toFloat())
     }
 
     private fun reshape(event: GLReshapeEvent) {

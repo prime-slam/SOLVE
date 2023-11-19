@@ -22,10 +22,7 @@ import solve.scene.model.Landmark
 import solve.scene.model.LayerSettings
 import solve.scene.model.LayerState
 import solve.scene.model.Point
-import solve.scene.view.drawing.BufferedImageView
-import solve.scene.view.drawing.FrameDrawer
 import solve.scene.view.drawing.FrameEventManager
-import solve.scene.view.landmarks.AnimationProvider
 import solve.scene.view.landmarks.PlaneView
 import solve.testMemoryLeak
 import solve.utils.ServiceLocator
