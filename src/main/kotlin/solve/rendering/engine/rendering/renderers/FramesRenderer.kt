@@ -41,7 +41,7 @@ class FramesRenderer(
         get() = (frames.count().toFloat() / gridWidth).ceilToInt()
     private var buffersSize = defaultBuffersSize
 
-    private lateinit var bufferFramesArrayTexture: ArrayTexture
+    private var bufferFramesArrayTexture: ArrayTexture? = null
 
     private var frames = emptyList<VisualizationFrame>()
     private var framesWidth = 1
@@ -99,13 +99,17 @@ class FramesRenderer(
         if (frames.isEmpty())
             return
 
-        if (needToReinitializeBuffers) {
-            initializeTexturesBuffers(frames)
-            needToReinitializeBuffers = false
-        }
+        if (needToReinitializeBuffers)
+            reinitializeBuffers()
 
         uploadLoadedFramesToBuffers()
         updateBuffersTextures()
+    }
+
+    private fun reinitializeBuffers() {
+        bufferFramesArrayTexture?.delete()
+        initializeTexturesBuffers(frames)
+        needToReinitializeBuffers = false
     }
 
     private fun changeSceneFrames(frames: List<VisualizationFrame>) {
@@ -119,7 +123,7 @@ class FramesRenderer(
 
     private fun uploadLoadedFramesToBuffers() {
         bufferFramesToUpload.toList().forEach { frame ->
-            bufferFramesArrayTexture.uploadTexture(frame.textureData, frame.bufferIndex)
+            bufferFramesArrayTexture?.uploadTexture(frame.textureData, frame.bufferIndex)
             bufferFramesToUpload.remove(frame)
             Texture2D.freeData(frame.textureData)
         }
@@ -222,7 +226,8 @@ class FramesRenderer(
         framesHeight = firstTextureData.height
         framesChannelsType = firstTextureData.channelsType
 
-        bufferFramesArrayTexture = ArrayTexture(framesWidth, framesHeight, framesChannelsType, maxBatchSize)
+        bufferFramesArrayTexture =
+            ArrayTexture(framesWidth, framesHeight, framesChannelsType, buffersSize.x * buffersSize.y)
 
         uploadInitialFramesToBuffer()
     }

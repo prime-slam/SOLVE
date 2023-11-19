@@ -1,6 +1,7 @@
 package solve.rendering.engine.rendering.texture
 
 import org.lwjgl.opengl.GL11.glBindTexture
+import org.lwjgl.opengl.GL11.glDeleteTextures
 import org.lwjgl.opengl.GL11.glGenTextures
 import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL13.GL_TEXTURE0
@@ -36,6 +37,10 @@ abstract class Texture {
 
         GL13.glActiveTexture(GL_TEXTURE0 + unit)
         glBindTexture(textureOpenGLType, textureID)
+    }
+
+    fun delete() {
+        glDeleteTextures(textureID)
     }
 
     protected fun initialize() {
