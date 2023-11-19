@@ -54,7 +54,6 @@ class SceneView : View() {
         }
     }
 
-
     private fun scrollRight() { } // TODO
 
     private fun scrollLeft() { } // TODO

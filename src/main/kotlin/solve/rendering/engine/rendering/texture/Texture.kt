@@ -55,9 +55,9 @@ abstract class Texture {
         }
 
         return width == other.width &&
-                height == other.height &&
-                textureID == other.textureID &&
-                textureOpenGLType == other.textureOpenGLType
+            height == other.height &&
+            textureID == other.textureID &&
+            textureOpenGLType == other.textureOpenGLType
     }
 
     override fun hashCode(): Int {

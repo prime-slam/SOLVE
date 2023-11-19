@@ -96,11 +96,13 @@ class FramesRenderer(
     }
 
     override fun beforeRender() {
-        if (frames.isEmpty())
+        if (frames.isEmpty()) {
             return
+        }
 
-        if (needToReinitializeBuffers)
+        if (needToReinitializeBuffers) {
             reinitializeBuffers()
+        }
 
         uploadLoadedFramesToBuffers()
         updateBuffersTextures()
