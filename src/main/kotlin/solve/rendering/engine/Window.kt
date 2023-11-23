@@ -1,6 +1,7 @@
 package solve.rendering.engine
 
 import org.joml.Vector2f
+import org.joml.Vector2i
 import solve.rendering.engine.camera.Camera
 import solve.rendering.engine.scene.Scene
 
@@ -10,6 +11,9 @@ class Window(
     camera: Camera = Camera(),
     scene: Scene? = null
 ) {
+    val size: Vector2i
+        get() = Vector2i(width, height)
+
     var width = width
         private set
     var height = height

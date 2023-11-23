@@ -5,8 +5,8 @@ import com.huskerdev.openglfx.events.GLInitializeEvent
 import com.huskerdev.openglfx.events.GLRenderEvent
 import com.huskerdev.openglfx.events.GLReshapeEvent
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
+import org.joml.Vector2i
 import org.lwjgl.opengl.GL.createCapabilities
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT
 import org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT
 import org.lwjgl.opengl.GL11.GL_DEPTH_TEST
@@ -15,11 +15,12 @@ import org.lwjgl.opengl.GL11.GL_PROJECTION
 import org.lwjgl.opengl.GL11.glClear
 import org.lwjgl.opengl.GL11.glDepthFunc
 import org.lwjgl.opengl.GL11.glEnable
-import org.lwjgl.opengl.GL11.glFrustum
 import org.lwjgl.opengl.GL11.glLoadIdentity
 import org.lwjgl.opengl.GL11.glMatrixMode
-import org.lwjgl.opengl.GL11.glTranslatef
 import solve.rendering.engine.Window
+import solve.rendering.engine.utils.minus
+import solve.rendering.engine.utils.plus
+import solve.rendering.engine.utils.toFloatVector
 import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
 
 abstract class OpenGLCanvas {
@@ -44,8 +45,6 @@ abstract class OpenGLCanvas {
     @Suppress("UNUSED_PARAMETER")
     private fun canvasInit(event: GLInitializeEvent) {
         window = Window(canvas.width.toInt(), canvas.height.toInt())
-        println(canvas.width)
-        println(canvas.height)
         createCapabilities()
 
         onInit()
@@ -63,12 +62,14 @@ abstract class OpenGLCanvas {
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
 
-        val aspect = event.height.toDouble() / event.width
-        glFrustum(-1.0, 1.0, -aspect, aspect, 5.0, 60.0)
-        glMatrixMode(GL11.GL_MODELVIEW)
-        glLoadIdentity()
+        val newWindowSize = Vector2i(event.width, event.height)
+        normalizeResizedCameraPosition(newWindowSize, window.size)
+        window.resize(event.width, event.height)
+    }
 
-        glTranslatef(0.0f, 0.0f, -40.0f)
+    private fun normalizeResizedCameraPosition(newWindowSize: Vector2i, oldWindowSize: Vector2i) {
+        val resizeDelta = newWindowSize - oldWindowSize
+        window.camera.position += resizeDelta.toFloatVector() / (2f * window.camera.scaledZoom)
     }
 
     companion object {

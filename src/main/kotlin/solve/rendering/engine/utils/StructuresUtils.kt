@@ -32,6 +32,12 @@ fun Vector3f.toIntVector(): Vector3i = Vector3i(x.toInt(), y.toInt(), z.toInt())
 
 fun Vector4f.toIntVector(): Vector4i = Vector4i(x.toInt(), y.toInt(), z.toInt(), w.toInt())
 
+fun Vector2i.toFloatVector(): Vector2f = Vector2f(this)
+
+fun Vector3i.toFloatVector(): Vector3f = Vector3f(this)
+
+fun Vector4i.toFloatVector(): Vector4f = Vector4f(this)
+
 operator fun Vector2i.plus(otherVector: Vector2i): Vector2i = Vector2i(this).add(otherVector)
 operator fun Vector3i.plus(otherVector: Vector3i): Vector3i = Vector3i(this).add(otherVector)
 operator fun Vector4i.plus(otherVector: Vector4i): Vector4i = Vector4i(this).add(otherVector)

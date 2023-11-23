@@ -3,7 +3,6 @@ package solve.rendering.canvas
 import org.joml.Vector2f
 import solve.rendering.engine.rendering.renderers.FramesRenderer
 import solve.rendering.engine.scene.Scene
-import solve.rendering.engine.utils.unaryMinus
 import solve.scene.controller.SceneController
 import solve.utils.ServiceLocator
 
