@@ -2,11 +2,14 @@ package solve.rendering.engine.camera
 
 import org.joml.Matrix4f
 import org.joml.Vector2f
+import org.joml.Vector2i
+import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.times
+import solve.rendering.engine.utils.toFloatVector
 
 class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
     var zoom: Float = zoom
-        set(value) {
+        private set(value) {
             if (value <= 0f) {
                 println("The camera scale should be positive number!")
                 return
@@ -16,6 +19,15 @@ class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
 
     val scaledZoom: Float
         get() = zoom * DefaultCameraScaleCoefficient
+
+    fun zoomToCenter(currentZoomMultiplier: Float) {
+        zoom *= currentZoomMultiplier
+    }
+
+    fun zoomToPoint(point: Vector2i, currentZoomMultiplier: Float) {
+        zoom *= currentZoomMultiplier
+        position += point.toFloatVector() * (currentZoomMultiplier - 1f) / scaledZoom
+    }
 
     fun calculateProjectionMatrix(projectionSize: Vector2f): Matrix4f {
         val orthoMatrix = calculateOrthoMatrix(projectionSize)
