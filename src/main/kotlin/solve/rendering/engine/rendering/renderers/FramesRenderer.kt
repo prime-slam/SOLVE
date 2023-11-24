@@ -22,7 +22,6 @@ import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.structures.IntRect
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.toIntVector
-import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
 import kotlin.math.abs
@@ -70,8 +69,9 @@ class FramesRenderer(
     }
 
     fun setFramesSelection(frames: List<VisualizationFrame>) {
-        if (frames.isEmpty())
+        if (frames.isEmpty()) {
             return
+        }
 
         this.selectedFrames = frames
         haveNewFramesSelection = true
@@ -106,11 +106,13 @@ class FramesRenderer(
     }
 
     override fun beforeRender() {
-        if (selectedFrames.isEmpty())
+        if (selectedFrames.isEmpty()) {
             return
+        }
 
-        if (needToReinitializeBuffers)
+        if (needToReinitializeBuffers) {
             reinitializeBuffers()
+        }
 
         if (haveNewFramesSelection) {
             uploadAllFramesToBuffer()
