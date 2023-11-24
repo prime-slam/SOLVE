@@ -46,19 +46,22 @@ class SceneCanvas : OpenGLCanvas() {
     }
     private val mouseDraggedEventHandler = EventHandler<MouseEvent> { event ->
         val mousePosition = extrudeEventMousePosition(event)
-        if (event.button == MouseButton.MIDDLE)
+        if (event.button == MouseButton.MIDDLE) {
             onMouseDragged(mousePosition)
+        }
     }
     private val wheelPressedEventHandler = EventHandler<MouseEvent> { event ->
-        if (event.button != MouseButton.MIDDLE)
+        if (event.button != MouseButton.MIDDLE) {
             return@EventHandler
+        }
         dragStartCameraPosition = window.camera.position
         dragStartPoint = fromScreenToCameraPoint(mousePosition)
         isDraggingScene = true
     }
     private val wheelReleasedEventHandler = EventHandler<MouseEvent> { event ->
-        if (event.button != MouseButton.MIDDLE)
+        if (event.button != MouseButton.MIDDLE) {
             return@EventHandler
+        }
         isDraggingScene = false
     }
 
