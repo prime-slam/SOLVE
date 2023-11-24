@@ -1,6 +1,7 @@
 package solve.rendering.canvas
 
 import com.huskerdev.openglfx.GLCanvasAnimator
+import com.huskerdev.openglfx.events.GLDisposeEvent
 import com.huskerdev.openglfx.events.GLInitializeEvent
 import com.huskerdev.openglfx.events.GLRenderEvent
 import com.huskerdev.openglfx.events.GLReshapeEvent
@@ -36,10 +37,13 @@ abstract class OpenGLCanvas {
 
     open fun onDraw(deltaTime: Float) { }
 
+    open fun onDispose() { }
+
     protected fun initializeCanvasEvents() {
+        canvas.addOnInitEvent(this::canvasInit)
         canvas.addOnReshapeEvent(this::reshape)
         canvas.addOnRenderEvent(this::render)
-        canvas.addOnInitEvent(this::canvasInit)
+        canvas.addOnDisposeEvent(this::dispose)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -65,6 +69,11 @@ abstract class OpenGLCanvas {
         val newWindowSize = Vector2i(event.width, event.height)
         normalizeResizedCameraPosition(newWindowSize, window.size)
         window.resize(event.width, event.height)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun dispose(event: GLDisposeEvent) {
+        onDispose()
     }
 
     private fun normalizeResizedCameraPosition(newWindowSize: Vector2i, oldWindowSize: Vector2i) {

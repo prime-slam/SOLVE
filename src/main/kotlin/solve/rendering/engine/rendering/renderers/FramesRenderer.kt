@@ -25,12 +25,10 @@ import solve.rendering.engine.utils.toIntVector
 import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
-import tornadofx.*
 import kotlin.math.abs
 
 class FramesRenderer(
-    window: Window,
-    sceneController: SceneController
+    window: Window
 ) : Renderer(window) {
     private data class LoadedBufferFrameData(val textureData: Texture2DData, val bufferIndex: Int)
 
@@ -47,6 +45,7 @@ class FramesRenderer(
     private var framesWidth = 1
     private var framesHeight = 1
     private var framesChannelsType = TextureChannelsType.RGBA
+    private var selectedFrames = emptyList<VisualizationFrame>()
 
     private var cameraLastGridCellPosition = getCameraGridCellPosition()
 
@@ -54,17 +53,28 @@ class FramesRenderer(
     private val framesLoadingCoroutineScope = CoroutineScope(Dispatchers.Default)
 
     private var needToReinitializeBuffers = false
-
-    // TODO: change scene frames from another class.
-    init {
-        sceneController.sceneProperty.onChange { scene ->
-            scene ?: return@onChange
-            changeSceneFrames(scene.frames)
-        }
-    }
+    private var haveNewFramesSelection = false
 
     fun changeModelsCommonMatrix(newMatrix: Matrix4f) {
         modelsCommonMatrix = newMatrix
+    }
+
+    fun setNewSceneFrames(frames: List<VisualizationFrame>) {
+        if (frames.isEmpty()) {
+            return
+        }
+
+        this.frames = frames
+        this.selectedFrames = frames
+        needToReinitializeBuffers = true
+    }
+
+    fun setFramesSelection(frames: List<VisualizationFrame>) {
+        if (frames.isEmpty())
+            return
+
+        this.selectedFrames = frames
+        haveNewFramesSelection = true
     }
 
     override fun createShaderProgram(): ShaderProgram {
@@ -89,19 +99,23 @@ class FramesRenderer(
         RenderBatch(maxBatchSize, zIndex, PrimitiveType.Point, listOf(ShaderAttributeType.FLOAT))
 
     override fun updateBatchesData() {
-        frames.forEachIndexed { index, _ ->
+        selectedFrames.forEachIndexed { index, _ ->
             val batch = getAvailableBatch(null, 0)
             batch.pushInt(index)
         }
     }
 
     override fun beforeRender() {
-        if (frames.isEmpty()) {
+        if (selectedFrames.isEmpty())
             return
-        }
 
-        if (needToReinitializeBuffers) {
+        if (needToReinitializeBuffers)
             reinitializeBuffers()
+
+        if (haveNewFramesSelection) {
+            uploadAllFramesToBuffer()
+            bufferFramesToUpload.clear()
+            haveNewFramesSelection = false
         }
 
         uploadLoadedFramesToBuffers()
@@ -111,16 +125,8 @@ class FramesRenderer(
     private fun reinitializeBuffers() {
         bufferFramesArrayTexture?.delete()
         initializeTexturesBuffers(frames)
+        uploadAllFramesToBuffer()
         needToReinitializeBuffers = false
-    }
-
-    private fun changeSceneFrames(frames: List<VisualizationFrame>) {
-        if (frames.isEmpty()) {
-            return
-        }
-
-        this.frames = frames
-        needToReinitializeBuffers = true
     }
 
     private fun uploadLoadedFramesToBuffers() {
@@ -178,10 +184,10 @@ class FramesRenderer(
     private fun getFramesAtRect(rect: IntRect): List<List<VisualizationFrame>> {
         val framesRect = mutableListOf<List<VisualizationFrame>>()
         for (y in rect.y0 until rect.y0 + rect.height) {
-            val framesFromIndex = (gridWidth * y + rect.x0).coerceIn(0..frames.lastIndex)
-            val framesToIndex = (framesFromIndex + rect.width).coerceIn(0..frames.lastIndex)
+            val framesFromIndex = (gridWidth * y + rect.x0).coerceIn(0..selectedFrames.lastIndex)
+            val framesToIndex = (framesFromIndex + rect.width).coerceIn(0..selectedFrames.lastIndex)
 
-            framesRect.add(frames.subList(framesFromIndex, framesToIndex))
+            framesRect.add(selectedFrames.subList(framesFromIndex, framesToIndex))
         }
 
         return framesRect
@@ -213,7 +219,7 @@ class FramesRenderer(
         return (window.camera.position - Vector2f(buffersSize) / 2f).toIntVector()
     }
 
-    private fun uploadInitialFramesToBuffer() {
+    private fun uploadAllFramesToBuffer() {
         loadRectFramesToBuffers(IntRect(0, 0, buffersSize.x, buffersSize.y))
     }
 
@@ -230,8 +236,6 @@ class FramesRenderer(
 
         bufferFramesArrayTexture =
             ArrayTexture(framesWidth, framesHeight, framesChannelsType, buffersSize.x * buffersSize.y)
-
-        uploadInitialFramesToBuffer()
     }
 
     private fun uploadFrameToBuffersArray(frame: VisualizationFrame, index: Int) {
