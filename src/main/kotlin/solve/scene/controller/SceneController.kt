@@ -60,7 +60,7 @@ class SceneController : Controller() {
     /**
      * Editable low border of scene scale range.
      */
-    private val installedMinScaleProperty = SimpleDoubleProperty(DefaultMinScale)
+    val installedMinScaleProperty = SimpleDoubleProperty(DefaultMinScale)
     var installedMinScale: Double
         get() = installedMinScaleProperty.value
         set(value) {
@@ -75,7 +75,7 @@ class SceneController : Controller() {
     /**
      * Editable top border of scene scale range.
      */
-    private val installedMaxScaleProperty = SimpleDoubleProperty(DefaultMaxScale)
+    val installedMaxScaleProperty = SimpleDoubleProperty(DefaultMaxScale)
     var installedMaxScale: Double
         get() = installedMaxScaleProperty.value
         set(value) {
@@ -94,8 +94,8 @@ class SceneController : Controller() {
     val scaleProperty = SimpleDoubleProperty(calculateMinScaleDependingOnColumns())
     var scale: Double
         get() = scaleProperty.value
-        set(value) {
-            scaleProperty.value = value
+        private set(value) {
+            scaleProperty.value = value.coerceIn(installedMinScale, installedMaxScale)
         }
 
     private val minScale: Double
@@ -134,6 +134,14 @@ class SceneController : Controller() {
         addGridSettingsBindings()
     }
 
+    fun increaseScale() {
+        scale *= ScaleFactor
+    }
+    
+    fun decreaseScale() {
+        scale /= ScaleFactor
+    }
+
     /**
      * Changes scene data object and recalculates visual properties.
      */
@@ -146,10 +154,6 @@ class SceneController : Controller() {
         recalculateScale(false)
     }
 
-    fun zoomIn(mousePosition: DoublePoint) = zoom(min(scale * ScaleFactor, maxScale), mousePosition)
-
-    fun zoomOut(mousePosition: DoublePoint) = zoom(max(scale / ScaleFactor, min(minScale, scale)), mousePosition)
-
     /**
      * Recalculates current scale value to avoid empty space.
      */
@@ -157,16 +161,6 @@ class SceneController : Controller() {
         if (!keepOldScale || hasEmptySpace) {
             scale = minScale
         }
-    }
-
-    private fun zoom(newScale: Double, mousePosition: DoublePoint) {
-        val initialMouseX = (xProperty.value + mousePosition.x) / scale
-        val initialMouseY = (yProperty.value + mousePosition.y) / scale
-
-        // TODO
-        initialMouseX.toString()
-        initialMouseY.toString()
-        newScale.toString()
     }
 
     private fun reinitializeSettings(newScene: Scene) {

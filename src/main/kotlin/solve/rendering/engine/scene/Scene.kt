@@ -3,16 +3,16 @@ package solve.rendering.engine.scene
 import solve.rendering.engine.rendering.renderers.Renderer
 
 class Scene(renderers: List<Renderer> = emptyList()) {
-    private val _gameObjects = mutableListOf<GameObject>()
-    val gameObjects: List<GameObject>
-        get() = _gameObjects
+    private val _sceneObjects = mutableListOf<SceneObject>()
+    val sceneObjects: List<SceneObject>
+        get() = _sceneObjects
 
     private val _renderers = renderers
     val renderers: List<Renderer>
         get() = _renderers
 
     fun update(deltaTime: Float) {
-        _gameObjects.forEach { gameObject ->
+        _sceneObjects.forEach { gameObject ->
             if (gameObject.isDestroyed) {
                 removeGameObject(gameObject)
                 return@forEach
@@ -23,17 +23,17 @@ class Scene(renderers: List<Renderer> = emptyList()) {
         }
     }
 
-    fun addGameObject(gameObject: GameObject) {
-        if (_gameObjects.contains(gameObject)) {
-            println("The scene already contains adding game object ($gameObject)!")
+    fun addGameObject(sceneObject: SceneObject) {
+        if (_sceneObjects.contains(sceneObject)) {
+            println("The scene already contains adding game object ($sceneObject)!")
             return
         }
-        _gameObjects.add(gameObject)
-        _renderers.forEach { it.addGameObject(gameObject) }
+        _sceneObjects.add(sceneObject)
+        _renderers.forEach { it.addGameObject(sceneObject) }
     }
 
-    fun removeGameObject(gameObject: GameObject) {
-        _gameObjects.remove(gameObject)
-        _renderers.forEach { it.removeGameObject(gameObject) }
+    fun removeGameObject(sceneObject: SceneObject) {
+        _sceneObjects.remove(sceneObject)
+        _renderers.forEach { it.removeGameObject(sceneObject) }
     }
 }
