@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11.glDrawElements
 import solve.rendering.engine.Window
 import solve.rendering.engine.rendering.batch.RenderBatch
 import solve.rendering.engine.rendering.texture.Texture2D
-import solve.rendering.engine.scene.GameObject
+import solve.rendering.engine.scene.SceneObject
 import solve.rendering.engine.shader.ShaderProgram
 
 abstract class Renderer(protected val window: Window) {
@@ -45,9 +45,9 @@ abstract class Renderer(protected val window: Window) {
         batches.forEach { it.deleteBuffers() }
     }
 
-    open fun addGameObject(gameObject: GameObject) { }
+    open fun addGameObject(sceneObject: SceneObject) { }
 
-    open fun removeGameObject(gameObject: GameObject): Boolean = false
+    open fun removeGameObject(sceneObject: SceneObject): Boolean = false
 
     protected fun getAvailableBatch(texture: Texture2D?, requiredZIndex: Int): RenderBatch {
         batches.forEach { batch ->

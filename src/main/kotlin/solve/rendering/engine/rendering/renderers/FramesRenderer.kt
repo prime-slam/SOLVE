@@ -58,6 +58,15 @@ class FramesRenderer(
         modelsCommonMatrix = newMatrix
     }
 
+    fun setGridWidth(gridWidth: Int) {
+        if (gridWidth < 1) {
+            println("The width of the frames grid should be a positive value!")
+            return
+        }
+
+        this.gridWidth = gridWidth
+    }
+
     fun setNewSceneFrames(frames: List<VisualizationFrame>) {
         if (frames.isEmpty()) {
             return

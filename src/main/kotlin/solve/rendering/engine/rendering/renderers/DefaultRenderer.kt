@@ -8,7 +8,7 @@ import solve.rendering.engine.Window
 import solve.rendering.engine.components.SpriteRenderer
 import solve.rendering.engine.rendering.batch.PrimitiveType
 import solve.rendering.engine.rendering.batch.RenderBatch
-import solve.rendering.engine.scene.GameObject
+import solve.rendering.engine.scene.SceneObject
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
@@ -59,7 +59,7 @@ class DefaultRenderer(
     override fun updateBatchesData() {
         spriteRenderers.forEach { spriteRenderer ->
             val sprite = spriteRenderer.sprite ?: return@forEach
-            val gameObject = spriteRenderer.gameObject ?: return@forEach
+            val gameObject = spriteRenderer.sceneObject ?: return@forEach
 
             val texture = sprite.texture
             val batch = getAvailableBatch(texture, gameObject.transform.zIndex)
@@ -80,8 +80,8 @@ class DefaultRenderer(
         }
     }
 
-    override fun addGameObject(gameObject: GameObject) {
-        val spriteRenderer = gameObject.getComponentOfType<SpriteRenderer>()
+    override fun addGameObject(sceneObject: SceneObject) {
+        val spriteRenderer = sceneObject.getComponentOfType<SpriteRenderer>()
         if (spriteRenderer == null) {
             println("The adding gameobject does not has a sprite renderer component!")
             return
@@ -90,8 +90,8 @@ class DefaultRenderer(
         spriteRenderers.add(spriteRenderer)
     }
 
-    override fun removeGameObject(gameObject: GameObject): Boolean {
-        val spriteRenderer = gameObject.getComponentOfType<SpriteRenderer>() ?: return false
+    override fun removeGameObject(sceneObject: SceneObject): Boolean {
+        val spriteRenderer = sceneObject.getComponentOfType<SpriteRenderer>() ?: return false
 
         return spriteRenderers.remove(spriteRenderer)
     }

@@ -1,7 +1,12 @@
 package solve.scene.view
 
 import javafx.application.Platform
+import javafx.beans.InvalidationListener
+import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseEvent
+import org.joml.Vector2i
 import solve.rendering.canvas.SceneCanvas
+import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.scene.model.Landmark
 import solve.scene.model.VisualizationFrame
@@ -17,31 +22,46 @@ class SceneView : View() {
     private val controller: SceneController by inject()
     private val canvas = SceneCanvas()
 
+    private var mouseScreenPoint = Vector2i()
+
     var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
         private set
 
     override val root = canvas.canvas
 
+    private val projectChangedEventHandler = InvalidationListener {
+        canvas.setNewSceneFrames(controller.scene.frames)
+    }
+    private val framesChangedEventHandler = InvalidationListener {
+        canvas.setFramesSelection(controller.scene.frames)
+    }
+
     init {
         addBindings()
     }
 
-    private fun setUpScrollingOnMouseWheel() { } // TODO
-
-    private fun bindPositionProperties() { } // TODO
-    private fun unbindPositionProperties() {
-        controller.xProperty.unbind()
-        controller.yProperty.unbind()
-        controller.scrollX = null
-        controller.scrollY = null
-    }
+    private fun extrudeEventMousePosition(event: MouseEvent) = Vector2i(event.x.toInt(), event.y.toInt())
 
     private fun addBindings() {
+        addSceneParamsBindings()
+        addSceneFramesBindings()
+        addInputBindings()
+    }
+
+    private fun addSceneFramesBindings() {
+        SceneFacade.lastVisualizationKeepSettingsProperty.addListener(projectChangedEventHandler)
+        controller.sceneProperty.addListener(framesChangedEventHandler)
+    }
+
+    private fun addSceneParamsBindings() {
         controller.sceneWidthProperty.bind(root.widthProperty())
 
         // Grid settings bindings.
-        controller.installedColumnsNumberProperty.onChange {
-            // TODO
+        controller.installedColumnsNumberProperty.onChange { columnsNumber ->
+            canvas.setColumnsNumber(columnsNumber)
+        }
+        controller.scaleProperty.onChange { scale ->
+            canvas.zoomToPoint(mouseScreenPoint, scale.toFloat())
         }
         Platform.runLater {
             if (this.root.scene != null) {
@@ -54,18 +74,40 @@ class SceneView : View() {
         }
     }
 
-    private fun scrollRight() { } // TODO
-
-    private fun scrollLeft() { } // TODO
-
-    private fun scrollUp() { } // TODO
-
-    private fun scrollDown() { } // TODO
-    private fun zoomOutFromCenter() { } // TODO
-
-    private fun zoomInToCenter() { } // TODO
+    private fun addInputBindings() {
+        root.setOnMouseMoved { event ->
+            mouseScreenPoint = extrudeEventMousePosition(event)
+        }
+        root.setOnMouseDragged { event ->
+            if (event.button != MouseDragButton)
+                return@setOnMouseDragged
+            mouseScreenPoint = extrudeEventMousePosition(event)
+            canvas.dragTo(mouseScreenPoint)
+        }
+        root.setOnMousePressed { event ->
+            if (event.button != MouseDragButton)
+                return@setOnMousePressed
+            canvas.startDragging(mouseScreenPoint)
+        }
+        root.setOnMouseReleased { event ->
+            if (event.button != MouseDragButton)
+                return@setOnMouseReleased
+            canvas.stopDragging()
+        }
+        root.setOnScroll { event ->
+            val scrollDelta = event.deltaY
+            if (scrollDelta > 0) {
+                controller.increaseScale()
+            } else {
+                controller.decreaseScale()
+            }
+        }
+    }
 
     companion object {
+        private const val OnWheelScrolledScaleMultiplier = 1.1f
+        private val MouseDragButton = MouseButton.MIDDLE
+
         const val framesMargin = 10.0
         const val scrollSpeed = 20.0
     }

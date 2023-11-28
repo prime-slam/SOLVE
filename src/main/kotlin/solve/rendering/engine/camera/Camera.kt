@@ -24,9 +24,10 @@ class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
         zoom *= currentZoomMultiplier
     }
 
-    fun zoomToPoint(point: Vector2i, currentZoomMultiplier: Float) {
-        zoom *= currentZoomMultiplier
-        position += point.toFloatVector() * (currentZoomMultiplier - 1f) / scaledZoom
+    fun zoomToPoint(point: Vector2i, newZoom: Float) {
+        val zoomMultiplier = newZoom / zoom
+        zoom = newZoom
+        position += point.toFloatVector() * (zoomMultiplier - 1f) / scaledZoom
     }
 
     fun calculateProjectionMatrix(projectionSize: Vector2f): Matrix4f {
