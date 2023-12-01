@@ -30,6 +30,5 @@ void main()
     } else {
         vs_out.isColored = true;
     }
-    vs_out.isColored = true;
     gl_Position = vec4(framePosition, 0.0, 1.0);
 }
