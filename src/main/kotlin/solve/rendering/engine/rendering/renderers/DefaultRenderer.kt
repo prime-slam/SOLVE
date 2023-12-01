@@ -62,6 +62,7 @@ class DefaultRenderer(
             val gameObject = spriteRenderer.sceneObject ?: return@forEach
 
             val texture = sprite.texture
+            val textureSidesRatio = texture.width.toFloat() / texture.height.toFloat()
             val batch = getAvailableBatch(texture, gameObject.transform.zIndex)
             val textureID = batch.getTextureLocalID(texture)
             val scale = gameObject.transform.scale
@@ -70,7 +71,10 @@ class DefaultRenderer(
             val uvCoordinates = sprite.uvCoordinates
 
             spriteLocalVerticesPositions.forEachIndexed { index, vertexPosition ->
-                val vertexLocalVector = Vector2f(vertexPosition.x * scale.x, vertexPosition.y * scale.y)
+                val vertexLocalVector = Vector2f(
+                    vertexPosition.x * scale.x * textureSidesRatio,
+                    vertexPosition.y * scale.y
+                )
 
                 batch.pushVector2f(position + vertexLocalVector)
                 batch.pushVector4f(color.toVector4f())

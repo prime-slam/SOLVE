@@ -1,5 +1,6 @@
 package solve.scene.model
 
+import solve.utils.loadBufferedImage
 import solve.utils.structures.Size as DoubleSize
 
 /**
@@ -17,8 +18,8 @@ class Scene(
      */
     val frameSize: DoubleSize by lazy {
         frames.firstOrNull()?.let {
-            // TODO
-            DoubleSize(0.0, 0.0)
+            val image = loadBufferedImage(it.imagePath.toString()) ?: return@let null
+            return@let DoubleSize(image.width.toDouble(), image.height.toDouble())
         } ?: DoubleSize(0.0, 0.0)
     }
 

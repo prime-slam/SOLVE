@@ -30,7 +30,9 @@ class SceneView : View() {
     override val root = canvas.canvas
 
     private val projectChangedEventHandler = InvalidationListener {
-        canvas.setNewSceneFrames(controller.scene.frames)
+        val framesSize = controller.scene.frameSize
+        val framesSizeVector = Vector2i(framesSize.width.toInt(), framesSize.height.toInt())
+        canvas.setNewSceneFrames(controller.scene.frames, framesSizeVector)
     }
     private val framesChangedEventHandler = InvalidationListener {
         canvas.setFramesSelection(controller.scene.frames)
@@ -108,7 +110,7 @@ class SceneView : View() {
         private const val OnWheelScrolledScaleMultiplier = 1.1f
         private val MouseDragButton = MouseButton.MIDDLE
 
-        const val framesMargin = 10.0
+        const val framesMargin = 0.0
         const val scrollSpeed = 20.0
     }
 }

@@ -3,6 +3,7 @@ package solve.scene.controller
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
+import solve.rendering.canvas.SceneCanvas
 import solve.scene.model.Scene
 import solve.scene.view.SceneView
 import solve.utils.ServiceLocator
@@ -95,7 +96,10 @@ class SceneController : Controller() {
     var scale: Double
         get() = scaleProperty.value
         private set(value) {
-            scaleProperty.value = value.coerceIn(installedMinScale, installedMaxScale)
+            scaleProperty.value = value.coerceIn(
+                max(installedMinScale, minScale),
+                min(installedMaxScale, maxScale)
+            )
         }
 
     private val minScale: Double
@@ -137,7 +141,7 @@ class SceneController : Controller() {
     fun increaseScale() {
         scale *= ScaleFactor
     }
-    
+
     fun decreaseScale() {
         scale /= ScaleFactor
     }
@@ -194,8 +198,8 @@ class SceneController : Controller() {
         return min(
             max(
                 installedMinScale,
-                sceneWidthProperty.value /
-                    ((scene.frameSize.width + SceneView.framesMargin) * columnsNumber)
+                sceneWidthProperty.value / ((scene.frameSize.width + SceneView.framesMargin) * columnsNumber) *
+                        SceneCanvas.IdentityFramesSizeScale
             ),
             DefaultMaxScale
         )
@@ -210,7 +214,7 @@ class SceneController : Controller() {
         const val DefaultMinScale = 0.2
         const val DefaultMaxScale = 20.0
 
-        const val MaxColumnsNumber = 5
+        const val MaxColumnsNumber = 6
 
         private const val DefaultX = 0.0
         private const val DefaultY = 0.0
