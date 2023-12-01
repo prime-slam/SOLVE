@@ -110,7 +110,6 @@ class SceneView : View() {
     }
 
     companion object {
-        private const val OnWheelScrolledScaleMultiplier = 1.1f
         private val MouseDragButton = MouseButton.MIDDLE
 
         const val framesMargin = 0.0

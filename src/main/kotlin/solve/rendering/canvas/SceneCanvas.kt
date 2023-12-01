@@ -1,6 +1,5 @@
 package solve.rendering.canvas
 
-import javafx.application.Platform
 import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.rendering.engine.rendering.renderers.FramesRenderer
@@ -41,12 +40,11 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     fun setFramesSelection(framesSelection: List<VisualizationFrame>) {
+        recalculateCameraCornersPositions()
+        window.camera.position = leftUpperCornerCameraPosition
+
         framesRenderer?.setFramesSelection(framesSelection)
         framesSelectionSize = framesSelection.count()
-        Platform.runLater {
-            recalculateCameraCornersPositions()
-            window.camera.position = leftUpperCornerCameraPosition
-        }
     }
 
     fun setColumnsNumber(columnsNumber: Int) {

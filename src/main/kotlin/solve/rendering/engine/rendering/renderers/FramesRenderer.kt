@@ -23,6 +23,7 @@ import solve.rendering.engine.structures.IntRect
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.toFloatVector
 import solve.rendering.engine.utils.toIntVector
+import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
 import java.util.Date
@@ -64,6 +65,8 @@ class FramesRenderer(
     private var needToReinitializeBuffers = false
     private var haveNewFramesSelection = false
 
+    private var isVirtualizationEnabled = false
+
     fun changeModelsCommonMatrix(newMatrix: Matrix4f) {
         modelsCommonMatrix = newMatrix
     }
@@ -78,9 +81,8 @@ class FramesRenderer(
     }
 
     fun setNewSceneFrames(frames: List<VisualizationFrame>) {
-        if (frames.isEmpty()) {
+        if (frames.isEmpty())
             return
-        }
 
         this.frames = frames
         this.selectedFrames = frames
@@ -88,6 +90,7 @@ class FramesRenderer(
     }
 
     fun setFramesSelection(frames: List<VisualizationFrame>) {
+        this.disableVirtualization()
         this.selectedFrames = frames
         haveNewFramesSelection = true
     }
@@ -123,22 +126,33 @@ class FramesRenderer(
     }
 
     override fun beforeRender() {
-        if (selectedFrames.isEmpty()) {
+        if (selectedFrames.isEmpty())
             return
-        }
 
-        if (needToReinitializeBuffers) {
+        if (needToReinitializeBuffers)
             reinitializeBuffers()
-        }
 
         if (haveNewFramesSelection) {
             uploadAllFramesToBuffer()
             bufferFramesToUpload.clear()
             haveNewFramesSelection = false
+            enableVirtualization()
         }
+
+        if (!isVirtualizationEnabled)
+            return
 
         uploadLoadedFramesToBuffers()
         updateBuffersTextures()
+    }
+
+    private fun disableVirtualization() {
+        isVirtualizationEnabled = false
+    }
+
+    private fun enableVirtualization() {
+        cameraLastGridCellPosition = getScreenCenterGridCellPosition()
+        isVirtualizationEnabled = true
     }
 
     private fun reinitializeBuffers() {
@@ -152,6 +166,7 @@ class FramesRenderer(
         bufferFramesToUpload.toList().forEach { frame ->
             bufferFramesToUpload.remove(frame)
             bufferFramesArrayTexture?.uploadTexture(frame.textureData, frame.bufferIndex)
+            println("Loading: index - ${frame.bufferIndex}")
             Texture2D.freeData(frame.textureData)
         }
     }
@@ -197,7 +212,9 @@ class FramesRenderer(
             rectWidth,
             rectHeight
         )
-        loadRectFramesToBuffers(newFramesRect)
+        if (newFramesRect.x0 > 0 && newFramesRect.x1 < gridWidth &&
+            newFramesRect.y0 > 0 && newFramesRect.y1 < gridHeight)
+            loadRectFramesToBuffers(newFramesRect)
     }
 
     private fun getFramesAtRect(rect: IntRect): List<List<VisualizationFrame>> {
@@ -220,10 +237,6 @@ class FramesRenderer(
         }
 
         val buffersOffset = Vector2i(framesRect.x0 % buffersSize.x, framesRect.y0 % buffersSize.y)
-        /*if (framesRect.width > buffersSize.x || framesRect.height > buffersSize.y) {
-            println("The size of the loading frames is out of buffers bounds!")
-            return
-        }*/
 
         for (y in 0 until rectFrames.count()) {
             for (x in 0 until rectFrames[y].count()) {
@@ -240,7 +253,7 @@ class FramesRenderer(
     }
 
     private fun uploadAllFramesToBuffer() {
-        loadRectFramesToBuffers(IntRect(0, 0, buffersSize.x, buffersSize.y))
+        loadRectFramesToBuffers(IntRect(0, 0, gridWidth, gridHeight))
     }
 
     private fun initializeTexturesBuffers(frames: List<VisualizationFrame>) {
@@ -253,6 +266,10 @@ class FramesRenderer(
         framesWidth = firstTextureData.width
         framesHeight = firstTextureData.height
         framesChannelsType = firstTextureData.channelsType
+        buffersSize = Vector2i(
+            (window.width / (framesWidth * SceneController.DefaultMinScale)).toInt() + BuffersSizeOffset,
+            (window.height / (framesHeight * SceneController.DefaultMinScale)).toInt() + BuffersSizeOffset
+        )
 
         bufferFramesArrayTexture =
             ArrayTexture(framesWidth, framesHeight, framesChannelsType, buffersSize.x * buffersSize.y)
@@ -260,6 +277,7 @@ class FramesRenderer(
 
     private fun uploadFrameToBuffersArray(frame: VisualizationFrame, index: Int) {
         val loadTime = Date().time
+        println("Uploading: ${frame.imagePath.fileName}, index - $index")
         framesLoadingCoroutineScope.launch {
             val textureData = Texture2D.loadData(frame.imagePath.toString())
             if (textureData == null) {
@@ -268,6 +286,7 @@ class FramesRenderer(
             }
 
             bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index, loadTime))
+            println("Added: ${frame.imagePath.fileName}, index - $index")
         }
     }
 
@@ -281,7 +300,8 @@ class FramesRenderer(
         private const val CameraPositionUniformName = "uCameraPosition"
 
         private const val DefaultGridWidth = 10
+        private const val BuffersSizeOffset = 2
 
-        private val defaultBuffersSize = Vector2i(5, 5)
+        private val defaultBuffersSize = Vector2i(10, 10)
     }
 }
