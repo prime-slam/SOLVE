@@ -81,19 +81,22 @@ class SceneView : View() {
             mouseScreenPoint = extrudeEventMousePosition(event)
         }
         root.setOnMouseDragged { event ->
-            if (event.button != MouseDragButton)
+            if (event.button != MouseDragButton) {
                 return@setOnMouseDragged
+            }
             mouseScreenPoint = extrudeEventMousePosition(event)
             canvas.dragTo(mouseScreenPoint)
         }
         root.setOnMousePressed { event ->
-            if (event.button != MouseDragButton)
+            if (event.button != MouseDragButton) {
                 return@setOnMousePressed
+            }
             canvas.startDragging(mouseScreenPoint)
         }
         root.setOnMouseReleased { event ->
-            if (event.button != MouseDragButton)
+            if (event.button != MouseDragButton) {
                 return@setOnMouseReleased
+            }
             canvas.stopDragging()
         }
         root.setOnScroll { event ->
