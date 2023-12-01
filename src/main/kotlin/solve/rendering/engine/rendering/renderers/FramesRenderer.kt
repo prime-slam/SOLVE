@@ -158,7 +158,6 @@ class FramesRenderer(
     private fun reinitializeBuffers() {
         bufferFramesArrayTexture?.delete()
         initializeTexturesBuffers(frames)
-        uploadAllFramesToBuffer()
         needToReinitializeBuffers = false
     }
 
@@ -166,7 +165,6 @@ class FramesRenderer(
         bufferFramesToUpload.toList().forEach { frame ->
             bufferFramesToUpload.remove(frame)
             bufferFramesArrayTexture?.uploadTexture(frame.textureData, frame.bufferIndex)
-            println("Loading: index - ${frame.bufferIndex}")
             Texture2D.freeData(frame.textureData)
         }
     }
@@ -218,7 +216,11 @@ class FramesRenderer(
     }
 
     private fun getFramesAtRect(rect: IntRect): List<List<VisualizationFrame>> {
+        if (selectedFrames.isEmpty())
+            return emptyList()
+
         val framesRect = mutableListOf<List<VisualizationFrame>>()
+
         for (y in rect.y0 until rect.y0 + rect.height) {
             val framesFromIndex = (gridWidth * y + rect.x0).coerceIn(0..selectedFrames.lastIndex)
             val framesToIndex = (framesFromIndex + rect.width).coerceIn(0..selectedFrames.count())
@@ -277,7 +279,6 @@ class FramesRenderer(
 
     private fun uploadFrameToBuffersArray(frame: VisualizationFrame, index: Int) {
         val loadTime = Date().time
-        println("Uploading: ${frame.imagePath.fileName}, index - $index")
         framesLoadingCoroutineScope.launch {
             val textureData = Texture2D.loadData(frame.imagePath.toString())
             if (textureData == null) {
@@ -286,7 +287,6 @@ class FramesRenderer(
             }
 
             bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index, loadTime))
-            println("Added: ${frame.imagePath.fileName}, index - $index")
         }
     }
 
