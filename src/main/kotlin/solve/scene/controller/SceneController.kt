@@ -8,7 +8,6 @@ import solve.scene.model.Scene
 import solve.scene.view.SceneView
 import solve.utils.ServiceLocator
 import solve.utils.ceilToInt
-import solve.utils.structures.DoublePoint
 import tornadofx.Controller
 import tornadofx.onChange
 import kotlin.math.max
@@ -199,7 +198,7 @@ class SceneController : Controller() {
             max(
                 installedMinScale,
                 sceneWidthProperty.value / ((scene.frameSize.width + SceneView.framesMargin) * columnsNumber) *
-                        SceneCanvas.IdentityFramesSizeScale
+                    SceneCanvas.IdentityFramesSizeScale
             ),
             DefaultMaxScale
         )
