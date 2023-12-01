@@ -81,8 +81,9 @@ class FramesRenderer(
     }
 
     fun setNewSceneFrames(frames: List<VisualizationFrame>) {
-        if (frames.isEmpty())
+        if (frames.isEmpty()) {
             return
+        }
 
         this.frames = frames
         this.selectedFrames = frames
@@ -126,11 +127,13 @@ class FramesRenderer(
     }
 
     override fun beforeRender() {
-        if (selectedFrames.isEmpty())
+        if (selectedFrames.isEmpty()) {
             return
+        }
 
-        if (needToReinitializeBuffers)
+        if (needToReinitializeBuffers) {
             reinitializeBuffers()
+        }
 
         if (haveNewFramesSelection) {
             uploadAllFramesToBuffer()
@@ -139,8 +142,9 @@ class FramesRenderer(
             enableVirtualization()
         }
 
-        if (!isVirtualizationEnabled)
+        if (!isVirtualizationEnabled) {
             return
+        }
 
         uploadLoadedFramesToBuffers()
         updateBuffersTextures()
@@ -211,13 +215,16 @@ class FramesRenderer(
             rectHeight
         )
         if (newFramesRect.x0 > 0 && newFramesRect.x1 < gridWidth &&
-            newFramesRect.y0 > 0 && newFramesRect.y1 < gridHeight)
+            newFramesRect.y0 > 0 && newFramesRect.y1 < gridHeight
+        ) {
             loadRectFramesToBuffers(newFramesRect)
+        }
     }
 
     private fun getFramesAtRect(rect: IntRect): List<List<VisualizationFrame>> {
-        if (selectedFrames.isEmpty())
+        if (selectedFrames.isEmpty()) {
             return emptyList()
+        }
 
         val framesRect = mutableListOf<List<VisualizationFrame>>()
 
