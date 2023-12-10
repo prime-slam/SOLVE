@@ -22,13 +22,6 @@ void main()
     vec2 cameraGridPosition = vec2(uCameraPosition.x / uTexturesRatio, uCameraPosition.y);
     vec2 framePosition = vec2(index % uGridWidth, index / uGridWidth);
     vec2 frameCameraPosition = framePosition - cameraGridPosition;
-    if (frameCameraPosition.x < 0 ||
-        frameCameraPosition.x >= uBuffersSize.x ||
-        frameCameraPosition.y < 0 ||
-        frameCameraPosition.y >= uBuffersSize.y) {
-        vs_out.isColored = false;
-    } else {
-        vs_out.isColored = true;
-    }
+    vs_out.isColored = true;
     gl_Position = vec4(framePosition, 0.0, 1.0);
 }

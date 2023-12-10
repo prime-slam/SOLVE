@@ -1,5 +1,6 @@
 package solve.rendering.canvas
 
+import javafx.application.Platform
 import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.rendering.engine.rendering.renderers.FramesRenderer
@@ -11,15 +12,16 @@ import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
 import solve.utils.ServiceLocator
 import solve.utils.ceilToInt
+import kotlin.io.path.Path
+import kotlin.math.pow
+import kotlin.math.sqrt
 
-class SceneCanvas : OpenGLCanvas() {
+class OpenGLSceneCanvas : OpenGLCanvas(), TestCanvas {
+    override val root = canvas
+
     private var sceneController: SceneController? = null
     private var framesRenderer: FramesRenderer? = null
     private var canvasScene: Scene? = null
-
-    private var isDraggingScene = false
-    private var dragStartCameraPoint = Vector2f()
-    private var dragStartPoint = Vector2i()
 
     private var leftUpperCornerCameraPosition = Vector2f()
     private var rightLowerCornerCameraPosition = Vector2f()
@@ -30,54 +32,25 @@ class SceneCanvas : OpenGLCanvas() {
     private val rowsNumber: Int
         get() = (framesSelectionSize.toFloat() / columnsNumber.toFloat()).ceilToInt()
 
+    private val measuredTimes = mutableListOf<Float>()
+    private var measurementNumber = 0
+
     init {
         initializeCanvasEvents()
     }
 
-    fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2i) {
-        framesRenderer?.setNewSceneFrames(frames)
-        this.framesSize = framesSize
-    }
-
-    fun setFramesSelection(framesSelection: List<VisualizationFrame>) {
-        recalculateCameraCornersPositions()
-        window.camera.position = leftUpperCornerCameraPosition
-
-        framesRenderer?.setFramesSelection(framesSelection)
-        framesSelectionSize = framesSelection.count()
-    }
-
-    fun setColumnsNumber(columnsNumber: Int) {
-        framesRenderer?.setGridWidth(columnsNumber)
-        this.columnsNumber = columnsNumber
-    }
-
-    fun dragTo(toScreenPoint: Vector2i) {
-        val mousePoint = fromScreenToCameraPoint(toScreenPoint)
-        if (isDraggingScene) {
-            val dragVector = mousePoint - dragStartPoint
-            window.camera.position = dragStartCameraPoint - dragVector.toFloatVector() / window.camera.scaledZoom
+    override fun drawFrames(testFramePath: String, scale: Float, gridWidth: Int, gridHeight: Int) {
+        Platform.runLater {
+            recalculateCameraCornersPositions()
             constraintCameraPosition()
         }
+
+        val frame = VisualizationFrame(0L, Path(testFramePath), emptyList())
+        framesRenderer?.setGridSize(gridWidth, gridHeight)
+        framesRenderer?.setTestFrame(frame)
+        window.camera.zoom = 2.6f * scale
     }
 
-    fun startDragging(fromScreenPoint: Vector2i) {
-        dragStartCameraPoint = window.camera.position
-        dragStartPoint = fromScreenToCameraPoint(fromScreenPoint)
-        isDraggingScene = true
-    }
-
-    fun stopDragging() {
-        isDraggingScene = false
-    }
-
-    fun zoomToPoint(screenPoint: Vector2i, newZoom: Float) {
-        val cameraPoint = fromScreenToCameraPoint(screenPoint)
-        window.camera.zoomToPoint(cameraPoint, newZoom)
-
-        recalculateCameraCornersPositions()
-        constraintCameraPosition()
-    }
 
     override fun onInit() {
         val controller = ServiceLocator.getService<SceneController>() ?: return
@@ -89,10 +62,22 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     override fun onDraw(deltaTime: Float) {
+        measurementNumber += 1
+
+        if (measurementNumber > TestCanvas.FirstSkippedMeasurementsNumber)
+            measuredTimes.add(deltaTime)
+
+        if (measurementNumber == TestCanvas.FirstSkippedMeasurementsNumber + TestCanvas.MeasurementsNumber) {
+            val avgTime = measuredTimes.average()
+            val variance = measuredTimes.sumOf { (it - avgTime).pow(2) } / measuredTimes.count()
+            val deviation = sqrt(variance)
+
+            println("Average time: $avgTime")
+            println("Deviation: $deviation")
+        }
+
         canvasScene?.renderers?.forEach { it.render() }
     }
-
-    private fun fromScreenToCameraPoint(screenPoint: Vector2i) = screenPoint - (window.size / 2)
 
     private fun constraintCameraPosition() {
         window.camera.position.x =

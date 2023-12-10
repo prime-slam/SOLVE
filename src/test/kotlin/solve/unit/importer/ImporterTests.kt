@@ -19,7 +19,7 @@ class ImporterTests {
         const val image1 = "123456789"
         const val image2 = "987654321"
         const val layer = "alg1_keypoint"
-        const val pathImage1 = "testData/TestProject1/images/123456789.jpg"
+        const val pathImage1 = "testData/TestProject1/images/test_image.jpg"
         const val pathImage2 = "testData/TestProject1/images/987654321.jpg"
         const val pathOutput1 = "testData/TestProject1/alg1_keypoint/123456789.csv"
         const val pathOutput2 = "testData/TestProject1/alg1_keypoint/987654321.csv"

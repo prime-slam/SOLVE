@@ -18,16 +18,11 @@ layout (points) in;
 layout (triangle_strip, max_vertices = 4) out;
 
 void main() {
-    bool isColored = gs_in[0].isColored;
-
-    if (isColored) {
         int frameID = gs_in[0].frameID;
         int frameX = int(mod(frameID, uGridWidth));
         int frameY = frameID / uGridWidth;
 
-        int bufferX = int(mod(frameX, uBuffersSize.x));
-        int bufferY = int(mod(frameY, uBuffersSize.y));
-        float texID = float(bufferY * uBuffersSize.x + bufferX);
+        float texID = 0;
 
         vec4 initialPosition = vec4(
             gl_in[0].gl_Position.x * uTexturesRatio,
@@ -56,12 +51,4 @@ void main() {
         EmitVertex();
 
         EndPrimitive();
-    } else {
-        gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
-        fTexID = -1.0;
-        fTexCoords = vec2(0.0, 0.0);
-        EmitVertex();
-
-        EndPrimitive();
-    }
 }

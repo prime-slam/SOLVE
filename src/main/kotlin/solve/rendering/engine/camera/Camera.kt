@@ -9,7 +9,7 @@ import solve.rendering.engine.utils.toFloatVector
 
 class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
     var zoom: Float = zoom
-        private set(value) {
+        set(value) {
             if (value <= 0f) {
                 println("The camera scale should be positive number!")
                 return

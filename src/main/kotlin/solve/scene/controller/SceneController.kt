@@ -3,7 +3,7 @@ package solve.scene.controller
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
-import solve.rendering.canvas.SceneCanvas
+import solve.rendering.canvas.OpenGLSceneCanvas
 import solve.scene.model.Scene
 import solve.scene.view.SceneView
 import solve.utils.ServiceLocator
@@ -198,7 +198,7 @@ class SceneController : Controller() {
             max(
                 installedMinScale,
                 sceneWidthProperty.value / ((scene.frameSize.width + SceneView.framesMargin) * columnsNumber) *
-                    SceneCanvas.IdentityFramesSizeScale
+                    OpenGLSceneCanvas.IdentityFramesSizeScale
             ),
             DefaultMaxScale
         )

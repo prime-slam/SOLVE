@@ -25,10 +25,8 @@ import solve.rendering.engine.utils.toFloatVector
 import solve.rendering.engine.utils.toIntVector
 import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
-import solve.utils.ceilToInt
+import java.nio.file.Path
 import java.util.Date
-import kotlin.math.abs
-import kotlin.math.min
 
 class FramesRenderer(
     window: Window
@@ -42,25 +40,23 @@ class FramesRenderer(
     override val maxBatchSize = 1000
     private var modelsCommonMatrix = Matrix4f().identity()
     private var gridWidth = DefaultGridWidth
-    private val gridHeight: Int
-        get() = (frames.count().toFloat() / gridWidth).ceilToInt()
+    private var gridHeight = DefaultGridWidth
     private var buffersSize = defaultBuffersSize
 
     private var bufferFramesArrayTexture: ArrayTexture? = null
 
-    private var frames = emptyList<VisualizationFrame>()
-    private var framesWidth = 1
-    private var framesHeight = 1
-    private var framesChannelsType = TextureChannelsType.RGBA
-    private var selectedFrames = emptyList<VisualizationFrame>()
+    private var testFrame = VisualizationFrame(0L, Path.of(""), emptyList())
+    private lateinit var frameData: Texture2DData
+    private var frameWidth = 1
+    private var frameHeight = 1
+    private var frameChannelsType = TextureChannelsType.RGBA
 
     private val framesRatio: Float
-        get() = framesWidth.toFloat() / framesHeight.toFloat()
+        get() = frameWidth.toFloat() / frameHeight.toFloat()
 
     private var cameraLastGridCellPosition = getScreenCenterGridCellPosition()
 
     private val bufferFramesToUpload = mutableListOf<LoadedBufferFrameData>()
-    private val framesLoadingCoroutineScope = CoroutineScope(Dispatchers.Default)
 
     private var needToReinitializeBuffers = false
     private var haveNewFramesSelection = false
@@ -71,29 +67,14 @@ class FramesRenderer(
         modelsCommonMatrix = newMatrix
     }
 
-    fun setGridWidth(gridWidth: Int) {
-        if (gridWidth < 1) {
-            println("The width of the frames grid should be a positive value!")
-            return
-        }
-
-        this.gridWidth = min(gridWidth, selectedFrames.count())
+    fun setGridSize(gridWidth: Int, gridHeight: Int) {
+        this.gridWidth = gridWidth
+        this.gridHeight = gridHeight
     }
 
-    fun setNewSceneFrames(frames: List<VisualizationFrame>) {
-        if (frames.isEmpty()) {
-            return
-        }
-
-        this.frames = frames
-        this.selectedFrames = frames
+    fun setTestFrame(frame: VisualizationFrame) {
+        this.testFrame = frame
         needToReinitializeBuffers = true
-    }
-
-    fun setFramesSelection(frames: List<VisualizationFrame>) {
-        this.disableVirtualization()
-        this.selectedFrames = frames
-        haveNewFramesSelection = true
     }
 
     override fun createShaderProgram(): ShaderProgram {
@@ -120,17 +101,13 @@ class FramesRenderer(
         RenderBatch(maxBatchSize, zIndex, PrimitiveType.Point, listOf(ShaderAttributeType.FLOAT))
 
     override fun updateBatchesData() {
-        selectedFrames.forEachIndexed { index, _ ->
+        for (index in 0 until (gridWidth * gridHeight)) {
             val batch = getAvailableBatch(null, 0)
             batch.pushInt(index)
         }
     }
 
     override fun beforeRender() {
-        if (selectedFrames.isEmpty()) {
-            return
-        }
-
         if (needToReinitializeBuffers) {
             reinitializeBuffers()
         }
@@ -145,9 +122,6 @@ class FramesRenderer(
         if (!isVirtualizationEnabled) {
             return
         }
-
-        uploadLoadedFramesToBuffers()
-        updateBuffersTextures()
     }
 
     private fun disableVirtualization() {
@@ -161,99 +135,9 @@ class FramesRenderer(
 
     private fun reinitializeBuffers() {
         bufferFramesArrayTexture?.delete()
-        initializeTexturesBuffers(frames)
+        initializeTexturesBuffers(testFrame)
         needToReinitializeBuffers = false
-    }
-
-    private fun uploadLoadedFramesToBuffers() {
-        bufferFramesToUpload.toList().forEach { frame ->
-            bufferFramesToUpload.remove(frame)
-            bufferFramesArrayTexture?.uploadTexture(frame.textureData, frame.bufferIndex)
-            Texture2D.freeData(frame.textureData)
-        }
-    }
-
-    private fun updateBuffersTextures() {
-        val cameraGridCellPosition = getScreenCenterGridCellPosition()
-        if (cameraGridCellPosition != cameraLastGridCellPosition) {
-            loadNewTexturesToBuffers(cameraGridCellPosition)
-        }
-        cameraLastGridCellPosition = cameraGridCellPosition
-    }
-
-    private fun loadNewTexturesToBuffers(cameraGridCellPosition: Vector2i) {
-        val cameraPosition = Vector2i(cameraGridCellPosition)
-        cameraPosition.x.coerceIn(0 until gridWidth)
-        cameraPosition.y.coerceIn(0 until gridHeight)
-
-        val gridCellPositionDelta = cameraPosition - cameraLastGridCellPosition
-        if (gridCellPositionDelta == Vector2i(0)) {
-            return
-        }
-
-        val rectWidth: Int
-        val rectHeight: Int
-        if (gridCellPositionDelta.x != 0) {
-            rectWidth = abs(gridCellPositionDelta.x)
-            rectHeight = buffersSize.y
-        } else {
-            rectHeight = abs(gridCellPositionDelta.y)
-            rectWidth = buffersSize.x
-        }
-        val newFramesRect = IntRect(
-            if (gridCellPositionDelta.x > 0) {
-                cameraPosition.x + buffersSize.x - gridCellPositionDelta.x
-            } else {
-                cameraPosition.x
-            },
-            if (gridCellPositionDelta.y > 0) {
-                cameraPosition.y + buffersSize.y - gridCellPositionDelta.y
-            } else {
-                cameraPosition.y
-            },
-            rectWidth,
-            rectHeight
-        )
-        if (newFramesRect.x0 > 0 && newFramesRect.x1 < gridWidth &&
-            newFramesRect.y0 > 0 && newFramesRect.y1 < gridHeight
-        ) {
-            loadRectFramesToBuffers(newFramesRect)
-        }
-    }
-
-    private fun getFramesAtRect(rect: IntRect): List<List<VisualizationFrame>> {
-        if (selectedFrames.isEmpty()) {
-            return emptyList()
-        }
-
-        val framesRect = mutableListOf<List<VisualizationFrame>>()
-
-        for (y in rect.y0 until rect.y0 + rect.height) {
-            val framesFromIndex = (gridWidth * y + rect.x0).coerceIn(0..selectedFrames.lastIndex)
-            val framesToIndex = (framesFromIndex + rect.width).coerceIn(0..selectedFrames.count())
-
-            framesRect.add(selectedFrames.subList(framesFromIndex, framesToIndex))
-        }
-
-        return framesRect
-    }
-
-    private fun loadRectFramesToBuffers(framesRect: IntRect) {
-        val rectFrames = getFramesAtRect(framesRect)
-
-        if (rectFrames.isEmpty() || rectFrames.first().isEmpty()) {
-            return
-        }
-
-        val buffersOffset = Vector2i(framesRect.x0 % buffersSize.x, framesRect.y0 % buffersSize.y)
-
-        for (y in 0 until rectFrames.count()) {
-            for (x in 0 until rectFrames[y].count()) {
-                val textureBuffersIndex =
-                    ((buffersOffset.y + y) % buffersSize.y) * buffersSize.x + (buffersOffset.x + x) % buffersSize.x
-                uploadFrameToBuffersArray(rectFrames[y][x], textureBuffersIndex)
-            }
-        }
+        haveNewFramesSelection = true
     }
 
     private fun getScreenCenterGridCellPosition(): Vector2i {
@@ -262,39 +146,30 @@ class FramesRenderer(
     }
 
     private fun uploadAllFramesToBuffer() {
-        loadRectFramesToBuffers(IntRect(0, 0, gridWidth, gridHeight))
+        uploadFrameToBuffersArray(0)
     }
 
-    private fun initializeTexturesBuffers(frames: List<VisualizationFrame>) {
-        val firstTextureData = Texture2D.loadData(frames.first().imagePath.toString())
-        if (firstTextureData == null) {
+    private fun initializeTexturesBuffers(frame: VisualizationFrame) {
+        val textureData = Texture2D.loadData(frame.imagePath.toString())
+        if (textureData == null) {
             println("The read texture is null!")
             return
         }
 
-        framesWidth = firstTextureData.width
-        framesHeight = firstTextureData.height
-        framesChannelsType = firstTextureData.channelsType
+        frameWidth = textureData.width
+        frameData = textureData
+        frameHeight = textureData.height
+        frameChannelsType = textureData.channelsType
         buffersSize = Vector2i(
-            (window.width / (framesWidth * SceneController.DefaultMinScale)).toInt() + BuffersSizeOffset,
-            (window.height / (framesHeight * SceneController.DefaultMinScale)).toInt() + BuffersSizeOffset
+            1, 1
         )
 
         bufferFramesArrayTexture =
-            ArrayTexture(framesWidth, framesHeight, framesChannelsType, buffersSize.x * buffersSize.y)
+            ArrayTexture(frameWidth, frameHeight, frameChannelsType, 1)
     }
 
-    private fun uploadFrameToBuffersArray(frame: VisualizationFrame, index: Int) {
-        val loadTime = Date().time
-        framesLoadingCoroutineScope.launch {
-            val textureData = Texture2D.loadData(frame.imagePath.toString())
-            if (textureData == null) {
-                println("The read texture is null!")
-                return@launch
-            }
-
-            bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index, loadTime))
-        }
+    private fun uploadFrameToBuffersArray(index: Int) {
+        bufferFramesArrayTexture?.uploadTexture(frameData, index)
     }
 
     companion object {

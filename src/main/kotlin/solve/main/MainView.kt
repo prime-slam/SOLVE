@@ -5,6 +5,7 @@ import io.github.palexdev.materialfx.css.themes.MFXThemeManager
 import io.github.palexdev.materialfx.css.themes.Themes
 import io.github.palexdev.materialfx.dialogs.MFXGenericDialog
 import io.github.palexdev.materialfx.dialogs.MFXStageDialog
+import javafx.application.Platform
 import javafx.geometry.Insets
 import javafx.scene.control.ContentDisplay
 import javafx.scene.image.Image
@@ -158,7 +159,7 @@ class MainView : View() {
         )
         mainViewSplitPane.addStylesheet(MainSplitPaneStyle::class)
         center = mainViewSplitPane
-    }
+    }.also { Platform.runLater { sceneView.initialize() } }
 
     override val root = mainViewBorderPane
 
