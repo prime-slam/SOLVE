@@ -95,6 +95,7 @@ internal class RenderBatchTest {
         @JvmStatic
         @BeforeAll
         fun setSystemProperties() {
+            System.setProperty("testfx.robot", "glass")
             System.setProperty("testfx.headless", "true")
             System.setProperty("prism.order", "sw")
             System.setProperty("prism.text", "t2k")
