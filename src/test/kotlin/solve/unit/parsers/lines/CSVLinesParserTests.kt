@@ -13,7 +13,7 @@ import solve.parsers.lines.lineBreakWithIntWithCommaRegex
 import solve.parsers.structures.Line
 import java.io.File
 
-internal class CSVLinesParserTest {
+internal class CSVLinesParserTests {
     @Test
     fun `Parsing a lines CSV file containing data in a standard format`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, csvTestLinesStringData)

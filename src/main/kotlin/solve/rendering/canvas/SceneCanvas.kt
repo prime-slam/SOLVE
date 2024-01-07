@@ -2,7 +2,7 @@ package solve.rendering.canvas
 
 import org.joml.Vector2f
 import org.joml.Vector2i
-import solve.rendering.engine.rendering.renderers.FramesRenderer
+import solve.rendering.engine.core.renderers.FramesRenderer
 import solve.rendering.engine.scene.Scene
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.times

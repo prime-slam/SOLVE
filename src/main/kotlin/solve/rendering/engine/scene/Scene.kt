@@ -1,6 +1,6 @@
 package solve.rendering.engine.scene
 
-import solve.rendering.engine.rendering.renderers.Renderer
+import solve.rendering.engine.core.renderers.Renderer
 
 class Scene(renderers: List<Renderer> = emptyList()) {
     private val _renderObjects = mutableListOf<RenderObject>()

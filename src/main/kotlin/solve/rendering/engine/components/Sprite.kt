@@ -1,7 +1,7 @@
 package solve.rendering.engine.components
 
 import org.joml.Vector2f
-import solve.rendering.engine.rendering.texture.Texture2D
+import solve.rendering.engine.core.texture.Texture2D
 
 class Sprite(val texture: Texture2D, uvCoordinates: List<Vector2f> = defaultUVCoordinates) {
     val uvCoordinates: List<Vector2f>

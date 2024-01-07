@@ -1,4 +1,4 @@
-package solve.rendering.engine.rendering.texture
+package solve.rendering.engine.core.texture
 
 import java.nio.ByteBuffer
 

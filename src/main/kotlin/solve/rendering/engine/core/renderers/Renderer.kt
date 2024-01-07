@@ -1,10 +1,10 @@
-package solve.rendering.engine.rendering.renderers
+package solve.rendering.engine.core.renderers
 
 import org.lwjgl.opengl.GL11.GL_UNSIGNED_INT
 import org.lwjgl.opengl.GL11.glDrawElements
 import solve.rendering.engine.Window
-import solve.rendering.engine.rendering.batch.RenderBatch
-import solve.rendering.engine.rendering.texture.Texture2D
+import solve.rendering.engine.core.batch.RenderBatch
+import solve.rendering.engine.core.texture.Texture2D
 import solve.rendering.engine.scene.RenderObject
 import solve.rendering.engine.shader.ShaderProgram
 

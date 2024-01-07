@@ -1,4 +1,4 @@
-package solve.rendering.engine.rendering.renderers
+package solve.rendering.engine.core.renderers
 
 import org.joml.Matrix4f
 import org.joml.Vector2f
@@ -6,8 +6,8 @@ import solve.constants.ShadersDefaultFragmentPath
 import solve.constants.ShadersDefaultVertexPath
 import solve.rendering.engine.Window
 import solve.rendering.engine.components.SpriteRenderer
-import solve.rendering.engine.rendering.batch.PrimitiveType
-import solve.rendering.engine.rendering.batch.RenderBatch
+import solve.rendering.engine.core.batch.PrimitiveType
+import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.scene.RenderObject
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram

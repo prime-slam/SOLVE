@@ -1,4 +1,4 @@
-package solve.rendering.engine.rendering.renderers
+package solve.rendering.engine.core.renderers
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,12 +10,12 @@ import solve.constants.ShadersFrameFragmentPath
 import solve.constants.ShadersFrameGeometryPath
 import solve.constants.ShadersFrameVertexPath
 import solve.rendering.engine.Window
-import solve.rendering.engine.rendering.batch.PrimitiveType
-import solve.rendering.engine.rendering.batch.RenderBatch
-import solve.rendering.engine.rendering.texture.ArrayTexture
-import solve.rendering.engine.rendering.texture.Texture2D
-import solve.rendering.engine.rendering.texture.Texture2DData
-import solve.rendering.engine.rendering.texture.TextureChannelsType
+import solve.rendering.engine.core.batch.PrimitiveType
+import solve.rendering.engine.core.batch.RenderBatch
+import solve.rendering.engine.core.texture.ArrayTexture
+import solve.rendering.engine.core.texture.Texture2D
+import solve.rendering.engine.core.texture.Texture2DData
+import solve.rendering.engine.core.texture.TextureChannelsType
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
