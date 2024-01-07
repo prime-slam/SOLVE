@@ -1,6 +1,5 @@
 package solve.unit.rendering.engine.structures
 
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import solve.rendering.engine.structures.IntRect

@@ -35,8 +35,9 @@ class Color(r: Float, g: Float, b: Float, a: Float = 1f) {
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is Color)
+        if (other !is Color) {
             return false
+        }
 
         return other.r == r && other.g == g && other.b == b && other.a == a
     }
