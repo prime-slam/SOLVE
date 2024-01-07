@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.framework.junit5.ApplicationExtension
 import solve.constants.IconsCatalogueApplyPath
-import solve.interactive.InteractiveTestClass
 import solve.rendering.engine.core.batch.PrimitiveType
 import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.core.texture.Texture2D
