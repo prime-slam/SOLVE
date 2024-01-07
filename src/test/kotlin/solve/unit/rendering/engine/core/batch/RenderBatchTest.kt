@@ -2,11 +2,11 @@ package solve.unit.rendering.engine.core.batch
 
 import org.joml.Vector3f
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.framework.junit5.ApplicationExtension
 import solve.constants.IconsCatalogueApplyPath
+import solve.interactive.InteractiveTestClass
 import solve.rendering.engine.core.batch.PrimitiveType
 import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.core.texture.Texture2D
@@ -14,7 +14,7 @@ import solve.rendering.engine.shader.ShaderAttributeType
 import solve.unit.rendering.utils.runInOpenGLContext
 
 @ExtendWith(ApplicationExtension::class)
-internal class RenderBatchTest {
+internal class RenderBatchTest : InteractiveTestClass() {
     @Test
     fun `Fully fills the vertices data buffer`() {
         runInOpenGLContext {
@@ -91,15 +91,6 @@ internal class RenderBatchTest {
     companion object {
         private const val TestRenderBatchSize = 10
         private const val MaxTexturesNumber = 8
-
-        @JvmStatic
-        @BeforeAll
-        fun setSystemProperties() {
-            System.setProperty("testfx.robot", "glass")
-            System.setProperty("testfx.headless", "true")
-            System.setProperty("prism.order", "sw")
-            System.setProperty("prism.text", "t2k")
-        }
 
         private fun createTestRenderBatch() = RenderBatch(
             TestRenderBatchSize,
