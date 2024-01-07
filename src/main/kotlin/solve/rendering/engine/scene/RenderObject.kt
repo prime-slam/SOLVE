@@ -2,7 +2,7 @@ package solve.rendering.engine.scene
 
 import solve.rendering.engine.components.Component
 
-class SceneObject(
+class RenderObject(
     name: String,
     val transform: Transform = Transform(),
     components: List<Component> = emptyList()
@@ -18,8 +18,8 @@ class SceneObject(
         private set
 
     init {
-        _sceneObjects.add(this)
-        _components.forEach { it.addToGameObject(this) }
+        _renderObjects.add(this)
+        _components.forEach { it.addToRenderObject(this) }
     }
 
     fun start() {
@@ -66,8 +66,8 @@ class SceneObject(
     }
 
     companion object {
-        private val _sceneObjects = mutableListOf<SceneObject>()
-        val sceneObjects: List<SceneObject>
-            get() = _sceneObjects
+        private val _renderObjects = mutableListOf<RenderObject>()
+        val renderObjects: List<RenderObject>
+            get() = _renderObjects
     }
 }
