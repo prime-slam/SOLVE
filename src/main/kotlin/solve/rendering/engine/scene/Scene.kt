@@ -14,7 +14,7 @@ class Scene(renderers: List<Renderer> = emptyList()) {
     fun update(deltaTime: Float) {
         _renderObjects.forEach { gameObject ->
             if (gameObject.isDestroyed) {
-                removeGameObject(gameObject)
+                removeRenderObject(gameObject)
                 return@forEach
             }
 
@@ -23,7 +23,7 @@ class Scene(renderers: List<Renderer> = emptyList()) {
         }
     }
 
-    fun addGameObject(renderObject: RenderObject) {
+    fun addRenderObject(renderObject: RenderObject) {
         if (_renderObjects.contains(renderObject)) {
             println("The scene already contains adding game object ($renderObject)!")
             return
@@ -32,7 +32,7 @@ class Scene(renderers: List<Renderer> = emptyList()) {
         _renderers.forEach { it.addRenderObject(renderObject) }
     }
 
-    fun removeGameObject(renderObject: RenderObject) {
+    fun removeRenderObject(renderObject: RenderObject) {
         _renderObjects.remove(renderObject)
         _renderers.forEach { it.removeRenderObject(renderObject) }
     }
