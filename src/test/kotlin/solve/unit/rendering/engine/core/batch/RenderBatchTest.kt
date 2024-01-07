@@ -83,7 +83,7 @@ internal class RenderBatchTest {
                 testRenderBatch.pushFloat(3f)
                 testRenderBatch.pushVector3f(Vector3f(4f, 5f, 6f))
             }
-            assertEquals(testRenderBatch.getVerticesNumber(), verticesNumber)
+            assertEquals(verticesNumber, testRenderBatch.getVerticesNumber())
         }
     }
 

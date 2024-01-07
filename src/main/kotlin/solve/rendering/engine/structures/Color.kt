@@ -34,6 +34,22 @@ class Color(r: Float, g: Float, b: Float, a: Float = 1f) {
         otherColor.a = a
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is Color)
+            return false
+
+        return other.r == r && other.g == g && other.b == b && other.a == a
+    }
+
+    override fun hashCode(): Int {
+        var result = r.hashCode()
+        result = 31 * result + g.hashCode()
+        result = 31 * result + b.hashCode()
+        result = 31 * result + a.hashCode()
+
+        return result
+    }
+
     companion object {
         private val componentValueRange = 0f..1f
         val white = Color(1f, 1f, 1f, 1f)
