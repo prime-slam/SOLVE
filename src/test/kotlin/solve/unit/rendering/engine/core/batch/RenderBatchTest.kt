@@ -2,10 +2,12 @@ package solve.unit.rendering.engine.core.batch
 
 import org.joml.Vector3f
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.framework.junit5.ApplicationExtension
 import solve.constants.IconsCatalogueApplyPath
+import solve.interactive.InteractiveTestClass
 import solve.rendering.engine.core.batch.PrimitiveType
 import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.core.texture.Texture2D
@@ -34,8 +36,8 @@ internal class RenderBatchTest {
 
     @Test
     fun `Fully fills the textures slots`() {
-        repeat(MaxTexturesNumber) {
-            runInOpenGLContext {
+        runInOpenGLContext {
+            repeat(MaxTexturesNumber) {
                 val testRenderBatch = createTestRenderBatch()
                 assert(!testRenderBatch.isTexturesFull)
                 for (i in 0 until MaxTexturesNumber) {
@@ -90,6 +92,14 @@ internal class RenderBatchTest {
     companion object {
         private const val TestRenderBatchSize = 10
         private const val MaxTexturesNumber = 8
+
+        @JvmStatic
+        @BeforeAll
+        fun setSystemProperties() {
+            System.setProperty("testfx.headless", "true")
+            System.setProperty("prism.order", "sw")
+            System.setProperty("prism.text", "t2k")
+        }
 
         private fun createTestRenderBatch() = RenderBatch(
             TestRenderBatchSize,
