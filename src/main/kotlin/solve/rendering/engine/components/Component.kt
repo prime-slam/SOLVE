@@ -1,16 +1,16 @@
 package solve.rendering.engine.components
 
-import solve.rendering.engine.scene.SceneObject
+import solve.rendering.engine.scene.RenderObject
 
 abstract class Component {
-    var sceneObject: SceneObject? = null
+    var renderObject: RenderObject? = null
         private set
 
-    fun addToGameObject(sceneObject: SceneObject) {
-        this.sceneObject?.removeComponent(this)
+    fun addToRenderObject(renderObject: RenderObject) {
+        this.renderObject?.removeComponent(this)
 
-        this.sceneObject = sceneObject
-        sceneObject.addComponent(this)
+        this.renderObject = renderObject
+        renderObject.addComponent(this)
     }
 
     open fun start() { }
