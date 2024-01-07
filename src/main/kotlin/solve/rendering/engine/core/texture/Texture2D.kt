@@ -1,4 +1,4 @@
-package solve.rendering.engine.rendering.texture
+package solve.rendering.engine.core.texture
 
 import org.lwjgl.opengl.GL11.GL_LINEAR
 import org.lwjgl.opengl.GL11.GL_REPEAT

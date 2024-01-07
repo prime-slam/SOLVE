@@ -1,6 +1,6 @@
 package solve.rendering.engine.components
 
-import solve.rendering.engine.rendering.texture.Texture2D
+import solve.rendering.engine.core.texture.Texture2D
 import solve.rendering.engine.structures.Color
 
 class SpriteRenderer() : Component() {

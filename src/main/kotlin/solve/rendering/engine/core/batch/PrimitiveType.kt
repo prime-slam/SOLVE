@@ -1,4 +1,4 @@
-package solve.rendering.engine.rendering.batch
+package solve.rendering.engine.core.batch
 
 import org.lwjgl.opengl.GL11.GL_LINES
 import org.lwjgl.opengl.GL11.GL_POINTS

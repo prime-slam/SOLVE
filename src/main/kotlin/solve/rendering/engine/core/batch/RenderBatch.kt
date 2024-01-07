@@ -1,4 +1,4 @@
-package solve.rendering.engine.rendering.batch
+package solve.rendering.engine.core.batch
 
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL20.glVertexAttribPointer
 import org.lwjgl.opengl.GL30.glBindVertexArray
 import org.lwjgl.opengl.GL30.glDeleteVertexArrays
 import org.lwjgl.opengl.GL30.glGenVertexArrays
-import solve.rendering.engine.rendering.texture.Texture2D
+import solve.rendering.engine.core.texture.Texture2D
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.utils.toList
 
@@ -113,7 +113,7 @@ open class RenderBatch(
     }
 
     private fun checkIfFull() {
-        if (verticesDataBufferIndexPointer == verticesDataBufferSize) {
+        if (verticesDataBufferIndexPointer >= verticesDataBufferSize) {
             isFull = true
         }
     }

@@ -13,7 +13,7 @@ import solve.parsers.points.CSVPointsParser
 import solve.parsers.structures.Point
 import java.io.File
 
-internal class CSVPointsParserTest {
+internal class CSVPointsParserTests {
     @Test
     fun `Parsing a points CSV file containing data in a standard format`(@TempDir tempFolder: File) {
         val csvDataFile = createCSVFileWithData(tempFolder, csvTestPointsStringData)

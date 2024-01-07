@@ -16,7 +16,7 @@ import solve.unit.parsers.createFileWithImageData
 import java.awt.image.BufferedImage
 import java.io.File
 
-internal class ImagePlanesParserTest {
+internal class ImagePlanesParserTests {
     // JPG format has not been tested because the data is distorted due to compression.
 
     private data class PlaneMaskData(val maskImage: BufferedImage, val planes: List<Plane>)
