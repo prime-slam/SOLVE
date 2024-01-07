@@ -1,9 +1,8 @@
 package solve.unit.rendering.engine.core.batch
 
 import org.joml.Vector3f
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.testfx.framework.junit5.ApplicationExtension
 import solve.constants.IconsCatalogueApplyPath
@@ -25,8 +24,9 @@ internal class RenderBatchTest {
                 testRenderBatch.pushFloat(2f)
                 testRenderBatch.pushVector3f(Vector3f(3f, 4f, 5f))
 
-                if (i < TestRenderBatchSize - 1)
+                if (i < TestRenderBatchSize - 1) {
                     assert(!testRenderBatch.isFull)
+                }
             }
             assert(testRenderBatch.isFull)
         }
@@ -43,8 +43,9 @@ internal class RenderBatchTest {
                     testRenderBatch.pushFloat(2f)
                     testRenderBatch.pushVector3f(Vector3f(3f, 4f, 5f))
 
-                    if (i < MaxTexturesNumber - 1)
+                    if (i < MaxTexturesNumber - 1) {
                         assert(!testRenderBatch.isTexturesFull)
+                    }
                 }
                 assert(testRenderBatch.isFull)
             }
@@ -60,7 +61,6 @@ internal class RenderBatchTest {
             assert(testRenderBatch.containsTexture(addingTexture))
         }
     }
-
 
     @Test
     fun `Removes added texture and checks if it does not contained`() {

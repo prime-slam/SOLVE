@@ -15,6 +15,7 @@ internal class CameraTests {
         camera.zoomToCenter(zoomMultiplier)
         assertEquals(zoomMultiplier, camera.zoom)
     }
+
     @Test
     fun `Calculates camera projection matrix`() {
         val camera = Camera()
