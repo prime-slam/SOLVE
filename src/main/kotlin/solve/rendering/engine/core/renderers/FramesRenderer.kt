@@ -26,6 +26,7 @@ import solve.rendering.engine.utils.toIntVector
 import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
+import java.util.Collections.synchronizedList
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.min
@@ -59,7 +60,7 @@ class FramesRenderer(
 
     private var cameraLastGridCellPosition = getScreenCenterGridCellPosition()
 
-    private val bufferFramesToUpload = mutableListOf<LoadedBufferFrameData>()
+    private val bufferFramesToUpload = synchronizedList<LoadedBufferFrameData>(mutableListOf())
     private val framesLoadingCoroutineScope = CoroutineScope(Dispatchers.Default)
 
     private var needToReinitializeBuffers = false
@@ -136,8 +137,8 @@ class FramesRenderer(
         }
 
         if (haveNewFramesSelection) {
-            uploadAllFramesToBuffer()
             bufferFramesToUpload.clear()
+            uploadAllFramesToBuffer()
             haveNewFramesSelection = false
             enableVirtualization()
         }
@@ -167,7 +168,9 @@ class FramesRenderer(
 
     private fun uploadLoadedFramesToBuffers() {
         bufferFramesToUpload.toList().forEach { frame ->
-            bufferFramesToUpload.remove(frame)
+            synchronized(bufferFramesToUpload) {
+                bufferFramesToUpload.remove(frame)
+            }
             bufferFramesArrayTexture?.uploadTexture(frame.textureData, frame.bufferIndex)
             Texture2D.freeData(frame.textureData)
         }
@@ -293,7 +296,9 @@ class FramesRenderer(
                 return@launch
             }
 
-            bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index, loadTime))
+            synchronized(bufferFramesToUpload) {
+                bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index, loadTime))
+            }
         }
     }
 

@@ -22,11 +22,11 @@ void main() {
 
     if (isColored) {
         int frameID = gs_in[0].frameID;
-        int frameX = int(mod(frameID, uGridWidth));
+        int frameX = frameID % uGridWidth;
         int frameY = frameID / uGridWidth;
 
-        int bufferX = int(mod(frameX, uBuffersSize.x));
-        int bufferY = int(mod(frameY, uBuffersSize.y));
+        int bufferX = frameX % uBuffersSize.x;
+        int bufferY = frameY % uBuffersSize.y;
         float texID = float(bufferY * uBuffersSize.x + bufferX);
 
         vec4 initialPosition = vec4(
