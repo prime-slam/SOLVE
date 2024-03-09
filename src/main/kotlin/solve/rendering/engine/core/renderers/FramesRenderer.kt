@@ -27,7 +27,6 @@ import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
 import java.util.Collections.synchronizedList
-import java.util.Date
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -36,8 +35,7 @@ class FramesRenderer(
 ) : Renderer(window) {
     private data class LoadedBufferFrameData(
         val textureData: Texture2DData,
-        val bufferIndex: Int,
-        val time: Long
+        val bufferIndex: Int
     )
 
     override val maxBatchSize = 1000
@@ -167,7 +165,7 @@ class FramesRenderer(
     }
 
     private fun uploadLoadedFramesToBuffers() {
-        bufferFramesToUpload.toList().forEach { frame ->
+        bufferFramesToUpload.forEach { frame ->
             synchronized(bufferFramesToUpload) {
                 bufferFramesToUpload.remove(frame)
             }
@@ -288,7 +286,6 @@ class FramesRenderer(
     }
 
     private fun uploadFrameToBuffersArray(frame: VisualizationFrame, index: Int) {
-        val loadTime = Date().time
         framesLoadingCoroutineScope.launch {
             val textureData = Texture2D.loadData(frame.imagePath.toString())
             if (textureData == null) {
@@ -297,7 +294,7 @@ class FramesRenderer(
             }
 
             synchronized(bufferFramesToUpload) {
-                bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index, loadTime))
+                bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index))
             }
         }
     }
