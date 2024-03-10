@@ -30,12 +30,16 @@ class SceneView : View() {
     override val root = canvas.canvas
 
     private val projectChangedEventHandler = InvalidationListener {
-        val framesSize = controller.scene.frameSize
-        val framesSizeVector = Vector2i(framesSize.width.toInt(), framesSize.height.toInt())
-        canvas.setNewSceneFrames(controller.scene.frames, framesSizeVector)
+
     }
-    private val framesChangedEventHandler = InvalidationListener {
-        canvas.setFramesSelection(controller.scene.frames)
+    private val sceneChangedEventHandler = InvalidationListener {
+        if (SceneFacade.lastVisualizationKeepSettings) {
+            canvas.setFramesSelection(controller.scene.frames)
+        } else {
+            val framesSize = controller.scene.frameSize
+            val framesSizeVector = Vector2i(framesSize.width.toInt(), framesSize.height.toInt())
+            canvas.setNewSceneFrames(controller.scene.frames, framesSizeVector)
+        }
     }
 
     init {
@@ -52,7 +56,7 @@ class SceneView : View() {
 
     private fun addSceneFramesBindings() {
         SceneFacade.lastVisualizationKeepSettingsProperty.addListener(projectChangedEventHandler)
-        controller.sceneProperty.addListener(framesChangedEventHandler)
+        controller.sceneProperty.addListener(sceneChangedEventHandler)
     }
 
     private fun addSceneParamsBindings() {

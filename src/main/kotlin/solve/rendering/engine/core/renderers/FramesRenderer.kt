@@ -27,7 +27,9 @@ import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.io.path.nameWithoutExtension
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 
 class FramesRenderer(
@@ -35,7 +37,8 @@ class FramesRenderer(
 ) : Renderer(window) {
     private data class LoadedBufferFrameData(
         val textureData: Texture2DData,
-        val bufferIndex: Int
+        val bufferIndex: Int,
+        val name: String
     )
 
     override val maxBatchSize = 1000
@@ -56,7 +59,7 @@ class FramesRenderer(
     private val framesRatio: Float
         get() = framesWidth.toFloat() / framesHeight.toFloat()
 
-    private var cameraLastGridCellPosition = getScreenCenterGridCellPosition()
+    private var cameraLastGridCellPosition = getScreenTopLeftGridCellPosition()
 
     private val bufferFramesToUpload = CopyOnWriteArrayList<LoadedBufferFrameData>(mutableListOf())
     private val framesLoadingCoroutineScope = CoroutineScope(Dispatchers.Default)
@@ -77,6 +80,7 @@ class FramesRenderer(
         }
 
         this.gridWidth = min(gridWidth, selectedFrames.count())
+        haveNewFramesSelection = true
     }
 
     fun setNewSceneFrames(frames: List<VisualizationFrame>) {
@@ -112,7 +116,7 @@ class FramesRenderer(
         shaderProgram.uploadVector2i(BuffersSizeUniformName, buffersSize)
         shaderProgram.uploadInt(TexturesArrayUniformName, 0)
         shaderProgram.uploadFloat(TexturesRatioUniformName, framesRatio)
-        shaderProgram.uploadVector2f(CameraPositionUniformName, getScreenCenterGridCellPosition().toFloatVector())
+        shaderProgram.uploadVector2f(CameraPositionUniformName, getScreenTopLeftGridCellPosition().toFloatVector())
     }
 
     override fun createNewBatch(zIndex: Int) =
@@ -154,7 +158,7 @@ class FramesRenderer(
     }
 
     private fun enableVirtualization() {
-        cameraLastGridCellPosition = getScreenCenterGridCellPosition()
+        cameraLastGridCellPosition = getScreenTopLeftGridCellPosition()
         isVirtualizationEnabled = true
     }
 
@@ -173,7 +177,7 @@ class FramesRenderer(
     }
 
     private fun updateBuffersTextures() {
-        val cameraGridCellPosition = getScreenCenterGridCellPosition()
+        val cameraGridCellPosition = getScreenTopLeftGridCellPosition()
         if (cameraGridCellPosition != cameraLastGridCellPosition) {
             loadNewTexturesToBuffers(cameraGridCellPosition)
         }
@@ -194,30 +198,26 @@ class FramesRenderer(
         val rectHeight: Int
         if (gridCellPositionDelta.x != 0) {
             rectWidth = abs(gridCellPositionDelta.x)
-            rectHeight = buffersSize.y
+            rectHeight = min(buffersSize.y, gridHeight)
         } else {
             rectHeight = abs(gridCellPositionDelta.y)
-            rectWidth = buffersSize.x
+            rectWidth = min(buffersSize.x, gridWidth)
         }
         val newFramesRect = IntRect(
             if (gridCellPositionDelta.x > 0) {
                 cameraPosition.x + buffersSize.x - gridCellPositionDelta.x
             } else {
-                cameraPosition.x
+                max(0, cameraPosition.x)
             },
             if (gridCellPositionDelta.y > 0) {
                 cameraPosition.y + buffersSize.y - gridCellPositionDelta.y
             } else {
-                cameraPosition.y
+                max(0, cameraPosition.y)
             },
             rectWidth,
             rectHeight
         )
-        if (newFramesRect.x0 > 0 && newFramesRect.x1 < gridWidth &&
-            newFramesRect.y0 > 0 && newFramesRect.y1 < gridHeight
-        ) {
             loadRectFramesToBuffers(newFramesRect)
-        }
     }
 
     private fun getFramesAtRect(rect: IntRect): List<List<VisualizationFrame>> {
@@ -245,17 +245,22 @@ class FramesRenderer(
         }
 
         val buffersOffset = Vector2i(framesRect.x0 % buffersSize.x, framesRect.y0 % buffersSize.y)
+        val uploadedBuffersIndices = mutableSetOf<Int>()
 
         for (y in 0 until rectFrames.count()) {
             for (x in 0 until rectFrames[y].count()) {
                 val textureBuffersIndex =
                     ((buffersOffset.y + y) % buffersSize.y) * buffersSize.x + (buffersOffset.x + x) % buffersSize.x
+                if (uploadedBuffersIndices.contains(textureBuffersIndex))
+                    continue
+
                 uploadFrameToBuffersArray(rectFrames[y][x], textureBuffersIndex)
+                uploadedBuffersIndices.add(textureBuffersIndex)
             }
         }
     }
 
-    private fun getScreenCenterGridCellPosition(): Vector2i {
+    private fun getScreenTopLeftGridCellPosition(): Vector2i {
         val cameraGridCellPosition = Vector2f(window.camera.position.x / framesRatio, window.camera.position.y)
         return (cameraGridCellPosition - Vector2f(buffersSize) / 2f).toIntVector()
     }
@@ -291,7 +296,7 @@ class FramesRenderer(
                 return@launch
             }
 
-            bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index))
+            bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index, frame.imagePath.nameWithoutExtension))
         }
     }
 

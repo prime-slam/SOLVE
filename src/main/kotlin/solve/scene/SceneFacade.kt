@@ -26,7 +26,7 @@ import tornadofx.find
  */
 object SceneFacade {
     val lastVisualizationKeepSettingsProperty = SimpleObjectProperty(true)
-    private var lastVisualizationKeepSettings: Boolean
+    var lastVisualizationKeepSettings: Boolean
         get() = lastVisualizationKeepSettingsProperty.value
         private set(value) {
             lastVisualizationKeepSettingsProperty.value = value
