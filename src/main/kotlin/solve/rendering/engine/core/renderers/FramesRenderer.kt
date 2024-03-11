@@ -26,8 +26,8 @@ import solve.rendering.engine.utils.toIntVector
 import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
+import java.util.Date
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.io.path.nameWithoutExtension
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -38,7 +38,7 @@ class FramesRenderer(
     private data class LoadedBufferFrameData(
         val textureData: Texture2DData,
         val bufferIndex: Int,
-        val name: String
+        val time: Long
     )
 
     override val maxBatchSize = 1000
@@ -169,9 +169,13 @@ class FramesRenderer(
     }
 
     private fun uploadLoadedFramesToBuffers() {
-        bufferFramesToUpload.forEach { frame ->
+        val uploadedFramesIndices = mutableSetOf<Int>()
+        bufferFramesToUpload.sortedBy { it.time }.forEach { frame ->
             bufferFramesToUpload.remove(frame)
-            bufferFramesArrayTexture?.uploadTexture(frame.textureData, frame.bufferIndex)
+            if (!uploadedFramesIndices.contains(frame.bufferIndex)) {
+                bufferFramesArrayTexture?.uploadTexture(frame.textureData, frame.bufferIndex)
+                uploadedFramesIndices.add(frame.bufferIndex)
+            }
             Texture2D.freeData(frame.textureData)
         }
     }
@@ -217,7 +221,7 @@ class FramesRenderer(
             rectWidth,
             rectHeight
         )
-            loadRectFramesToBuffers(newFramesRect)
+        loadRectFramesToBuffers(newFramesRect)
     }
 
     private fun getFramesAtRect(rect: IntRect): List<List<VisualizationFrame>> {
@@ -251,8 +255,9 @@ class FramesRenderer(
             for (x in 0 until rectFrames[y].count()) {
                 val textureBuffersIndex =
                     ((buffersOffset.y + y) % buffersSize.y) * buffersSize.x + (buffersOffset.x + x) % buffersSize.x
-                if (uploadedBuffersIndices.contains(textureBuffersIndex))
+                if (uploadedBuffersIndices.contains(textureBuffersIndex)) {
                     continue
+                }
 
                 uploadFrameToBuffersArray(rectFrames[y][x], textureBuffersIndex)
                 uploadedBuffersIndices.add(textureBuffersIndex)
@@ -289,6 +294,7 @@ class FramesRenderer(
     }
 
     private fun uploadFrameToBuffersArray(frame: VisualizationFrame, index: Int) {
+        val loadTime = Date().time
         framesLoadingCoroutineScope.launch {
             val textureData = Texture2D.loadData(frame.imagePath.toString())
             if (textureData == null) {
@@ -296,7 +302,7 @@ class FramesRenderer(
                 return@launch
             }
 
-            bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index, frame.imagePath.nameWithoutExtension))
+            bufferFramesToUpload.add(LoadedBufferFrameData(textureData, index, loadTime))
         }
     }
 

@@ -29,9 +29,6 @@ class SceneView : View() {
 
     override val root = canvas.canvas
 
-    private val projectChangedEventHandler = InvalidationListener {
-
-    }
     private val sceneChangedEventHandler = InvalidationListener {
         if (SceneFacade.lastVisualizationKeepSettings) {
             canvas.setFramesSelection(controller.scene.frames)
@@ -55,7 +52,6 @@ class SceneView : View() {
     }
 
     private fun addSceneFramesBindings() {
-        SceneFacade.lastVisualizationKeepSettingsProperty.addListener(projectChangedEventHandler)
         controller.sceneProperty.addListener(sceneChangedEventHandler)
     }
 
