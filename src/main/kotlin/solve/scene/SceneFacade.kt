@@ -25,8 +25,8 @@ import tornadofx.find
  * Transforms common application data models into scene data and applies it.
  */
 object SceneFacade {
-    val lastVisualizationKeepSettingsProperty = SimpleObjectProperty(false)
-    private var lastVisualizationKeepSettings: Boolean
+    val lastVisualizationKeepSettingsProperty = SimpleObjectProperty(true)
+    var lastVisualizationKeepSettings: Boolean
         get() = lastVisualizationKeepSettingsProperty.value
         private set(value) {
             lastVisualizationKeepSettingsProperty.value = value
