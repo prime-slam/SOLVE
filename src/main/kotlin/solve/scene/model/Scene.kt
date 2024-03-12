@@ -23,6 +23,9 @@ class Scene(
         } ?: DoubleSize(0.0, 0.0)
     }
 
+    val layers: List<Layer>
+        get() = frames.firstOrNull()?.layers ?: emptyList()
+
     private val canvasLayersStorage =
         layerSettings.filter { it.usesCanvas }.toMutableList()
 
@@ -35,6 +38,16 @@ class Scene(
     private val changedCallbacks = mutableListOf<() -> Unit>()
 
     val canvasLayersCount = canvasLayersStorage.size
+
+    fun getLayersWithCommonSettings(layerSettings: LayerSettings) : List<Layer> {
+        val layers = mutableListOf<Layer>()
+        frames.forEach { frame ->
+            val frameLayer = frame.layers.firstOrNull { it.settings == layerSettings } ?: return@forEach
+            layers.add(frameLayer)
+        }
+
+        return layers
+    }
 
     override fun addOrderChangedListener(action: () -> Unit) {
         changedCallbacks.add(action)

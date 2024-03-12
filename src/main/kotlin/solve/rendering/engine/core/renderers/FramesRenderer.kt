@@ -307,6 +307,8 @@ class FramesRenderer(
     }
 
     companion object {
+        const val DefaultGridWidth = 10
+
         private const val ProjectionUniformName = "uProjection"
         private const val ModelUniformName = "uModel"
         private const val GridWidthUniformName = "uGridWidth"
@@ -315,7 +317,6 @@ class FramesRenderer(
         private const val TexturesRatioUniformName = "uTexturesRatio"
         private const val CameraPositionUniformName = "uCameraPosition"
 
-        private const val DefaultGridWidth = 10
         private const val BuffersSizeOffset = 2
 
         private val defaultBuffersSize = Vector2i(10, 10)

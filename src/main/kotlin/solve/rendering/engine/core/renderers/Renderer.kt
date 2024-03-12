@@ -41,8 +41,9 @@ abstract class Renderer(protected val window: Window) {
         shaderProgram.detach()
     }
 
-    fun cleanup() {
+    fun delete() {
         batches.forEach { it.deleteBuffers() }
+        shaderProgram.delete()
     }
 
     open fun addRenderObject(renderObject: RenderObject) { }
