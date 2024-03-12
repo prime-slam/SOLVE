@@ -30,8 +30,11 @@ const val IconsGrid = "/icons/sidepanel/Grid.png"
 const val IconsGridSelected = "/icons/sidepanel/GridSelected.png"
 
 // Engine shaders.
-const val ShadersDefaultVertexPath = "engine/shaders/default/default.vert"
-const val ShadersDefaultFragmentPath = "engine/shaders/default/default.frag"
+const val ShadersDefaultVertexPath = "engine/shaders/default/sprite.vert"
+const val ShadersDefaultFragmentPath = "engine/shaders/default/sprite.frag"
 const val ShadersFrameVertexPath = "engine/shaders/frame/frame.vert"
 const val ShadersFrameGeometryPath = "engine/shaders/frame/frame.geom"
 const val ShadersFrameFragmentPath = "engine/shaders/frame/frame.frag"
+const val ShadersPointLandmarkVertexPath = "engine/shaders/landmark/point/point.vert"
+const val ShadersPointLandmarkGeomPath = "engine/shaders/landmark/point/point.geom"
+const val ShadersPointLandmarkFragmentPath = "engine/shaders/landmark/point/point.frag"

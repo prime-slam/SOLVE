@@ -36,6 +36,7 @@ class SceneView : View() {
             val framesSize = controller.scene.frameSize
             val framesSizeVector = Vector2i(framesSize.width.toInt(), framesSize.height.toInt())
             canvas.setNewSceneFrames(controller.scene.frames, framesSizeVector)
+            canvas.setNewScene(controller.scene)
         }
     }
 

@@ -14,7 +14,7 @@ import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.utils.plus
 
-class LandmarkRenderer(
+class SpritesRenderer(
     window: Window
 ) : Renderer(window) {
     override val maxBatchSize = 1000
