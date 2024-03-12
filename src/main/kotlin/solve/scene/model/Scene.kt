@@ -39,7 +39,7 @@ class Scene(
 
     val canvasLayersCount = canvasLayersStorage.size
 
-    fun getLayersWithCommonSettings(layerSettings: LayerSettings) : List<Layer> {
+    fun getLayersWithCommonSettings(layerSettings: LayerSettings): List<Layer> {
         val layers = mutableListOf<Layer>()
         frames.forEach { frame ->
             val frameLayer = frame.layers.firstOrNull { it.settings == layerSettings } ?: return@forEach

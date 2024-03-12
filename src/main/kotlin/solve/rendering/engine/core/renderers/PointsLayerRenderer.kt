@@ -21,7 +21,7 @@ class PointsLayerRenderer(
 
     override val maxBatchSize = 1000
 
-    private var gridWidth = 6//FramesRenderer.DefaultGridWidth
+    private var gridWidth = 6 // FramesRenderer.DefaultGridWidth
     private var pointsRadius = 1f
     private var framesSize = Vector2f()
 
