@@ -38,8 +38,7 @@ class SceneCanvas : OpenGLCanvas() {
         initializeCanvasEvents()
     }
 
-    fun setNewScene(scene: solve.scene.model.Scene)
-    {
+    fun setNewScene(scene: solve.scene.model.Scene) {
         canvasScene?.clearLandmarkRenderers()
         qwe = true
         this.scene = scene
@@ -102,8 +101,9 @@ class SceneCanvas : OpenGLCanvas() {
         if (qwe) {
             val scene = this.scene ?: return
             scene.layers.forEach { layer ->
-                if (layer is Layer.PointLayer)
+                if (layer is Layer.PointLayer) {
                     addLandmarkRenderer(layer, scene)
+                }
             }
             qwe = false
         }
