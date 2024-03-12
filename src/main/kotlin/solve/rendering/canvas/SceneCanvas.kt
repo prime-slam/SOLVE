@@ -4,19 +4,20 @@ import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.rendering.engine.core.renderers.FramesRenderer
 import solve.rendering.engine.core.renderers.PointsLayerRenderer
-import solve.rendering.engine.scene.Scene
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.times
 import solve.rendering.engine.utils.toFloatVector
 import solve.scene.controller.SceneController
 import solve.scene.model.Layer
+import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
 import solve.utils.ServiceLocator
 import solve.utils.ceilToInt
+import solve.rendering.engine.scene.Scene as EngineScene
 
 class SceneCanvas : OpenGLCanvas() {
     private var sceneController: SceneController? = null
-    private var canvasScene: Scene? = null
+    private var canvasScene: EngineScene? = null
 
     private var isDraggingScene = false
     private var dragStartCameraPoint = Vector2f()
@@ -31,16 +32,16 @@ class SceneCanvas : OpenGLCanvas() {
     private val rowsNumber: Int
         get() = (framesSelectionSize.toFloat() / columnsNumber.toFloat()).ceilToInt()
 
-    private var qwe = false
-    private var scene: solve.scene.model.Scene? = null
+    private var needToReinitializeRenderers = false
+    private var scene: Scene? = null
 
     init {
         initializeCanvasEvents()
     }
 
-    fun setNewScene(scene: solve.scene.model.Scene) {
+    fun setNewScene(scene: Scene) {
         canvasScene?.clearLandmarkRenderers()
-        qwe = true
+        needToReinitializeRenderers = true
         this.scene = scene
     }
 
@@ -93,19 +94,23 @@ class SceneCanvas : OpenGLCanvas() {
         val controller = ServiceLocator.getService<SceneController>() ?: return
         sceneController = controller
 
-        canvasScene = Scene(FramesRenderer(window))
+        canvasScene = EngineScene(FramesRenderer(window))
     }
 
     override fun onDraw(deltaTime: Float) {
-        canvasScene?.update(deltaTime)
-        if (qwe) {
+        canvasScene?.update()
+        checkRenderersInitialization()
+    }
+
+    private fun checkRenderersInitialization() {
+        if (needToReinitializeRenderers) {
             val scene = this.scene ?: return
             scene.layers.forEach { layer ->
                 if (layer is Layer.PointLayer) {
                     addLandmarkRenderer(layer, scene)
                 }
             }
-            qwe = false
+            needToReinitializeRenderers = false
         }
     }
 
