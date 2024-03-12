@@ -103,7 +103,7 @@ class ShaderProgram {
         isUsed = false
     }
 
-    fun cleanup() {
+    fun delete() {
         detach()
         if (shaderProgramID != GL_FALSE) {
             glDeleteProgram(shaderProgramID)

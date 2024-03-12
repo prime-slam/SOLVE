@@ -3,18 +3,19 @@ package solve.rendering.canvas
 import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.rendering.engine.core.renderers.FramesRenderer
+import solve.rendering.engine.core.renderers.PointsLayerRenderer
 import solve.rendering.engine.scene.Scene
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.times
 import solve.rendering.engine.utils.toFloatVector
 import solve.scene.controller.SceneController
+import solve.scene.model.Layer
 import solve.scene.model.VisualizationFrame
 import solve.utils.ServiceLocator
 import solve.utils.ceilToInt
 
 class SceneCanvas : OpenGLCanvas() {
     private var sceneController: SceneController? = null
-    private var framesRenderer: FramesRenderer? = null
     private var canvasScene: Scene? = null
 
     private var isDraggingScene = false
@@ -30,12 +31,22 @@ class SceneCanvas : OpenGLCanvas() {
     private val rowsNumber: Int
         get() = (framesSelectionSize.toFloat() / columnsNumber.toFloat()).ceilToInt()
 
+    private var qwe = false
+    private var scene: solve.scene.model.Scene? = null
+
     init {
         initializeCanvasEvents()
     }
 
+    fun setNewScene(scene: solve.scene.model.Scene)
+    {
+        canvasScene?.clearLandmarkRenderers()
+        qwe = true
+        this.scene = scene
+    }
+
     fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2i) {
-        framesRenderer?.setNewSceneFrames(frames)
+        canvasScene?.framesRenderer?.setNewSceneFrames(frames)
         this.framesSize = framesSize
     }
 
@@ -43,12 +54,12 @@ class SceneCanvas : OpenGLCanvas() {
         recalculateCameraCornersPositions()
         window.camera.position = leftUpperCornerCameraPosition
 
-        framesRenderer?.setFramesSelection(framesSelection)
+        canvasScene?.framesRenderer?.setFramesSelection(framesSelection)
         framesSelectionSize = framesSelection.count()
     }
 
     fun setColumnsNumber(columnsNumber: Int) {
-        framesRenderer?.setGridWidth(columnsNumber)
+        canvasScene?.framesRenderer?.setGridWidth(columnsNumber)
         this.columnsNumber = columnsNumber
     }
 
@@ -83,13 +94,34 @@ class SceneCanvas : OpenGLCanvas() {
         val controller = ServiceLocator.getService<SceneController>() ?: return
         sceneController = controller
 
-        val renderer = FramesRenderer(window)
-        framesRenderer = renderer
-        canvasScene = Scene(listOf(renderer))
+        canvasScene = Scene(FramesRenderer(window))
     }
 
     override fun onDraw(deltaTime: Float) {
-        canvasScene?.renderers?.forEach { it.render() }
+        canvasScene?.update(deltaTime)
+        if (qwe) {
+            val scene = this.scene ?: return
+            scene.layers.forEach { layer ->
+                if (layer is Layer.PointLayer)
+                    addLandmarkRenderer(layer, scene)
+            }
+            qwe = false
+        }
+    }
+
+    private fun addLandmarkRenderer(layer: Layer, scene: solve.scene.model.Scene) {
+        val addingRenderer = when (layer) {
+            is Layer.LineLayer -> TODO()
+            is Layer.PlaneLayer -> TODO()
+            is Layer.PointLayer -> PointsLayerRenderer(window)
+        }
+        val addingLayers = scene.getLayersWithCommonSettings(layer.settings).filterIsInstance<Layer.PointLayer>()
+        val framesSize = Vector2f(scene.frameSize.width.toFloat(), scene.frameSize.height.toFloat())
+        addingRenderer.setNewLayers(
+            addingLayers,
+            framesSize
+        )
+        canvasScene?.addLandmarkRenderer(addingRenderer)
     }
 
     private fun fromScreenToCameraPoint(screenPoint: Vector2i) = screenPoint - (window.size / 2)
