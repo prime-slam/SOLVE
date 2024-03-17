@@ -1,9 +1,10 @@
 package solve.rendering.engine.components
 
 import solve.rendering.engine.core.texture.Texture2D
+import solve.rendering.engine.scene.Transform
 import solve.rendering.engine.structures.Color
 
-class SpriteRenderer() : Component() {
+class SpriteRenderer(val transform: Transform = Transform()) {
     var color = Color.white
         private set
     var sprite: Sprite? = null

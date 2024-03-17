@@ -8,7 +8,6 @@ import solve.rendering.engine.Window
 import solve.rendering.engine.components.SpriteRenderer
 import solve.rendering.engine.core.batch.PrimitiveType
 import solve.rendering.engine.core.batch.RenderBatch
-import solve.rendering.engine.scene.RenderObject
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
@@ -59,14 +58,13 @@ class SpritesRenderer(
     override fun updateBatchesData() {
         spriteRenderers.forEach { spriteRenderer ->
             val sprite = spriteRenderer.sprite ?: return@forEach
-            val gameObject = spriteRenderer.renderObject ?: return@forEach
 
             val texture = sprite.texture
             val textureSidesRatio = texture.width.toFloat() / texture.height.toFloat()
-            val batch = getAvailableBatch(texture, gameObject.transform.zIndex)
+            val batch = getAvailableBatch(texture, spriteRenderer.transform.zIndex)
             val textureID = batch.getTextureLocalID(texture)
-            val scale = gameObject.transform.scale
-            val position = gameObject.transform.position
+            val scale = spriteRenderer.transform.scale
+            val position = spriteRenderer.transform.position
             val color = spriteRenderer.color
             val uvCoordinates = sprite.uvCoordinates
 
@@ -84,19 +82,11 @@ class SpritesRenderer(
         }
     }
 
-    override fun addRenderObject(renderObject: RenderObject) {
-        val spriteRenderer = renderObject.getComponentOfType<SpriteRenderer>()
-        if (spriteRenderer == null) {
-            println("The adding gameobject does not has a sprite renderer component!")
-            return
-        }
-
+    fun addSpriteRenderer(spriteRenderer: SpriteRenderer) {
         spriteRenderers.add(spriteRenderer)
     }
 
-    override fun removeRenderObject(renderObject: RenderObject): Boolean {
-        val spriteRenderer = renderObject.getComponentOfType<SpriteRenderer>() ?: return false
-
+    fun removeSpriteRenderer(spriteRenderer: SpriteRenderer): Boolean {
         return spriteRenderers.remove(spriteRenderer)
     }
 
