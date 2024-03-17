@@ -1,6 +1,7 @@
 package solve.rendering.engine.core.renderers
 
 import org.joml.Vector2f
+import org.joml.Vector3f
 import solve.constants.ShadersPointLandmarkFragmentPath
 import solve.constants.ShadersPointLandmarkVertexPath
 import solve.rendering.engine.Window
@@ -23,12 +24,6 @@ class PointsLayerRenderer(
 
     override val maxBatchSize = 1000
 
-    private var pointsRadius = 1f
-
-    fun setPointsRadius(pointsRadius: Float) {
-        this.pointsRadius = pointsRadius
-    }
-
     fun setNewLayers(pointLayers: List<PointLayer>, framesSize: Vector2f) {
         initializeFrameSizeData(framesSize)
         this.pointLayers = pointLayers
@@ -47,7 +42,8 @@ class PointsLayerRenderer(
     override fun createNewBatch(zIndex: Int): RenderBatch {
         val shaderAttributesTypes = listOf(
             ShaderAttributeType.FLOAT2,
-            ShaderAttributeType.FLOAT2
+            ShaderAttributeType.FLOAT2,
+            ShaderAttributeType.FLOAT
         )
 
         return RenderBatch(
@@ -60,11 +56,15 @@ class PointsLayerRenderer(
 
     override fun uploadUniforms(shaderProgram: ShaderProgram) {
         shaderProgram.uploadMatrix4f(ProjectionUniformName, window.calculateProjectionMatrix())
+        shaderProgram.uploadInt(UseCommonColorUniformName, if (useCommonColor()) 1 else 0)
+        shaderProgram.uploadVector3f(CommonColorUniformName, getPointsColor())
     }
 
     override fun updateBatchesData() {
+        val pointsRadius = getPointsRadius()
+
         pointLayersLandmarks.forEachIndexed { pointsLayerIndex, pointsLayerLandmarks ->
-            pointsLayerLandmarks.forEach { pointLandmark ->
+            pointsLayerLandmarks.forEachIndexed { pointLandmarkIndex, pointLandmark ->
                 val batch = getAvailableBatch(null, 0)
 
                 val pointLandmarkPosition = Vector2f(
@@ -78,13 +78,34 @@ class PointsLayerRenderer(
                             Vector2f(vertexLocalPosition) * pointsRadius / window.camera.zoom / DefaultLocalVerticesPositionsDivider
                     batch.pushVector2f(vertexPosition)
                     batch.pushVector2f(vertexLocalPosition)
+                    batch.pushFloat(pointLandmarkIndex.toFloat())
                 }
             }
         }
     }
 
+    private fun getPointsColor(): Vector3f {
+        val pointsCommonColor = pointLayers.firstOrNull()?.settings?.commonColor ?: return Vector3f(1f, 0f, 0f)
+
+        return Vector3f(
+            pointsCommonColor.red.toFloat(),
+            pointsCommonColor.green.toFloat(),
+            pointsCommonColor.blue.toFloat()
+        )
+    }
+
+    private fun useCommonColor(): Boolean {
+        return pointLayers.firstOrNull()?.settings?.useCommonColor ?: false
+    }
+
+    private fun getPointsRadius(): Float {
+        return pointLayers.firstOrNull()?.settings?.selectedRadius?.toFloat() ?: return 1f
+    }
+
     companion object {
         private const val ProjectionUniformName = "uProjection"
+        private const val UseCommonColorUniformName = "uUseCommonColor"
+        private const val CommonColorUniformName = "uCommonColor"
 
         private val circleBoundsVerticesLocalPositions = listOf(
             Vector2f(1f, 1f),
@@ -93,6 +114,6 @@ class PointsLayerRenderer(
             Vector2f(-1f, 1f)
         )
 
-        private const val DefaultLocalVerticesPositionsDivider = 70f
+        private const val DefaultLocalVerticesPositionsDivider = 500f
     }
 }
