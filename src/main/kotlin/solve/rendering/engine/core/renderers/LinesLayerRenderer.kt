@@ -81,7 +81,7 @@ class LinesLayerRenderer(
 
                 linePoints.forEach { linePoint ->
                     val pointToVertexVector = Vector2f(normalVector) *
-                            lineWidth / window.camera.zoom / DefaultLocalVerticesPositionsDivider
+                        lineWidth / window.camera.zoom / DefaultLocalVerticesPositionsDivider
                     val linePointFirstVertexPosition = linePoint + pointToVertexVector
                     val linePointSecondVertexPosition = linePoint - pointToVertexVector
                     batch.pushVector2f(linePointFirstVertexPosition)
