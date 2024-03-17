@@ -13,6 +13,7 @@ import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
+import solve.scene.model.Layer
 import solve.scene.model.Layer.PointLayer
 
 class PointsLayerRenderer(
@@ -23,8 +24,9 @@ class PointsLayerRenderer(
 
     override val maxBatchSize = 1000
 
-    fun setNewLayers(pointLayers: List<PointLayer>, framesSize: Vector2f) {
-        initializeFrameSizeData(framesSize)
+    override fun setNewLayers(layers: List<Layer>, framesSize: Vector2f) {
+        super.setNewLayers(layers, framesSize)
+        val pointLayers = layers.filterIsInstance<PointLayer>()
         this.pointLayers = pointLayers
         pointLayersLandmarks = pointLayers.map { it.getLandmarks() }
     }

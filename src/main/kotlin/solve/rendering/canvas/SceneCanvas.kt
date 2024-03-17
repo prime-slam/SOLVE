@@ -3,6 +3,7 @@ package solve.rendering.canvas
 import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.rendering.engine.core.renderers.FramesRenderer
+import solve.rendering.engine.core.renderers.LinesLayerRenderer
 import solve.rendering.engine.core.renderers.PointsLayerRenderer
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.times
@@ -112,7 +113,7 @@ class SceneCanvas : OpenGLCanvas() {
     private fun reinitializeRenderers() {
         val scene = this.scene ?: return
         scene.layers.forEach { layer ->
-            if (layer is Layer.PointLayer) {
+            if (layer is Layer.PointLayer || layer is Layer.LineLayer) {
                 addLandmarkRenderer(layer, scene)
             }
         }
@@ -124,11 +125,11 @@ class SceneCanvas : OpenGLCanvas() {
 
     private fun addLandmarkRenderer(layer: Layer, scene: solve.scene.model.Scene) {
         val addingRenderer = when (layer) {
-            is Layer.LineLayer -> TODO()
-            is Layer.PlaneLayer -> TODO()
             is Layer.PointLayer -> PointsLayerRenderer(window)
+            is Layer.LineLayer -> LinesLayerRenderer(window)
+            is Layer.PlaneLayer -> TODO()
         }
-        val addingLayers = scene.getLayersWithCommonSettings(layer.settings).filterIsInstance<Layer.PointLayer>()
+        val addingLayers = scene.getLayersWithCommonSettings(layer.settings)
         val framesSize = Vector2f(scene.frameSize.width.toFloat(), scene.frameSize.height.toFloat())
         addingRenderer.setNewLayers(
             addingLayers,

@@ -3,6 +3,7 @@ package solve.rendering.engine.core.renderers
 import org.joml.Vector2f
 import solve.rendering.engine.Window
 import solve.rendering.engine.utils.plus
+import solve.scene.model.Layer
 
 abstract class LandmarkLayerRenderer(
     window: Window
@@ -10,6 +11,10 @@ abstract class LandmarkLayerRenderer(
     private var gridWidth = FramesRenderer.DefaultGridWidth
     private var framesSize = Vector2f()
     private var framesRatio: Float = 1f
+
+    open fun setNewLayers(layers: List<Layer>, framesSize: Vector2f) {
+        initializeFrameSizeData(framesSize)
+    }
 
     protected fun initializeFrameSizeData(framesSize: Vector2f) {
         this.framesSize = framesSize
