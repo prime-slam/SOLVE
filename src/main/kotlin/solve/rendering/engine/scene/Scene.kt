@@ -1,39 +1,28 @@
 package solve.rendering.engine.scene
 
-import solve.rendering.engine.core.renderers.Renderer
+import solve.rendering.engine.core.renderers.FramesRenderer
+import solve.rendering.engine.core.renderers.LandmarkLayerRenderer
 
-class Scene(renderers: List<Renderer> = emptyList()) {
-    private val _renderObjects = mutableListOf<RenderObject>()
-    val renderObjects: List<RenderObject>
-        get() = _renderObjects
+class Scene(val framesRenderer: FramesRenderer) {
+    private val _landmarkRenderers = mutableListOf<LandmarkLayerRenderer>()
+    val landmarkRenderers: List<LandmarkLayerRenderer>
+        get() = _landmarkRenderers
 
-    private val _renderers = renderers
-    val renderers: List<Renderer>
-        get() = _renderers
-
-    fun update(deltaTime: Float) {
-        _renderObjects.forEach { gameObject ->
-            if (gameObject.isDestroyed) {
-                removeRenderObject(gameObject)
-                return@forEach
-            }
-
-            gameObject.update(deltaTime)
-            _renderers.forEach { it.render() }
-        }
+    fun update() {
+        render()
     }
 
-    fun addRenderObject(renderObject: RenderObject) {
-        if (_renderObjects.contains(renderObject)) {
-            println("The scene already contains adding game object ($renderObject)!")
-            return
-        }
-        _renderObjects.add(renderObject)
-        _renderers.forEach { it.addRenderObject(renderObject) }
+    fun addLandmarkRenderer(renderer: LandmarkLayerRenderer) {
+        _landmarkRenderers.add(renderer)
     }
 
-    fun removeRenderObject(renderObject: RenderObject) {
-        _renderObjects.remove(renderObject)
-        _renderers.forEach { it.removeRenderObject(renderObject) }
+    fun clearLandmarkRenderers() {
+        landmarkRenderers.forEach { it.delete() }
+        _landmarkRenderers.clear()
+    }
+
+    private fun render() {
+        framesRenderer.render()
+        landmarkRenderers.forEach { it.render() }
     }
 }
