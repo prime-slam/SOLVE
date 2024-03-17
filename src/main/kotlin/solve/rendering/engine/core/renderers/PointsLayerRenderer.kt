@@ -13,7 +13,6 @@ import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
-import solve.scene.model.Layer
 import solve.scene.model.Layer.PointLayer
 
 class PointsLayerRenderer(
@@ -74,8 +73,8 @@ class PointsLayerRenderer(
                 val pointShaderPosition = framePixelToShaderPosition(pointsLayerIndex, pointLandmarkPosition)
 
                 circleBoundsVerticesLocalPositions.forEach { vertexLocalPosition ->
-                    val vertexPosition = pointShaderPosition +
-                            Vector2f(vertexLocalPosition) * pointsRadius / window.camera.zoom / DefaultLocalVerticesPositionsDivider
+                    val vertexPosition = pointShaderPosition + Vector2f(vertexLocalPosition) *
+                        pointsRadius / window.camera.zoom / DefaultLocalVerticesPositionsDivider
                     batch.pushVector2f(vertexPosition)
                     batch.pushVector2f(vertexLocalPosition)
                     batch.pushFloat(pointLandmarkIndex.toFloat())
