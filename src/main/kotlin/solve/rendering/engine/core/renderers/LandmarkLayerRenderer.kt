@@ -3,9 +3,8 @@ package solve.rendering.engine.core.renderers
 import org.joml.Vector2f
 import solve.rendering.engine.Window
 import solve.rendering.engine.utils.plus
-import solve.scene.model.Layer
 
-abstract class LandmarkLayerRenderer (
+abstract class LandmarkLayerRenderer(
     window: Window
 ) : Renderer(window) {
     private var gridWidth = FramesRenderer.DefaultGridWidth
