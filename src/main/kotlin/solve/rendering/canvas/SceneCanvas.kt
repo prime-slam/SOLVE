@@ -60,6 +60,7 @@ class SceneCanvas : OpenGLCanvas() {
 
     fun setColumnsNumber(columnsNumber: Int) {
         canvasScene?.framesRenderer?.setGridWidth(columnsNumber)
+        canvasScene?.landmarkRenderers?.forEach { it.setNewGridWidth(columnsNumber) }
         this.columnsNumber = columnsNumber
     }
 
@@ -104,14 +105,21 @@ class SceneCanvas : OpenGLCanvas() {
 
     private fun checkRenderersInitialization() {
         if (needToReinitializeRenderers) {
-            val scene = this.scene ?: return
-            scene.layers.forEach { layer ->
-                if (layer is Layer.PointLayer) {
-                    addLandmarkRenderer(layer, scene)
-                }
-            }
-            needToReinitializeRenderers = false
+            reinitializeRenderers()
         }
+    }
+
+    private fun reinitializeRenderers() {
+        val scene = this.scene ?: return
+        scene.layers.forEach { layer ->
+            if (layer is Layer.PointLayer) {
+                addLandmarkRenderer(layer, scene)
+            }
+        }
+        canvasScene?.landmarkRenderers?.forEach {
+            it.setNewGridWidth(sceneController?.installedColumnsNumber ?: SceneController.MaxColumnsNumber)
+        }
+        needToReinitializeRenderers = false
     }
 
     private fun addLandmarkRenderer(layer: Layer, scene: solve.scene.model.Scene) {
