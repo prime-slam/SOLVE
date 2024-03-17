@@ -1,18 +1,19 @@
 package solve.rendering.engine.scene
 
 import solve.rendering.engine.core.renderers.FramesRenderer
+import solve.rendering.engine.core.renderers.LandmarkLayerRenderer
 import solve.rendering.engine.core.renderers.Renderer
 
 class Scene(val framesRenderer: FramesRenderer) {
-    private val _landmarkRenderers = mutableListOf<Renderer>()
-    val landmarkRenderers: List<Renderer>
+    private val _landmarkRenderers = mutableListOf<LandmarkLayerRenderer>()
+    val landmarkRenderers: List<LandmarkLayerRenderer>
         get() = _landmarkRenderers
 
     fun update() {
         render()
     }
 
-    fun addLandmarkRenderer(renderer: Renderer) {
+    fun addLandmarkRenderer(renderer: LandmarkLayerRenderer) {
         _landmarkRenderers.add(renderer)
     }
 

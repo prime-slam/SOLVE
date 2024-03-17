@@ -10,38 +10,29 @@ import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.utils.plus
+import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
+import solve.scene.model.Layer
 import solve.scene.model.Layer.PointLayer
 
 class PointsLayerRenderer(
     window: Window
-) : Renderer(window) {
+) : LandmarkLayerRenderer(window) {
     private var pointLayers = emptyList<PointLayer>()
     private var pointLayersLandmarks = emptyList<List<Landmark.Keypoint>>()
 
     override val maxBatchSize = 1000
 
-    private var gridWidth = 6 // FramesRenderer.DefaultGridWidth
     private var pointsRadius = 1f
-    private var framesSize = Vector2f()
-
-    fun setNewLayers(pointLayers: List<PointLayer>, framesSize: Vector2f) {
-        this.pointLayers = pointLayers
-        this.framesSize = framesSize
-        pointLayersLandmarks = pointLayers.map { it.getLandmarks() }
-    }
-
-    fun setGridWidth(gridWidth: Int) {
-        if (gridWidth < 1) {
-            println("The width of the frames grid should be a positive value!")
-            return
-        }
-
-        this.gridWidth = gridWidth
-    }
 
     fun setPointsRadius(pointsRadius: Float) {
         this.pointsRadius = pointsRadius
+    }
+
+    fun setNewLayers(pointLayers: List<PointLayer>, framesSize: Vector2f) {
+        initializeFrameSizeData(framesSize)
+        this.pointLayers = pointLayers
+        pointLayersLandmarks = pointLayers.map { it.getLandmarks() }
     }
 
     override fun createShaderProgram(): ShaderProgram {
@@ -72,25 +63,19 @@ class PointsLayerRenderer(
     }
 
     override fun updateBatchesData() {
-        val framesRatio = framesSize.x / framesSize.y
-
         pointLayersLandmarks.forEachIndexed { pointsLayerIndex, pointsLayerLandmarks ->
             pointsLayerLandmarks.forEach { pointLandmark ->
                 val batch = getAvailableBatch(null, 0)
 
-                val frameRelativePosition = Vector2f(
-                    pointLandmark.coordinate.x.toFloat() / framesSize.y,
-                    pointLandmark.coordinate.y.toFloat() / framesSize.y
+                val pointLandmarkPosition = Vector2f(
+                    pointLandmark.coordinate.x.toFloat(),
+                    pointLandmark.coordinate.y.toFloat()
                 )
-                val previousFramesVector = Vector2f(
-                    (pointsLayerIndex % gridWidth).toFloat() * framesRatio,
-                    (pointsLayerIndex / gridWidth).toFloat()
-                )
-                val framePosition = previousFramesVector + frameRelativePosition
+                val pointShaderPosition = framePixelToShaderPosition(pointsLayerIndex, pointLandmarkPosition)
 
                 circleBoundsVerticesLocalPositions.forEach { vertexLocalPosition ->
-                    val vertexPosition =
-                        framePosition + Vector2f(vertexLocalPosition) / DefaultLocalVerticesPositionsDivider
+                    val vertexPosition = pointShaderPosition +
+                            Vector2f(vertexLocalPosition) * pointsRadius / window.camera.zoom / DefaultLocalVerticesPositionsDivider
                     batch.pushVector2f(vertexPosition)
                     batch.pushVector2f(vertexLocalPosition)
                 }
