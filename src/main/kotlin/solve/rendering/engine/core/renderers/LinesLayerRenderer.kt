@@ -43,7 +43,8 @@ class LinesLayerRenderer(
 
     override fun createNewBatch(zIndex: Int): RenderBatch {
         val shaderAttributesTypes = listOf(
-            ShaderAttributeType.FLOAT2
+            ShaderAttributeType.FLOAT2,
+            ShaderAttributeType.FLOAT
         )
 
         return RenderBatch(
@@ -56,11 +57,13 @@ class LinesLayerRenderer(
 
     override fun uploadUniforms(shaderProgram: ShaderProgram) {
         shaderProgram.uploadMatrix4f(ProjectionUniformName, window.calculateProjectionMatrix())
+        shaderProgram.uploadInt(UseCommonColorUniformName, if (useCommonColor()) 1 else 0)
+        shaderProgram.uploadVector3f(CommonColorUniformName, getLinesColor())
     }
 
     override fun updateBatchesData() {
         lineLayersLandmarks.forEachIndexed { linesLayerIndex, linesLayerLandmarks ->
-            linesLayerLandmarks.forEach { lineLandmark ->
+            linesLayerLandmarks.forEachIndexed { lineLandmarkIndex, lineLandmark ->
                 val batch = getAvailableBatch(null, 0)
 
                 val lineStartPosition = Vector2f(
@@ -83,7 +86,9 @@ class LinesLayerRenderer(
                     val linePointFirstVertexPosition = linePoint + pointToVertexVector
                     val linePointSecondVertexPosition = linePoint - pointToVertexVector
                     batch.pushVector2f(linePointFirstVertexPosition)
+                    batch.pushFloat(lineLandmarkIndex.toFloat())
                     batch.pushVector2f(linePointSecondVertexPosition)
+                    batch.pushFloat(lineLandmarkIndex.toFloat())
                 }
             }
         }
@@ -109,13 +114,8 @@ class LinesLayerRenderer(
 
     companion object {
         private const val ProjectionUniformName = "uProjection"
-
-        private val circleBoundsVerticesLocalPositions = listOf(
-            Vector2f(1f, 1f),
-            Vector2f(1f, -1f),
-            Vector2f(-1f, -1f),
-            Vector2f(-1f, 1f)
-        )
+        private const val UseCommonColorUniformName = "uUseCommonColor"
+        private const val CommonColorUniformName = "uCommonColor"
 
         private const val DefaultLocalVerticesPositionsDivider = 250f
     }
