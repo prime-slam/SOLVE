@@ -83,7 +83,7 @@ class FramesRenderer(
         haveNewFramesSelection = true
     }
 
-    fun setNewSceneFrames(frames: List<VisualizationFrame>) {
+    override fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2f) {
         if (frames.isEmpty()) {
             return
         }
@@ -93,9 +93,9 @@ class FramesRenderer(
         needToReinitializeBuffers = true
     }
 
-    fun setFramesSelection(frames: List<VisualizationFrame>) {
+    fun setFramesSelection(selection: List<VisualizationFrame>) {
         this.disableVirtualization()
-        this.selectedFrames = frames
+        this.selectedFrames = selection
         haveNewFramesSelection = true
     }
 

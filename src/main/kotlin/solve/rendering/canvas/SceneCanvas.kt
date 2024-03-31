@@ -43,7 +43,7 @@ class SceneCanvas : OpenGLCanvas() {
     fun setNewScene(scene: Scene) {
         this.scene = scene
         this.framesSize = Vector2i(scene.frameSize.width.toInt(), scene.frameSize.height.toInt())
-        canvasScene?.framesRenderer?.setNewSceneFrames(scene.frames)
+        canvasScene?.framesRenderer?.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
 
         needToReinitializeRenderers = true
     }
@@ -53,6 +53,13 @@ class SceneCanvas : OpenGLCanvas() {
         window.camera.position = leftUpperCornerCameraPosition
 
         canvasScene?.framesRenderer?.setFramesSelection(framesSelection)
+        canvasScene?.landmarkRenderers?.forEach { renderer ->
+            val rendererLayerSettings =
+                canvasScene?.landmarkLayerRendererLayers?.get(renderer)?.settings ?: return@forEach
+            val selectedFramesLayers  =
+                scene?.getLayersWithCommonSettings(rendererLayerSettings, framesSelection) ?: return@forEach
+            renderer.setFramesSelectionLayers(selectedFramesLayers)
+        }
         framesSelectionSize = framesSelection.count()
     }
 
@@ -110,6 +117,7 @@ class SceneCanvas : OpenGLCanvas() {
     private fun reinitializeRenderers() {
         canvasScene?.clearLandmarkRenderers()
         val scene = this.scene ?: return
+
         scene.layers.forEach { layer ->
             if (layer is Layer.PointLayer || layer is Layer.LineLayer) {
                 addLandmarkRenderer(layer, scene)
@@ -127,13 +135,8 @@ class SceneCanvas : OpenGLCanvas() {
             is Layer.LineLayer -> LinesLayerRenderer(window)
             is Layer.PlaneLayer -> TODO()
         }
-        val addingLayers = scene.getLayersWithCommonSettings(layer.settings)
-        val framesSize = Vector2f(scene.frameSize.width.toFloat(), scene.frameSize.height.toFloat())
-        addingRenderer.setNewLayers(
-            addingLayers,
-            framesSize
-        )
-        canvasScene?.addLandmarkRenderer(addingRenderer)
+        addingRenderer.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
+        canvasScene?.addLandmarkRenderer(addingRenderer, layer)
     }
 
     private fun fromScreenToCameraPoint(screenPoint: Vector2i) = screenPoint - (window.size / 2)
