@@ -7,17 +7,11 @@ import com.huskerdev.openglfx.events.GLRenderEvent
 import com.huskerdev.openglfx.events.GLReshapeEvent
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
 import org.joml.Vector2i
+import org.lwjgl.glfw.GLFW
+import org.lwjgl.glfw.GLFW.glfwWindowHint
 import org.lwjgl.opengl.GL.createCapabilities
-import org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT
-import org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT
-import org.lwjgl.opengl.GL11.GL_DEPTH_TEST
-import org.lwjgl.opengl.GL11.GL_LEQUAL
-import org.lwjgl.opengl.GL11.GL_PROJECTION
-import org.lwjgl.opengl.GL11.glClear
-import org.lwjgl.opengl.GL11.glDepthFunc
-import org.lwjgl.opengl.GL11.glEnable
-import org.lwjgl.opengl.GL11.glLoadIdentity
-import org.lwjgl.opengl.GL11.glMatrixMode
+import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL13.GL_MULTISAMPLE
 import solve.rendering.engine.Window
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.plus
@@ -33,7 +27,12 @@ abstract class OpenGLCanvas {
         canvas.animator = GLCanvasAnimator(OpenGLCanvasFPS)
     }
 
-    open fun onInit() { }
+    open fun onInit() {
+        glEnable(GL_BLEND)
+        glEnable(GL_DEPTH_TEST)
+        glEnable(GL_MULTISAMPLE)
+        glDepthFunc(GL_LEQUAL)
+    }
 
     open fun onDraw(deltaTime: Float) { }
 
@@ -50,13 +49,10 @@ abstract class OpenGLCanvas {
     private fun canvasInit(event: GLInitializeEvent) {
         window = Window(canvas.width.toInt(), canvas.height.toInt())
         createCapabilities()
-
         onInit()
     }
 
     private fun render(event: GLRenderEvent) {
-        glEnable(GL_DEPTH_TEST)
-        glDepthFunc(GL_LEQUAL)
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
         onDraw(event.delta.toFloat())
