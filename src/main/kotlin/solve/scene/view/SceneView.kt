@@ -33,9 +33,6 @@ class SceneView : View() {
         if (SceneFacade.lastVisualizationKeepSettings) {
             canvas.setFramesSelection(controller.scene.frames)
         } else {
-            //val framesSize = controller.scene.frameSize
-            //val framesSizeVector = Vector2i(framesSize.width.toInt(), framesSize.height.toInt())
-            // canvas.setNewSceneFrames(controller.scene.frames, framesSizeVector)
             canvas.setNewScene(controller.scene)
         }
     }
@@ -46,7 +43,7 @@ class SceneView : View() {
 
     private fun extrudeEventMousePosition(event: MouseEvent) = Vector2i(event.x.toInt(), event.y.toInt())
 
-    private fun addBindings() {
+   private fun addBindings() {
         addSceneParamsBindings()
         addSceneFramesBindings()
         addInputBindings()
