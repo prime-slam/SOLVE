@@ -33,9 +33,9 @@ class SceneView : View() {
         if (SceneFacade.lastVisualizationKeepSettings) {
             canvas.setFramesSelection(controller.scene.frames)
         } else {
-            val framesSize = controller.scene.frameSize
-            val framesSizeVector = Vector2i(framesSize.width.toInt(), framesSize.height.toInt())
-            canvas.setNewSceneFrames(controller.scene.frames, framesSizeVector)
+            //val framesSize = controller.scene.frameSize
+            //val framesSizeVector = Vector2i(framesSize.width.toInt(), framesSize.height.toInt())
+            // canvas.setNewSceneFrames(controller.scene.frames, framesSizeVector)
             canvas.setNewScene(controller.scene)
         }
     }
