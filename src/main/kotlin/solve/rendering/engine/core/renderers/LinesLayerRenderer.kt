@@ -16,6 +16,7 @@ import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Layer.LineLayer
+import solve.scene.model.VisualizationFrame
 
 class LinesLayerRenderer(
     window: Window
@@ -27,10 +28,8 @@ class LinesLayerRenderer(
 
     private var lineWidth = 1f
 
-    override fun setNewLayers(layers: List<Layer>, framesSize: Vector2f) {
-        super.setNewLayers(lineLayers, framesSize)
-        val lineLayers = layers.filterIsInstance<LineLayer>()
-        this.lineLayers = lineLayers
+    override fun setFramesSelectionLayers(layers: List<Layer>) {
+        lineLayers = layers.filterIsInstance<LineLayer>()
         lineLayersLandmarks = lineLayers.map { it.getLandmarks() }
     }
 

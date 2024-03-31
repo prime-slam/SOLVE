@@ -1,9 +1,11 @@
 package solve.rendering.engine.core.renderers
 
 import org.joml.Vector2f
+import org.joml.Vector2i
 import solve.rendering.engine.Window
 import solve.rendering.engine.utils.plus
 import solve.scene.model.Layer
+import solve.scene.model.VisualizationFrame
 
 abstract class LandmarkLayerRenderer(
     window: Window
@@ -12,11 +14,9 @@ abstract class LandmarkLayerRenderer(
     private var framesSize = Vector2f()
     private var framesRatio: Float = 1f
 
-    open fun setNewLayers(layers: List<Layer>, framesSize: Vector2f) {
-        initializeFrameSizeData(framesSize)
-    }
+    abstract fun setFramesSelectionLayers(layers: List<Layer>)
 
-    protected fun initializeFrameSizeData(framesSize: Vector2f) {
+    override fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2f) {
         this.framesSize = framesSize
         this.framesRatio = framesSize.x / framesSize.y
     }

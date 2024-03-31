@@ -1,11 +1,13 @@
 package solve.rendering.engine.core.renderers
 
+import org.joml.Vector2f
 import org.lwjgl.opengl.GL11.GL_UNSIGNED_INT
 import org.lwjgl.opengl.GL11.glDrawElements
 import solve.rendering.engine.Window
 import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.core.texture.Texture2D
 import solve.rendering.engine.shader.ShaderProgram
+import solve.scene.model.VisualizationFrame
 
 abstract class Renderer(protected val window: Window) {
     protected abstract val maxBatchSize: Int
@@ -17,6 +19,8 @@ abstract class Renderer(protected val window: Window) {
     init {
         initialize()
     }
+
+    abstract fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2f)
 
     open fun render() {
         shaderProgram.use()

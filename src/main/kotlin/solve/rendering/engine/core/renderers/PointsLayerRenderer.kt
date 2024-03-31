@@ -24,10 +24,8 @@ class PointsLayerRenderer(
 
     override val maxBatchSize = 1000
 
-    override fun setNewLayers(layers: List<Layer>, framesSize: Vector2f) {
-        super.setNewLayers(layers, framesSize)
-        val pointLayers = layers.filterIsInstance<PointLayer>()
-        this.pointLayers = pointLayers
+    override fun setFramesSelectionLayers(layers: List<Layer>) {
+        pointLayers = layers.filterIsInstance<PointLayer>()
         pointLayersLandmarks = pointLayers.map { it.getLandmarks() }
     }
 
