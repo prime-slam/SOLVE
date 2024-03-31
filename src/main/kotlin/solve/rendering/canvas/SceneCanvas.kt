@@ -41,14 +41,11 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     fun setNewScene(scene: Scene) {
-        canvasScene?.clearLandmarkRenderers()
-        needToReinitializeRenderers = true
         this.scene = scene
-    }
+        this.framesSize = Vector2i(scene.frameSize.width.toInt(), scene.frameSize.height.toInt())
+        canvasScene?.framesRenderer?.setNewSceneFrames(scene.frames)
 
-    fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2i) {
-        canvasScene?.framesRenderer?.setNewSceneFrames(frames)
-        this.framesSize = framesSize
+        needToReinitializeRenderers = true
     }
 
     fun setFramesSelection(framesSelection: List<VisualizationFrame>) {
@@ -111,6 +108,7 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     private fun reinitializeRenderers() {
+        canvasScene?.clearLandmarkRenderers()
         val scene = this.scene ?: return
         scene.layers.forEach { layer ->
             if (layer is Layer.PointLayer || layer is Layer.LineLayer) {
@@ -123,7 +121,7 @@ class SceneCanvas : OpenGLCanvas() {
         needToReinitializeRenderers = false
     }
 
-    private fun addLandmarkRenderer(layer: Layer, scene: solve.scene.model.Scene) {
+    private fun addLandmarkRenderer(layer: Layer, scene: Scene) {
         val addingRenderer = when (layer) {
             is Layer.PointLayer -> PointsLayerRenderer(window)
             is Layer.LineLayer -> LinesLayerRenderer(window)
