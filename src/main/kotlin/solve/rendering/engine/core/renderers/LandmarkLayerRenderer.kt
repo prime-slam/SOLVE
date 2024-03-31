@@ -1,7 +1,6 @@
 package solve.rendering.engine.core.renderers
 
 import org.joml.Vector2f
-import org.joml.Vector2i
 import solve.rendering.engine.Window
 import solve.rendering.engine.utils.plus
 import solve.scene.model.Layer

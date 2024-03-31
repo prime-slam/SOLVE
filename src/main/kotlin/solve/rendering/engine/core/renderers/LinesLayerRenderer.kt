@@ -16,7 +16,6 @@ import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Layer.LineLayer
-import solve.scene.model.VisualizationFrame
 
 class LinesLayerRenderer(
     window: Window

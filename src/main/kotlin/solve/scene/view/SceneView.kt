@@ -43,7 +43,7 @@ class SceneView : View() {
 
     private fun extrudeEventMousePosition(event: MouseEvent) = Vector2i(event.x.toInt(), event.y.toInt())
 
-   private fun addBindings() {
+    private fun addBindings() {
         addSceneParamsBindings()
         addSceneFramesBindings()
         addInputBindings()
