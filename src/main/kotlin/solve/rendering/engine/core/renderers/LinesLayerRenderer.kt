@@ -25,8 +25,6 @@ class LinesLayerRenderer(
 
     override val maxBatchSize = 1000
 
-    private var lineWidth = 1f
-
     override fun setFramesSelectionLayers(layers: List<Layer>) {
         lineLayers = layers.filterIsInstance<LineLayer>()
         lineLayersLandmarks = lineLayers.map { it.getLandmarks() }
@@ -62,6 +60,8 @@ class LinesLayerRenderer(
     }
 
     override fun updateBatchesData() {
+        val linesWidth = getLinesWidth()
+
         lineLayersLandmarks.forEachIndexed { linesLayerIndex, linesLayerLandmarks ->
             linesLayerLandmarks.forEachIndexed { lineLandmarkIndex, lineLandmark ->
                 val batch = getAvailableBatch(null, 0)
@@ -80,14 +80,17 @@ class LinesLayerRenderer(
                 val normalVector = Vector2f(-lineVector.y, lineVector.x).normalize()
                 val linePoints = listOf(lineStartShaderPosition, lineFinishShaderPosition)
 
-                linePoints.forEach { linePoint ->
+                linePoints.forEachIndexed { sideIndex, linePoint ->
                     val pointToVertexVector = Vector2f(normalVector) *
-                        lineWidth / window.camera.zoom / DefaultLocalVerticesPositionsDivider
-                    val linePointFirstVertexPosition = linePoint + pointToVertexVector
-                    val linePointSecondVertexPosition = linePoint - pointToVertexVector
-                    batch.pushVector2f(linePointFirstVertexPosition)
+                            linesWidth / window.camera.zoom / DefaultLocalVerticesPositionsDivider
+
+                    val upperVertexPosition = linePoint + pointToVertexVector
+                    val bottomVertexPosition = linePoint - pointToVertexVector
+                    val firstVertexPosition = if (sideIndex == 0) upperVertexPosition else bottomVertexPosition
+                    val secondVertexPosition = if (sideIndex == 0) bottomVertexPosition else upperVertexPosition
+                    batch.pushVector2f(firstVertexPosition)
                     batch.pushFloat(lineLandmarkIndex.toFloat())
-                    batch.pushVector2f(linePointSecondVertexPosition)
+                    batch.pushVector2f(secondVertexPosition)
                     batch.pushFloat(lineLandmarkIndex.toFloat())
                 }
             }
@@ -104,6 +107,10 @@ class LinesLayerRenderer(
         )
     }
 
+    private fun getLinesWidth(): Float {
+        return lineLayers.firstOrNull()?.settings?.selectedWidth?.toFloat() ?: return 1f
+    }
+
     private fun useCommonColor(): Boolean {
         return lineLayers.firstOrNull()?.settings?.useCommonColor ?: false
     }
@@ -117,6 +124,6 @@ class LinesLayerRenderer(
         private const val UseCommonColorUniformName = "uUseCommonColor"
         private const val CommonColorUniformName = "uCommonColor"
 
-        private const val DefaultLocalVerticesPositionsDivider = 250f
+        private const val DefaultLocalVerticesPositionsDivider = 800f
     }
 }
