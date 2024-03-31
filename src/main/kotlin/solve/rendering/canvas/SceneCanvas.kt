@@ -56,7 +56,7 @@ class SceneCanvas : OpenGLCanvas() {
         canvasScene?.landmarkRenderers?.forEach { renderer ->
             val rendererLayerSettings =
                 canvasScene?.landmarkLayerRendererLayers?.get(renderer)?.settings ?: return@forEach
-            val selectedFramesLayers  =
+            val selectedFramesLayers =
                 scene?.getLayersWithCommonSettings(rendererLayerSettings, framesSelection) ?: return@forEach
             renderer.setFramesSelectionLayers(selectedFramesLayers)
         }
