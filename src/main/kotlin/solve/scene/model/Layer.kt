@@ -1,5 +1,7 @@
 package solve.scene.model
 
+import java.nio.file.Path
+
 /**
  * Aggregates all landmarks from one layer and frame.
  */
@@ -27,6 +29,7 @@ sealed class Layer(
     class PlaneLayer(
         name: String,
         override val settings: LayerSettings.PlaneLayerSettings,
-        override val getLandmarks: () -> List<Landmark>
+        val filePath: Path,
+        override val getLandmarks: () -> List<Landmark.Plane> = { emptyList() }
     ) : Layer(name, settings, getLandmarks)
 }

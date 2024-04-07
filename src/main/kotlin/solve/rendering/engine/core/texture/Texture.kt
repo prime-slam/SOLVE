@@ -1,10 +1,12 @@
 package solve.rendering.engine.core.texture
 
+import org.joml.Vector2f
 import org.lwjgl.opengl.GL11.glBindTexture
 import org.lwjgl.opengl.GL11.glDeleteTextures
 import org.lwjgl.opengl.GL11.glGenTextures
 import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL13.GL_TEXTURE0
+import org.lwjgl.opengl.GL13.glActiveTexture
 
 abstract class Texture {
     protected abstract val textureOpenGLType: Int
@@ -35,7 +37,7 @@ abstract class Texture {
             return
         }
 
-        GL13.glActiveTexture(GL_TEXTURE0 + unit)
+        glActiveTexture(GL_TEXTURE0 + unit)
         glBindTexture(textureOpenGLType, textureID)
     }
 
@@ -45,8 +47,8 @@ abstract class Texture {
 
     protected fun initialize() {
         bind()
-        initializeTexture()
         initializeTextureParams()
+        initializeTexture()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -69,5 +71,14 @@ abstract class Texture {
         result = primeNumber * result + channelsType.hashCode()
 
         return result
+    }
+
+    companion object {
+        val defaultUVCoordinates = listOf(
+            Vector2f(0f, 0f),
+            Vector2f(0f, 1f),
+            Vector2f(1f, 1f),
+            Vector2f(1f, 0f)
+        )
     }
 }

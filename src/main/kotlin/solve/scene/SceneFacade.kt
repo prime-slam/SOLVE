@@ -104,12 +104,9 @@ object SceneFacade {
 
             LayerKind.Plane -> Layer.PlaneLayer(
                 file.projectLayer.name,
-                layerSettings as LayerSettings.PlaneLayerSettings
-            ) {
-                ImagePlanesParser.parse(file.path.toString()).map { plane ->
-                    PlaneFactory.buildLandmark(plane, layerSettings, layerState)
-                }
-            }
+                layerSettings as LayerSettings.PlaneLayerSettings,
+                file.path
+            )
         }
     }
 }
