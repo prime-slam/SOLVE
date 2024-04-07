@@ -15,7 +15,7 @@ import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load
 import solve.utils.getResourceAbsolutePath
 
-class Texture2D(private val resourcesPath: String) : Texture() {
+class Texture2D(private val filePath: String) : Texture() {
     override val textureOpenGLType: Int = GL_TEXTURE_2D
 
     init {
@@ -31,13 +31,7 @@ class Texture2D(private val resourcesPath: String) : Texture() {
     }
 
     override fun initializeTexture() {
-        val absolutePath = getResourceAbsolutePath(resourcesPath)
-        if (absolutePath == null) {
-            println("The path of the reading texture is null!")
-            return
-        }
-
-        val textureData = loadData(absolutePath)
+        val textureData = loadData(filePath)
         if (textureData == null) {
             println("The read texture data is null!")
             return

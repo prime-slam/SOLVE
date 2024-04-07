@@ -4,6 +4,7 @@ import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.rendering.engine.core.renderers.FramesRenderer
 import solve.rendering.engine.core.renderers.LinesLayerRenderer
+import solve.rendering.engine.core.renderers.PlanesLayerRenderer
 import solve.rendering.engine.core.renderers.PointsLayerRenderer
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.times
@@ -119,9 +120,7 @@ class SceneCanvas : OpenGLCanvas() {
         val scene = this.scene ?: return
 
         scene.layers.forEach { layer ->
-            if (layer is Layer.PointLayer || layer is Layer.LineLayer) {
-                addLandmarkRenderer(layer, scene)
-            }
+            addLandmarkRenderer(layer, scene)
         }
         canvasScene?.landmarkRenderers?.forEach {
             it.setNewGridWidth(sceneController?.installedColumnsNumber ?: SceneController.MaxColumnsNumber)
@@ -131,9 +130,9 @@ class SceneCanvas : OpenGLCanvas() {
 
     private fun addLandmarkRenderer(layer: Layer, scene: Scene) {
         val addingRenderer = when (layer) {
-            is Layer.PointLayer -> PointsLayerRenderer(window)
-            is Layer.LineLayer -> LinesLayerRenderer(window)
-            is Layer.PlaneLayer -> TODO()
+            is Layer.PointLayer -> PointsLayerRenderer(window) { sceneController?.scene }
+            is Layer.LineLayer -> LinesLayerRenderer(window) { sceneController?.scene }
+            is Layer.PlaneLayer -> PlanesLayerRenderer(window) { sceneController?.scene }
         }
         addingRenderer.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
         canvasScene?.addLandmarkRenderer(addingRenderer, layer)

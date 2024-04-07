@@ -1,39 +1,41 @@
 package solve.rendering.engine.core.renderers
 
 import org.joml.Vector2f
-import org.joml.Vector3f
-import solve.constants.ShadersLineLandmarkFragmentPath
-import solve.constants.ShadersLineLandmarkVertexPath
+import solve.constants.ShadersPlaneLandmarkFragmentPath
+import solve.constants.ShadersPlaneLandmarkVertexPath
 import solve.rendering.engine.Window
 import solve.rendering.engine.core.batch.PrimitiveType
 import solve.rendering.engine.core.batch.RenderBatch
+import solve.rendering.engine.core.texture.Texture
+import solve.rendering.engine.core.texture.Texture2D
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
-import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.plus
-import solve.rendering.engine.utils.times
-import solve.scene.model.Landmark
 import solve.scene.model.Layer
-import solve.scene.model.Layer.LineLayer
+import solve.scene.model.Layer.PlaneLayer
+import solve.scene.model.Scene
 
 class PlanesLayerRenderer(
-    window: Window
-) : LandmarkLayerRenderer(window) {
-    private var lineLayers = emptyList<LineLayer>()
-    private var lineLayersLandmarks = emptyList<List<Landmark.Line>>()
+    window: Window,
+    getScene: () -> Scene?
+) : LandmarkLayerRenderer(window, getScene) {
+    private var planeLayers = emptyList<PlaneLayer>()
+    private var planeLayersTextures = emptyList<Texture2D>()
 
     override val maxBatchSize = 1000
 
+    private var needToInitializePlaneTextures = false
+
     override fun setFramesSelectionLayers(layers: List<Layer>) {
-        lineLayers = layers.filterIsInstance<LineLayer>()
-        lineLayersLandmarks = lineLayers.map { it.getLandmarks() }
+        planeLayers = layers.filterIsInstance<PlaneLayer>()
+        needToInitializePlaneTextures = true
     }
 
     override fun createShaderProgram(): ShaderProgram {
         val shaderProgram = ShaderProgram()
-        shaderProgram.addShader(ShadersLineLandmarkVertexPath, ShaderType.VERTEX)
-        shaderProgram.addShader(ShadersLineLandmarkFragmentPath, ShaderType.FRAGMENT)
+        shaderProgram.addShader(ShadersPlaneLandmarkVertexPath, ShaderType.VERTEX)
+        shaderProgram.addShader(ShadersPlaneLandmarkFragmentPath, ShaderType.FRAGMENT)
         shaderProgram.link()
 
         return shaderProgram
@@ -41,6 +43,7 @@ class PlanesLayerRenderer(
 
     override fun createNewBatch(zIndex: Int): RenderBatch {
         val shaderAttributesTypes = listOf(
+            ShaderAttributeType.FLOAT2,
             ShaderAttributeType.FLOAT2,
             ShaderAttributeType.FLOAT
         )
@@ -55,75 +58,46 @@ class PlanesLayerRenderer(
 
     override fun uploadUniforms(shaderProgram: ShaderProgram) {
         shaderProgram.uploadMatrix4f(ProjectionUniformName, window.calculateProjectionMatrix())
-        shaderProgram.uploadInt(UseCommonColorUniformName, if (useCommonColor()) 1 else 0)
-        shaderProgram.uploadVector3f(CommonColorUniformName, getLinesColor())
+    }
+
+    override fun beforeRender() {
+
     }
 
     override fun updateBatchesData() {
-        val linesWidth = getLinesWidth()
+        if (needToInitializePlaneTextures) {
+            planeLayersTextures = planeLayers.map { Texture2D(it.filePath.toString()) }
+            needToInitializePlaneTextures = false
+        }
 
-        lineLayersLandmarks.forEachIndexed { linesLayerIndex, linesLayerLandmarks ->
-            linesLayerLandmarks.forEachIndexed { lineLandmarkIndex, lineLandmark ->
-                val batch = getAvailableBatch(null, 0)
-
-                val lineStartPosition = Vector2f(
-                    lineLandmark.startCoordinate.x.toFloat(),
-                    lineLandmark.startCoordinate.y.toFloat()
-                )
-                val lineFinishPosition = Vector2f(
-                    lineLandmark.finishCoordinate.x.toFloat(),
-                    lineLandmark.finishCoordinate.y.toFloat()
-                )
-                val lineStartShaderPosition = framePixelToShaderPosition(linesLayerIndex, lineStartPosition)
-                val lineFinishShaderPosition = framePixelToShaderPosition(linesLayerIndex, lineFinishPosition)
-                val lineVector = lineFinishShaderPosition - lineStartShaderPosition
-                val normalVector = Vector2f(-lineVector.y, lineVector.x).normalize()
-                val linePoints = listOf(lineStartShaderPosition, lineFinishShaderPosition)
-
-                linePoints.forEachIndexed { sideIndex, linePoint ->
-                    val pointToVertexVector = Vector2f(normalVector) *
-                        linesWidth / window.camera.zoom / DefaultLocalVerticesPositionsDivider
-
-                    val upperVertexPosition = linePoint + pointToVertexVector
-                    val bottomVertexPosition = linePoint - pointToVertexVector
-                    val firstVertexPosition = if (sideIndex == 0) upperVertexPosition else bottomVertexPosition
-                    val secondVertexPosition = if (sideIndex == 0) bottomVertexPosition else upperVertexPosition
-                    batch.pushVector2f(firstVertexPosition)
-                    batch.pushFloat(lineLandmarkIndex.toFloat())
-                    batch.pushVector2f(secondVertexPosition)
-                    batch.pushFloat(lineLandmarkIndex.toFloat())
-                }
+        planeLayers.forEachIndexed { planeLayerIndex, planeLayer ->
+            val planeLayerTexture = planeLayersTextures[planeLayerIndex]
+            //val layerIndex = getScene()?.indexOf(planeLayer.settings) ?: return@forEachIndexed
+            val batch = getAvailableBatch(planeLayerTexture, 0)
+            val textureID = batch.getTextureLocalID(planeLayerTexture)
+            val topLeftFrameShaderPosition = getFrameTopLeftShaderPosition(planeLayerIndex)
+            textureLocalVerticesPositions.forEachIndexed { localVertexIndex, localVertexPosition ->
+                val q = Vector2f(localVertexPosition)
+                if (planeLayer.name.contains("alg1"))
+                    q.mul(0.5f)
+                else
+                    q.mul(0.8f)
+                val scaledLocalVertexPosition = Vector2f(q.x * framesRatio, q.y)
+                val vertexShaderPosition = topLeftFrameShaderPosition + scaledLocalVertexPosition
+                batch.pushVector2f(vertexShaderPosition)
+                batch.pushVector2f(Texture.defaultUVCoordinates[localVertexIndex])
+                batch.pushFloat(textureID.toFloat())
             }
         }
     }
-
-    private fun getLinesColor(): Vector3f {
-        val pointsCommonColor = lineLayers.firstOrNull()?.settings?.commonColor ?: return Vector3f(1f, 0f, 0f)
-
-        return Vector3f(
-            pointsCommonColor.red.toFloat(),
-            pointsCommonColor.green.toFloat(),
-            pointsCommonColor.blue.toFloat()
-        )
-    }
-
-    private fun getLinesWidth(): Float {
-        return lineLayers.firstOrNull()?.settings?.selectedWidth?.toFloat() ?: return 1f
-    }
-
-    private fun useCommonColor(): Boolean {
-        return lineLayers.firstOrNull()?.settings?.useCommonColor ?: false
-    }
-
-    private fun getLineWidth(): Float {
-        return lineLayers.firstOrNull()?.settings?.selectedWidth?.toFloat() ?: return 1f
-    }
-
     companion object {
         private const val ProjectionUniformName = "uProjection"
-        private const val UseCommonColorUniformName = "uUseCommonColor"
-        private const val CommonColorUniformName = "uCommonColor"
 
-        private const val DefaultLocalVerticesPositionsDivider = 800f
+        private val textureLocalVerticesPositions = listOf(
+            Vector2f(0.0f, 1.0f),
+            Vector2f(0.0f, 0.0f),
+            Vector2f(1.0f, 0.0f),
+            Vector2f(1.0f, 1.0f)
+        )
     }
 }

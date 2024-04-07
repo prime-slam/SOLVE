@@ -1,6 +1,7 @@
 package solve.scene.model
 
 import solve.utils.loadBufferedImage
+import tornadofx.*
 import solve.utils.structures.Size as DoubleSize
 
 /**
@@ -26,18 +27,9 @@ class Scene(
     val layers: List<Layer>
         get() = frames.firstOrNull()?.layers ?: emptyList()
 
-    private val canvasLayersStorage =
-        layerSettings.filter { it.usesCanvas }.toMutableList()
+    private val layersStorage = layerSettings.toMutableList()
 
-    /**
-     * Layers which use frame drawer and which don't should be stored separately
-     * to keep canvas layers always above non-canvas.
-     */
-    private val nonCanvasLayersStorage =
-        layerSettings.filterNot { it.usesCanvas }.toMutableList()
     private val changedCallbacks = mutableListOf<() -> Unit>()
-
-    val canvasLayersCount = canvasLayersStorage.size
 
     fun getLayersWithCommonSettings(
         layerSettings: LayerSettings,
@@ -61,14 +53,7 @@ class Scene(
     }
 
     override fun indexOf(element: LayerSettings): Int {
-        if (element.usesCanvas) {
-            return canvasLayersStorage.indexOf(element)
-        }
-
-        if (nonCanvasLayersStorage.contains(element)) {
-            return canvasLayersStorage.size + nonCanvasLayersStorage.indexOf(element)
-        }
-        return -1
+        return layersStorage.indexOf(element)
     }
 
     /**
@@ -76,15 +61,7 @@ class Scene(
      * If index is invalid IndexOutOfBoundsException is thrown.
      */
     fun changeLayerIndex(element: LayerSettings, index: Int) {
-        when (element) {
-            is LayerSettings.PlaneLayerSettings -> canvasLayersStorage.changeLayerIndex(element, index)
-            else -> nonCanvasLayersStorage.changeLayerIndex(element, index)
-        }
+        layersStorage.move(element, index)
         changedCallbacks.forEach { it() }
-    }
-
-    private fun <T> MutableList<T>.changeLayerIndex(element: T, index: Int) {
-        remove(element)
-        add(index, element)
     }
 }

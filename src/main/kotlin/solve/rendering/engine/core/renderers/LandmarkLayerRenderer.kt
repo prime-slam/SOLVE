@@ -4,14 +4,16 @@ import org.joml.Vector2f
 import solve.rendering.engine.Window
 import solve.rendering.engine.utils.plus
 import solve.scene.model.Layer
+import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
 
 abstract class LandmarkLayerRenderer(
-    window: Window
+    window: Window,
+    protected val getScene: () -> Scene?
 ) : Renderer(window) {
-    private var gridWidth = FramesRenderer.DefaultGridWidth
-    private var framesSize = Vector2f()
-    private var framesRatio: Float = 1f
+    protected var gridWidth = FramesRenderer.DefaultGridWidth
+    protected var framesSize = Vector2f()
+    protected var framesRatio: Float = 1f
 
     abstract fun setFramesSelectionLayers(layers: List<Layer>)
 
@@ -29,13 +31,15 @@ abstract class LandmarkLayerRenderer(
         this.gridWidth = gridWidth
     }
 
-    protected fun framePixelToShaderPosition(frameIndex: Int, framePixelPosition: Vector2f): Vector2f {
-        val frameRelativePosition = Vector2f(framePixelPosition) / framesSize.y
-        val previousFramesVector = Vector2f(
-            (frameIndex % gridWidth).toFloat() * framesRatio,
-            (frameIndex / gridWidth).toFloat()
-        )
+    protected fun getFrameTopLeftShaderPosition(frameIndex: Int) = Vector2f(
+        (frameIndex % gridWidth).toFloat() * framesRatio,
+        (frameIndex / gridWidth).toFloat()
+    )
 
-        return previousFramesVector + frameRelativePosition
+    protected fun getFramePixelShaderPosition(frameIndex: Int, framePixelPosition: Vector2f): Vector2f {
+        val frameRelativePosition = Vector2f(framePixelPosition) / framesSize.y
+        val frameTopLeftPosition = getFrameTopLeftShaderPosition(frameIndex)
+
+        return frameTopLeftPosition + frameRelativePosition
     }
 }

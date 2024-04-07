@@ -16,10 +16,12 @@ import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Layer.LineLayer
+import solve.scene.model.Scene
 
 class LinesLayerRenderer(
-    window: Window
-) : LandmarkLayerRenderer(window) {
+    window: Window,
+    getScene: () -> Scene?
+) : LandmarkLayerRenderer(window, getScene) {
     private var lineLayers = emptyList<LineLayer>()
     private var lineLayersLandmarks = emptyList<List<Landmark.Line>>()
 
@@ -74,8 +76,8 @@ class LinesLayerRenderer(
                     lineLandmark.finishCoordinate.x.toFloat(),
                     lineLandmark.finishCoordinate.y.toFloat()
                 )
-                val lineStartShaderPosition = framePixelToShaderPosition(linesLayerIndex, lineStartPosition)
-                val lineFinishShaderPosition = framePixelToShaderPosition(linesLayerIndex, lineFinishPosition)
+                val lineStartShaderPosition = getFramePixelShaderPosition(linesLayerIndex, lineStartPosition)
+                val lineFinishShaderPosition = getFramePixelShaderPosition(linesLayerIndex, lineFinishPosition)
                 val lineVector = lineFinishShaderPosition - lineStartShaderPosition
                 val normalVector = Vector2f(-lineVector.y, lineVector.x).normalize()
                 val linePoints = listOf(lineStartShaderPosition, lineFinishShaderPosition)

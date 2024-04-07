@@ -1,6 +1,5 @@
 #version 330 core
 
-in vec4 fColor;
 in vec2 fTexCoords;
 in float fTexId;
 
@@ -14,31 +13,35 @@ void main()
         int id = int(fTexId);
         switch (id) {
             case 0:
-                color = fColor * texture(uTextures[0], fTexCoords);
+                color = texture(uTextures[0], fTexCoords);
                 break;
             case 1:
-                color = fColor * texture(uTextures[1], fTexCoords);
+                color = texture(uTextures[1], fTexCoords);
                 break;
             case 2:
-                color = fColor * texture(uTextures[2], fTexCoords);
+                color = texture(uTextures[2], fTexCoords);
                 break;
             case 3:
-                color = fColor * texture(uTextures[3], fTexCoords);
+                color = texture(uTextures[3], fTexCoords);
                 break;
             case 4:
-                color = fColor * texture(uTextures[4], fTexCoords);
+                color = texture(uTextures[4], fTexCoords);
                 break;
             case 5:
-                color = fColor * texture(uTextures[5], fTexCoords);
+                color = texture(uTextures[5], fTexCoords);
                 break;
             case 6:
-                color = fColor * texture(uTextures[6], fTexCoords);
+                color = texture(uTextures[6], fTexCoords);
                 break;
             case 7:
-                color = fColor * texture(uTextures[7], fTexCoords);
+                color = texture(uTextures[7], fTexCoords);
                 break;
         }
+
+        if (color == vec4(0, 0, 0, 1)) {
+            color = vec4(0, 0, 0, 0);
+        }
     } else {
-        color = fColor;
+        color = vec4(0, 0, 0, 0);
     }
 }

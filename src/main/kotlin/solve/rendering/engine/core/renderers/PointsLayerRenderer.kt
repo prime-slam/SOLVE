@@ -15,10 +15,12 @@ import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Layer.PointLayer
+import solve.scene.model.Scene
 
 class PointsLayerRenderer(
-    window: Window
-) : LandmarkLayerRenderer(window) {
+    window: Window,
+    getScene: () -> Scene?
+) : LandmarkLayerRenderer(window, getScene) {
     private var pointLayers = emptyList<PointLayer>()
     private var pointLayersLandmarks = emptyList<List<Landmark.Keypoint>>()
 
@@ -70,7 +72,7 @@ class PointsLayerRenderer(
                     pointLandmark.coordinate.x.toFloat(),
                     pointLandmark.coordinate.y.toFloat()
                 )
-                val pointShaderPosition = framePixelToShaderPosition(pointsLayerIndex, pointLandmarkPosition)
+                val pointShaderPosition = getFramePixelShaderPosition(pointsLayerIndex, pointLandmarkPosition)
 
                 circleBoundsVerticesLocalPositions.forEach { vertexLocalPosition ->
                     val vertexPosition = pointShaderPosition + Vector2f(vertexLocalPosition) *

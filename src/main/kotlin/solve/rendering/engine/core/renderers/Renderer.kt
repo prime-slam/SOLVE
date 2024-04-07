@@ -13,8 +13,8 @@ abstract class Renderer(protected val window: Window) {
     protected abstract val maxBatchSize: Int
 
     protected var needToRebuffer = true
-    private lateinit var shaderProgram: ShaderProgram
-    private val batches = mutableListOf<RenderBatch>()
+    protected lateinit var shaderProgram: ShaderProgram
+    protected val batches = mutableListOf<RenderBatch>()
 
     init {
         initialize()
