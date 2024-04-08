@@ -21,6 +21,7 @@ import org.lwjgl.opengl.GL20.glVertexAttribPointer
 import org.lwjgl.opengl.GL30.glBindVertexArray
 import org.lwjgl.opengl.GL30.glDeleteVertexArrays
 import org.lwjgl.opengl.GL30.glGenVertexArrays
+import solve.rendering.engine.core.texture.Texture
 import solve.rendering.engine.core.texture.Texture2D
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.utils.toList
@@ -30,7 +31,7 @@ open class RenderBatch(
     val zIndex: Int,
     val primitiveType: PrimitiveType,
     private val attributes: List<ShaderAttributeType>
-) {
+) : Comparable<RenderBatch> {
     var isFull = false
         private set
     var isTexturesFull = false
@@ -40,7 +41,7 @@ open class RenderBatch(
     private var vaoID = 0
     private var eboID = 0
 
-    private val textures = mutableListOf<Texture2D>()
+    private val textures = mutableListOf<Texture>()
 
     private val attributesNumber = attributes.sumOf { it.number }
     private val attributesTotalSize = attributes.sumOf { it.size }
@@ -61,6 +62,15 @@ open class RenderBatch(
         textures.clear()
     }
 
+    override fun compareTo(other: RenderBatch): Int {
+        return if (zIndex < other.zIndex)
+            -1
+        else if (zIndex > other.zIndex)
+            1
+        else
+            0
+    }
+
     fun bind() {
         glBindVertexArray(vaoID)
         attributes.forEachIndexed { index, _ -> glEnableVertexAttribArray(index) }
@@ -69,6 +79,7 @@ open class RenderBatch(
 
     fun unbind() {
         attributes.forEachIndexed { index, _ -> glDisableVertexAttribArray(index) }
+        textures.forEach { texture -> texture.unbind() }
         glBindVertexArray(0)
     }
 
@@ -83,7 +94,7 @@ open class RenderBatch(
         glDeleteVertexArrays(vaoID)
     }
 
-    fun addTexture(texture: Texture2D): Int {
+    fun addTexture(texture: Texture): Int {
         val textureID: Int
         if (textures.contains(texture)) {
             textureID = textures.indexOf(texture) + 1
@@ -99,11 +110,11 @@ open class RenderBatch(
         return textureID
     }
 
-    fun getTextureLocalID(texture: Texture2D) = textures.indexOf(texture) + 1
+    fun getTextureLocalID(texture: Texture) = textures.indexOf(texture) + 1
 
-    fun removeTexture(texture: Texture2D): Boolean = textures.remove(texture)
+    fun removeTexture(texture: Texture): Boolean = textures.remove(texture)
 
-    fun containsTexture(texture: Texture2D) = textures.contains(texture)
+    fun containsTexture(texture: Texture) = textures.contains(texture)
 
     fun getVerticesNumber(): Int {
         if (verticesDataBufferIndexPointer % attributesNumber != 0) {

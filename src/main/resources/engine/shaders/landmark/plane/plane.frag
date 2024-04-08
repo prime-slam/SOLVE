@@ -39,9 +39,9 @@ void main()
         }
 
         if (color == vec4(0, 0, 0, 1)) {
-            color = vec4(0, 0, 0, 0);
+            discard;
         }
     } else {
-        color = vec4(0, 0, 0, 0);
+        discard;
     }
 }
