@@ -5,16 +5,19 @@ import org.lwjgl.opengl.GL11.GL_UNSIGNED_INT
 import org.lwjgl.opengl.GL11.glDrawElements
 import solve.rendering.engine.Window
 import solve.rendering.engine.core.batch.RenderBatch
+import solve.rendering.engine.core.texture.Texture
 import solve.rendering.engine.core.texture.Texture2D
 import solve.rendering.engine.shader.ShaderProgram
 import solve.scene.model.VisualizationFrame
 
-abstract class Renderer(protected val window: Window) {
+abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
     protected abstract val maxBatchSize: Int
 
     protected var needToRebuffer = true
     protected lateinit var shaderProgram: ShaderProgram
     protected val batches = mutableListOf<RenderBatch>()
+
+    protected var renderPriority = 0
 
     init {
         initialize()
@@ -34,7 +37,8 @@ abstract class Renderer(protected val window: Window) {
             rebufferBatches()
         }
 
-        batches.forEach { batch ->
+        batches.sort()
+        batches.sorted().forEach { batch ->
             batch.bind()
             glDrawElements(batch.primitiveType.openGLPrimitive, batch.getVerticesNumber(), GL_UNSIGNED_INT, 0)
             batch.unbind()
@@ -44,12 +48,21 @@ abstract class Renderer(protected val window: Window) {
         shaderProgram.detach()
     }
 
+    override fun compareTo(other: Renderer): Int {
+        return if (renderPriority < other.renderPriority)
+            -1
+        else if (renderPriority > other.renderPriority)
+            1
+        else
+            0
+    }
+
     fun delete() {
         batches.forEach { it.deleteBuffers() }
         shaderProgram.delete()
     }
 
-    protected fun getAvailableBatch(texture: Texture2D?, requiredZIndex: Int): RenderBatch {
+    protected fun getAvailableBatch(texture: Texture?, requiredZIndex: Int): RenderBatch {
         batches.forEach { batch ->
             if (batch.isFull || batch.zIndex != requiredZIndex) {
                 return@forEach

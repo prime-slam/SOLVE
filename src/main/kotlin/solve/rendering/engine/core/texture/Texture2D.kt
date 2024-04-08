@@ -1,10 +1,7 @@
 package solve.rendering.engine.core.texture
 
-import org.lwjgl.opengl.GL11.GL_LINEAR
 import org.lwjgl.opengl.GL11.GL_REPEAT
 import org.lwjgl.opengl.GL11.GL_TEXTURE_2D
-import org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER
-import org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER
 import org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S
 import org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T
 import org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE
@@ -13,9 +10,11 @@ import org.lwjgl.opengl.GL11.glTexParameteri
 import org.lwjgl.stb.STBImage.stbi_image_free
 import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load
-import solve.utils.getResourceAbsolutePath
 
-class Texture2D(private val filePath: String) : Texture() {
+class Texture2D(
+    private val filePath: String,
+    filterType: TextureFilterType = TextureFilterType.Smoothed
+) : Texture(filterType) {
     override val textureOpenGLType: Int = GL_TEXTURE_2D
 
     init {
@@ -25,9 +24,6 @@ class Texture2D(private val filePath: String) : Texture() {
     override fun initializeTextureParams() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     }
 
     override fun initializeTexture() {

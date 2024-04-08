@@ -18,8 +18,9 @@ class ArrayTexture(
     width: Int,
     height: Int,
     channelsType: TextureChannelsType,
-    val size: Int
-) : Texture() {
+    val size: Int,
+    filterType: TextureFilterType = TextureFilterType.Smoothed
+) : Texture(filterType) {
     override val textureOpenGLType: Int = GL_TEXTURE_2D_ARRAY
 
     init {
@@ -28,6 +29,12 @@ class ArrayTexture(
         this.channelsType = channelsType
 
         initialize()
+    }
+
+    override fun initializeTextureParams() {
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        glGenerateMipmap(GL_TEXTURE_2D_ARRAY)
     }
 
     fun uploadTexture(textureData: Texture2DData, layerIndex: Int) {
@@ -64,13 +71,5 @@ class ArrayTexture(
             GL_UNSIGNED_BYTE,
             null as ByteBuffer?
         )
-    }
-
-    override fun initializeTextureParams() {
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-        glGenerateMipmap(GL_TEXTURE_2D_ARRAY)
     }
 }

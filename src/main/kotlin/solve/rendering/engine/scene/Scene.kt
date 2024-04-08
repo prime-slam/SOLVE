@@ -29,6 +29,7 @@ class Scene(val framesRenderer: FramesRenderer) {
 
     private fun render() {
         framesRenderer.render()
-        landmarkRenderers.forEach { it.render() }
+        _landmarkRenderers.sort()
+        //_landmarkRenderers.forEach { it.render() }
     }
 }

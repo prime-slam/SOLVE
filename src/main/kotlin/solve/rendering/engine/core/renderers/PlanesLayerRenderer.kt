@@ -8,6 +8,7 @@ import solve.rendering.engine.core.batch.PrimitiveType
 import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.core.texture.Texture
 import solve.rendering.engine.core.texture.Texture2D
+import solve.rendering.engine.core.texture.TextureFilterType
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
@@ -58,31 +59,30 @@ class PlanesLayerRenderer(
 
     override fun uploadUniforms(shaderProgram: ShaderProgram) {
         shaderProgram.uploadMatrix4f(ProjectionUniformName, window.calculateProjectionMatrix())
+        shaderProgram.uploadIntArray(TexturesUniformName, texturesIndices)
     }
 
     override fun beforeRender() {
-
-    }
-
-    override fun updateBatchesData() {
         if (needToInitializePlaneTextures) {
-            planeLayersTextures = planeLayers.map { Texture2D(it.filePath.toString()) }
+            planeLayersTextures = planeLayers.map { Texture2D(it.filePath.toString(), TextureFilterType.PixelPerfect) }
             needToInitializePlaneTextures = false
         }
 
+        val firstPlaneLayer = planeLayers.firstOrNull() ?: return
+        renderPriority = getScene()?.indexOf(firstPlaneLayer.settings) ?: return
+    }
+
+    override fun updateBatchesData() {
         planeLayers.forEachIndexed { planeLayerIndex, planeLayer ->
+            if (!planeLayer.settings.enabled)
+                return@forEachIndexed
+
             val planeLayerTexture = planeLayersTextures[planeLayerIndex]
-            //val layerIndex = getScene()?.indexOf(planeLayer.settings) ?: return@forEachIndexed
             val batch = getAvailableBatch(planeLayerTexture, 0)
             val textureID = batch.getTextureLocalID(planeLayerTexture)
             val topLeftFrameShaderPosition = getFrameTopLeftShaderPosition(planeLayerIndex)
             textureLocalVerticesPositions.forEachIndexed { localVertexIndex, localVertexPosition ->
-                val q = Vector2f(localVertexPosition)
-                if (planeLayer.name.contains("alg1"))
-                    q.mul(0.5f)
-                else
-                    q.mul(0.8f)
-                val scaledLocalVertexPosition = Vector2f(q.x * framesRatio, q.y)
+                val scaledLocalVertexPosition = Vector2f(localVertexPosition.x * framesRatio, localVertexPosition.y)
                 val vertexShaderPosition = topLeftFrameShaderPosition + scaledLocalVertexPosition
                 batch.pushVector2f(vertexShaderPosition)
                 batch.pushVector2f(Texture.defaultUVCoordinates[localVertexIndex])
@@ -92,6 +92,9 @@ class PlanesLayerRenderer(
     }
     companion object {
         private const val ProjectionUniformName = "uProjection"
+        private const val TexturesUniformName = "uTextures"
+
+        private val texturesIndices = intArrayOf(0, 1, 2, 3, 4, 5, 6, 7)
 
         private val textureLocalVerticesPositions = listOf(
             Vector2f(0.0f, 1.0f),
