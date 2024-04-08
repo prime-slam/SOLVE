@@ -201,6 +201,6 @@ open class RenderBatch(
     }
 
     companion object {
-        private const val MaxTexturesNumber = 8
+        private const val MaxTexturesNumber = 7
     }
 }

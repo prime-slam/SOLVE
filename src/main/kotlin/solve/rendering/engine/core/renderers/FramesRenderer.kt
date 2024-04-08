@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector2i
+import org.lwjgl.opengl.GL13
 import solve.constants.ShadersFrameFragmentPath
 import solve.constants.ShadersFrameGeometryPath
 import solve.constants.ShadersFrameVertexPath
@@ -44,6 +45,7 @@ class FramesRenderer(
     override val maxBatchSize = 1000
     private var modelsCommonMatrix = Matrix4f().identity()
     private var gridWidth = DefaultGridWidth
+    private var installedGridWidth = gridWidth
     private val gridHeight: Int
         get() = (frames.count().toFloat() / gridWidth).ceilToInt()
     private var buffersSize = defaultBuffersSize
@@ -79,7 +81,9 @@ class FramesRenderer(
             return
         }
 
-        this.gridWidth = min(gridWidth, selectedFrames.count())
+        disableVirtualization()
+        installedGridWidth = gridWidth
+        updateGridWidth()
         haveNewFramesSelection = true
     }
 
@@ -89,13 +93,14 @@ class FramesRenderer(
         }
 
         this.frames = frames
-        this.selectedFrames = frames
+        selectedFrames = frames
         needToReinitializeBuffers = true
     }
 
     fun setFramesSelection(selection: List<VisualizationFrame>) {
-        this.disableVirtualization()
-        this.selectedFrames = selection
+        disableVirtualization()
+        selectedFrames = selection
+        updateGridWidth()
         haveNewFramesSelection = true
     }
 
@@ -127,16 +132,19 @@ class FramesRenderer(
             val batch = getAvailableBatch(null, 0)
             batch.pushInt(index)
         }
+
+        GL13.glActiveTexture(GL13.GL_TEXTURE0 + 0)
+        bufferFramesArrayTexture?.bind()
     }
 
     override fun beforeRender() {
-        if (selectedFrames.isEmpty()) {
-            return
-        }
-
         if (needToReinitializeBuffers) {
             reinitializeBuffers()
         }
+
+        /*if (selectedFrames.isEmpty()) {
+            return
+        }*/
 
         if (haveNewFramesSelection) {
             bufferFramesToUpload.clear()
@@ -272,6 +280,11 @@ class FramesRenderer(
 
     private fun uploadAllFramesToBuffer() {
         loadRectFramesToBuffers(IntRect(0, 0, gridWidth, gridHeight))
+    }
+
+    private fun updateGridWidth()
+    {
+        this.gridWidth = min(installedGridWidth, selectedFrames.count())
     }
 
     private fun initializeTexturesBuffers(frames: List<VisualizationFrame>) {

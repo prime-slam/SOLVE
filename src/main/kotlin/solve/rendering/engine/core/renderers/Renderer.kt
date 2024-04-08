@@ -57,7 +57,7 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
             0
     }
 
-    fun delete() {
+    open fun delete() {
         batches.forEach { it.deleteBuffers() }
         shaderProgram.delete()
     }
@@ -85,6 +85,7 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
         val batch = createNewBatch(requiredZIndex)
         texture?.let { batch.addTexture(texture) }
         batches.add(batch)
+        println(batches.maxOf { it.textures.count() })
 
         return batch
     }
