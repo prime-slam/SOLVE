@@ -62,8 +62,14 @@ class PlanesLayerRenderer(
         shaderProgram.uploadIntArray(TexturesUniformName, texturesIndices)
     }
 
+    override fun delete() {
+        planeLayersTextures.forEach { it.delete() }
+        super.delete()
+    }
+
     override fun beforeRender() {
         if (needToInitializePlaneTextures) {
+            planeLayersTextures.forEach { it.delete() }
             planeLayersTextures = planeLayers.map { Texture2D(it.filePath.toString(), TextureFilterType.PixelPerfect) }
             needToInitializePlaneTextures = false
         }

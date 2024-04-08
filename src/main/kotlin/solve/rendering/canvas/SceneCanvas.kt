@@ -37,6 +37,8 @@ class SceneCanvas : OpenGLCanvas() {
     private var needToReinitializeRenderers = false
     private var scene: Scene? = null
 
+    private var isFirstFramesSelection = false
+
     init {
         initializeCanvasEvents()
     }
@@ -45,11 +47,18 @@ class SceneCanvas : OpenGLCanvas() {
         this.scene = scene
         this.framesSize = Vector2i(scene.frameSize.width.toInt(), scene.frameSize.height.toInt())
         canvasScene?.framesRenderer?.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
+        isFirstFramesSelection = true
 
         needToReinitializeRenderers = true
     }
 
     fun setFramesSelection(framesSelection: List<VisualizationFrame>) {
+        if (framesSelection.isNotEmpty() && isFirstFramesSelection)
+        {
+            canvasScene?.initializeFramesRenderer()
+            isFirstFramesSelection = false
+        }
+
         recalculateCameraCornersPositions()
         window.camera.position = leftUpperCornerCameraPosition
 
@@ -98,6 +107,7 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     override fun onInit() {
+        super.onInit()
         val controller = ServiceLocator.getService<SceneController>() ?: return
         sceneController = controller
 
@@ -105,8 +115,12 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     override fun onDraw(deltaTime: Float) {
-        canvasScene?.update()
         checkRenderersInitialization()
+
+        if (needToReinitializeRenderers)
+            return
+
+        canvasScene?.update()
     }
 
     private fun checkRenderersInitialization() {

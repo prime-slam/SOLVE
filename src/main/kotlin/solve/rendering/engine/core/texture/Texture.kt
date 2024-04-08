@@ -38,8 +38,8 @@ abstract class Texture(private val filterType: TextureFilterType = TextureFilter
 
     private fun initializeTextureFilterParams()
     {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterType.openGLParamValue)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterType.openGLParamValue)
+        glTexParameteri(textureOpenGLType, GL_TEXTURE_MIN_FILTER, filterType.openGLParamValue)
+        glTexParameteri(textureOpenGLType, GL_TEXTURE_MAG_FILTER, filterType.openGLParamValue)
     }
 
     fun bind() {
@@ -51,11 +51,6 @@ abstract class Texture(private val filterType: TextureFilterType = TextureFilter
     }
 
     fun bindToSlot(unit: Int) {
-        if (unit <= 0) {
-            println("The slot unit should be a positive number!")
-            return
-        }
-
         glActiveTexture(GL_TEXTURE0 + unit)
         glBindTexture(textureOpenGLType, textureID)
     }
@@ -66,9 +61,9 @@ abstract class Texture(private val filterType: TextureFilterType = TextureFilter
 
     protected fun initialize() {
         bind()
+        initializeTexture()
         initializeTextureFilterParams()
         initializeTextureParams()
-        initializeTexture()
     }
 
     override fun equals(other: Any?): Boolean {
