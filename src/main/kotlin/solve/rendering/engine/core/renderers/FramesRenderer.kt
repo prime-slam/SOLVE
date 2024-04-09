@@ -6,7 +6,6 @@ import kotlinx.coroutines.launch
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector2i
-import org.lwjgl.opengl.GL13
 import solve.constants.ShadersFrameFragmentPath
 import solve.constants.ShadersFrameGeometryPath
 import solve.constants.ShadersFrameVertexPath
@@ -275,8 +274,7 @@ class FramesRenderer(
         loadRectFramesToBuffers(IntRect(0, 0, gridWidth, gridHeight))
     }
 
-    private fun updateGridWidth()
-    {
+    private fun updateGridWidth() {
         this.gridWidth = min(installedGridWidth, selectedFrames.count())
     }
 

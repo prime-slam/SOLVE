@@ -2,10 +2,8 @@ package solve.scene
 
 import javafx.beans.property.SimpleObjectProperty
 import solve.parsers.factories.LineFactory
-import solve.parsers.factories.PlaneFactory
 import solve.parsers.factories.PointFactory
 import solve.parsers.lines.CSVLinesParser
-import solve.parsers.planes.ImagePlanesParser
 import solve.parsers.points.CSVPointsParser
 import solve.project.model.LandmarkFile
 import solve.project.model.LayerKind

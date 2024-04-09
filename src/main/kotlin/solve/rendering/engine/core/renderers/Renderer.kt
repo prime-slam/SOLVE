@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11.glDrawElements
 import solve.rendering.engine.Window
 import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.core.texture.Texture
-import solve.rendering.engine.core.texture.Texture2D
 import solve.rendering.engine.shader.ShaderProgram
 import solve.scene.model.VisualizationFrame
 
@@ -49,12 +48,13 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
     }
 
     override fun compareTo(other: Renderer): Int {
-        return if (renderPriority < other.renderPriority)
+        return if (renderPriority < other.renderPriority) {
             -1
-        else if (renderPriority > other.renderPriority)
+        } else if (renderPriority > other.renderPriority) {
             1
-        else
+        } else {
             0
+        }
     }
 
     open fun delete() {

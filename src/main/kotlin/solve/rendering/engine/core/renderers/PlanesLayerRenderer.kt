@@ -80,8 +80,9 @@ class PlanesLayerRenderer(
 
     override fun updateBatchesData() {
         val firstLayer = planeLayers.firstOrNull() ?: return
-        if (!firstLayer.settings.enabled)
+        if (!firstLayer.settings.enabled) {
             return
+        }
 
         planeLayers.forEachIndexed { planeLayerIndex, _ ->
             val planeLayerTexture = planeLayersTextures[planeLayerIndex]
