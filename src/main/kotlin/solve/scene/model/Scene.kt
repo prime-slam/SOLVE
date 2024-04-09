@@ -72,10 +72,11 @@ class Scene(
      * If index is invalid IndexOutOfBoundsException is thrown.
      */
     fun changeLayerIndex(element: LayerSettings, index: Int) {
-        if (element is LayerSettings.PlaneLayerSettings)
+        if (element is LayerSettings.PlaneLayerSettings) {
             planesLayersStorage.move(element, index)
-        else
+        } else {
             nonPlanesLayersStorage.move(element, index)
+        }
 
         changedCallbacks.forEach { it() }
     }
