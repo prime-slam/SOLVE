@@ -53,8 +53,7 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     fun setFramesSelection(framesSelection: List<VisualizationFrame>) {
-        if (framesSelection.isNotEmpty() && isFirstFramesSelection)
-        {
+        if (framesSelection.isNotEmpty() && isFirstFramesSelection) {
             canvasScene?.initializeFramesRenderer()
             isFirstFramesSelection = false
         }
@@ -117,8 +116,9 @@ class SceneCanvas : OpenGLCanvas() {
     override fun onDraw(deltaTime: Float) {
         checkRenderersInitialization()
 
-        if (needToReinitializeRenderers)
+        if (needToReinitializeRenderers) {
             return
+        }
 
         canvasScene?.update()
     }

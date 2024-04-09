@@ -2,21 +2,17 @@ package solve.rendering.engine.core.texture
 
 import com.huskerdev.openglfx.core.GL_NEAREST
 import org.joml.Vector2f
-import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_LINEAR
-import org.lwjgl.opengl.GL11.GL_TEXTURE_2D
 import org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER
 import org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER
 import org.lwjgl.opengl.GL11.glBindTexture
 import org.lwjgl.opengl.GL11.glDeleteTextures
 import org.lwjgl.opengl.GL11.glGenTextures
 import org.lwjgl.opengl.GL11.glTexParameteri
-import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL13.GL_TEXTURE0
 import org.lwjgl.opengl.GL13.glActiveTexture
 
-enum class TextureFilterType(val openGLParamValue: Int)
-{
+enum class TextureFilterType(val openGLParamValue: Int) {
     PixelPerfect(GL_NEAREST),
     Smoothed(GL_LINEAR)
 }
@@ -36,8 +32,7 @@ abstract class Texture(private val filterType: TextureFilterType = TextureFilter
 
     protected abstract fun initializeTexture()
 
-    private fun initializeTextureFilterParams()
-    {
+    private fun initializeTextureFilterParams() {
         glTexParameteri(textureOpenGLType, GL_TEXTURE_MIN_FILTER, filterType.openGLParamValue)
         glTexParameteri(textureOpenGLType, GL_TEXTURE_MAG_FILTER, filterType.openGLParamValue)
     }

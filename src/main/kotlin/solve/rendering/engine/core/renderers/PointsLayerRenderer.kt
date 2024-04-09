@@ -63,8 +63,9 @@ class PointsLayerRenderer(
 
     override fun updateBatchesData() {
         val firstLayer = pointLayers.firstOrNull() ?: return
-        if (!firstLayer.settings.enabled)
+        if (!firstLayer.settings.enabled) {
             return
+        }
 
         val pointsRadius = getPointsRadius()
 

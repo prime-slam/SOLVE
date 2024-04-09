@@ -3,8 +3,6 @@ package solve.rendering.engine.core.batch
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector4f
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
 import org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW
 import org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER
@@ -13,7 +11,6 @@ import org.lwjgl.opengl.GL15.glBindBuffer
 import org.lwjgl.opengl.GL15.glBufferData
 import org.lwjgl.opengl.GL15.glBufferSubData
 import org.lwjgl.opengl.GL15.glDeleteBuffers
-import org.lwjgl.opengl.GL15.glDeleteTextures
 import org.lwjgl.opengl.GL15.glGenBuffers
 import org.lwjgl.opengl.GL20.glDisableVertexAttribArray
 import org.lwjgl.opengl.GL20.glEnableVertexAttribArray
@@ -22,7 +19,6 @@ import org.lwjgl.opengl.GL30.glBindVertexArray
 import org.lwjgl.opengl.GL30.glDeleteVertexArrays
 import org.lwjgl.opengl.GL30.glGenVertexArrays
 import solve.rendering.engine.core.texture.Texture
-import solve.rendering.engine.core.texture.Texture2D
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.utils.toList
 
@@ -63,12 +59,13 @@ open class RenderBatch(
     }
 
     override fun compareTo(other: RenderBatch): Int {
-        return if (zIndex < other.zIndex)
+        return if (zIndex < other.zIndex) {
             -1
-        else if (zIndex > other.zIndex)
+        } else if (zIndex > other.zIndex) {
             1
-        else
+        } else {
             0
+        }
     }
 
     fun bind() {

@@ -63,8 +63,9 @@ class LinesLayerRenderer(
 
     override fun updateBatchesData() {
         val firstLayer = lineLayers.firstOrNull() ?: return
-        if (!firstLayer.settings.enabled)
+        if (!firstLayer.settings.enabled) {
             return
+        }
 
         val linesWidth = getLinesWidth()
 

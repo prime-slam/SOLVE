@@ -34,8 +34,7 @@ class Scene(val framesRenderer: FramesRenderer) {
         _landmarkRenderersLayers.clear()
     }
 
-    fun initializeFramesRenderer()
-    {
+    fun initializeFramesRenderer() {
         CoroutineScope(Dispatchers.Default).launch {
             isFramesRendererInitializing = true
             delay(FrameRendererInitializationDelayMillis)
@@ -45,8 +44,9 @@ class Scene(val framesRenderer: FramesRenderer) {
 
     private fun render() {
         framesRenderer.render()
-        if (isFramesRendererInitializing)
+        if (isFramesRendererInitializing) {
             return
+        }
 
         _landmarkRenderers.sort()
         _landmarkRenderers.forEach { it.render() }
