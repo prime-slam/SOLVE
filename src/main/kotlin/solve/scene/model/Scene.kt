@@ -27,7 +27,10 @@ class Scene(
     val layers: List<Layer>
         get() = frames.firstOrNull()?.layers ?: emptyList()
 
-    private val layersStorage = layerSettings.toMutableList()
+    private val planesLayersStorage = layerSettings.filter { it is LayerSettings.PlaneLayerSettings }.toMutableList()
+    private val nonPlanesLayersStorage = layerSettings.filterNot {
+        it is LayerSettings.PlaneLayerSettings
+    }.toMutableList()
 
     private val changedCallbacks = mutableListOf<() -> Unit>()
 
@@ -53,7 +56,15 @@ class Scene(
     }
 
     override fun indexOf(element: LayerSettings): Int {
-        return layersStorage.indexOf(element)
+        if (element is LayerSettings.PlaneLayerSettings) {
+            return planesLayersStorage.indexOf(element)
+        }
+
+        if (nonPlanesLayersStorage.contains(element)) {
+            return planesLayersStorage.size + nonPlanesLayersStorage.indexOf(element)
+        }
+
+        return -1
     }
 
     /**
@@ -61,7 +72,11 @@ class Scene(
      * If index is invalid IndexOutOfBoundsException is thrown.
      */
     fun changeLayerIndex(element: LayerSettings, index: Int) {
-        layersStorage.move(element, index)
+        if (element is LayerSettings.PlaneLayerSettings)
+            planesLayersStorage.move(element, index)
+        else
+            nonPlanesLayersStorage.move(element, index)
+
         changedCallbacks.forEach { it() }
     }
 }
