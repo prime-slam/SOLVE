@@ -85,7 +85,6 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
         val batch = createNewBatch(requiredZIndex)
         texture?.let { batch.addTexture(texture) }
         batches.add(batch)
-        println(batches.maxOf { it.textures.count() })
 
         return batch
     }
