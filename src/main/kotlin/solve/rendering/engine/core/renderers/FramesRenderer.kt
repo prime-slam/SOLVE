@@ -6,6 +6,8 @@ import kotlinx.coroutines.launch
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector2i
+import org.lwjgl.opengl.GL13.GL_TEXTURE0
+import org.lwjgl.opengl.GL13.glActiveTexture
 import solve.constants.ShadersFrameFragmentPath
 import solve.constants.ShadersFrameGeometryPath
 import solve.constants.ShadersFrameVertexPath
@@ -131,6 +133,9 @@ class FramesRenderer(
             val batch = getAvailableBatch(null, 0)
             batch.pushInt(index)
         }
+
+        glActiveTexture(GL_TEXTURE0)
+        bufferFramesArrayTexture?.bind()
     }
 
     override fun beforeRender() {
