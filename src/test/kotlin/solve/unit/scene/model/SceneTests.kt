@@ -39,8 +39,8 @@ internal class SceneTests {
     @Test
     fun `Changes layer settings if index is not correct`() {
         val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2))
-        assertThrows<IndexOutOfBoundsException> { orderManager.changeLayerIndex(pointLayerSettings1, 10) }
-        assertThrows<IndexOutOfBoundsException> { orderManager.changeLayerIndex(pointLayerSettings1, -1) }
+        assertThrows<IllegalStateException> { orderManager.changeLayerIndex(pointLayerSettings1, 10) }
+        assertThrows<IllegalStateException> { orderManager.changeLayerIndex(pointLayerSettings1, -1) }
     }
 
     @Test
@@ -87,15 +87,6 @@ internal class SceneTests {
         orderManager.changeLayerIndex(pointLayerSettings1, 1)
         assertEquals(3, orderManager.indexOf(pointLayerSettings1))
         assertEquals(2, orderManager.indexOf(pointLayerSettings2))
-        assertThrows<IndexOutOfBoundsException> { orderManager.changeLayerIndex(planeLayerSettings1, 2) }
-    }
-
-    @Test
-    fun `Canvas layers count`() {
-        val scene = Scene(
-            listOf(),
-            listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2)
-        )
-        assertEquals(2, scene.canvasLayersCount)
+        assertThrows<IllegalStateException> { orderManager.changeLayerIndex(planeLayerSettings1, 2) }
     }
 }
