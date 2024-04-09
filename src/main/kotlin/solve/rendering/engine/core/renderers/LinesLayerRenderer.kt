@@ -61,6 +61,11 @@ class LinesLayerRenderer(
         shaderProgram.uploadVector3f(CommonColorUniformName, getLinesColor())
     }
 
+    override fun beforeRender() {
+        val firstPlaneLayer = lineLayers.firstOrNull() ?: return
+        renderPriority = getScene()?.indexOf(firstPlaneLayer.settings) ?: return
+    }
+
     override fun updateBatchesData() {
         val firstLayer = lineLayers.firstOrNull() ?: return
         if (!firstLayer.settings.enabled) {

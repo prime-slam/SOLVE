@@ -61,6 +61,11 @@ class PointsLayerRenderer(
         shaderProgram.uploadVector3f(CommonColorUniformName, getPointsColor())
     }
 
+    override fun beforeRender() {
+        val firstPlaneLayer = pointLayers.firstOrNull() ?: return
+        renderPriority = getScene()?.indexOf(firstPlaneLayer.settings) ?: return
+    }
+
     override fun updateBatchesData() {
         val firstLayer = pointLayers.firstOrNull() ?: return
         if (!firstLayer.settings.enabled) {
