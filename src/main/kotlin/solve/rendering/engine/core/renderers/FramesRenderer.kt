@@ -132,19 +132,12 @@ class FramesRenderer(
             val batch = getAvailableBatch(null, 0)
             batch.pushInt(index)
         }
-
-        GL13.glActiveTexture(GL13.GL_TEXTURE0 + 0)
-        bufferFramesArrayTexture?.bind()
     }
 
     override fun beforeRender() {
         if (needToReinitializeBuffers) {
             reinitializeBuffers()
         }
-
-        /*if (selectedFrames.isEmpty()) {
-            return
-        }*/
 
         if (haveNewFramesSelection) {
             bufferFramesToUpload.clear()

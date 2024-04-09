@@ -51,6 +51,11 @@ abstract class Texture(private val filterType: TextureFilterType = TextureFilter
     }
 
     fun bindToSlot(unit: Int) {
+        if (unit <= 0) {
+            println("The slot unit should be a positive number!")
+            return
+        }
+
         glActiveTexture(GL_TEXTURE0 + unit)
         glBindTexture(textureOpenGLType, textureID)
     }

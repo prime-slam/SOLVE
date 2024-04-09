@@ -79,10 +79,11 @@ class PlanesLayerRenderer(
     }
 
     override fun updateBatchesData() {
-        planeLayers.forEachIndexed { planeLayerIndex, planeLayer ->
-            if (!planeLayer.settings.enabled)
-                return@forEachIndexed
+        val firstLayer = planeLayers.firstOrNull() ?: return
+        if (!firstLayer.settings.enabled)
+            return
 
+        planeLayers.forEachIndexed { planeLayerIndex, _ ->
             val planeLayerTexture = planeLayersTextures[planeLayerIndex]
             val batch = getAvailableBatch(planeLayerTexture, 0)
             val textureID = batch.getTextureLocalID(planeLayerTexture)
