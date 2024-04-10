@@ -8,6 +8,8 @@ import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.core.texture.Texture
 import solve.rendering.engine.shader.ShaderProgram
 import solve.scene.model.VisualizationFrame
+import solve.utils.ceilToInt
+import kotlin.math.min
 
 abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
     protected abstract val maxBatchSize: Int
@@ -16,13 +18,50 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
     protected lateinit var shaderProgram: ShaderProgram
     protected val batches = mutableListOf<RenderBatch>()
 
+    protected var frames = emptyList<VisualizationFrame>()
+    protected var selectedFrames = emptyList<VisualizationFrame>()
+    protected var framesSize = Vector2f()
+
     protected var renderPriority = 0
+
+    protected var gridWidth = DefaultGridWidth
+    protected var installedGridWidth = gridWidth
+    protected val gridHeight: Int
+        get() = (frames.count().toFloat() / gridWidth).ceilToInt()
 
     init {
         initialize()
     }
 
-    abstract fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2f)
+    open fun onSceneFramesUpdated() { }
+
+    open fun onFramesSelectionUpdated() { }
+
+    open fun onGridWidthUpdated() { }
+
+    fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2f)
+    {
+        this.frames = frames
+        this.framesSize = framesSize
+        onSceneFramesUpdated()
+    }
+
+    fun setFramesSelection(selection: List<VisualizationFrame>) {
+        selectedFrames = selection
+        updateGridWidth()
+        onFramesSelectionUpdated()
+    }
+
+    fun setNewGridWidth(gridWidth: Int) {
+        if (gridWidth < 1) {
+            println("The width of the frames grid should be a positive value!")
+            return
+        }
+
+        installedGridWidth = gridWidth
+        updateGridWidth()
+        onGridWidthUpdated()
+    }
 
     open fun render() {
         shaderProgram.use()
@@ -45,6 +84,10 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
 
         afterRender()
         shaderProgram.detach()
+    }
+
+    protected fun updateGridWidth() {
+        this.gridWidth = min(installedGridWidth, selectedFrames.count())
     }
 
     override fun compareTo(other: Renderer): Int {
@@ -111,5 +154,15 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
 
     private fun rebufferBatches() {
         batches.forEach { it.rebuffer() }
+    }
+
+    companion object {
+        const val ProjectionUniformName = "uProjection"
+        const val GridWidthUniformName = "uGridWidth"
+        const val FramesSpacingUniformName = "uFramesSpacing"
+
+
+        const val DefaultGridWidth = 10
+        const val FramesSpacing = 0.02f
     }
 }

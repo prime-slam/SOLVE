@@ -45,19 +45,14 @@ class FramesRenderer(
 
     override val maxBatchSize = 1000
     private var modelsCommonMatrix = Matrix4f().identity()
-    private var gridWidth = DefaultGridWidth
-    private var installedGridWidth = gridWidth
-    private val gridHeight: Int
-        get() = (frames.count().toFloat() / gridWidth).ceilToInt()
+
     private var buffersSize = defaultBuffersSize
 
     private var bufferFramesArrayTexture: ArrayTexture? = null
 
-    private var frames = emptyList<VisualizationFrame>()
     private var framesWidth = 1
     private var framesHeight = 1
     private var framesChannelsType = TextureChannelsType.RGBA
-    private var selectedFrames = emptyList<VisualizationFrame>()
 
     private val framesRatio: Float
         get() = framesWidth.toFloat() / framesHeight.toFloat()
@@ -76,32 +71,17 @@ class FramesRenderer(
         modelsCommonMatrix = newMatrix
     }
 
-    fun setGridWidth(gridWidth: Int) {
-        if (gridWidth < 1) {
-            println("The width of the frames grid should be a positive value!")
-            return
-        }
-
-        disableVirtualization()
-        installedGridWidth = gridWidth
-        updateGridWidth()
-        haveNewFramesSelection = true
-    }
-
-    override fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2f) {
-        if (frames.isEmpty()) {
-            return
-        }
-
-        this.frames = frames
-        selectedFrames = frames
+    override fun onSceneFramesUpdated() {
         needToReinitializeBuffers = true
     }
 
-    fun setFramesSelection(selection: List<VisualizationFrame>) {
+    override fun onFramesSelectionUpdated() {
         disableVirtualization()
-        selectedFrames = selection
-        updateGridWidth()
+        haveNewFramesSelection = true
+    }
+
+    override fun onGridWidthUpdated() {
+        disableVirtualization()
         haveNewFramesSelection = true
     }
 
@@ -123,6 +103,7 @@ class FramesRenderer(
         shaderProgram.uploadInt(TexturesArrayUniformName, 0)
         shaderProgram.uploadFloat(TexturesRatioUniformName, framesRatio)
         shaderProgram.uploadVector2f(CameraPositionUniformName, getScreenTopLeftGridCellPosition().toFloatVector())
+        shaderProgram.uploadFloat(FramesSpacingUniformName, FramesSpacing)
     }
 
     override fun createNewBatch(zIndex: Int) =
@@ -279,10 +260,6 @@ class FramesRenderer(
         loadRectFramesToBuffers(IntRect(0, 0, gridWidth, gridHeight))
     }
 
-    private fun updateGridWidth() {
-        this.gridWidth = min(installedGridWidth, selectedFrames.count())
-    }
-
     private fun initializeTexturesBuffers(frames: List<VisualizationFrame>) {
         val firstTextureData = Texture2D.loadData(frames.first().imagePath.toString())
         if (firstTextureData == null) {
@@ -316,17 +293,14 @@ class FramesRenderer(
     }
 
     companion object {
-        const val DefaultGridWidth = 10
-
-        private const val ProjectionUniformName = "uProjection"
         private const val ModelUniformName = "uModel"
-        private const val GridWidthUniformName = "uGridWidth"
         private const val BuffersSizeUniformName = "uBuffersSize"
         private const val TexturesArrayUniformName = "uTextures"
         private const val TexturesRatioUniformName = "uTexturesRatio"
         private const val CameraPositionUniformName = "uCameraPosition"
 
         private const val BuffersSizeOffset = 2
+
 
         private val defaultBuffersSize = Vector2i(10, 10)
     }

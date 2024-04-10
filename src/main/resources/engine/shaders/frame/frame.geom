@@ -5,6 +5,7 @@ uniform mat4 uModel;
 uniform int uGridWidth;
 uniform ivec2 uBuffersSize;
 uniform float uTexturesRatio;
+uniform float uFramesSpacing;
 
 in VS_OUT {
     int frameID;
@@ -30,8 +31,8 @@ void main() {
         float texID = float(bufferY * uBuffersSize.x + bufferX);
 
         vec4 initialPosition = vec4(
-            gl_in[0].gl_Position.x * uTexturesRatio,
-            gl_in[0].gl_Position.y,
+            (gl_in[0].gl_Position.x * uTexturesRatio + uFramesSpacing * frameX),
+            gl_in[0].gl_Position.y + uFramesSpacing * frameY,
             gl_in[0].gl_Position.z,
             gl_in[0].gl_Position.w
         );

@@ -11,30 +11,23 @@ abstract class LandmarkLayerRenderer(
     window: Window,
     protected val getScene: () -> Scene?
 ) : Renderer(window) {
-    protected var gridWidth = FramesRenderer.DefaultGridWidth
-    protected var framesSize = Vector2f()
     protected var framesRatio: Float = 1f
 
     abstract fun setFramesSelectionLayers(layers: List<Layer>)
 
-    override fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2f) {
-        this.framesSize = framesSize
+    override fun onSceneFramesUpdated() {
         this.framesRatio = framesSize.x / framesSize.y
     }
 
-    fun setNewGridWidth(gridWidth: Int) {
-        if (gridWidth < 1) {
-            println("The width of the frames grid should be a positive value!")
-            return
-        }
+    protected fun getFrameTopLeftShaderPosition(frameIndex: Int): Vector2f {
+        val frameXIndex = frameIndex % gridWidth
+        val frameYIndex = frameIndex / gridWidth
 
-        this.gridWidth = gridWidth
+        return Vector2f(
+            frameXIndex.toFloat() * framesRatio + frameXIndex * FramesSpacing,
+            frameYIndex.toFloat() + frameYIndex * FramesSpacing
+        )
     }
-
-    protected fun getFrameTopLeftShaderPosition(frameIndex: Int) = Vector2f(
-        (frameIndex % gridWidth).toFloat() * framesRatio,
-        (frameIndex / gridWidth).toFloat()
-    )
 
     protected fun getFramePixelShaderPosition(frameIndex: Int, framePixelPosition: Vector2f): Vector2f {
         val frameRelativePosition = Vector2f(framePixelPosition) / framesSize.y
