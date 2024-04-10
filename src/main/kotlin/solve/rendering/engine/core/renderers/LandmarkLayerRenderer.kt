@@ -5,7 +5,6 @@ import solve.rendering.engine.Window
 import solve.rendering.engine.utils.plus
 import solve.scene.model.Layer
 import solve.scene.model.Scene
-import solve.scene.model.VisualizationFrame
 
 abstract class LandmarkLayerRenderer(
     window: Window,

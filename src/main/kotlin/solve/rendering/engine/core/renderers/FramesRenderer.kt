@@ -27,7 +27,6 @@ import solve.rendering.engine.utils.toFloatVector
 import solve.rendering.engine.utils.toIntVector
 import solve.scene.controller.SceneController
 import solve.scene.model.VisualizationFrame
-import solve.utils.ceilToInt
 import java.util.Date
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
@@ -300,7 +299,6 @@ class FramesRenderer(
         private const val CameraPositionUniformName = "uCameraPosition"
 
         private const val BuffersSizeOffset = 2
-
 
         private val defaultBuffersSize = Vector2i(10, 10)
     }

@@ -39,8 +39,7 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
 
     open fun onGridWidthUpdated() { }
 
-    fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2f)
-    {
+    fun setNewSceneFrames(frames: List<VisualizationFrame>, framesSize: Vector2f) {
         this.frames = frames
         this.framesSize = framesSize
         onSceneFramesUpdated()
@@ -160,7 +159,6 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
         const val ProjectionUniformName = "uProjection"
         const val GridWidthUniformName = "uGridWidth"
         const val FramesSpacingUniformName = "uFramesSpacing"
-
 
         const val DefaultGridWidth = 10
         const val FramesSpacing = 0.02f
