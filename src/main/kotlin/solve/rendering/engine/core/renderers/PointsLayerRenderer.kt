@@ -114,7 +114,6 @@ class PointsLayerRenderer(
     }
 
     companion object {
-        private const val ProjectionUniformName = "uProjection"
         private const val UseCommonColorUniformName = "uUseCommonColor"
         private const val CommonColorUniformName = "uCommonColor"
 

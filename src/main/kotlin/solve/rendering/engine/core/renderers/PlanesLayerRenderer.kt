@@ -99,7 +99,6 @@ class PlanesLayerRenderer(
         }
     }
     companion object {
-        private const val ProjectionUniformName = "uProjection"
         private const val TexturesUniformName = "uTextures"
 
         private val texturesIndices = intArrayOf(0, 1, 2, 3, 4, 5, 6, 7)

@@ -47,6 +47,7 @@ class SceneCanvas : OpenGLCanvas() {
         this.scene = scene
         this.framesSize = Vector2i(scene.frameSize.width.toInt(), scene.frameSize.height.toInt())
         canvasScene?.framesRenderer?.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
+        canvasScene?.landmarkRenderers?.forEach { it.setNewSceneFrames(scene.frames, framesSize.toFloatVector()) }
         isFirstFramesSelection = true
 
         needToReinitializeRenderers = true
@@ -62,6 +63,7 @@ class SceneCanvas : OpenGLCanvas() {
         window.camera.position = leftUpperCornerCameraPosition
 
         canvasScene?.framesRenderer?.setFramesSelection(framesSelection)
+        canvasScene?.landmarkRenderers?.forEach { it.setFramesSelection(framesSelection) }
         canvasScene?.landmarkRenderers?.forEach { renderer ->
             val rendererLayerSettings =
                 canvasScene?.landmarkLayerRendererLayers?.get(renderer)?.settings ?: return@forEach
@@ -73,7 +75,7 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     fun setColumnsNumber(columnsNumber: Int) {
-        canvasScene?.framesRenderer?.setGridWidth(columnsNumber)
+        canvasScene?.framesRenderer?.setNewGridWidth(columnsNumber)
         canvasScene?.landmarkRenderers?.forEach { it.setNewGridWidth(columnsNumber) }
         this.columnsNumber = columnsNumber
     }
