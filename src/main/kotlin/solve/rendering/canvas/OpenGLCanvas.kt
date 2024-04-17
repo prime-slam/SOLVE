@@ -62,11 +62,6 @@ abstract class OpenGLCanvas {
     }
 
     private fun render(event: GLRenderEvent) {
-        /*glEnable(GL_BLEND)
-        glEnable(GL_DEPTH_TEST)
-        glEnable(GL_MULTISAMPLE)
-        glDepthFunc(GL_LEQUAL)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)*/
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
         onDraw(event.delta.toFloat())

@@ -1,6 +1,7 @@
 package solve.rendering.engine.core.renderers
 
 import org.joml.Vector2f
+import org.joml.Vector2i
 import org.lwjgl.opengl.GL11.GL_UNSIGNED_INT
 import org.lwjgl.opengl.GL11.glDrawElements
 import solve.rendering.engine.Window
@@ -161,6 +162,8 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
         const val FramesSpacingUniformName = "uFramesSpacing"
 
         const val DefaultGridWidth = 10
-        const val FramesSpacing = 0.02f
+        const val FramesSpacing = 0.25f
+
+        fun getSpacingWidth(framesSize: Vector2i) = framesSize.y * FramesSpacing
     }
 }

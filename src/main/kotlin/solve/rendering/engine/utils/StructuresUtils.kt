@@ -7,6 +7,7 @@ import org.joml.Vector3f
 import org.joml.Vector3i
 import org.joml.Vector4f
 import org.joml.Vector4i
+import solve.scene.model.Point
 
 operator fun Vector2f.plus(otherVector: Vector2f): Vector2f = Vector2f(this).add(otherVector)
 operator fun Vector3f.plus(otherVector: Vector3f): Vector3f = Vector3f(this).add(otherVector)
@@ -74,3 +75,5 @@ fun Vector2f.toList() = listOf(x, y)
 fun Vector3f.toList() = listOf(x, y, z)
 
 fun Vector4f.toList() = listOf(x, y, z, w)
+
+fun Point.toVector2i() = Vector2i(x.toInt(), y.toInt())

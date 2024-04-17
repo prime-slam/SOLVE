@@ -24,6 +24,8 @@ class SceneView : View() {
 
     private var mouseScreenPoint = Vector2i()
 
+    private var wasMouseDragging = false
+
     var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
         private set
 
@@ -79,23 +81,32 @@ class SceneView : View() {
             mouseScreenPoint = extrudeEventMousePosition(event)
         }
         root.setOnMouseDragged { event ->
-            if (event.button != MouseDragButton) {
+            if (event.button != MouseInteractButton) {
                 return@setOnMouseDragged
             }
+            wasMouseDragging = true
             mouseScreenPoint = extrudeEventMousePosition(event)
             canvas.dragTo(mouseScreenPoint)
         }
         root.setOnMousePressed { event ->
-            if (event.button != MouseDragButton) {
+            if (event.button != MouseInteractButton) {
                 return@setOnMousePressed
             }
             canvas.startDragging(mouseScreenPoint)
         }
         root.setOnMouseReleased { event ->
-            if (event.button != MouseDragButton) {
+            if (event.button != MouseInteractButton) {
                 return@setOnMouseReleased
             }
             canvas.stopDragging()
+        }
+        root.setOnMouseClicked { event ->
+            if (event.button != MouseInteractButton) {
+                return@setOnMouseClicked
+            }
+            if (!wasMouseDragging)
+                canvas.interactWithLandmark(mouseScreenPoint)
+            wasMouseDragging = false
         }
         root.setOnScroll { event ->
             val scrollDelta = event.deltaY
@@ -108,7 +119,7 @@ class SceneView : View() {
     }
 
     companion object {
-        private val MouseDragButton = MouseButton.MIDDLE
+        private val MouseInteractButton = MouseButton.PRIMARY
 
         const val framesMargin = 0.0
         const val scrollSpeed = 20.0
