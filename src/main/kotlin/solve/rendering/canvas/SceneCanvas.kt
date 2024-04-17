@@ -6,7 +6,9 @@ import solve.rendering.engine.core.renderers.FramesRenderer
 import solve.rendering.engine.core.renderers.LinesLayerRenderer
 import solve.rendering.engine.core.renderers.PlanesLayerRenderer
 import solve.rendering.engine.core.renderers.PointsLayerRenderer
+import solve.rendering.engine.core.renderers.Renderer
 import solve.rendering.engine.utils.minus
+import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.times
 import solve.rendering.engine.utils.toFloatVector
 import solve.scene.controller.SceneController
@@ -30,6 +32,8 @@ class SceneCanvas : OpenGLCanvas() {
 
     private var framesSelectionSize = 0
     private var framesSize = Vector2i()
+    private val framesRatio: Float
+        get() = framesSize.x.toFloat() / framesSize.y
     private var columnsNumber = 0
     private val rowsNumber: Int
         get() = (framesSelectionSize.toFloat() / columnsNumber.toFloat()).ceilToInt()
@@ -99,6 +103,16 @@ class SceneCanvas : OpenGLCanvas() {
         isDraggingScene = false
     }
 
+    fun interactWithLandmark(screenPoint: Vector2i) {
+        val frameCoordinate = shaderToFrameVector(calculateWindowTopLeftCornerShaderPosition()) + screenToFrameVector(screenPoint)
+        //val frameIndex = frameCoordinate.toIntVector()
+        // Frame local coordinate including spacing area.
+        val frameLocalCoordinate = Vector2f(frameCoordinate.x % 1, frameCoordinate.y % 1)
+        // Frame local coordinate excluding spacing area.
+        frameLocalCoordinate.y *= (1 + Renderer.FramesSpacing)
+        frameLocalCoordinate.x *= (framesSize.x + Renderer.getSpacingWidth(framesSize)) / framesSize.x
+    }
+
     fun zoomToPoint(screenPoint: Vector2i, newZoom: Float) {
         val cameraPoint = fromScreenToCameraPoint(screenPoint)
         window.camera.zoomToPoint(cameraPoint, newZoom)
@@ -123,6 +137,33 @@ class SceneCanvas : OpenGLCanvas() {
         }
 
         canvasScene?.update()
+    }
+
+    private fun calculateWindowTopLeftCornerShaderPosition() : Vector2f {
+        return window.camera.position - screenToShaderVector(Vector2i(window.size) / 2f)
+    }
+
+    // Converts screen vector to shader coordinates.
+    // One frame excluding spacing area corresponds to a (1, framesRatio) vector.
+    private fun screenToShaderVector(screenVector: Vector2i) : Vector2f {
+        return Vector2f(screenVector) / window.camera.scaledZoom
+    }
+
+    // Converts screen vector to frame coordinates.
+    // One frame including spacing area corresponds to a (1, 1) vector.
+    private fun screenToFrameVector(screenVector: Vector2i) : Vector2f {
+        val shaderVector = screenToShaderVector(screenVector)
+        val frameVector = shaderToFrameVector(shaderVector)
+
+        return frameVector
+    }
+
+    private fun shaderToFrameVector(shaderVector: Vector2f) : Vector2f {
+        val frameVector = Vector2f(shaderVector)
+        frameVector.x /= (framesSize.x + Renderer.getSpacingWidth(framesSize)) / framesSize.y
+        frameVector.y /= (1 + Renderer.FramesSpacing)
+
+        return frameVector
     }
 
     private fun checkRenderersInitialization() {
@@ -167,8 +208,10 @@ class SceneCanvas : OpenGLCanvas() {
         val halfScreenSize = (Vector2f(window.width.toFloat(), window.height.toFloat()) / 2f) / window.camera.scaledZoom
         leftUpperCornerCameraPosition = halfScreenSize
 
-        val framesSelectionSize =
-            Vector2i(columnsNumber * framesSize.x, rowsNumber * framesSize.y).toFloatVector()
+        val framesSelectionSize = Vector2f(
+            columnsNumber * framesSize.x + (columnsNumber - 1) * Renderer.getSpacingWidth(framesSize),
+            rowsNumber * framesSize.y + (rowsNumber - 1) * Renderer.getSpacingWidth(framesSize)
+        )
         val framesSelectionScreenSize =
             framesSelectionSize * window.camera.zoom / IdentityFramesSizeScale / window.camera.scaledZoom
 
