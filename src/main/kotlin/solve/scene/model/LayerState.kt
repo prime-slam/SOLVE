@@ -69,8 +69,9 @@ class LayerState(val name: String) {
     }
 
     private fun unhighlightLandmark(landmarkUID: Long) {
-        if (!landmarksHighlightingProgress.contains(landmarkUID))
+        if (!landmarksHighlightingProgress.contains(landmarkUID)) {
             return
+        }
 
         landmarksHighlightingProgress[landmarkUID]?.propertyTranslator?.translateTo(0f, HighlightDurationMillis)
     }
