@@ -81,14 +81,14 @@ internal class SceneFacadeTests : SceneTestsBase() {
         SceneFacade.visualize(data1.layers, data1.frames, false)
         val settings = controller.scene.layerSettings.single()
         val state = getState(0, layerName, 1)
-        state.hoveredLandmarksUids.add(1)
+        state.hoverLandmark(1)
         val data2 = createScene(listOf(layerName), framesCount = 5)
         SceneFacade.visualize(data2.layers, data2.frames, true)
         assertEquals(5, controller.scene.frames.size)
         assertSame(settings, controller.scene.layerSettings.single())
         val newState = getState(0, layerName, 1)
         assertNotSame(state, newState)
-        assertEquals(0, newState.hoveredLandmarksUids.size)
+        assertEquals(0, newState.hoveredLandmarkUIDs.size)
     }
 
     @Test
