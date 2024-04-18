@@ -11,6 +11,7 @@ import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.times
 import solve.rendering.engine.utils.toFloatVector
+import solve.rendering.engine.utils.toIntVector
 import solve.scene.controller.SceneController
 import solve.scene.model.Layer
 import solve.scene.model.Scene
@@ -21,7 +22,7 @@ import solve.rendering.engine.scene.Scene as EngineScene
 
 class SceneCanvas : OpenGLCanvas() {
     private var sceneController: SceneController? = null
-    private var canvasScene: EngineScene? = null
+    private var engineScene: EngineScene? = null
 
     private var isDraggingScene = false
     private var dragStartCameraPoint = Vector2f()
@@ -43,6 +44,13 @@ class SceneCanvas : OpenGLCanvas() {
 
     private var isFirstFramesSelection = false
 
+    // Used for frame to shader and shader to frame vector conversions.
+    private val frameToShaderConversionCoefficientsMultipliers: Vector2f
+        get() = Vector2f(
+            (framesSize.x + Renderer.getSpacingWidth(framesSize)) / framesSize.y,
+            (1 + Renderer.FramesSpacing)
+        )
+
     init {
         initializeCanvasEvents()
     }
@@ -50,8 +58,8 @@ class SceneCanvas : OpenGLCanvas() {
     fun setNewScene(scene: Scene) {
         this.scene = scene
         this.framesSize = Vector2i(scene.frameSize.width.toInt(), scene.frameSize.height.toInt())
-        canvasScene?.framesRenderer?.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
-        canvasScene?.landmarkRenderers?.forEach { it.setNewSceneFrames(scene.frames, framesSize.toFloatVector()) }
+        engineScene?.framesRenderer?.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
+        engineScene?.landmarkRenderers?.forEach { it.setNewSceneFrames(scene.frames, framesSize.toFloatVector()) }
         isFirstFramesSelection = true
 
         needToReinitializeRenderers = true
@@ -59,18 +67,18 @@ class SceneCanvas : OpenGLCanvas() {
 
     fun setFramesSelection(framesSelection: List<VisualizationFrame>) {
         if (framesSelection.isNotEmpty() && isFirstFramesSelection) {
-            canvasScene?.initializeFramesRenderer()
+            engineScene?.initializeFramesRenderer()
             isFirstFramesSelection = false
         }
 
         recalculateCameraCornersPositions()
         window.camera.position = leftUpperCornerCameraPosition
 
-        canvasScene?.framesRenderer?.setFramesSelection(framesSelection)
-        canvasScene?.landmarkRenderers?.forEach { it.setFramesSelection(framesSelection) }
-        canvasScene?.landmarkRenderers?.forEach { renderer ->
+        engineScene?.framesRenderer?.setFramesSelection(framesSelection)
+        engineScene?.landmarkRenderers?.forEach { it.setFramesSelection(framesSelection) }
+        engineScene?.landmarkRenderers?.forEach { renderer ->
             val rendererLayerSettings =
-                canvasScene?.landmarkLayerRendererLayers?.get(renderer)?.settings ?: return@forEach
+                engineScene?.landmarkLayerRendererLayers?.get(renderer)?.settings ?: return@forEach
             val selectedFramesLayers =
                 scene?.getLayersWithCommonSettings(rendererLayerSettings, framesSelection) ?: return@forEach
             renderer.setFramesSelectionLayers(selectedFramesLayers)
@@ -79,8 +87,8 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     fun setColumnsNumber(columnsNumber: Int) {
-        canvasScene?.framesRenderer?.setNewGridWidth(columnsNumber)
-        canvasScene?.landmarkRenderers?.forEach { it.setNewGridWidth(columnsNumber) }
+        engineScene?.framesRenderer?.setNewGridWidth(columnsNumber)
+        engineScene?.landmarkRenderers?.forEach { it.setNewGridWidth(columnsNumber) }
         this.columnsNumber = columnsNumber
     }
 
@@ -104,13 +112,20 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     fun interactWithLandmark(screenPoint: Vector2i) {
-        val frameCoordinate = shaderToFrameVector(calculateWindowTopLeftCornerShaderPosition()) + screenToFrameVector(screenPoint)
-        //val frameIndex = frameCoordinate.toIntVector()
+        val frameCoordinate = shaderToFrameVector(calculateWindowTopLeftCornerShaderPosition()) +
+            screenToFrameVector(screenPoint)
+        val frameIndexCoordinates = frameCoordinate.toIntVector()
+        val frameIndex = frameIndexCoordinates.y * columnsNumber + frameIndexCoordinates.x
+
         // Frame local coordinate including spacing area.
-        val frameLocalCoordinate = Vector2f(frameCoordinate.x % 1, frameCoordinate.y % 1)
+        var frameLocalCoordinate = Vector2f(frameCoordinate.x % 1, frameCoordinate.y % 1)
         // Frame local coordinate excluding spacing area.
-        frameLocalCoordinate.y *= (1 + Renderer.FramesSpacing)
-        frameLocalCoordinate.x *= (framesSize.x + Renderer.getSpacingWidth(framesSize)) / framesSize.x
+        frameLocalCoordinate = frameToShaderVector(frameLocalCoordinate)
+        frameLocalCoordinate.x /= framesRatio
+        val framePixelCoordinate =
+            Vector2f(frameLocalCoordinate.x * framesSize.x, frameLocalCoordinate.y * framesSize.y).toIntVector()
+
+        handleLandmarkInteraction(frameIndex, framePixelCoordinate)
     }
 
     fun zoomToPoint(screenPoint: Vector2i, newZoom: Float) {
@@ -126,7 +141,7 @@ class SceneCanvas : OpenGLCanvas() {
         val controller = ServiceLocator.getService<SceneController>() ?: return
         sceneController = controller
 
-        canvasScene = EngineScene(FramesRenderer(window))
+        engineScene = EngineScene(FramesRenderer(window))
     }
 
     override fun onDraw(deltaTime: Float) {
@@ -136,34 +151,56 @@ class SceneCanvas : OpenGLCanvas() {
             return
         }
 
-        canvasScene?.update()
+        engineScene?.update()
     }
 
-    private fun calculateWindowTopLeftCornerShaderPosition() : Vector2f {
+    private fun handleLandmarkInteraction(frameIndex: Int, frameInteractionPixel: Vector2i) {
+        val interactingVisualizationFrame = scene?.frames?.get(frameIndex) ?: return
+        interactingVisualizationFrame.layers.forEach { layer ->
+            when (layer) {
+                is Layer.PointLayer -> TODO()
+                is Layer.LineLayer -> TODO()
+                is Layer.PlaneLayer -> TODO()
+            }
+        }
+        frameInteractionPixel.toString()
+    }
+
+    private fun calculateWindowTopLeftCornerShaderPosition(): Vector2f {
         return window.camera.position - screenToShaderVector(Vector2i(window.size) / 2f)
     }
 
     // Converts screen vector to shader coordinates.
-    // One frame excluding spacing area corresponds to a (1, framesRatio) vector.
-    private fun screenToShaderVector(screenVector: Vector2i) : Vector2f {
+    // One frame excluding spacing area corresponds to a (1, framesRatio) shader vector.
+    private fun screenToShaderVector(screenVector: Vector2i): Vector2f {
         return Vector2f(screenVector) / window.camera.scaledZoom
     }
 
     // Converts screen vector to frame coordinates.
-    // One frame including spacing area corresponds to a (1, 1) vector.
-    private fun screenToFrameVector(screenVector: Vector2i) : Vector2f {
+    // One frame including spacing area corresponds to a (1, 1) frame vector.
+    private fun screenToFrameVector(screenVector: Vector2i): Vector2f {
         val shaderVector = screenToShaderVector(screenVector)
         val frameVector = shaderToFrameVector(shaderVector)
 
         return frameVector
     }
 
-    private fun shaderToFrameVector(shaderVector: Vector2f) : Vector2f {
+    private fun shaderToFrameVector(shaderVector: Vector2f): Vector2f {
         val frameVector = Vector2f(shaderVector)
-        frameVector.x /= (framesSize.x + Renderer.getSpacingWidth(framesSize)) / framesSize.y
-        frameVector.y /= (1 + Renderer.FramesSpacing)
+        val frameToShaderMultiplier = frameToShaderConversionCoefficientsMultipliers
+        frameVector.x /= frameToShaderMultiplier.x
+        frameVector.y /= frameToShaderMultiplier.y
 
         return frameVector
+    }
+
+    private fun frameToShaderVector(frameVector: Vector2f): Vector2f {
+        val shaderVector = Vector2f(frameVector)
+        val frameToShaderMultiplier = frameToShaderConversionCoefficientsMultipliers
+        shaderVector.x *= frameToShaderMultiplier.x
+        shaderVector.y *= frameToShaderMultiplier.y
+
+        return shaderVector
     }
 
     private fun checkRenderersInitialization() {
@@ -173,13 +210,13 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     private fun reinitializeRenderers() {
-        canvasScene?.clearLandmarkRenderers()
+        engineScene?.clearLandmarkRenderers()
         val scene = this.scene ?: return
 
         scene.layers.forEach { layer ->
             addLandmarkRenderer(layer, scene)
         }
-        canvasScene?.landmarkRenderers?.forEach {
+        engineScene?.landmarkRenderers?.forEach {
             it.setNewGridWidth(sceneController?.installedColumnsNumber ?: SceneController.MaxColumnsNumber)
         }
         needToReinitializeRenderers = false
@@ -192,7 +229,7 @@ class SceneCanvas : OpenGLCanvas() {
             is Layer.PlaneLayer -> PlanesLayerRenderer(window) { sceneController?.scene }
         }
         addingRenderer.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
-        canvasScene?.addLandmarkRenderer(addingRenderer, layer)
+        engineScene?.addLandmarkRenderer(addingRenderer, layer)
     }
 
     private fun fromScreenToCameraPoint(screenPoint: Vector2i) = screenPoint - (window.size / 2)

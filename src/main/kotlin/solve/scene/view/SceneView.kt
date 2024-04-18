@@ -104,8 +104,9 @@ class SceneView : View() {
             if (event.button != MouseInteractButton) {
                 return@setOnMouseClicked
             }
-            if (!wasMouseDragging)
+            if (!wasMouseDragging) {
                 canvas.interactWithLandmark(mouseScreenPoint)
+            }
             wasMouseDragging = false
         }
         root.setOnScroll { event ->
