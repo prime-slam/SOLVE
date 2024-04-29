@@ -162,7 +162,7 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
         const val FramesSpacingUniformName = "uFramesSpacing"
 
         const val DefaultGridWidth = 10
-        const val FramesSpacing = 0.25f
+        const val FramesSpacing = 0.02f
 
         fun getSpacingWidth(framesSize: Vector2i) = framesSize.y * FramesSpacing
     }
