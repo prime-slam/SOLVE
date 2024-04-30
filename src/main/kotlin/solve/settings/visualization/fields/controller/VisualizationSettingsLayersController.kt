@@ -19,10 +19,10 @@ class VisualizationSettingsLayersController : Controller() {
         val planeLayers = layers.filter { it.usesCanvas }
         val notPlaneLayers = layers.filterNot { !it.usesCanvas }
 
-        notPlaneLayers.reversed().forEachIndexed { index, notPlane ->
+        notPlaneLayers.asReversed().forEachIndexed { index, notPlane ->
             sceneController.scene.changeLayerIndex(notPlane, index)
         }
-        planeLayers.reversed().forEachIndexed { index, plane ->
+        planeLayers.asReversed().forEachIndexed { index, plane ->
             sceneController.scene.changeLayerIndex(plane, index)
         }
     }
