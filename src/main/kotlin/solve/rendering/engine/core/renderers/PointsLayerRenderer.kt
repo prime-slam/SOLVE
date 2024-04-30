@@ -83,10 +83,12 @@ class PointsLayerRenderer(
                     pointLandmark.coordinate.y.toFloat()
                 )
                 val pointShaderPosition = getFramePixelShaderPosition(pointsLayerIndex, pointLandmarkPosition)
+                val selectionProgress = pointLandmark.layerState.getLandmarkHighlightingProgress(pointLandmark.uid)
+                val radiusMultiplier = 1f + selectionProgress * (HighlightingRadiusMultiplier - 1f)
 
                 circleBoundsVerticesLocalPositions.forEach { vertexLocalPosition ->
                     val vertexPosition = pointShaderPosition + Vector2f(vertexLocalPosition) *
-                        pointsRadius / window.camera.zoom / DefaultLocalVerticesPositionsDivider
+                            pointsRadius * radiusMultiplier / window.camera.zoom / DefaultLocalVerticesPositionsDivider
                     batch.pushVector2f(vertexPosition)
                     batch.pushVector2f(vertexLocalPosition)
                     batch.pushFloat(pointLandmarkIndex.toFloat())
@@ -125,5 +127,6 @@ class PointsLayerRenderer(
         )
 
         private const val DefaultLocalVerticesPositionsDivider = 500f
+        private const val HighlightingRadiusMultiplier = 2f
     }
 }

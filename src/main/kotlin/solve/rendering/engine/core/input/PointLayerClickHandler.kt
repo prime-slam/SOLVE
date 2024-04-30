@@ -6,14 +6,19 @@ import solve.rendering.engine.utils.toVector2i
 import solve.scene.model.Landmark.Keypoint
 
 class PointLayerClickHandler : LayerClickHandler<Keypoint>() {
-    override fun indexOfClickedLandmark(landmarks: List<Keypoint>, clickedPixelCoordinate: Vector2i): Int {
+    override fun indexOfClickedLandmark(
+        landmarks: List<Keypoint>,
+        clickedPixelCoordinate: Vector2i,
+        landmarkSize: Float
+    ): Int {
         var minKeypointDistanceIndex = -1
         var minKeypointDistance = Double.MAX_VALUE
 
         landmarks.forEachIndexed { index, keypoint ->
             val keypointCoordinate = keypoint.coordinate.toVector2i()
             val keypointDistance = (keypointCoordinate - clickedPixelCoordinate).length()
-            if (keypointDistance < ClickedLandmarkMaxAllowedDistance && keypointDistance < minKeypointDistance) {
+            if (keypointDistance < landmarkSize * HandledDistanceMultiplier &&
+                keypointDistance < minKeypointDistance) {
                 minKeypointDistanceIndex = index
                 minKeypointDistance = keypointDistance
             }
@@ -23,6 +28,6 @@ class PointLayerClickHandler : LayerClickHandler<Keypoint>() {
     }
 
     companion object {
-        private const val ClickedLandmarkMaxAllowedDistance = 3
+        private const val HandledDistanceMultiplier = 1.5f
     }
 }

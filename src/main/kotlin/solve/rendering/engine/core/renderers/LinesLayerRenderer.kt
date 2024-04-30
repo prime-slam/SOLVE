@@ -91,10 +91,12 @@ class LinesLayerRenderer(
                 val lineVector = lineFinishShaderPosition - lineStartShaderPosition
                 val normalVector = Vector2f(-lineVector.y, lineVector.x).normalize()
                 val linePoints = listOf(lineStartShaderPosition, lineFinishShaderPosition)
+                val selectionProgress = lineLandmark.layerState.getLandmarkHighlightingProgress(lineLandmark.uid)
+                val widthMultiplier = 1f + selectionProgress * (HighlightingWidthMultiplier - 1f)
 
                 linePoints.forEachIndexed { sideIndex, linePoint ->
-                    val pointToVertexVector = Vector2f(normalVector) *
-                        linesWidth / window.camera.zoom / DefaultLocalVerticesPositionsDivider
+                    val pointToVertexVector = Vector2f(normalVector) * linesWidth * widthMultiplier /
+                         window.camera.zoom / DefaultLocalVerticesPositionsDivider
 
                     val upperVertexPosition = linePoint + pointToVertexVector
                     val bottomVertexPosition = linePoint - pointToVertexVector
@@ -136,5 +138,6 @@ class LinesLayerRenderer(
         private const val CommonColorUniformName = "uCommonColor"
 
         private const val DefaultLocalVerticesPositionsDivider = 800f
+        private const val HighlightingWidthMultiplier = 2.5f
     }
 }

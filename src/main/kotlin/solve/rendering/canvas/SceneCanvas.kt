@@ -2,6 +2,9 @@ package solve.rendering.canvas
 
 import org.joml.Vector2f
 import org.joml.Vector2i
+import solve.rendering.engine.core.input.LayerClickHandler
+import solve.rendering.engine.core.input.LineLayerClickHandler
+import solve.rendering.engine.core.input.PointLayerClickHandler
 import solve.rendering.engine.core.renderers.FramesRenderer
 import solve.rendering.engine.core.renderers.LinesLayerRenderer
 import solve.rendering.engine.core.renderers.PlanesLayerRenderer
@@ -13,6 +16,7 @@ import solve.rendering.engine.utils.times
 import solve.rendering.engine.utils.toFloatVector
 import solve.rendering.engine.utils.toIntVector
 import solve.scene.controller.SceneController
+import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
@@ -31,6 +35,8 @@ class SceneCanvas : OpenGLCanvas() {
     private var leftUpperCornerCameraPosition = Vector2f()
     private var rightLowerCornerCameraPosition = Vector2f()
 
+    private var lastLayersWithCommonSettings = listOf<Layer>()
+    private var lastFramesSelection = listOf<VisualizationFrame>()
     private var framesSelectionSize = 0
     private var framesSize = Vector2i()
     private val framesRatio: Float
@@ -50,6 +56,9 @@ class SceneCanvas : OpenGLCanvas() {
             (framesSize.x + Renderer.getSpacingWidth(framesSize)) / framesSize.y,
             (1 + Renderer.FramesSpacing)
         )
+
+    private val pointLayerClickHandler = PointLayerClickHandler()
+    private val lineLayerClickHandler = LineLayerClickHandler()
 
     init {
         initializeCanvasEvents()
@@ -79,11 +88,12 @@ class SceneCanvas : OpenGLCanvas() {
         engineScene?.landmarkRenderers?.forEach { renderer ->
             val rendererLayerSettings =
                 engineScene?.landmarkLayerRendererLayers?.get(renderer)?.settings ?: return@forEach
-            val selectedFramesLayers =
+            lastLayersWithCommonSettings =
                 scene?.getLayersWithCommonSettings(rendererLayerSettings, framesSelection) ?: return@forEach
-            renderer.setFramesSelectionLayers(selectedFramesLayers)
+            renderer.setFramesSelectionLayers(lastLayersWithCommonSettings)
         }
         framesSelectionSize = framesSelection.count()
+        lastFramesSelection = framesSelection
     }
 
     fun setColumnsNumber(columnsNumber: Int) {
@@ -155,15 +165,51 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     private fun handleLandmarkInteraction(frameIndex: Int, frameInteractionPixel: Vector2i) {
-        val interactingVisualizationFrame = scene?.frames?.get(frameIndex) ?: return
+        if (frameIndex >= lastFramesSelection.count())
+            return
+
+        val interactingVisualizationFrame = lastFramesSelection[frameIndex]
+        var clickedLandmark: Landmark? = null
+
         interactingVisualizationFrame.layers.forEach { layer ->
             when (layer) {
-                is Layer.PointLayer -> TODO()
-                is Layer.LineLayer -> TODO()
-                is Layer.PlaneLayer -> TODO()
+                is Layer.PointLayer ->  {
+                    val pointLandmarks = layer.getLandmarks()
+                    val landmarkIndex =
+                        pointLayerClickHandler.indexOfClickedLandmark(
+                            pointLandmarks,
+                            frameInteractionPixel,
+                            layer.settings.selectedRadius.toFloat() / window.camera.zoom
+                        )
+
+                    if (landmarkIndex == -1)
+                        return@forEach
+
+                    clickedLandmark = pointLandmarks[landmarkIndex]
+                }
+                is Layer.LineLayer -> {
+                    val lineLandmarks = layer.getLandmarks()
+                    val landmarkIndex =
+                        lineLayerClickHandler.indexOfClickedLandmark(
+                            lineLandmarks,
+                            frameInteractionPixel,
+                            layer.settings.selectedWidth.toFloat() / window.camera.zoom
+                        )
+
+                    if (landmarkIndex == -1)
+                        return@forEach
+
+                    clickedLandmark = lineLandmarks[landmarkIndex]
+                }
+                is Layer.PlaneLayer -> {}
             }
         }
-        frameInteractionPixel.toString()
+
+        val selectedLandmark = clickedLandmark ?: return
+        if (selectedLandmark.layerState.selectedLandmarksUIDs.contains(selectedLandmark.uid))
+            selectedLandmark.layerState.deselectLandmark(selectedLandmark.uid)
+        else
+            selectedLandmark.layerState.selectLandmark(selectedLandmark.uid)
     }
 
     private fun calculateWindowTopLeftCornerShaderPosition(): Vector2f {
