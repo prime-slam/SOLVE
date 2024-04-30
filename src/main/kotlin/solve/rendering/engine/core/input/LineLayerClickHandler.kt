@@ -7,7 +7,11 @@ import solve.rendering.engine.utils.toVector2i
 import solve.scene.model.Landmark.Line
 
 class LineLayerClickHandler : LayerClickHandler<Line>() {
-    override fun indexOfClickedLandmark(landmarks: List<Line>, clickedPixelCoordinate: Vector2i): Int {
+    override fun indexOfClickedLandmark(
+        landmarks: List<Line>,
+        clickedPixelCoordinate: Vector2i,
+        landmarkSize: Float
+    ): Int {
         var minLineDistanceIndex = -1
         var minLineDistance = Float.MAX_VALUE
 
@@ -19,7 +23,7 @@ class LineLayerClickHandler : LayerClickHandler<Line>() {
                 lineStartCoordinate.toFloatVector(),
                 lineFinishCoordinate.toFloatVector()
             )
-            if (lineDistance < ClickedLandmarkMaxAllowedDistance && lineDistance < minLineDistance) {
+            if (lineDistance < landmarkSize * HandledDistanceMultiplier && lineDistance < minLineDistance) {
                 minLineDistanceIndex = index
                 minLineDistance = lineDistance
             }
@@ -29,6 +33,6 @@ class LineLayerClickHandler : LayerClickHandler<Line>() {
     }
 
     companion object {
-        private const val ClickedLandmarkMaxAllowedDistance = 3
+        private const val HandledDistanceMultiplier = 4f
     }
 }

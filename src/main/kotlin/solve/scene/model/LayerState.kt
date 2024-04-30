@@ -77,6 +77,6 @@ class LayerState(val name: String) {
     }
 
     companion object {
-        private const val HighlightDurationMillis = 1000L
+        private const val HighlightDurationMillis = 300L
     }
 }
