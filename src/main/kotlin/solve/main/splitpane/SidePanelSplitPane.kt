@@ -21,10 +21,10 @@ class SidePanelSplitPane(
         }
 
         if (location == SidePanelLocation.Left && !isLeftSidePanelHidden) {
-            items.removeFirst()
+            items.removeAt(0)
             isLeftSidePanelHidden = true
         } else if (location == SidePanelLocation.Right && !isRightSidePanelHidden) {
-            items.removeLast()
+            items.removeAt(items.count() - 1)
             isRightSidePanelHidden = true
         } else {
             return
