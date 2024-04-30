@@ -18,7 +18,8 @@ class PointLayerClickHandler : LayerClickHandler<Keypoint>() {
             val keypointCoordinate = keypoint.coordinate.toVector2i()
             val keypointDistance = (keypointCoordinate - clickedPixelCoordinate).length()
             if (keypointDistance < landmarkSize * HandledDistanceMultiplier &&
-                keypointDistance < minKeypointDistance) {
+                keypointDistance < minKeypointDistance
+            ) {
                 minKeypointDistanceIndex = index
                 minKeypointDistance = keypointDistance
             }

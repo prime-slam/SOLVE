@@ -96,7 +96,7 @@ class LinesLayerRenderer(
 
                 linePoints.forEachIndexed { sideIndex, linePoint ->
                     val pointToVertexVector = Vector2f(normalVector) * linesWidth * widthMultiplier /
-                         window.camera.zoom / DefaultLocalVerticesPositionsDivider
+                        window.camera.zoom / DefaultLocalVerticesPositionsDivider
 
                     val upperVertexPosition = linePoint + pointToVertexVector
                     val bottomVertexPosition = linePoint - pointToVertexVector
