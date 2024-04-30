@@ -88,7 +88,7 @@ class PointsLayerRenderer(
 
                 circleBoundsVerticesLocalPositions.forEach { vertexLocalPosition ->
                     val vertexPosition = pointShaderPosition + Vector2f(vertexLocalPosition) *
-                            pointsRadius * radiusMultiplier / window.camera.zoom / DefaultLocalVerticesPositionsDivider
+                        pointsRadius * radiusMultiplier / window.camera.zoom / DefaultLocalVerticesPositionsDivider
                     batch.pushVector2f(vertexPosition)
                     batch.pushVector2f(vertexLocalPosition)
                     batch.pushFloat(pointLandmarkIndex.toFloat())

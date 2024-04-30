@@ -2,7 +2,6 @@ package solve.rendering.canvas
 
 import org.joml.Vector2f
 import org.joml.Vector2i
-import solve.rendering.engine.core.input.LayerClickHandler
 import solve.rendering.engine.core.input.LineLayerClickHandler
 import solve.rendering.engine.core.input.PointLayerClickHandler
 import solve.rendering.engine.core.renderers.FramesRenderer
@@ -165,15 +164,16 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     private fun handleLandmarkInteraction(frameIndex: Int, frameInteractionPixel: Vector2i) {
-        if (frameIndex >= lastFramesSelection.count())
+        if (frameIndex >= lastFramesSelection.count()) {
             return
+        }
 
         val interactingVisualizationFrame = lastFramesSelection[frameIndex]
         var clickedLandmark: Landmark? = null
 
         interactingVisualizationFrame.layers.forEach { layer ->
             when (layer) {
-                is Layer.PointLayer ->  {
+                is Layer.PointLayer -> {
                     val pointLandmarks = layer.getLandmarks()
                     val landmarkIndex =
                         pointLayerClickHandler.indexOfClickedLandmark(
@@ -182,8 +182,9 @@ class SceneCanvas : OpenGLCanvas() {
                             layer.settings.selectedRadius.toFloat() / window.camera.zoom
                         )
 
-                    if (landmarkIndex == -1)
+                    if (landmarkIndex == -1) {
                         return@forEach
+                    }
 
                     clickedLandmark = pointLandmarks[landmarkIndex]
                 }
@@ -196,8 +197,9 @@ class SceneCanvas : OpenGLCanvas() {
                             layer.settings.selectedWidth.toFloat() / window.camera.zoom
                         )
 
-                    if (landmarkIndex == -1)
+                    if (landmarkIndex == -1) {
                         return@forEach
+                    }
 
                     clickedLandmark = lineLandmarks[landmarkIndex]
                 }
@@ -206,10 +208,11 @@ class SceneCanvas : OpenGLCanvas() {
         }
 
         val selectedLandmark = clickedLandmark ?: return
-        if (selectedLandmark.layerState.selectedLandmarksUIDs.contains(selectedLandmark.uid))
+        if (selectedLandmark.layerState.selectedLandmarksUIDs.contains(selectedLandmark.uid)) {
             selectedLandmark.layerState.deselectLandmark(selectedLandmark.uid)
-        else
+        } else {
             selectedLandmark.layerState.selectLandmark(selectedLandmark.uid)
+        }
     }
 
     private fun calculateWindowTopLeftCornerShaderPosition(): Vector2f {
