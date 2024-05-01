@@ -1,8 +1,19 @@
 package solve.rendering.canvas
 
+import io.github.palexdev.materialfx.beans.Alignment
+import io.github.palexdev.materialfx.controls.MFXContextMenu
+import io.github.palexdev.materialfx.controls.MFXContextMenuItem
+import javafx.application.Platform
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.geometry.HPos
+import javafx.geometry.VPos
+import javafx.scene.Node
+import javafx.scene.input.Clipboard
+import javafx.scene.input.ClipboardContent
 import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.rendering.engine.core.input.LineLayerClickHandler
+import solve.rendering.engine.core.input.MouseButton
 import solve.rendering.engine.core.input.PointLayerClickHandler
 import solve.rendering.engine.core.renderers.FramesRenderer
 import solve.rendering.engine.core.renderers.LinesLayerRenderer
@@ -19,8 +30,16 @@ import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
+import solve.scene.view.association.AssociationsManager
 import solve.utils.ServiceLocator
+import solve.utils.action
 import solve.utils.ceilToInt
+import solve.utils.getScreenPosition
+import solve.utils.item
+import solve.utils.lineSeparator
+import tornadofx.add
+import tornadofx.enableWhen
+import tornadofx.wrapIn
 import solve.rendering.engine.scene.Scene as EngineScene
 
 class SceneCanvas : OpenGLCanvas() {
@@ -56,8 +75,12 @@ class SceneCanvas : OpenGLCanvas() {
             (1 + Renderer.FramesSpacing)
         )
 
+    private var contextMenuInvokeFrame: VisualizationFrame? = null
+
     private val pointLayerClickHandler = PointLayerClickHandler()
     private val lineLayerClickHandler = LineLayerClickHandler()
+
+    private val contextMenu = buildContextMenu(canvas)
 
     init {
         initializeCanvasEvents()
@@ -120,21 +143,29 @@ class SceneCanvas : OpenGLCanvas() {
         isDraggingScene = false
     }
 
-    fun interactWithLandmark(screenPoint: Vector2i) {
-        val frameCoordinate = shaderToFrameVector(calculateWindowTopLeftCornerShaderPosition()) +
-            screenToFrameVector(screenPoint)
-        val frameIndexCoordinates = frameCoordinate.toIntVector()
+    fun handleClick(screenPoint: Vector2i, mouseButton: MouseButton) {
+        val frameCoordinates = determineFrameCoordinates(screenPoint)
+        val frameIndexCoordinates = frameCoordinates.toIntVector()
         val frameIndex = frameIndexCoordinates.y * columnsNumber + frameIndexCoordinates.x
-
         // Frame local coordinate including spacing area.
-        var frameLocalCoordinate = Vector2f(frameCoordinate.x % 1, frameCoordinate.y % 1)
+        var frameLocalCoordinate = Vector2f(frameCoordinates.x % 1, frameCoordinates.y % 1)
         // Frame local coordinate excluding spacing area.
         frameLocalCoordinate = frameToShaderVector(frameLocalCoordinate)
         frameLocalCoordinate.x /= framesRatio
         val framePixelCoordinate =
             Vector2f(frameLocalCoordinate.x * framesSize.x, frameLocalCoordinate.y * framesSize.y).toIntVector()
 
-        handleLandmarkInteraction(frameIndex, framePixelCoordinate)
+        if (mouseButton == landmarkInteractionMouseButton) {
+            tryInteractWithLandmark(frameIndex, framePixelCoordinate)
+        } else if (mouseButton == contextMenuMouseButton) {
+            contextMenuInvokeFrame = getContextMenuInvokeFrame(frameIndex) ?: return
+            val canvasScreenPosition = canvas.getScreenPosition()
+            contextMenu.show(
+                canvas,
+                canvasScreenPosition.x + screenPoint.x.toDouble(),
+                canvasScreenPosition.y + screenPoint.y.toDouble()
+            )
+        }
     }
 
     fun zoomToPoint(screenPoint: Vector2i, newZoom: Float) {
@@ -163,7 +194,11 @@ class SceneCanvas : OpenGLCanvas() {
         engineScene?.update()
     }
 
-    private fun handleLandmarkInteraction(frameIndex: Int, frameInteractionPixel: Vector2i) {
+    private fun determineFrameCoordinates(screenPoint: Vector2i): Vector2f {
+        return shaderToFrameVector(calculateWindowTopLeftCornerShaderPosition()) + screenToFrameVector(screenPoint)
+    }
+
+    private fun tryInteractWithLandmark(frameIndex: Int, frameInteractionPixel: Vector2i) {
         if (frameIndex >= lastFramesSelection.count()) {
             return
         }
@@ -309,7 +344,57 @@ class SceneCanvas : OpenGLCanvas() {
             rightLowerCornerCameraPosition.y.coerceAtLeast(leftUpperCornerCameraPosition.y)
     }
 
+    private fun buildContextMenu(parent: Node): MFXContextMenu {
+        val contextMenu = MFXContextMenu(parent)
+        contextMenu.addCopyTimestampItem()
+        contextMenu.lineSeparator()
+        contextMenu.addAssociateKeypointsItem()
+        contextMenu.addClearAssociationsItem()
+
+        return contextMenu
+    }
+
+    private fun MFXContextMenu.addCopyTimestampItem() {
+        item("Copy timestamp").action {
+            val invokeFrame = contextMenuInvokeFrame ?: return@action
+
+            val timestamp = invokeFrame.timestamp
+            val clipboardContent = ClipboardContent().also { it.putString(timestamp.toString()) }
+            Clipboard.getSystemClipboard().setContent(clipboardContent)
+        }
+    }
+
+    private fun MFXContextMenu.addAssociateKeypointsItem() {
+        item("Associate keypoints").action {
+            val invokeFrame = contextMenuInvokeFrame ?: return@action
+
+            println("assoiation")
+            invokeFrame.toString()
+        }
+    }
+
+    private fun MFXContextMenu.addClearAssociationsItem() {
+        item("Clear associations").action {
+            val invokeFrame = contextMenuInvokeFrame ?: return@action
+
+            println("clear associations")
+            invokeFrame.toString()
+        }
+    }
+
+    private fun getContextMenuInvokeFrame(contextMenuInvokeFrameIndex: Int) : VisualizationFrame? {
+        if (contextMenuInvokeFrameIndex >= lastFramesSelection.count()) {
+            println("The index of the invoked frame is incorrect!")
+            return null
+        }
+
+        return lastFramesSelection[contextMenuInvokeFrameIndex]
+    }
+
     companion object {
         const val IdentityFramesSizeScale = 1.605f
+
+        private val landmarkInteractionMouseButton = MouseButton.Left
+        private val contextMenuMouseButton = MouseButton.Right
     }
 }

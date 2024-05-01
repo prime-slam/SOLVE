@@ -2,10 +2,11 @@ package solve.scene.view
 
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
-import javafx.scene.input.MouseButton
+import javafx.scene.input.MouseButton as JavaFXMouseButton
 import javafx.scene.input.MouseEvent
 import org.joml.Vector2i
 import solve.rendering.canvas.SceneCanvas
+import solve.rendering.engine.core.input.MouseButton
 import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.scene.model.Landmark
@@ -81,7 +82,7 @@ class SceneView : View() {
             mouseScreenPoint = extrudeEventMousePosition(event)
         }
         root.setOnMouseDragged { event ->
-            if (event.button != MouseInteractButton) {
+            if (getMouseButton(event) != MouseInteractionButton) {
                 return@setOnMouseDragged
             }
             wasMouseDragging = true
@@ -89,23 +90,22 @@ class SceneView : View() {
             canvas.dragTo(mouseScreenPoint)
         }
         root.setOnMousePressed { event ->
-            if (event.button != MouseInteractButton) {
+            if (getMouseButton(event) != MouseInteractionButton) {
                 return@setOnMousePressed
             }
             canvas.startDragging(mouseScreenPoint)
         }
         root.setOnMouseReleased { event ->
-            if (event.button != MouseInteractButton) {
+            if (getMouseButton(event) != MouseInteractionButton) {
                 return@setOnMouseReleased
             }
             canvas.stopDragging()
         }
         root.setOnMouseClicked { event ->
-            if (event.button != MouseInteractButton) {
-                return@setOnMouseClicked
-            }
+            val mouseButton = getMouseButton(event) ?: return@setOnMouseClicked
+
             if (!wasMouseDragging) {
-                canvas.interactWithLandmark(mouseScreenPoint)
+                canvas.handleClick(mouseScreenPoint, mouseButton)
             }
             wasMouseDragging = false
         }
@@ -119,8 +119,17 @@ class SceneView : View() {
         }
     }
 
+    private fun getMouseButton(event: MouseEvent) : MouseButton? {
+        return when (event.button) {
+            JavaFXMouseButton.PRIMARY -> MouseButton.Left
+            JavaFXMouseButton.MIDDLE -> MouseButton.Middle
+            JavaFXMouseButton.SECONDARY -> MouseButton.Right
+            else -> null
+        }
+    }
+
     companion object {
-        private val MouseInteractButton = MouseButton.PRIMARY
+        private val MouseInteractionButton = MouseButton.Left
 
         const val framesMargin = 0.0
         const val scrollSpeed = 20.0
