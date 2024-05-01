@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
     kotlin("jvm") version "1.7.20"
-    id("org.openjfx.javafxplugin") version "0.0.10"
+    id("org.openjfx.javafxplugin") version "0.0.14"
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
     id("application")
     application
