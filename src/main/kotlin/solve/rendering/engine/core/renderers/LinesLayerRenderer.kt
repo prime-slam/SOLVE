@@ -44,7 +44,8 @@ class LinesLayerRenderer(
     override fun createNewBatch(zIndex: Int): RenderBatch {
         val shaderAttributesTypes = listOf(
             ShaderAttributeType.FLOAT2,
-            ShaderAttributeType.FLOAT
+            ShaderAttributeType.FLOAT,
+            ShaderAttributeType.FLOAT3
         )
 
         return RenderBatch(
@@ -58,7 +59,6 @@ class LinesLayerRenderer(
     override fun uploadUniforms(shaderProgram: ShaderProgram) {
         shaderProgram.uploadMatrix4f(ProjectionUniformName, window.calculateProjectionMatrix())
         shaderProgram.uploadInt(UseCommonColorUniformName, if (useCommonColor()) 1 else 0)
-        shaderProgram.uploadVector3f(CommonColorUniformName, getLinesColor())
     }
 
     override fun beforeRender() {
@@ -91,8 +91,26 @@ class LinesLayerRenderer(
                 val lineVector = lineFinishShaderPosition - lineStartShaderPosition
                 val normalVector = Vector2f(-lineVector.y, lineVector.x).normalize()
                 val linePoints = listOf(lineStartShaderPosition, lineFinishShaderPosition)
-                val selectionProgress = lineLandmark.layerState.getLandmarkHighlightingProgress(lineLandmark.uid)
-                val widthMultiplier = 1f + selectionProgress * (HighlightingWidthMultiplier - 1f)
+                val highlightingProgress = lineLandmark.layerState.getLandmarkHighlightingProgress(lineLandmark.uid)
+
+                var widthMultiplier = 1f
+                var lineColor = lineLandmark.layerSettings.getColor(lineLandmark)
+                if (highlightingProgress == 1f) {
+                    widthMultiplier = HighlightingWidthMultiplier
+                    lineColor = lineLandmark.layerSettings.getUniqueColor(lineLandmark)
+                } else if (highlightingProgress > 0f && highlightingProgress < 1f ) {
+                    widthMultiplier += highlightingProgress * (HighlightingWidthMultiplier - 1f)
+                    lineColor = lineColor.interpolate(
+                        lineLandmark.layerSettings.getUniqueColor(lineLandmark),
+                        highlightingProgress.toDouble()
+                    )
+                }
+
+                val lineColorVector = Vector3f(
+                    lineColor.red.toFloat(),
+                    lineColor.green.toFloat(),
+                    lineColor.blue.toFloat()
+                )
 
                 linePoints.forEachIndexed { sideIndex, linePoint ->
                     val pointToVertexVector = Vector2f(normalVector) * linesWidth * widthMultiplier /
@@ -104,21 +122,13 @@ class LinesLayerRenderer(
                     val secondVertexPosition = if (sideIndex == 0) bottomVertexPosition else upperVertexPosition
                     batch.pushVector2f(firstVertexPosition)
                     batch.pushFloat(lineLandmarkIndex.toFloat())
+                    batch.pushVector3f(lineColorVector)
                     batch.pushVector2f(secondVertexPosition)
                     batch.pushFloat(lineLandmarkIndex.toFloat())
+                    batch.pushVector3f(lineColorVector)
                 }
             }
         }
-    }
-
-    private fun getLinesColor(): Vector3f {
-        val pointsCommonColor = lineLayers.firstOrNull()?.settings?.commonColor ?: return Vector3f(1f, 0f, 0f)
-
-        return Vector3f(
-            pointsCommonColor.red.toFloat(),
-            pointsCommonColor.green.toFloat(),
-            pointsCommonColor.blue.toFloat()
-        )
     }
 
     private fun getLinesWidth(): Float {
@@ -135,7 +145,6 @@ class LinesLayerRenderer(
 
     companion object {
         private const val UseCommonColorUniformName = "uUseCommonColor"
-        private const val CommonColorUniformName = "uCommonColor"
 
         private const val DefaultLocalVerticesPositionsDivider = 800f
         private const val HighlightingWidthMultiplier = 2.5f

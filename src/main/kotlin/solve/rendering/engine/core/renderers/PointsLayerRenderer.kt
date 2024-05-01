@@ -44,7 +44,8 @@ class PointsLayerRenderer(
         val shaderAttributesTypes = listOf(
             ShaderAttributeType.FLOAT2,
             ShaderAttributeType.FLOAT2,
-            ShaderAttributeType.FLOAT
+            ShaderAttributeType.FLOAT,
+            ShaderAttributeType.FLOAT3
         )
 
         return RenderBatch(
@@ -58,7 +59,6 @@ class PointsLayerRenderer(
     override fun uploadUniforms(shaderProgram: ShaderProgram) {
         shaderProgram.uploadMatrix4f(ProjectionUniformName, window.calculateProjectionMatrix())
         shaderProgram.uploadInt(UseCommonColorUniformName, if (useCommonColor()) 1 else 0)
-        shaderProgram.uploadVector3f(CommonColorUniformName, getPointsColor())
     }
 
     override fun beforeRender() {
@@ -83,8 +83,27 @@ class PointsLayerRenderer(
                     pointLandmark.coordinate.y.toFloat()
                 )
                 val pointShaderPosition = getFramePixelShaderPosition(pointsLayerIndex, pointLandmarkPosition)
-                val selectionProgress = pointLandmark.layerState.getLandmarkHighlightingProgress(pointLandmark.uid)
-                val radiusMultiplier = 1f + selectionProgress * (HighlightingRadiusMultiplier - 1f)
+
+                val highlightingProgress = pointLandmark.layerState.getLandmarkHighlightingProgress(pointLandmark.uid)
+
+                var radiusMultiplier = 1f
+                var pointColor = pointLandmark.layerSettings.getColor(pointLandmark)
+                if (highlightingProgress == 1f) {
+                    radiusMultiplier = HighlightingRadiusMultiplier
+                    pointColor = pointLandmark.layerSettings.getUniqueColor(pointLandmark)
+                } else if (highlightingProgress > 0f && highlightingProgress < 1f ) {
+                    radiusMultiplier += highlightingProgress * (HighlightingRadiusMultiplier - 1f)
+                    pointColor = pointColor.interpolate(
+                        pointLandmark.layerSettings.getUniqueColor(pointLandmark),
+                        highlightingProgress.toDouble()
+                    )
+                }
+
+                val pointColorVector = Vector3f(
+                    pointColor.red.toFloat(),
+                    pointColor.green.toFloat(),
+                    pointColor.blue.toFloat()
+                )
 
                 circleBoundsVerticesLocalPositions.forEach { vertexLocalPosition ->
                     val vertexPosition = pointShaderPosition + Vector2f(vertexLocalPosition) *
@@ -92,19 +111,10 @@ class PointsLayerRenderer(
                     batch.pushVector2f(vertexPosition)
                     batch.pushVector2f(vertexLocalPosition)
                     batch.pushFloat(pointLandmarkIndex.toFloat())
+                    batch.pushVector3f(pointColorVector)
                 }
             }
         }
-    }
-
-    private fun getPointsColor(): Vector3f {
-        val pointsCommonColor = pointLayers.firstOrNull()?.settings?.commonColor ?: return Vector3f(1f, 0f, 0f)
-
-        return Vector3f(
-            pointsCommonColor.red.toFloat(),
-            pointsCommonColor.green.toFloat(),
-            pointsCommonColor.blue.toFloat()
-        )
     }
 
     private fun useCommonColor(): Boolean {
@@ -117,7 +127,6 @@ class PointsLayerRenderer(
 
     companion object {
         private const val UseCommonColorUniformName = "uUseCommonColor"
-        private const val CommonColorUniformName = "uCommonColor"
 
         private val circleBoundsVerticesLocalPositions = listOf(
             Vector2f(1f, 1f),
