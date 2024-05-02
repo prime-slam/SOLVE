@@ -13,8 +13,6 @@ import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.utils.plus
-import solve.scene.model.Landmark
-import solve.scene.model.Layer
 import solve.scene.model.Layer.PlaneLayer
 import solve.scene.model.Scene
 

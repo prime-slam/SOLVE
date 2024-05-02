@@ -8,7 +8,7 @@ import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.rendering.engine.Window
 import solve.rendering.engine.core.input.MouseButton
-import solve.rendering.engine.core.input.SceneCanvasClickHandler
+import solve.rendering.engine.core.input.MouseInputHandler
 import solve.rendering.engine.core.renderers.FramesRenderer
 import solve.rendering.engine.core.renderers.LinesLayerRenderer
 import solve.rendering.engine.core.renderers.PlanesLayerRenderer
@@ -176,7 +176,7 @@ class SceneCanvas : OpenGLCanvas() {
 
     private fun determineFrameCoordinates(screenPoint: Vector2i): Vector2f {
         return shaderToFrameVector(window.calculateTopLeftCornerShaderPosition(), framesSize) +
-                screenToFrameVector(screenPoint, framesSize, window)
+            screenToFrameVector(screenPoint, framesSize, window)
     }
 
     private fun tryInteractWithLandmark(frameIndex: Int, frameInteractionPixel: Vector2i) {
@@ -192,7 +192,7 @@ class SceneCanvas : OpenGLCanvas() {
                 is Layer.PointLayer -> {
                     val pointLandmarks = layer.getLandmarks()
                     val landmarkIndex =
-                        SceneCanvasClickHandler.indexOfClickedPointLandmark(
+                        MouseInputHandler.indexOfClickedPointLandmark(
                             pointLandmarks,
                             frameInteractionPixel,
                             layer.settings.selectedRadius.toFloat() / window.camera.zoom
@@ -207,7 +207,7 @@ class SceneCanvas : OpenGLCanvas() {
                 is Layer.LineLayer -> {
                     val lineLandmarks = layer.getLandmarks()
                     val landmarkIndex =
-                        SceneCanvasClickHandler.indexOfClickedLineLandmark(
+                        MouseInputHandler.indexOfClickedLineLandmark(
                             lineLandmarks,
                             frameInteractionPixel,
                             layer.settings.selectedWidth.toFloat() / window.camera.zoom
@@ -326,7 +326,7 @@ class SceneCanvas : OpenGLCanvas() {
         }
     }
 
-    private fun getContextMenuInvokeFrame(contextMenuInvokeFrameIndex: Int) : VisualizationFrame? {
+    private fun getContextMenuInvokeFrame(contextMenuInvokeFrameIndex: Int): VisualizationFrame? {
         if (contextMenuInvokeFrameIndex >= lastFramesSelection.count()) {
             println("The index of the invoked frame is incorrect!")
             return null
@@ -375,6 +375,5 @@ class SceneCanvas : OpenGLCanvas() {
 
             return shaderVector
         }
-
     }
 }
