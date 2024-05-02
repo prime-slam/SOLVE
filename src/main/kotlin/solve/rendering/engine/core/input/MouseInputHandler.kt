@@ -7,7 +7,7 @@ import solve.rendering.engine.utils.toFloatVector
 import solve.rendering.engine.utils.toVector2i
 import solve.scene.model.Landmark
 
-object SceneCanvasClickHandler {
+object MouseInputHandler {
     private const val LineHandledDistanceMultiplier = 4f
     private const val PointHandledDistanceMultiplier = 1.5f
 

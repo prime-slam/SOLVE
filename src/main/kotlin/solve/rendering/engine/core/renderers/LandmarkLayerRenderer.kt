@@ -1,7 +1,6 @@
 package solve.rendering.engine.core.renderers
 
 import org.joml.Vector2f
-import org.joml.Vector2i
 import solve.rendering.canvas.SceneCanvas
 import solve.rendering.engine.Window
 import solve.rendering.engine.utils.minus
@@ -52,12 +51,13 @@ abstract class LandmarkLayerRenderer(
         newVisiblePointLayers.forEach { visibleLayersToLandmarksMap[it] = it.getLandmarks() }
         _visibleLayersLandmarks = visibleLayersToLandmarksMap.keys.sortedBy {
             layers.indexOf(it)
-        }.mapNotNull { visibleLayersToLandmarksMap[it]}
+        }.mapNotNull { visibleLayersToLandmarksMap[it] }
     }
 
     private fun updateVisibleLayers() {
-        if (layers.isEmpty())
+        if (layers.isEmpty()) {
             return
+        }
 
         val framesIntSize = framesSize.toIntVector()
         val windowTopLeftShaderPosition = window.calculateTopLeftCornerShaderPosition()
@@ -75,8 +75,9 @@ abstract class LandmarkLayerRenderer(
         for (y in topLeftVisibleFrameIndexCoordinates.y..downRightVisibleFrameIndexCoordinates.y) {
             for (x in topLeftVisibleFrameIndexCoordinates.x..downRightVisibleFrameIndexCoordinates.x) {
                 val layerIndex = y * gridWidth + x
-                if (layerIndex !in layers.indices)
+                if (layerIndex !in layers.indices) {
                     continue
+                }
 
                 newVisibleLayers.add(layers[layerIndex])
                 newVisibleLayersSelectionIndices.add(layerIndex)

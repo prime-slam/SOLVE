@@ -2,7 +2,6 @@ package solve.scene.view
 
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
-import javafx.scene.input.MouseButton as JavaFXMouseButton
 import javafx.scene.input.MouseEvent
 import org.joml.Vector2i
 import solve.rendering.canvas.SceneCanvas
@@ -14,6 +13,7 @@ import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationsManager
 import tornadofx.View
 import tornadofx.onChange
+import javafx.scene.input.MouseButton as JavaFXMouseButton
 
 /**
  * Scene visual component, represents grid with frames.
@@ -119,7 +119,7 @@ class SceneView : View() {
         }
     }
 
-    private fun getMouseButton(event: MouseEvent) : MouseButton? {
+    private fun getMouseButton(event: MouseEvent): MouseButton? {
         return when (event.button) {
             JavaFXMouseButton.PRIMARY -> MouseButton.Left
             JavaFXMouseButton.MIDDLE -> MouseButton.Middle

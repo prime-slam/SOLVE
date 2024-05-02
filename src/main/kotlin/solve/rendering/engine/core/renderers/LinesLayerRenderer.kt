@@ -14,7 +14,6 @@ import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
-import solve.scene.model.Layer
 import solve.scene.model.Layer.LineLayer
 import solve.scene.model.Scene
 
@@ -97,7 +96,7 @@ class LinesLayerRenderer(
                 if (highlightingProgress == 1f) {
                     widthMultiplier = HighlightingWidthMultiplier
                     lineColor = lineLandmark.layerSettings.getUniqueColor(lineLandmark)
-                } else if (highlightingProgress > 0f && highlightingProgress < 1f ) {
+                } else if (highlightingProgress > 0f && highlightingProgress < 1f) {
                     widthMultiplier += highlightingProgress * (HighlightingWidthMultiplier - 1f)
                     lineColor = lineColor.interpolate(
                         lineLandmark.layerSettings.getUniqueColor(lineLandmark),

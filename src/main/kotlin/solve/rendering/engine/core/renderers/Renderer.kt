@@ -145,7 +145,7 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
 
     protected abstract fun updateBatchesData()
 
-    protected fun getCameraCellPosition() : Vector2f {
+    protected fun getCameraCellPosition(): Vector2f {
         val framesSpacingXFactor = framesSize.x / (getSpacingWidth(framesSize.toIntVector()) + framesSize.x)
         val framesSpacingYFactor = 1f / (1f + FramesSpacing)
         val framesRatio = framesSize.x / framesSize.y

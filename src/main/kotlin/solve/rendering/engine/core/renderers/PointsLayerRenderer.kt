@@ -13,7 +13,6 @@ import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
-import solve.scene.model.Layer
 import solve.scene.model.Layer.PointLayer
 import solve.scene.model.Scene
 
@@ -89,7 +88,7 @@ class PointsLayerRenderer(
                 if (highlightingProgress == 1f) {
                     radiusMultiplier = HighlightingRadiusMultiplier
                     pointColor = pointLandmark.layerSettings.getUniqueColor(pointLandmark)
-                } else if (highlightingProgress > 0f && highlightingProgress < 1f ) {
+                } else if (highlightingProgress > 0f && highlightingProgress < 1f) {
                     radiusMultiplier += highlightingProgress * (HighlightingRadiusMultiplier - 1f)
                     pointColor = pointColor.interpolate(
                         pointLandmark.layerSettings.getUniqueColor(pointLandmark),
