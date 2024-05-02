@@ -21,15 +21,10 @@ class PointsLayerRenderer(
     window: Window,
     getScene: () -> Scene?
 ) : LandmarkLayerRenderer(window, getScene) {
-    private var pointLayers = emptyList<PointLayer>()
-    private var pointLayersLandmarks = emptyList<List<Landmark.Keypoint>>()
+    private var visiblePointLayers = emptyList<PointLayer>()
+    private var visiblePointLayersLandmarks = emptyList<List<Landmark.Keypoint>>()
 
     override val maxBatchSize = 1000
-
-    override fun setFramesSelectionLayers(layers: List<Layer>) {
-        pointLayers = layers.filterIsInstance<PointLayer>()
-        pointLayersLandmarks = pointLayers.map { it.getLandmarks() }
-    }
 
     override fun createShaderProgram(): ShaderProgram {
         val shaderProgram = ShaderProgram()
@@ -44,7 +39,6 @@ class PointsLayerRenderer(
         val shaderAttributesTypes = listOf(
             ShaderAttributeType.FLOAT2,
             ShaderAttributeType.FLOAT2,
-            ShaderAttributeType.FLOAT,
             ShaderAttributeType.FLOAT3
         )
 
@@ -62,27 +56,31 @@ class PointsLayerRenderer(
     }
 
     override fun beforeRender() {
-        val firstPlaneLayer = pointLayers.firstOrNull() ?: return
-        renderPriority = getScene()?.indexOf(firstPlaneLayer.settings) ?: return
+        super.beforeRender()
+        visiblePointLayers = visibleLayers.filterIsInstance<PointLayer>()
+        visiblePointLayersLandmarks = visibleLayersLandmarks.map { it.filterIsInstance<Landmark.Keypoint>() }
+        val firstPointLayer = layers.filterIsInstance<PointLayer>().firstOrNull() ?: return
+        renderPriority = getScene()?.indexOf(firstPointLayer.settings) ?: return
     }
 
     override fun updateBatchesData() {
-        val firstLayer = pointLayers.firstOrNull() ?: return
+        val firstLayer = visiblePointLayers.firstOrNull() ?: return
         if (!firstLayer.settings.enabled) {
             return
         }
 
         val pointsRadius = getPointsRadius()
 
-        pointLayersLandmarks.forEachIndexed { pointsLayerIndex, pointsLayerLandmarks ->
-            pointsLayerLandmarks.forEachIndexed { pointLandmarkIndex, pointLandmark ->
+        visiblePointLayersLandmarks.forEachIndexed { visibleLayerIndex, pointsLayerLandmarks ->
+            pointsLayerLandmarks.forEach { pointLandmark ->
+                val selectionLayerIndex = visibleLayersSelectionIndices[visibleLayerIndex]
                 val batch = getAvailableBatch(null, 0)
 
                 val pointLandmarkPosition = Vector2f(
                     pointLandmark.coordinate.x.toFloat(),
                     pointLandmark.coordinate.y.toFloat()
                 )
-                val pointShaderPosition = getFramePixelShaderPosition(pointsLayerIndex, pointLandmarkPosition)
+                val pointShaderPosition = getFramePixelShaderPosition(selectionLayerIndex, pointLandmarkPosition)
 
                 val highlightingProgress = pointLandmark.layerState.getLandmarkHighlightingProgress(pointLandmark.uid)
 
@@ -110,7 +108,6 @@ class PointsLayerRenderer(
                         pointsRadius * radiusMultiplier / window.camera.zoom / DefaultLocalVerticesPositionsDivider
                     batch.pushVector2f(vertexPosition)
                     batch.pushVector2f(vertexLocalPosition)
-                    batch.pushFloat(pointLandmarkIndex.toFloat())
                     batch.pushVector3f(pointColorVector)
                 }
             }
@@ -118,11 +115,11 @@ class PointsLayerRenderer(
     }
 
     private fun useCommonColor(): Boolean {
-        return pointLayers.firstOrNull()?.settings?.useCommonColor ?: false
+        return visiblePointLayers.firstOrNull()?.settings?.useCommonColor ?: false
     }
 
     private fun getPointsRadius(): Float {
-        return pointLayers.firstOrNull()?.settings?.selectedRadius?.toFloat() ?: return 1f
+        return visiblePointLayers.firstOrNull()?.settings?.selectedRadius?.toFloat() ?: return 1f
     }
 
     companion object {

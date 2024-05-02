@@ -251,7 +251,7 @@ class FramesRenderer(
     }
 
     private fun getScreenTopLeftGridCellPosition(): Vector2i {
-        val cameraGridCellPosition = Vector2f(window.camera.position.x / framesRatio, window.camera.position.y)
+        val cameraGridCellPosition = getCameraCellPosition()
         return (cameraGridCellPosition - Vector2f(buffersSize) / 2f).toIntVector()
     }
 

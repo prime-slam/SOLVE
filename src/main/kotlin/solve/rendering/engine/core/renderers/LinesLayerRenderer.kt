@@ -22,15 +22,10 @@ class LinesLayerRenderer(
     window: Window,
     getScene: () -> Scene?
 ) : LandmarkLayerRenderer(window, getScene) {
-    private var lineLayers = emptyList<LineLayer>()
-    private var lineLayersLandmarks = emptyList<List<Landmark.Line>>()
+    private var visibleLineLayers = emptyList<LineLayer>()
+    private var visibleLineLayersLandmarks = emptyList<List<Landmark.Line>>()
 
     override val maxBatchSize = 1000
-
-    override fun setFramesSelectionLayers(layers: List<Layer>) {
-        lineLayers = layers.filterIsInstance<LineLayer>()
-        lineLayersLandmarks = lineLayers.map { it.getLandmarks() }
-    }
 
     override fun createShaderProgram(): ShaderProgram {
         val shaderProgram = ShaderProgram()
@@ -62,20 +57,24 @@ class LinesLayerRenderer(
     }
 
     override fun beforeRender() {
-        val firstPlaneLayer = lineLayers.firstOrNull() ?: return
-        renderPriority = getScene()?.indexOf(firstPlaneLayer.settings) ?: return
+        super.beforeRender()
+        visibleLineLayers = visibleLayers.filterIsInstance<LineLayer>()
+        visibleLineLayersLandmarks = visibleLayersLandmarks.map { it.filterIsInstance<Landmark.Line>() }
+        val firstLineLayer = visibleLayers.filterIsInstance<LineLayer>().firstOrNull() ?: return
+        renderPriority = getScene()?.indexOf(firstLineLayer.settings) ?: return
     }
 
     override fun updateBatchesData() {
-        val firstLayer = lineLayers.firstOrNull() ?: return
+        val firstLayer = visibleLineLayers.firstOrNull() ?: return
         if (!firstLayer.settings.enabled) {
             return
         }
 
         val linesWidth = getLinesWidth()
 
-        lineLayersLandmarks.forEachIndexed { linesLayerIndex, linesLayerLandmarks ->
+        visibleLineLayersLandmarks.forEachIndexed { visibleLayerIndex, linesLayerLandmarks ->
             linesLayerLandmarks.forEachIndexed { lineLandmarkIndex, lineLandmark ->
+                val selectionLayerIndex = visibleLayersSelectionIndices[visibleLayerIndex]
                 val batch = getAvailableBatch(null, 0)
 
                 val lineStartPosition = Vector2f(
@@ -86,8 +85,8 @@ class LinesLayerRenderer(
                     lineLandmark.finishCoordinate.x.toFloat(),
                     lineLandmark.finishCoordinate.y.toFloat()
                 )
-                val lineStartShaderPosition = getFramePixelShaderPosition(linesLayerIndex, lineStartPosition)
-                val lineFinishShaderPosition = getFramePixelShaderPosition(linesLayerIndex, lineFinishPosition)
+                val lineStartShaderPosition = getFramePixelShaderPosition(selectionLayerIndex, lineStartPosition)
+                val lineFinishShaderPosition = getFramePixelShaderPosition(selectionLayerIndex, lineFinishPosition)
                 val lineVector = lineFinishShaderPosition - lineStartShaderPosition
                 val normalVector = Vector2f(-lineVector.y, lineVector.x).normalize()
                 val linePoints = listOf(lineStartShaderPosition, lineFinishShaderPosition)
@@ -132,15 +131,15 @@ class LinesLayerRenderer(
     }
 
     private fun getLinesWidth(): Float {
-        return lineLayers.firstOrNull()?.settings?.selectedWidth?.toFloat() ?: return 1f
+        return visibleLineLayers.firstOrNull()?.settings?.selectedWidth?.toFloat() ?: return 1f
     }
 
     private fun useCommonColor(): Boolean {
-        return lineLayers.firstOrNull()?.settings?.useCommonColor ?: false
+        return visibleLineLayers.firstOrNull()?.settings?.useCommonColor ?: false
     }
 
     private fun getLineWidth(): Float {
-        return lineLayers.firstOrNull()?.settings?.selectedWidth?.toFloat() ?: return 1f
+        return visibleLineLayers.firstOrNull()?.settings?.selectedWidth?.toFloat() ?: return 1f
     }
 
     companion object {

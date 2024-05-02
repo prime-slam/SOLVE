@@ -1,20 +1,14 @@
 package solve.rendering.canvas
 
-import io.github.palexdev.materialfx.beans.Alignment
 import io.github.palexdev.materialfx.controls.MFXContextMenu
-import io.github.palexdev.materialfx.controls.MFXContextMenuItem
-import javafx.application.Platform
-import javafx.beans.property.SimpleBooleanProperty
-import javafx.geometry.HPos
-import javafx.geometry.VPos
 import javafx.scene.Node
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import org.joml.Vector2f
 import org.joml.Vector2i
-import solve.rendering.engine.core.input.LineLayerClickHandler
+import solve.rendering.engine.Window
 import solve.rendering.engine.core.input.MouseButton
-import solve.rendering.engine.core.input.PointLayerClickHandler
+import solve.rendering.engine.core.input.SceneCanvasClickHandler
 import solve.rendering.engine.core.renderers.FramesRenderer
 import solve.rendering.engine.core.renderers.LinesLayerRenderer
 import solve.rendering.engine.core.renderers.PlanesLayerRenderer
@@ -30,16 +24,12 @@ import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
-import solve.scene.view.association.AssociationsManager
 import solve.utils.ServiceLocator
 import solve.utils.action
 import solve.utils.ceilToInt
 import solve.utils.getScreenPosition
 import solve.utils.item
 import solve.utils.lineSeparator
-import tornadofx.add
-import tornadofx.enableWhen
-import tornadofx.wrapIn
 import solve.rendering.engine.scene.Scene as EngineScene
 
 class SceneCanvas : OpenGLCanvas() {
@@ -68,17 +58,7 @@ class SceneCanvas : OpenGLCanvas() {
 
     private var isFirstFramesSelection = false
 
-    // Used for frame to shader and shader to frame vector conversions.
-    private val frameToShaderConversionCoefficientsMultipliers: Vector2f
-        get() = Vector2f(
-            (framesSize.x + Renderer.getSpacingWidth(framesSize)) / framesSize.y,
-            (1 + Renderer.FramesSpacing)
-        )
-
     private var contextMenuInvokeFrame: VisualizationFrame? = null
-
-    private val pointLayerClickHandler = PointLayerClickHandler()
-    private val lineLayerClickHandler = LineLayerClickHandler()
 
     private val contextMenu = buildContextMenu(canvas)
 
@@ -150,7 +130,7 @@ class SceneCanvas : OpenGLCanvas() {
         // Frame local coordinate including spacing area.
         var frameLocalCoordinate = Vector2f(frameCoordinates.x % 1, frameCoordinates.y % 1)
         // Frame local coordinate excluding spacing area.
-        frameLocalCoordinate = frameToShaderVector(frameLocalCoordinate)
+        frameLocalCoordinate = frameToShaderVector(frameLocalCoordinate, framesSize)
         frameLocalCoordinate.x /= framesRatio
         val framePixelCoordinate =
             Vector2f(frameLocalCoordinate.x * framesSize.x, frameLocalCoordinate.y * framesSize.y).toIntVector()
@@ -195,7 +175,8 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     private fun determineFrameCoordinates(screenPoint: Vector2i): Vector2f {
-        return shaderToFrameVector(calculateWindowTopLeftCornerShaderPosition()) + screenToFrameVector(screenPoint)
+        return shaderToFrameVector(window.calculateTopLeftCornerShaderPosition(), framesSize) +
+                screenToFrameVector(screenPoint, framesSize, window)
     }
 
     private fun tryInteractWithLandmark(frameIndex: Int, frameInteractionPixel: Vector2i) {
@@ -211,7 +192,7 @@ class SceneCanvas : OpenGLCanvas() {
                 is Layer.PointLayer -> {
                     val pointLandmarks = layer.getLandmarks()
                     val landmarkIndex =
-                        pointLayerClickHandler.indexOfClickedLandmark(
+                        SceneCanvasClickHandler.indexOfClickedPointLandmark(
                             pointLandmarks,
                             frameInteractionPixel,
                             layer.settings.selectedRadius.toFloat() / window.camera.zoom
@@ -226,7 +207,7 @@ class SceneCanvas : OpenGLCanvas() {
                 is Layer.LineLayer -> {
                     val lineLandmarks = layer.getLandmarks()
                     val landmarkIndex =
-                        lineLayerClickHandler.indexOfClickedLandmark(
+                        SceneCanvasClickHandler.indexOfClickedLineLandmark(
                             lineLandmarks,
                             frameInteractionPixel,
                             layer.settings.selectedWidth.toFloat() / window.camera.zoom
@@ -248,43 +229,6 @@ class SceneCanvas : OpenGLCanvas() {
         } else {
             selectedLandmark.layerState.selectLandmark(selectedLandmark.uid)
         }
-    }
-
-    private fun calculateWindowTopLeftCornerShaderPosition(): Vector2f {
-        return window.camera.position - screenToShaderVector(Vector2i(window.size) / 2f)
-    }
-
-    // Converts screen vector to shader coordinates.
-    // One frame excluding spacing area corresponds to a (1, framesRatio) shader vector.
-    private fun screenToShaderVector(screenVector: Vector2i): Vector2f {
-        return Vector2f(screenVector) / window.camera.scaledZoom
-    }
-
-    // Converts screen vector to frame coordinates.
-    // One frame including spacing area corresponds to a (1, 1) frame vector.
-    private fun screenToFrameVector(screenVector: Vector2i): Vector2f {
-        val shaderVector = screenToShaderVector(screenVector)
-        val frameVector = shaderToFrameVector(shaderVector)
-
-        return frameVector
-    }
-
-    private fun shaderToFrameVector(shaderVector: Vector2f): Vector2f {
-        val frameVector = Vector2f(shaderVector)
-        val frameToShaderMultiplier = frameToShaderConversionCoefficientsMultipliers
-        frameVector.x /= frameToShaderMultiplier.x
-        frameVector.y /= frameToShaderMultiplier.y
-
-        return frameVector
-    }
-
-    private fun frameToShaderVector(frameVector: Vector2f): Vector2f {
-        val shaderVector = Vector2f(frameVector)
-        val frameToShaderMultiplier = frameToShaderConversionCoefficientsMultipliers
-        shaderVector.x *= frameToShaderMultiplier.x
-        shaderVector.y *= frameToShaderMultiplier.y
-
-        return shaderVector
     }
 
     private fun checkRenderersInitialization() {
@@ -396,5 +340,41 @@ class SceneCanvas : OpenGLCanvas() {
 
         private val landmarkInteractionMouseButton = MouseButton.Left
         private val contextMenuMouseButton = MouseButton.Right
+
+        // Used for frame to shader and shader to frame vector conversions.
+        private fun getFrameToShaderConversionCoefficients(framesSize: Vector2i): Vector2f {
+            return Vector2f(
+                (framesSize.x + Renderer.getSpacingWidth(framesSize)) / framesSize.y,
+                (1 + Renderer.FramesSpacing)
+            )
+        }
+
+        // Converts screen vector to frame coordinates.
+        // One frame including spacing area corresponds to a (1, 1) frame vector.
+        fun screenToFrameVector(screenVector: Vector2i, framesSize: Vector2i, window: Window): Vector2f {
+            val shaderVector = window.screenToShaderVector(screenVector)
+            val frameVector = shaderToFrameVector(shaderVector, framesSize)
+
+            return frameVector
+        }
+
+        fun shaderToFrameVector(shaderVector: Vector2f, framesSize: Vector2i): Vector2f {
+            val frameVector = Vector2f(shaderVector)
+            val frameToShaderMultiplier = getFrameToShaderConversionCoefficients(framesSize)
+            frameVector.x /= frameToShaderMultiplier.x
+            frameVector.y /= frameToShaderMultiplier.y
+
+            return frameVector
+        }
+
+        fun frameToShaderVector(frameVector: Vector2f, framesSize: Vector2i): Vector2f {
+            val shaderVector = Vector2f(frameVector)
+            val frameToShaderMultiplier = getFrameToShaderConversionCoefficients(framesSize)
+            shaderVector.x *= frameToShaderMultiplier.x
+            shaderVector.y *= frameToShaderMultiplier.y
+
+            return shaderVector
+        }
+
     }
 }
