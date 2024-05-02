@@ -8,6 +8,7 @@ import solve.rendering.engine.Window
 import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.core.texture.Texture
 import solve.rendering.engine.shader.ShaderProgram
+import solve.rendering.engine.utils.toIntVector
 import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
 import kotlin.math.min
@@ -143,6 +144,17 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
     protected abstract fun uploadUniforms(shaderProgram: ShaderProgram)
 
     protected abstract fun updateBatchesData()
+
+    protected fun getCameraCellPosition() : Vector2f {
+        val framesSpacingXFactor = framesSize.x / (getSpacingWidth(framesSize.toIntVector()) + framesSize.x)
+        val framesSpacingYFactor = 1f / (1f + FramesSpacing)
+        val framesRatio = framesSize.x / framesSize.y
+
+        return Vector2f(
+            window.camera.position.x * framesSpacingXFactor / framesRatio,
+            window.camera.position.y * framesSpacingYFactor
+        )
+    }
 
     private fun initialize() {
         shaderProgram = createShaderProgram()

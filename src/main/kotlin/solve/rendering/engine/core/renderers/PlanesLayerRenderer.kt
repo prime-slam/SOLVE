@@ -13,6 +13,7 @@ import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.utils.plus
+import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Layer.PlaneLayer
 import solve.scene.model.Scene
@@ -21,17 +22,12 @@ class PlanesLayerRenderer(
     window: Window,
     getScene: () -> Scene?
 ) : LandmarkLayerRenderer(window, getScene) {
-    private var planeLayers = emptyList<PlaneLayer>()
-    private var planeLayersTextures = emptyList<Texture2D>()
+    private var visiblePlaneLayers = emptyList<PlaneLayer>()
+    private var visiblePlaneLayersTextures = emptyList<Texture2D>()
 
     override val maxBatchSize = 1000
 
     private var needToInitializePlaneTextures = false
-
-    override fun setFramesSelectionLayers(layers: List<Layer>) {
-        planeLayers = layers.filterIsInstance<PlaneLayer>()
-        needToInitializePlaneTextures = true
-    }
 
     override fun createShaderProgram(): ShaderProgram {
         val shaderProgram = ShaderProgram()
@@ -63,32 +59,37 @@ class PlanesLayerRenderer(
     }
 
     override fun delete() {
-        planeLayersTextures.forEach { it.delete() }
+        visiblePlaneLayersTextures.forEach { it.delete() }
         super.delete()
     }
 
     override fun beforeRender() {
+        super.beforeRender()
+        visiblePlaneLayers = visibleLayers.filterIsInstance<PlaneLayer>()
         if (needToInitializePlaneTextures) {
-            planeLayersTextures.forEach { it.delete() }
-            planeLayersTextures = planeLayers.map { Texture2D(it.filePath.toString(), TextureFilterType.PixelPerfect) }
+            visiblePlaneLayersTextures.forEach { it.delete() }
+            visiblePlaneLayersTextures = visiblePlaneLayers.map {
+                Texture2D(it.filePath.toString(), TextureFilterType.PixelPerfect)
+            }
             needToInitializePlaneTextures = false
         }
 
-        val firstPlaneLayer = planeLayers.firstOrNull() ?: return
+        val firstPlaneLayer = layers.filterIsInstance<PlaneLayer>().firstOrNull() ?: return
         renderPriority = getScene()?.indexOf(firstPlaneLayer.settings) ?: return
     }
 
     override fun updateBatchesData() {
-        val firstLayer = planeLayers.firstOrNull() ?: return
+        val firstLayer = visiblePlaneLayers.firstOrNull() ?: return
         if (!firstLayer.settings.enabled) {
             return
         }
 
-        planeLayers.forEachIndexed { planeLayerIndex, _ ->
-            val planeLayerTexture = planeLayersTextures[planeLayerIndex]
+        visiblePlaneLayers.forEachIndexed { visibleLayerIndex, _ ->
+            val selectionLayerIndex = visibleLayersSelectionIndices[visibleLayerIndex]
+            val planeLayerTexture = visiblePlaneLayersTextures[visibleLayerIndex]
             val batch = getAvailableBatch(planeLayerTexture, 0)
             val textureID = batch.getTextureLocalID(planeLayerTexture)
-            val topLeftFrameShaderPosition = getFrameTopLeftShaderPosition(planeLayerIndex)
+            val topLeftFrameShaderPosition = getFrameTopLeftShaderPosition(selectionLayerIndex)
             textureLocalVerticesPositions.forEachIndexed { localVertexIndex, localVertexPosition ->
                 val scaledLocalVertexPosition = Vector2f(localVertexPosition.x * framesRatio, localVertexPosition.y)
                 val vertexShaderPosition = topLeftFrameShaderPosition + scaledLocalVertexPosition

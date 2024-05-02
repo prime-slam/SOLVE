@@ -1,7 +1,6 @@
 #version 330 core
 
 in vec2 fLocalPos;
-in float fIndex;
 in vec3 fColor;
 
 uniform int uUseCommonColor;
