@@ -21,7 +21,8 @@ class PlanesLayerRenderer(
     getScene: () -> Scene?
 ) : LandmarkLayerRenderer(window, getScene) {
     private var visiblePlaneLayers = emptyList<PlaneLayer>()
-    private var visiblePlaneLayersTextures = emptyList<Texture2D>()
+    private var visiblePlaneLayersToTexturesMap = mutableMapOf<PlaneLayer, Texture2D>()
+    private var visiblePlaneLayersTextures = listOf<Texture2D>()
 
     override val maxBatchSize = 1000
 
@@ -57,20 +58,28 @@ class PlanesLayerRenderer(
     }
 
     override fun delete() {
-        visiblePlaneLayersTextures.forEach { it.delete() }
+        visiblePlaneLayersToTexturesMap.values.forEach { it.delete() }
+        visiblePlaneLayersToTexturesMap.clear()
         super.delete()
     }
 
     override fun beforeRender() {
         super.beforeRender()
         visiblePlaneLayers = visibleLayers.filterIsInstance<PlaneLayer>()
-        if (needToInitializePlaneTextures) {
-            visiblePlaneLayersTextures.forEach { it.delete() }
-            visiblePlaneLayersTextures = visiblePlaneLayers.map {
-                Texture2D(it.filePath.toString(), TextureFilterType.PixelPerfect)
-            }
-            needToInitializePlaneTextures = false
+
+        val hiddenVisiblePlaneLayers = hiddenVisibleLayersInCurrentFrame.filterIsInstance<PlaneLayer>()
+        val newVisiblePlaneLayers = newVisibleLayersInCurrentFrame.filterIsInstance<PlaneLayer>()
+
+        hiddenVisiblePlaneLayers.forEach {
+            visiblePlaneLayersToTexturesMap[it]?.delete()
+            visiblePlaneLayersToTexturesMap.remove(it)
         }
+        newVisiblePlaneLayers.forEach {
+            visiblePlaneLayersToTexturesMap[it] = Texture2D(it.filePath.toString(), TextureFilterType.PixelPerfect)
+        }
+        visiblePlaneLayersTextures = visiblePlaneLayersToTexturesMap.keys.sortedBy {
+            visiblePlaneLayers.indexOf(it)
+        }.mapNotNull { visiblePlaneLayersToTexturesMap[it] }
 
         val firstPlaneLayer = layers.filterIsInstance<PlaneLayer>().firstOrNull() ?: return
         renderPriority = getScene()?.indexOf(firstPlaneLayer.settings) ?: return
