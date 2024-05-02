@@ -3,7 +3,6 @@ package solve.rendering.engine.core.renderers
 import org.joml.Vector2f
 import solve.rendering.canvas.SceneCanvas
 import solve.rendering.engine.Window
-import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.toIntVector
 import solve.scene.model.Landmark
@@ -20,7 +19,9 @@ abstract class LandmarkLayerRenderer(
     protected val visibleLayers: List<Layer>
         get() = _visibleLayers
 
-    private var previousVisibleLayers = emptyList<Layer>()
+    private var _previousVisibleLayers = emptyList<Layer>()
+    protected val previousVisibleLayers: List<Layer>
+        get() = _previousVisibleLayers
     private var visibleLayersToLandmarksMap = mutableMapOf<Layer, List<Landmark>>()
     private var _visibleLayersLandmarks = emptyList<List<Landmark>>()
 
@@ -30,6 +31,14 @@ abstract class LandmarkLayerRenderer(
 
     protected val visibleLayersSelectionIndices: List<Int>
         get() = _visibleLayersSelectionIndices
+
+    private var _hiddenVisibleLayersInCurrentFrame = setOf<Layer>()
+    protected val hiddenVisibleLayersInCurrentFrame: Set<Layer>
+        get() = _hiddenVisibleLayersInCurrentFrame
+
+    private var _newVisibleLayersInCurrentFrame = setOf<Layer>()
+    protected val newVisibleLayersInCurrentFrame: Set<Layer>
+        get() = _newVisibleLayersInCurrentFrame
 
     protected var layers = emptyList<Layer>()
 
@@ -44,11 +53,11 @@ abstract class LandmarkLayerRenderer(
     override fun beforeRender() {
         updateVisibleLayers()
 
-        val hiddenLayers = previousVisibleLayers.subtract(this._visibleLayers.toSet())
-        val newVisiblePointLayers = this._visibleLayers.subtract(previousVisibleLayers.toSet())
+        _hiddenVisibleLayersInCurrentFrame = _previousVisibleLayers.subtract(this._visibleLayers.toSet())
+        _newVisibleLayersInCurrentFrame = this._visibleLayers.subtract(_previousVisibleLayers.toSet())
 
-        hiddenLayers.forEach { visibleLayersToLandmarksMap.remove(it) }
-        newVisiblePointLayers.forEach { visibleLayersToLandmarksMap[it] = it.getLandmarks() }
+        _hiddenVisibleLayersInCurrentFrame.forEach { visibleLayersToLandmarksMap.remove(it) }
+        _newVisibleLayersInCurrentFrame.forEach { visibleLayersToLandmarksMap[it] = it.getLandmarks() }
         _visibleLayersLandmarks = visibleLayersToLandmarksMap.keys.sortedBy {
             layers.indexOf(it)
         }.mapNotNull { visibleLayersToLandmarksMap[it] }
@@ -84,7 +93,7 @@ abstract class LandmarkLayerRenderer(
             }
         }
 
-        previousVisibleLayers = this._visibleLayers
+        _previousVisibleLayers = this._visibleLayers
         this._visibleLayers = newVisibleLayers
         _visibleLayersSelectionIndices = newVisibleLayersSelectionIndices
     }
