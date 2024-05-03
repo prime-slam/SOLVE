@@ -97,21 +97,4 @@ abstract class LandmarkLayerRenderer(
         this._visibleLayers = newVisibleLayers
         _visibleLayersSelectionIndices = newVisibleLayersSelectionIndices
     }
-
-    protected fun getFrameTopLeftShaderPosition(frameIndex: Int): Vector2f {
-        val frameXIndex = frameIndex % gridWidth
-        val frameYIndex = frameIndex / gridWidth
-
-        return Vector2f(
-            frameXIndex.toFloat() * framesRatio + frameXIndex * FramesSpacing,
-            frameYIndex.toFloat() + frameYIndex * FramesSpacing
-        )
-    }
-
-    protected fun getFramePixelShaderPosition(frameIndex: Int, framePixelPosition: Vector2f): Vector2f {
-        val frameRelativePosition = Vector2f(framePixelPosition) / framesSize.y
-        val frameTopLeftPosition = getFrameTopLeftShaderPosition(frameIndex)
-
-        return frameTopLeftPosition + frameRelativePosition
-    }
 }

@@ -38,7 +38,6 @@ class LinesLayerRenderer(
     override fun createNewBatch(zIndex: Int): RenderBatch {
         val shaderAttributesTypes = listOf(
             ShaderAttributeType.FLOAT2,
-            ShaderAttributeType.FLOAT,
             ShaderAttributeType.FLOAT3
         )
 
@@ -72,7 +71,7 @@ class LinesLayerRenderer(
         val linesWidth = getLinesWidth()
 
         visibleLineLayersLandmarks.forEachIndexed { visibleLayerIndex, linesLayerLandmarks ->
-            linesLayerLandmarks.forEachIndexed { lineLandmarkIndex, lineLandmark ->
+            linesLayerLandmarks.forEach { lineLandmark ->
                 val selectionLayerIndex = visibleLayersSelectionIndices[visibleLayerIndex]
                 val batch = getAvailableBatch(null, 0)
 
@@ -119,10 +118,8 @@ class LinesLayerRenderer(
                     val firstVertexPosition = if (sideIndex == 0) upperVertexPosition else bottomVertexPosition
                     val secondVertexPosition = if (sideIndex == 0) bottomVertexPosition else upperVertexPosition
                     batch.pushVector2f(firstVertexPosition)
-                    batch.pushFloat(lineLandmarkIndex.toFloat())
                     batch.pushVector3f(lineColorVector)
                     batch.pushVector2f(secondVertexPosition)
-                    batch.pushFloat(lineLandmarkIndex.toFloat())
                     batch.pushVector3f(lineColorVector)
                 }
             }

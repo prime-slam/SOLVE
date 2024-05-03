@@ -13,7 +13,7 @@ import solve.testMemoryLeak
 import solve.utils.structures.DoublePoint
 
 @ExtendWith(ApplicationExtension::class)
-internal class AssociationAdornerTests : InteractiveTestClass() {
+internal class AssociationConnectionAdornerTests : InteractiveTestClass() {
     @Test
     fun `Adorner rectangle fills the corresponding frame`() {
         val width = 10.0

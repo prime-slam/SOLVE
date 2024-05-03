@@ -10,7 +10,6 @@ import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
 import solve.scene.model.Landmark
 import solve.scene.model.VisualizationFrame
-import solve.scene.view.association.AssociationsManager
 import tornadofx.View
 import tornadofx.onChange
 import javafx.scene.input.MouseButton as JavaFXMouseButton
@@ -26,9 +25,6 @@ class SceneView : View() {
     private var mouseScreenPoint = Vector2i()
 
     private var wasMouseDragging = false
-
-    var currentAssociationsManager: AssociationsManager<VisualizationFrame, Landmark.Keypoint>? = null
-        private set
 
     override val root = canvas.canvas
 
