@@ -8,6 +8,7 @@ import solve.rendering.engine.Window
 import solve.rendering.engine.core.batch.RenderBatch
 import solve.rendering.engine.core.texture.Texture
 import solve.rendering.engine.shader.ShaderProgram
+import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.toIntVector
 import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
@@ -166,6 +167,24 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
 
     private fun rebufferBatches() {
         batches.forEach { it.rebuffer() }
+    }
+
+    protected fun getFrameTopLeftShaderPosition(frameIndex: Int): Vector2f {
+        val frameXIndex = frameIndex % gridWidth
+        val frameYIndex = frameIndex / gridWidth
+        val framesRatio = framesSize.x / framesSize.y
+
+        return Vector2f(
+            frameXIndex.toFloat() * framesRatio + frameXIndex * FramesSpacing,
+            frameYIndex.toFloat() + frameYIndex * FramesSpacing
+        )
+    }
+
+    protected fun getFramePixelShaderPosition(frameIndex: Int, framePixelPosition: Vector2f): Vector2f {
+        val frameRelativePosition = Vector2f(framePixelPosition) / framesSize.y
+        val frameTopLeftPosition = getFrameTopLeftShaderPosition(frameIndex)
+
+        return frameTopLeftPosition + frameRelativePosition
     }
 
     companion object {

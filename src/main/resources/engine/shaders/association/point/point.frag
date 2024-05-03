@@ -2,8 +2,6 @@
 
 in vec3 fColor;
 
-uniform int uUseCommonColor;
-
 out vec4 color;
 
 void main()

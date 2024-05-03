@@ -41,3 +41,5 @@ const val ShadersLineLandmarkVertexPath = "engine/shaders/landmark/line/line.ver
 const val ShadersLineLandmarkFragmentPath = "engine/shaders/landmark/line/line.frag"
 const val ShadersPlaneLandmarkVertexPath = "engine/shaders/landmark/plane/plane.vert"
 const val ShadersPlaneLandmarkFragmentPath = "engine/shaders/landmark/plane/plane.frag"
+const val ShadersPointAssociationVertexPath = "engine/shaders/association/point/point.vert"
+const val ShadersPointAssociationFragmentPath = "engine/shaders/association/point/point.frag"

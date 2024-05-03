@@ -12,6 +12,7 @@ import solve.rendering.engine.core.input.MouseInputHandler
 import solve.rendering.engine.core.renderers.FramesRenderer
 import solve.rendering.engine.core.renderers.LinesLayerRenderer
 import solve.rendering.engine.core.renderers.PlanesLayerRenderer
+import solve.rendering.engine.core.renderers.PointAssociationsRenderer
 import solve.rendering.engine.core.renderers.PointsLayerRenderer
 import solve.rendering.engine.core.renderers.Renderer
 import solve.rendering.engine.utils.minus
@@ -24,6 +25,7 @@ import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
+import solve.scene.view.association.AssociationManager
 import solve.utils.ServiceLocator
 import solve.utils.action
 import solve.utils.ceilToInt
@@ -43,7 +45,6 @@ class SceneCanvas : OpenGLCanvas() {
     private var leftUpperCornerCameraPosition = Vector2f()
     private var rightLowerCornerCameraPosition = Vector2f()
 
-    private var lastLayersWithCommonSettings = listOf<Layer>()
     private var lastFramesSelection = listOf<VisualizationFrame>()
     private var framesSelectionSize = 0
     private var framesSize = Vector2i()
@@ -60,6 +61,8 @@ class SceneCanvas : OpenGLCanvas() {
 
     private var contextMenuInvokeFrame: VisualizationFrame? = null
 
+    private val associationManager = AssociationManager()
+
     private val contextMenu = buildContextMenu(canvas)
 
     init {
@@ -69,8 +72,7 @@ class SceneCanvas : OpenGLCanvas() {
     fun setNewScene(scene: Scene) {
         this.scene = scene
         this.framesSize = Vector2i(scene.frameSize.width.toInt(), scene.frameSize.height.toInt())
-        engineScene?.framesRenderer?.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
-        engineScene?.landmarkRenderers?.forEach { it.setNewSceneFrames(scene.frames, framesSize.toFloatVector()) }
+        engineScene?.setNewScene(scene)
         isFirstFramesSelection = true
 
         needToReinitializeRenderers = true
@@ -85,23 +87,17 @@ class SceneCanvas : OpenGLCanvas() {
         recalculateCameraCornersPositions()
         window.camera.position = leftUpperCornerCameraPosition
 
-        engineScene?.framesRenderer?.setFramesSelection(framesSelection)
-        engineScene?.landmarkRenderers?.forEach { it.setFramesSelection(framesSelection) }
-        engineScene?.landmarkRenderers?.forEach { renderer ->
-            val rendererLayerSettings =
-                engineScene?.landmarkLayerRendererLayers?.get(renderer)?.settings ?: return@forEach
-            lastLayersWithCommonSettings =
-                scene?.getLayersWithCommonSettings(rendererLayerSettings, framesSelection) ?: return@forEach
-            renderer.setFramesSelectionLayers(lastLayersWithCommonSettings)
-        }
+        engineScene?.setFramesSelection(framesSelection)
+        associationManager.setFramesSelection(framesSelection)
         framesSelectionSize = framesSelection.count()
         lastFramesSelection = framesSelection
+
+        associationManager.associate(0, 12)
     }
 
     fun setColumnsNumber(columnsNumber: Int) {
-        engineScene?.framesRenderer?.setNewGridWidth(columnsNumber)
-        engineScene?.landmarkRenderers?.forEach { it.setNewGridWidth(columnsNumber) }
         this.columnsNumber = columnsNumber
+        engineScene?.setColumnsNumber(columnsNumber)
     }
 
     fun dragTo(toScreenPoint: Vector2i) {
@@ -160,8 +156,13 @@ class SceneCanvas : OpenGLCanvas() {
         super.onInit()
         val controller = ServiceLocator.getService<SceneController>() ?: return
         sceneController = controller
+        val framesRenderer = FramesRenderer(window)
+        val pointAssociationsRenderer = PointAssociationsRenderer(window, associationManager)
 
-        engineScene = EngineScene(FramesRenderer(window))
+        engineScene = EngineScene(
+            framesRenderer,
+            pointAssociationsRenderer
+        ) { scene }
     }
 
     override fun onDraw(deltaTime: Float) {
