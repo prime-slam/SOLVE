@@ -88,7 +88,7 @@ class PointAssociationsRenderer(
 
                 linePoints.forEachIndexed { sideIndex, linePoint ->
                     val pointToVertexVector = Vector2f(normalVector) * AssociationLineWidth / window.camera.zoom /
-                            DefaultLocalVerticesPositionsDivider
+                        DefaultLocalVerticesPositionsDivider
 
                     val upperVertexPosition = linePoint + pointToVertexVector
                     val bottomVertexPosition = linePoint - pointToVertexVector

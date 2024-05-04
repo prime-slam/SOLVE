@@ -1,6 +1,5 @@
 package solve.scene.view.association
 
-import org.joml.Vector2i
 import solve.scene.model.Landmark
 
 data class AssociationLine(
