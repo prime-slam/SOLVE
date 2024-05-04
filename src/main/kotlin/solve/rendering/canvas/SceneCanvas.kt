@@ -376,10 +376,11 @@ class SceneCanvas : OpenGLCanvas() {
 
     private fun MFXContextMenu.addClearAssociationsItem() {
         item("Clear associations").action {
-            val invokeFrame = contextMenuInvokeFrame ?: return@action
-
-            println("clear associations")
-            invokeFrame.toString()
+            if (associationManager.associationConnections.any {
+                it.firstFrameIndex == contextMenuInvokeFrameIndex || it.secondFrameIndex == contextMenuInvokeFrameIndex
+            }) {
+                associationManager.clearAssociation(contextMenuInvokeFrameIndex)
+            }
         }
     }
 
