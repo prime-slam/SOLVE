@@ -70,9 +70,6 @@ class PointAssociationsRenderer(
                     associationLine.secondKeypoint.coordinate.toVector2i().toFloatVector()
                 )
 
-                println("line start shader pos: ${lineStartShaderPosition}")
-                println("line finish shader pos: ${lineFinishShaderPosition}")
-
                 val lineVector = lineFinishShaderPosition - lineStartShaderPosition
                 val normalVector = Vector2f(-lineVector.y, lineVector.x).normalize()
                 val linePoints = listOf(lineStartShaderPosition, lineFinishShaderPosition)
