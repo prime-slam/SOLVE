@@ -8,8 +8,6 @@ import solve.rendering.canvas.SceneCanvas
 import solve.rendering.engine.core.input.MouseButton
 import solve.scene.SceneFacade
 import solve.scene.controller.SceneController
-import solve.scene.model.Landmark
-import solve.scene.model.VisualizationFrame
 import tornadofx.View
 import tornadofx.onChange
 import javafx.scene.input.MouseButton as JavaFXMouseButton

@@ -71,7 +71,6 @@ class SceneCanvas : OpenGLCanvas() {
     private var isFirstAssociatingFrameChosen = false
     private var associationAdorner: AssociationAdorner? = null
 
-
     private val contextMenu = buildContextMenu(canvas)
 
     init {
@@ -99,7 +98,8 @@ class SceneCanvas : OpenGLCanvas() {
         engineScene?.setFramesSelection(framesSelection)
         associationManager.setFramesSelection(framesSelection)
         framesSelectionSize = framesSelection.count()
-        lastFramesSelection = framesSelection }
+        lastFramesSelection = framesSelection
+    }
 
     fun setColumnsNumber(columnsNumber: Int) {
         this.columnsNumber = columnsNumber
@@ -334,8 +334,9 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     private fun onSecondAssociatingFrameChosen(secondFrameIndex: Int) {
-        if (!isFirstAssociatingFrameChosen)
+        if (!isFirstAssociatingFrameChosen) {
             return
+        }
 
         if (firstAssociatingFrameIndex != secondFrameIndex) {
             associationManager.associate(firstAssociatingFrameIndex, secondFrameIndex)
@@ -378,7 +379,8 @@ class SceneCanvas : OpenGLCanvas() {
         item("Clear associations").action {
             if (associationManager.associationConnections.any {
                 it.firstFrameIndex == contextMenuInvokeFrameIndex || it.secondFrameIndex == contextMenuInvokeFrameIndex
-            }) {
+            }
+            ) {
                 associationManager.clearAssociation(contextMenuInvokeFrameIndex)
             }
         }
@@ -434,17 +436,16 @@ class SceneCanvas : OpenGLCanvas() {
             return shaderVector
         }
 
-
         // Returns a frame position in screen coordinates without taking into account the camera position.
-        fun getGlobalFrameScreenPosition(frameIndexCoordinates: Vector2i, framesSize: Vector2i) : Vector2f {
+        fun getGlobalFrameScreenPosition(frameIndexCoordinates: Vector2i, framesSize: Vector2i): Vector2f {
             return Vector2f(
-                (framesSize.x.toFloat() + Renderer.getSpacingWidth(framesSize)) * frameIndexCoordinates.x ,
+                (framesSize.x.toFloat() + Renderer.getSpacingWidth(framesSize)) * frameIndexCoordinates.x,
                 (framesSize.y.toFloat() * (1f + Renderer.FramesSpacing)) * frameIndexCoordinates.y
             )
         }
 
         // Returns a top left corner position in screen coordinates without taking into account the camera position.
-        fun getGlobalTopLeftCornerScreenPosition(window: Window, framesSize: Vector2i) : Vector2f {
+        fun getGlobalTopLeftCornerScreenPosition(window: Window, framesSize: Vector2i): Vector2f {
             val topLeftCornerShaderPosition = window.calculateTopLeftCornerShaderPosition()
             return shaderToFrameVector(topLeftCornerShaderPosition, framesSize).also {
                 it.x *= framesSize.x
@@ -457,7 +458,7 @@ class SceneCanvas : OpenGLCanvas() {
             frameIndexCoordinates: Vector2i,
             framesSize: Vector2i,
             window: Window
-        ) : Vector2f {
+        ): Vector2f {
             val globalFrameScreenPosition = getGlobalFrameScreenPosition(frameIndexCoordinates, framesSize)
             val globalTopLeftCornerScreenPosition = getGlobalTopLeftCornerScreenPosition(window, framesSize)
 

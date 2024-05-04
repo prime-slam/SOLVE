@@ -1,6 +1,5 @@
 package solve.rendering.engine.core.renderers
 
-import org.joml.Vector2f
 import solve.rendering.canvas.SceneCanvas
 import solve.rendering.engine.Window
 import solve.rendering.engine.utils.plus

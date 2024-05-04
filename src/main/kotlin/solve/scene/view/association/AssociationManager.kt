@@ -26,7 +26,8 @@ class AssociationManager {
         val secondFramePointLayers = secondFrame.layers.filterIsInstance<Layer.PointLayer>()
 
         if (associatingKeypointLayerIndex !in firstFrameKeypointLayers.indices ||
-            associatingKeypointLayerIndex !in secondFramePointLayers.indices) {
+            associatingKeypointLayerIndex !in secondFramePointLayers.indices
+        ) {
             println("There are no point layer with a given index to associate!")
             return
         }
@@ -42,7 +43,8 @@ class AssociationManager {
                 val firstKeypoint = firstFrameKeypoints[firstFrameKeypointUID] ?: return@forEach
                 val secondKeypoint = secondFrameKeypoints[firstFrameKeypointUID] ?: return@forEach
 
-                associationLines.add(AssociationLine(
+                associationLines.add(
+                    AssociationLine(
                         firstFrameKeypointUID,
                         firstFrameIndex,
                         secondFrameIndex,
@@ -54,14 +56,18 @@ class AssociationManager {
         }
         _associationConnections.add(
             AssociationConnection(
-                firstFrameIndex, secondFrameIndex, associatingKeypointLayerIndex, associationLines)
+                firstFrameIndex,
+                secondFrameIndex,
+                associatingKeypointLayerIndex,
+                associationLines
+            )
         )
     }
 
     fun clearAssociation(frameIndex: Int, associatedKeypointLayerIndex: Int = 0) {
         _associationConnections.removeAll {
             it.keypointLayerIndex == associatedKeypointLayerIndex &&
-            (it.firstFrameIndex == frameIndex || it.secondFrameIndex == frameIndex)
+                (it.firstFrameIndex == frameIndex || it.secondFrameIndex == frameIndex)
         }
     }
 }
