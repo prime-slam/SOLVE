@@ -1,7 +1,6 @@
 package solve.scene.view.association
 
-import javafx.beans.InvalidationListener
-import javafx.beans.property.DoubleProperty
+import javafx.animation.AnimationTimer
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.StackPane
@@ -20,36 +19,39 @@ import tornadofx.*
 class AssociationAdorner(
     private val width: Double,
     private val height: Double,
-    private val framePosition: DoublePoint,
-    private val scale: DoubleProperty
-) {
+    private val getFrameScreenPosition: () -> DoublePoint,
+    private val getScale: () -> Double
+) : AnimationTimer() {
     private val pane = StackPane()
+
+    private val scale: Double
+        get() = getScale()
+
+    private val frameScreenPosition: DoublePoint
+        get() = getFrameScreenPosition()
+
+    init {
+        start()
+    }
 
     /**
      * Adorner visual node.
      */
     val node: Node = pane
 
-    private lateinit var rectangle: Rectangle
+    private val rectangle = Rectangle()
 
-    private val scaleChangedListener = InvalidationListener {
-        pane.prefWidth = width * scale.value
-        pane.prefHeight = height * scale.value
-        pane.layoutX = framePosition.x * scale.value
-        pane.layoutY = framePosition.y * scale.value
-        rectangle.width = width * scale.value
-        rectangle.height = height * scale.value
+    private fun updateView() {
+        pane.prefWidth = width * scale
+        pane.prefHeight = height * scale
+        pane.layoutX = frameScreenPosition.x * scale
+        pane.layoutY = frameScreenPosition.y * scale
+        rectangle.width = width * scale
+        rectangle.height = height * scale
     }
 
     init {
-        pane.prefWidth = width * scale.value
-        pane.prefHeight = height * scale.value
-        pane.layoutX = framePosition.x * scale.value
-        pane.layoutY = framePosition.y * scale.value
-
-        rectangle = Rectangle()
-        rectangle.width = width * scale.value
-        rectangle.height = height * scale.value
+        updateView()
         rectangle.fill = Paint.valueOf(Style.primaryColor)
         rectangle.opacity = RectangleOpacity
 
@@ -60,12 +62,14 @@ class AssociationAdorner(
 
         pane.add(rectangle)
         pane.add(label)
-
-        scale.addListener(scaleChangedListener)
     }
 
-    fun dispose() {
-        scale.removeListener(scaleChangedListener)
+    override fun handle(currentTime: Long) {
+        updateView()
+    }
+
+    fun destroy() {
+        stop()
     }
 
     companion object {

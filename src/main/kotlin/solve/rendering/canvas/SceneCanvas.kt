@@ -25,6 +25,7 @@ import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
+import solve.scene.view.association.AssociationAdorner
 import solve.scene.view.association.AssociationManager
 import solve.utils.ServiceLocator
 import solve.utils.action
@@ -32,6 +33,9 @@ import solve.utils.ceilToInt
 import solve.utils.getScreenPosition
 import solve.utils.item
 import solve.utils.lineSeparator
+import solve.utils.removeSafely
+import solve.utils.structures.DoublePoint
+import tornadofx.*
 import solve.rendering.engine.scene.Scene as EngineScene
 
 class SceneCanvas : OpenGLCanvas() {
@@ -60,8 +64,13 @@ class SceneCanvas : OpenGLCanvas() {
     private var isFirstFramesSelection = false
 
     private var contextMenuInvokeFrame: VisualizationFrame? = null
+    private var contextMenuInvokeFrameIndex = 0
 
     private val associationManager = AssociationManager()
+    private var firstAssociatingFrameIndex = 0
+    private var isFirstAssociatingFrameChosen = false
+    private var associationAdorner: AssociationAdorner? = null
+
 
     private val contextMenu = buildContextMenu(canvas)
 
@@ -90,10 +99,7 @@ class SceneCanvas : OpenGLCanvas() {
         engineScene?.setFramesSelection(framesSelection)
         associationManager.setFramesSelection(framesSelection)
         framesSelectionSize = framesSelection.count()
-        lastFramesSelection = framesSelection
-
-        associationManager.associate(0, 12)
-    }
+        lastFramesSelection = framesSelection }
 
     fun setColumnsNumber(columnsNumber: Int) {
         this.columnsNumber = columnsNumber
@@ -132,9 +138,15 @@ class SceneCanvas : OpenGLCanvas() {
             Vector2f(frameLocalCoordinate.x * framesSize.x, frameLocalCoordinate.y * framesSize.y).toIntVector()
 
         if (mouseButton == landmarkInteractionMouseButton) {
+            if (isFirstAssociatingFrameChosen) {
+                onSecondAssociatingFrameChosen(frameIndex)
+                return
+            }
+
             tryInteractWithLandmark(frameIndex, framePixelCoordinate)
         } else if (mouseButton == contextMenuMouseButton) {
             contextMenuInvokeFrame = getContextMenuInvokeFrame(frameIndex) ?: return
+            contextMenuInvokeFrameIndex = frameIndex
             val canvasScreenPosition = canvas.getScreenPosition()
             contextMenu.show(
                 canvas,
@@ -311,11 +323,55 @@ class SceneCanvas : OpenGLCanvas() {
 
     private fun MFXContextMenu.addAssociateKeypointsItem() {
         item("Associate keypoints").action {
-            val invokeFrame = contextMenuInvokeFrame ?: return@action
-
-            println("assoiation")
-            invokeFrame.toString()
+            onFirstAssociatingFrameChosen(contextMenuInvokeFrameIndex)
         }
+    }
+
+    private fun onFirstAssociatingFrameChosen(firstFrameIndex: Int) {
+        firstAssociatingFrameIndex = contextMenuInvokeFrameIndex
+        isFirstAssociatingFrameChosen = true
+        createAssociationAdorner(firstFrameIndex)
+    }
+
+    private fun onSecondAssociatingFrameChosen(secondFrameIndex: Int) {
+        if (!isFirstAssociatingFrameChosen)
+            return
+
+        if (firstAssociatingFrameIndex != secondFrameIndex) {
+            associationManager.associate(firstAssociatingFrameIndex, secondFrameIndex)
+        }
+
+        isFirstAssociatingFrameChosen = false
+        val removingAssociationAdorner = associationAdorner ?: return
+        canvas.removeSafely(removingAssociationAdorner.node)
+        removingAssociationAdorner.destroy()
+    }
+
+    private fun createAssociationAdorner(firstFrameIndex: Int) {
+        val getFrameScreenPosition = {
+            val frameIndexCoordinates = Vector2i(firstFrameIndex % columnsNumber, firstFrameIndex / columnsNumber)
+            val frameTopLeftRelativeScreenPosition = getFrameTopLeftCornerRelativeScreenPosition(
+                frameIndexCoordinates,
+                framesSize,
+                window
+            )
+
+            DoublePoint(
+                frameTopLeftRelativeScreenPosition.x.toDouble(),
+                frameTopLeftRelativeScreenPosition.y.toDouble()
+            )
+        }
+        val getScreenScale = {
+            window.camera.zoom.toDouble() / IdentityFramesSizeScale
+        }
+        val associationAdorner = AssociationAdorner(
+            framesSize.x.toDouble(),
+            framesSize.y.toDouble(),
+            getFrameScreenPosition,
+            getScreenScale
+        )
+        canvas.add(associationAdorner.node)
+        this.associationAdorner = associationAdorner
     }
 
     private fun MFXContextMenu.addClearAssociationsItem() {
@@ -337,7 +393,7 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     companion object {
-        const val IdentityFramesSizeScale = 1.605f
+        const val IdentityFramesSizeScale = 1.6f
 
         private val landmarkInteractionMouseButton = MouseButton.Left
         private val contextMenuMouseButton = MouseButton.Right
@@ -350,7 +406,7 @@ class SceneCanvas : OpenGLCanvas() {
             )
         }
 
-        // Converts screen vector to frame coordinates.
+        // Converts a screen vector to frame coordinates.
         // One frame including spacing area corresponds to a (1, 1) frame vector.
         fun screenToFrameVector(screenVector: Vector2i, framesSize: Vector2i, window: Window): Vector2f {
             val shaderVector = window.screenToShaderVector(screenVector)
@@ -375,6 +431,36 @@ class SceneCanvas : OpenGLCanvas() {
             shaderVector.y *= frameToShaderMultiplier.y
 
             return shaderVector
+        }
+
+
+        // Returns a frame position in screen coordinates without taking into account the camera position.
+        fun getGlobalFrameScreenPosition(frameIndexCoordinates: Vector2i, framesSize: Vector2i) : Vector2f {
+            return Vector2f(
+                (framesSize.x.toFloat() + Renderer.getSpacingWidth(framesSize)) * frameIndexCoordinates.x ,
+                (framesSize.y.toFloat() * (1f + Renderer.FramesSpacing)) * frameIndexCoordinates.y
+            )
+        }
+
+        // Returns a top left corner position in screen coordinates without taking into account the camera position.
+        fun getGlobalTopLeftCornerScreenPosition(window: Window, framesSize: Vector2i) : Vector2f {
+            val topLeftCornerShaderPosition = window.calculateTopLeftCornerShaderPosition()
+            return shaderToFrameVector(topLeftCornerShaderPosition, framesSize).also {
+                it.x *= framesSize.x
+                it.y *= framesSize.y
+            }
+        }
+
+        // Returns a frame position in screen coordinates with taking into account the camera position.
+        fun getFrameTopLeftCornerRelativeScreenPosition(
+            frameIndexCoordinates: Vector2i,
+            framesSize: Vector2i,
+            window: Window
+        ) : Vector2f {
+            val globalFrameScreenPosition = getGlobalFrameScreenPosition(frameIndexCoordinates, framesSize)
+            val globalTopLeftCornerScreenPosition = getGlobalTopLeftCornerScreenPosition(window, framesSize)
+
+            return globalFrameScreenPosition - globalTopLeftCornerScreenPosition
         }
     }
 }
