@@ -8,12 +8,16 @@ import com.huskerdev.openglfx.events.GLReshapeEvent
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
 import org.joml.Vector2i
 import org.lwjgl.opengl.GL.createCapabilities
+import org.lwjgl.opengl.GL11.GL_ALPHA_TEST
 import org.lwjgl.opengl.GL11.GL_BLEND
 import org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT
 import org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT
 import org.lwjgl.opengl.GL11.GL_DEPTH_TEST
 import org.lwjgl.opengl.GL11.GL_LEQUAL
+import org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA
 import org.lwjgl.opengl.GL11.GL_PROJECTION
+import org.lwjgl.opengl.GL11.GL_SRC_ALPHA
+import org.lwjgl.opengl.GL11.glBlendFunc
 import org.lwjgl.opengl.GL11.glClear
 import org.lwjgl.opengl.GL11.glDepthFunc
 import org.lwjgl.opengl.GL11.glEnable
@@ -38,6 +42,8 @@ abstract class OpenGLCanvas {
     open fun onDraw(deltaTime: Float) { }
 
     open fun onInit() {
+        glEnable(GL_ALPHA_TEST)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_BLEND)
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_MULTISAMPLE)

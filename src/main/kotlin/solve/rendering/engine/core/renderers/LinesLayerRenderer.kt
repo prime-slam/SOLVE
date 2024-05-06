@@ -1,7 +1,7 @@
 package solve.rendering.engine.core.renderers
 
 import org.joml.Vector2f
-import org.joml.Vector3f
+import org.joml.Vector4f
 import solve.constants.ShadersLineLandmarkFragmentPath
 import solve.constants.ShadersLineLandmarkVertexPath
 import solve.rendering.engine.Window
@@ -16,6 +16,7 @@ import solve.rendering.engine.utils.times
 import solve.scene.model.Landmark
 import solve.scene.model.Layer.LineLayer
 import solve.scene.model.Scene
+import kotlin.math.min
 
 class LinesLayerRenderer(
     window: Window,
@@ -38,7 +39,7 @@ class LinesLayerRenderer(
     override fun createNewBatch(zIndex: Int): RenderBatch {
         val shaderAttributesTypes = listOf(
             ShaderAttributeType.FLOAT2,
-            ShaderAttributeType.FLOAT3
+            ShaderAttributeType.FLOAT4
         )
 
         return RenderBatch(
@@ -73,7 +74,6 @@ class LinesLayerRenderer(
         visibleLineLayersLandmarks.forEachIndexed { visibleLayerIndex, linesLayerLandmarks ->
             linesLayerLandmarks.forEach { lineLandmark ->
                 val selectionLayerIndex = visibleLayersSelectionIndices[visibleLayerIndex]
-                val batch = getAvailableBatch(null, 0)
 
                 val lineStartPosition = Vector2f(
                     lineLandmark.startCoordinate.x.toFloat(),
@@ -87,7 +87,6 @@ class LinesLayerRenderer(
                 val lineFinishShaderPosition = getFramePixelShaderPosition(selectionLayerIndex, lineFinishPosition)
                 val lineVector = lineFinishShaderPosition - lineStartShaderPosition
                 val normalVector = Vector2f(-lineVector.y, lineVector.x).normalize()
-                val linePoints = listOf(lineStartShaderPosition, lineFinishShaderPosition)
                 val highlightingProgress = lineLandmark.layerState.getLandmarkHighlightingProgress(lineLandmark.uid)
 
                 var widthMultiplier = 1f
@@ -103,26 +102,74 @@ class LinesLayerRenderer(
                     )
                 }
 
-                val lineColorVector = Vector3f(
+                val lineColorVector = Vector4f(
                     lineColor.red.toFloat(),
                     lineColor.green.toFloat(),
-                    lineColor.blue.toFloat()
+                    lineColor.blue.toFloat(),
+                    1f
                 )
+                val zeroAlphaLineColorVector = Vector4f(lineColorVector).also { it.w = 0f }
 
-                linePoints.forEachIndexed { sideIndex, linePoint ->
-                    val pointToVertexVector = Vector2f(normalVector) * linesWidth * widthMultiplier /
-                        window.camera.zoom / DefaultLocalVerticesPositionsDivider
-
-                    val upperVertexPosition = linePoint + pointToVertexVector
-                    val bottomVertexPosition = linePoint - pointToVertexVector
-                    val firstVertexPosition = if (sideIndex == 0) upperVertexPosition else bottomVertexPosition
-                    val secondVertexPosition = if (sideIndex == 0) bottomVertexPosition else upperVertexPosition
-                    batch.pushVector2f(firstVertexPosition)
-                    batch.pushVector3f(lineColorVector)
-                    batch.pushVector2f(secondVertexPosition)
-                    batch.pushVector3f(lineColorVector)
-                }
+                val opaqueLineRectWidth = linesWidth * widthMultiplier
+                drawLineRectVertices(
+                    lineStartShaderPosition,
+                    lineFinishShaderPosition,
+                    opaqueLineRectWidth,
+                    lineColorVector,
+                    lineColorVector,
+                    normalVector
+                )
+                val nonOpaqueLineRectWidth = min(
+                    opaqueLineRectWidth * NonOpaqueLineWidthFactor,
+                    NonOpaqueMaxLineWidth
+                )
+                val nonOpaqueRectNormalOffset = Vector2f(normalVector) *
+                    (opaqueLineRectWidth + nonOpaqueLineRectWidth) / 2f / window.camera.zoom /
+                    DefaultLocalVerticesPositionsDivider
+                drawLineRectVertices(
+                    lineStartShaderPosition + nonOpaqueRectNormalOffset,
+                    lineFinishShaderPosition + nonOpaqueRectNormalOffset,
+                    nonOpaqueLineRectWidth,
+                    lineColorVector,
+                    zeroAlphaLineColorVector,
+                    normalVector
+                )
+                drawLineRectVertices(
+                    lineStartShaderPosition - nonOpaqueRectNormalOffset,
+                    lineFinishShaderPosition - nonOpaqueRectNormalOffset,
+                    nonOpaqueLineRectWidth,
+                    zeroAlphaLineColorVector,
+                    lineColorVector,
+                    normalVector
+                )
             }
+        }
+    }
+
+    private fun drawLineRectVertices(
+        rectCenterStartPoint: Vector2f,
+        rectCenterFinishPoint: Vector2f,
+        rectWidth: Float,
+        bottomVerticesColor: Vector4f,
+        upperVerticesColor: Vector4f,
+        normalVector: Vector2f
+    ) {
+        val batch = getAvailableBatch(null, 0)
+        val centerLinePoints = listOf(rectCenterStartPoint, rectCenterFinishPoint)
+        centerLinePoints.forEachIndexed { sideIndex, linePoint ->
+            val pointToVertexVector = Vector2f(normalVector) * (rectWidth / 2f) / window.camera.zoom /
+                DefaultLocalVerticesPositionsDivider
+
+            val upperVertexPosition = linePoint + pointToVertexVector
+            val bottomVertexPosition = linePoint - pointToVertexVector
+            val firstVertexPosition = if (sideIndex == 0) upperVertexPosition else bottomVertexPosition
+            val secondVertexPosition = if (sideIndex == 0) bottomVertexPosition else upperVertexPosition
+            val firstVertexColor = if (sideIndex == 0) upperVerticesColor else bottomVerticesColor
+            val secondVertexColor = if (sideIndex == 0) bottomVerticesColor else upperVerticesColor
+            batch.pushVector2f(firstVertexPosition)
+            batch.pushVector4f(firstVertexColor)
+            batch.pushVector2f(secondVertexPosition)
+            batch.pushVector4f(secondVertexColor)
         }
     }
 
@@ -141,7 +188,15 @@ class LinesLayerRenderer(
     companion object {
         private const val UseCommonColorUniformName = "uUseCommonColor"
 
-        private const val DefaultLocalVerticesPositionsDivider = 800f
+        private val boundsVerticesLocalPositions = listOf(
+            Vector2f(1f, 1f),
+            Vector2f(1f, -1f),
+            Vector2f(-1f, -1f),
+            Vector2f(-1f, 1f)
+        )
+        private const val DefaultLocalVerticesPositionsDivider = 600f
         private const val HighlightingWidthMultiplier = 2.5f
+        private const val NonOpaqueLineWidthFactor = 1f
+        private const val NonOpaqueMaxLineWidth = 4f
     }
 }
