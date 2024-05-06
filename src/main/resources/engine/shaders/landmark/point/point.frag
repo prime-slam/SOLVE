@@ -10,9 +10,12 @@ out vec4 color;
 void main()
 {
     float localRadius = dot(fLocalPos, fLocalPos);
-    if (length(localRadius) > 1) {
+    if (localRadius > 1) {
         discard;
     }
 
-    color = vec4(fColor, 1.0);
+    if (localRadius < 0.6)
+        color = vec4(fColor, 1);
+    else
+        color = vec4(fColor, (1 - localRadius) * (1 - localRadius));
 }
