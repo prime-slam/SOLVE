@@ -181,19 +181,9 @@ class LinesLayerRenderer(
         return visibleLineLayers.firstOrNull()?.settings?.useCommonColor ?: false
     }
 
-    private fun getLineWidth(): Float {
-        return visibleLineLayers.firstOrNull()?.settings?.selectedWidth?.toFloat() ?: return 1f
-    }
-
     companion object {
         private const val UseCommonColorUniformName = "uUseCommonColor"
 
-        private val boundsVerticesLocalPositions = listOf(
-            Vector2f(1f, 1f),
-            Vector2f(1f, -1f),
-            Vector2f(-1f, -1f),
-            Vector2f(-1f, 1f)
-        )
         private const val DefaultLocalVerticesPositionsDivider = 600f
         private const val HighlightingWidthMultiplier = 2.5f
         private const val NonOpaqueLineWidthFactor = 1f
