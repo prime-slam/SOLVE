@@ -32,7 +32,7 @@ class SceneController : Controller() {
     /**
      * Scene data object.
      */
-    val sceneProperty = SimpleObjectProperty(Scene(emptyList(), emptyList()))
+    val sceneProperty = SimpleObjectProperty(Scene(emptyList(), emptyList(), emptyList()))
     val scene: Scene
         get() = sceneProperty.value
 

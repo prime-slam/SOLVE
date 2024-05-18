@@ -6,6 +6,7 @@ import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import org.joml.Vector2f
 import org.joml.Vector2i
+import solve.parsers.planes.ImagePlanesParser
 import solve.rendering.engine.Window
 import solve.rendering.engine.core.input.MouseButton
 import solve.rendering.engine.core.input.MouseInputHandler
@@ -21,8 +22,9 @@ import solve.rendering.engine.utils.times
 import solve.rendering.engine.utils.toFloatVector
 import solve.rendering.engine.utils.toIntVector
 import solve.scene.controller.SceneController
-import solve.scene.model.Landmark
 import solve.scene.model.Layer
+import solve.scene.model.LayerState
+import solve.scene.model.Point
 import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
 import solve.scene.view.association.AssociationAdorner
@@ -198,7 +200,8 @@ class SceneCanvas : OpenGLCanvas() {
         }
 
         val interactingVisualizationFrame = lastFramesSelection[frameIndex]
-        var clickedLandmark: Landmark? = null
+        var clickedLandmarkLayerState: LayerState? = null
+        var clickedLandmarkUID = 0L
 
         interactingVisualizationFrame.layers.forEach { layer ->
             when (layer) {
@@ -215,7 +218,9 @@ class SceneCanvas : OpenGLCanvas() {
                         return@forEach
                     }
 
-                    clickedLandmark = pointLandmarks[landmarkIndex]
+                    val clickedLandmark = pointLandmarks[landmarkIndex]
+                    clickedLandmarkLayerState = clickedLandmark.layerState
+                    clickedLandmarkUID = clickedLandmark.uid
                 }
                 is Layer.LineLayer -> {
                     val lineLandmarks = layer.getLandmarks()
@@ -230,17 +235,33 @@ class SceneCanvas : OpenGLCanvas() {
                         return@forEach
                     }
 
-                    clickedLandmark = lineLandmarks[landmarkIndex]
+                    val clickedLandmark = lineLandmarks[landmarkIndex]
+                    clickedLandmarkLayerState = clickedLandmark.layerState
+                    clickedLandmarkUID = clickedLandmark.uid
                 }
-                is Layer.PlaneLayer -> {}
+                is Layer.PlanesLayer -> {
+                    val framePlaneUIDs = ImagePlanesParser.extractUIDs(layer.filePath.toString())
+                    val clickedPixelIntegerColor = ImagePlanesParser.getPixelColor(
+                        layer.filePath.toString(),
+                        Point(frameInteractionPixel.x.toShort(), frameInteractionPixel.y.toShort())
+                    )?.toLong() ?: return@forEach
+
+                    // The integer pixel color is equal to UID of the corresponding plane.
+                    if (!framePlaneUIDs.contains(clickedPixelIntegerColor))
+                        return@forEach
+
+                    clickedLandmarkLayerState = layer.layerState
+                    clickedLandmarkUID = clickedPixelIntegerColor
+                }
             }
         }
 
-        val selectedLandmark = clickedLandmark ?: return
-        if (selectedLandmark.layerState.selectedLandmarksUIDs.contains(selectedLandmark.uid)) {
-            selectedLandmark.layerState.deselectLandmark(selectedLandmark.uid)
+        val selectedLandmarkLayerState = clickedLandmarkLayerState ?: return
+
+        if (selectedLandmarkLayerState.selectedLandmarksUIDs.contains(clickedLandmarkUID)) {
+            selectedLandmarkLayerState.deselectLandmark(clickedLandmarkUID)
         } else {
-            selectedLandmark.layerState.selectLandmark(selectedLandmark.uid)
+            selectedLandmarkLayerState.selectLandmark(clickedLandmarkUID)
         }
     }
 
@@ -267,7 +288,7 @@ class SceneCanvas : OpenGLCanvas() {
         val addingRenderer = when (layer) {
             is Layer.PointLayer -> PointsLayerRenderer(window) { sceneController?.scene }
             is Layer.LineLayer -> LinesLayerRenderer(window) { sceneController?.scene }
-            is Layer.PlaneLayer -> PlanesLayerRenderer(window) { sceneController?.scene }
+            is Layer.PlanesLayer -> PlanesLayerRenderer(window) { sceneController?.scene }
         }
         addingRenderer.setNewSceneFrames(scene.frames, framesSize.toFloatVector())
         engineScene?.addLandmarkRenderer(addingRenderer, layer)

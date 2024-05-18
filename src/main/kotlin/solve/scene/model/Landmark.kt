@@ -25,7 +25,6 @@ sealed class Landmark(val uid: Long, open val layerSettings: LayerSettings, val 
     class Plane(
         uid: Long,
         override val layerSettings: LayerSettings.PlaneLayerSettings,
-        layerState: LayerState,
-        val points: List<Point>
+        layerState: LayerState
     ) : Landmark(uid, layerSettings, layerState)
 }

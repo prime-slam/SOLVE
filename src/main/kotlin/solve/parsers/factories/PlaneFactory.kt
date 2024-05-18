@@ -14,7 +14,6 @@ object PlaneFactory : LandmarkFactory<StoragePlane, ScenePlane, PlaneLayerSettin
     ): ScenePlane = ScenePlane(
         storageFormatLandmark.uid,
         containingLayerSettings,
-        containingLayerState,
-        storageFormatLandmark.points
+        containingLayerState
     )
 }

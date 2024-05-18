@@ -1,15 +1,20 @@
 package solve.rendering.engine.core.input
 
+import javafx.scene.robot.Robot
 import org.joml.Vector2i
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.pointToSegmentDistance
 import solve.rendering.engine.utils.toFloatVector
 import solve.rendering.engine.utils.toVector2i
 import solve.scene.model.Landmark
+import java.awt.Color
+import java.awt.MouseInfo
 
 object MouseInputHandler {
     private const val LineHandledDistanceMultiplier = 4f
     private const val PointHandledDistanceMultiplier = 1.5f
+
+    private const val ColorSegmentMaxValue = 255
 
     fun indexOfClickedLineLandmark(
         lineLandmarks: List<Landmark.Line>,
@@ -56,5 +61,18 @@ object MouseInputHandler {
         }
 
         return minKeypointDistanceIndex
+    }
+
+    fun getClickedPixelColor() : Color {
+        val pointerLocation = MouseInfo.getPointerInfo().location
+        val robot = Robot()
+
+        val javaFXColor = robot.getPixelColor(pointerLocation.x.toDouble(), pointerLocation.y.toDouble())
+
+        return Color(
+            (javaFXColor.red * ColorSegmentMaxValue).toInt(),
+            (javaFXColor.green * ColorSegmentMaxValue).toInt(),
+            (javaFXColor.blue * ColorSegmentMaxValue).toInt()
+        )
     }
 }
