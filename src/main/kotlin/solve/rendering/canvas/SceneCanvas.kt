@@ -247,8 +247,9 @@ class SceneCanvas : OpenGLCanvas() {
                     )?.toLong() ?: return@forEach
 
                     // The integer pixel color is equal to UID of the corresponding plane.
-                    if (!framePlaneUIDs.contains(clickedPixelIntegerColor))
+                    if (!framePlaneUIDs.contains(clickedPixelIntegerColor)) {
                         return@forEach
+                    }
 
                     clickedLandmarkLayerState = layer.layerState
                     clickedLandmarkUID = clickedPixelIntegerColor
