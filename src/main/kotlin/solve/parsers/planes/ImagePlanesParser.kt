@@ -62,7 +62,7 @@ object ImagePlanesParser : Parser<Plane> {
         return uids.toList()
     }
 
-    fun getPixelColor(filePath: String, pixelPosition: Point) : Int? {
+    fun getPixelColor(filePath: String, pixelPosition: Point): Int? {
         val bufferedImage = loadBufferedImage(filePath) ?: return null
 
         return bufferedImage.getPixelColor(pixelPosition)
@@ -99,7 +99,7 @@ object ImagePlanesParser : Parser<Plane> {
         }
     }
 
-    private fun BufferedImage.getPixelColor(pixelPosition: Point) : Int? {
+    private fun BufferedImage.getPixelColor(pixelPosition: Point): Int? {
         val imageByteDataArray = getImageByteDataArray(this)
         val colorSegmentsType: ColorSegmentsType =
             ColorSegmentsType.getColorSegmentsType(colorModel.numComponents) ?: return null

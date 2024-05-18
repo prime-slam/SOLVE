@@ -2,7 +2,6 @@ package solve.scene
 
 import javafx.beans.property.SimpleObjectProperty
 import solve.parsers.factories.LineFactory
-import solve.parsers.factories.PlaneFactory
 import solve.parsers.factories.PointFactory
 import solve.parsers.lines.CSVLinesParser
 import solve.parsers.points.CSVPointsParser
@@ -12,7 +11,6 @@ import solve.project.model.ProjectFrame
 import solve.project.model.ProjectLayer
 import solve.scene.controller.SceneController
 import solve.scene.model.ColorManager
-import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.LayerSettings
 import solve.scene.model.LayerState

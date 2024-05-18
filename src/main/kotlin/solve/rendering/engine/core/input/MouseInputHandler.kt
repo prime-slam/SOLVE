@@ -63,7 +63,7 @@ object MouseInputHandler {
         return minKeypointDistanceIndex
     }
 
-    fun getClickedPixelColor() : Color {
+    fun getClickedPixelColor(): Color {
         val pointerLocation = MouseInfo.getPointerInfo().location
         val robot = Robot()
 
