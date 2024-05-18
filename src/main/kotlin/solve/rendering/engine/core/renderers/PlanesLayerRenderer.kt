@@ -13,16 +13,20 @@ import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.shader.ShaderProgram
 import solve.rendering.engine.shader.ShaderType
 import solve.rendering.engine.utils.plus
-import solve.scene.model.Layer.PlaneLayer
+import solve.scene.model.Layer.PlanesLayer
+import solve.scene.model.LayerState
 import solve.scene.model.Scene
 
 class PlanesLayerRenderer(
     window: Window,
     getScene: () -> Scene?
 ) : LandmarkLayerRenderer(window, getScene) {
-    private var visiblePlaneLayers = emptyList<PlaneLayer>()
-    private var visiblePlaneLayersToTexturesMap = mutableMapOf<PlaneLayer, Texture2D>()
+    private var visiblePlanesLayers = emptyList<PlanesLayer>()
+    private var visiblePlanesLayersToTexturesMap = mutableMapOf<PlanesLayer, Texture2D>()
     private var visiblePlaneLayersTextures = listOf<Texture2D>()
+
+    private val planeLayersState: LayerState?
+        get() = layers.filterIsInstance<PlanesLayer>().firstOrNull()?.layerState
 
     override val maxBatchSize = 1000
 
@@ -55,43 +59,61 @@ class PlanesLayerRenderer(
     override fun uploadUniforms(shaderProgram: ShaderProgram) {
         shaderProgram.uploadMatrix4f(ProjectionUniformName, window.calculateProjectionMatrix())
         shaderProgram.uploadIntArray(TexturesUniformName, texturesIndices)
+
+        val layersState = planeLayersState
+        var interactingPlanesNumber = 0
+        if (layersState != null) {
+            val interactingPlanesUIDs = layersState.selectedLandmarksUIDs.union(
+                layersState.hoveredLandmarkUIDs
+            ).distinct()
+            shaderProgram.uploadIntArray(
+                InteractingPlanesUIDsUniformName,
+                interactingPlanesUIDs.map { it.toInt() }.toIntArray()
+            )
+            val planesOpacity = interactingPlanesUIDs.map {
+                1f - layersState.getLandmarkHighlightingProgress(it)
+            }.toFloatArray()
+            shaderProgram.uploadFloatArray(InteractingPlanesOpacityUniformName, planesOpacity)
+            interactingPlanesNumber = interactingPlanesUIDs.count()
+        }
+        shaderProgram.uploadInt(InteractingPlanesNumberUniformName, interactingPlanesNumber)
     }
 
     override fun delete() {
-        visiblePlaneLayersToTexturesMap.values.forEach { it.delete() }
-        visiblePlaneLayersToTexturesMap.clear()
+        visiblePlanesLayersToTexturesMap.values.forEach { it.delete() }
+        visiblePlanesLayersToTexturesMap.clear()
         super.delete()
     }
 
     override fun beforeRender() {
         super.beforeRender()
-        visiblePlaneLayers = visibleLayers.filterIsInstance<PlaneLayer>()
+        visiblePlanesLayers = visibleLayers.filterIsInstance<PlanesLayer>()
 
-        val hiddenVisiblePlaneLayers = hiddenVisibleLayersInCurrentFrame.filterIsInstance<PlaneLayer>()
-        val newVisiblePlaneLayers = newVisibleLayersInCurrentFrame.filterIsInstance<PlaneLayer>()
+        val hiddenVisiblePlanesLayers = hiddenVisibleLayersInCurrentFrame.filterIsInstance<PlanesLayer>()
+        val newVisiblePlanesLayers = newVisibleLayersInCurrentFrame.filterIsInstance<PlanesLayer>()
 
-        hiddenVisiblePlaneLayers.forEach {
-            visiblePlaneLayersToTexturesMap[it]?.delete()
-            visiblePlaneLayersToTexturesMap.remove(it)
+        hiddenVisiblePlanesLayers.forEach {
+            visiblePlanesLayersToTexturesMap[it]?.delete()
+            visiblePlanesLayersToTexturesMap.remove(it)
         }
-        newVisiblePlaneLayers.forEach {
-            visiblePlaneLayersToTexturesMap[it] = Texture2D(it.filePath.toString(), TextureFilterType.PixelPerfect)
+        newVisiblePlanesLayers.forEach {
+            visiblePlanesLayersToTexturesMap[it] = Texture2D(it.filePath.toString(), TextureFilterType.PixelPerfect)
         }
-        visiblePlaneLayersTextures = visiblePlaneLayersToTexturesMap.keys.sortedBy {
-            visiblePlaneLayers.indexOf(it)
-        }.mapNotNull { visiblePlaneLayersToTexturesMap[it] }
+        visiblePlaneLayersTextures = visiblePlanesLayersToTexturesMap.keys.sortedBy {
+            visiblePlanesLayers.indexOf(it)
+        }.mapNotNull { visiblePlanesLayersToTexturesMap[it] }
 
-        val firstPlaneLayer = layers.filterIsInstance<PlaneLayer>().firstOrNull() ?: return
-        renderPriority = getScene()?.indexOf(firstPlaneLayer.settings) ?: return
+        val firstPlanesLayer = layers.filterIsInstance<PlanesLayer>().firstOrNull() ?: return
+        renderPriority = getScene()?.indexOf(firstPlanesLayer.settings) ?: return
     }
 
     override fun updateBatchesData() {
-        val firstLayer = visiblePlaneLayers.firstOrNull() ?: return
+        val firstLayer = visiblePlanesLayers.firstOrNull() ?: return
         if (!firstLayer.settings.enabled) {
             return
         }
 
-        visiblePlaneLayers.forEachIndexed { visibleLayerIndex, _ ->
+        visiblePlanesLayers.forEachIndexed { visibleLayerIndex, _ ->
             val selectionLayerIndex = visibleLayersSelectionIndices[visibleLayerIndex]
             val planeLayerTexture = visiblePlaneLayersTextures[visibleLayerIndex]
             val batch = getAvailableBatch(planeLayerTexture, 0)
@@ -108,6 +130,9 @@ class PlanesLayerRenderer(
     }
     companion object {
         private const val TexturesUniformName = "uTextures"
+        private const val InteractingPlanesUIDsUniformName = "uInteractingPlanesUIDs"
+        private const val InteractingPlanesOpacityUniformName = "uInteractingPlanesOpacity"
+        private const val InteractingPlanesNumberUniformName = "uInteractingPlanesNumber"
 
         private val texturesIndices = intArrayOf(0, 1, 2, 3, 4, 5, 6, 7)
 

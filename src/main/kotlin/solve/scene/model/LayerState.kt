@@ -35,8 +35,9 @@ class LayerState(val name: String) {
             return
         }
 
-        _selectedLandmarksUIDs.remove(landmarkUID)
-        unhighlightLandmark(landmarkUID)
+        unhighlightLandmark(landmarkUID, onFinished = {
+            _selectedLandmarksUIDs.remove(landmarkUID)
+        })
     }
 
     fun hoverLandmark(landmarkUID: Long) {
@@ -50,30 +51,40 @@ class LayerState(val name: String) {
             return
         }
 
-        _hoveredLandmarksUIDs.remove(landmarkUID)
-        unhighlightLandmark(landmarkUID)
+        unhighlightLandmark(landmarkUID, onFinished = {
+            _hoveredLandmarksUIDs.remove(landmarkUID)
+            println("unhovered")
+        })
     }
 
     fun getLandmarkHighlightingProgress(landmarkUID: Long): Float {
         return landmarksHighlightingProgress[landmarkUID]?.highlightingProperty?.value ?: 0f
     }
 
-    private fun highlightLandmark(landmarkUID: Long) {
+    private fun highlightLandmark(landmarkUID: Long, onFinished: () -> Unit = { }) {
         if (!landmarksHighlightingProgress.contains(landmarkUID)) {
             val highlightingProperty = floatProperty(0f)
             landmarksHighlightingProgress[landmarkUID] =
                 LandmarkHighlightingData(highlightingProperty, PropertyTranslator(highlightingProperty))
         }
 
-        landmarksHighlightingProgress[landmarkUID]?.propertyTranslator?.translateTo(1f, HighlightDurationMillis)
+        landmarksHighlightingProgress[landmarkUID]?.propertyTranslator?.translateTo(
+            1f,
+            HighlightDurationMillis,
+            onFinished
+        )
     }
 
-    private fun unhighlightLandmark(landmarkUID: Long) {
+    private fun unhighlightLandmark(landmarkUID: Long, onFinished: () -> Unit = { }) {
         if (!landmarksHighlightingProgress.contains(landmarkUID)) {
             return
         }
 
-        landmarksHighlightingProgress[landmarkUID]?.propertyTranslator?.translateTo(0f, HighlightDurationMillis)
+        landmarksHighlightingProgress[landmarkUID]?.propertyTranslator?.translateTo(
+            0f,
+            HighlightDurationMillis,
+            onFinished
+        )
     }
 
     companion object {

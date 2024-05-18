@@ -28,10 +28,50 @@ object ImagePlanesParser : Parser<Plane> {
     const val ColorBitsNumber = 8
     const val BackgroundColor = 0
 
+    override fun parse(filePath: String): List<Plane> {
+        val bufferedImage = loadBufferedImage(filePath) ?: return emptyList()
+
+        val planePoints = mutableMapOf<Long, MutableList<Point>>()
+
+        val imageWidth = bufferedImage.width
+
+        bufferedImage.forEachPixelColor { i, color ->
+            val x = i % imageWidth
+            val y = i / imageWidth
+
+            if (color != BackgroundColor) {
+                planePoints.getOrPut(color.toLong()) { mutableListOf() }.add(Point(x.toShort(), y.toShort()))
+            }
+        }
+
+        return planePoints.keys.map { Plane(it) }
+    }
+
+    override fun extractUIDs(filePath: String): List<Long> {
+        val bufferedImage = loadBufferedImage(filePath) ?: return emptyList()
+
+        val uids = mutableSetOf<Long>()
+
+        bufferedImage.forEachPixelColor { _, color ->
+            if (color != BackgroundColor) {
+                val uid = color.toLong()
+                uids.add(uid)
+            }
+        }
+
+        return uids.toList()
+    }
+
+    fun getPixelColor(filePath: String, pixelPosition: Point) : Int? {
+        val bufferedImage = loadBufferedImage(filePath) ?: return null
+
+        return bufferedImage.getPixelColor(pixelPosition)
+    }
+
     private fun convertSeparateToWholeRGB(r: UByte, g: UByte, b: UByte): Int =
         (r.toInt() shl ColorBitsNumber * 2) + (g.toInt() shl ColorBitsNumber) + b.toInt()
 
-    private fun getPlanePixelColor(
+    private fun getImageByteDataPixelColor(
         pixelIndex: Int,
         imageByteDataArray: ByteArray,
         segmentsType: ColorSegmentsType
@@ -54,42 +94,18 @@ object ImagePlanesParser : Parser<Plane> {
         val colorComponentsNumber = colorSegmentsType.colorComponentsNumber
 
         for (i in imageByteDataArray.indices step colorComponentsNumber) {
-            val pixelColor = getPlanePixelColor(i, imageByteDataArray, colorSegmentsType)
+            val pixelColor = getImageByteDataPixelColor(i, imageByteDataArray, colorSegmentsType)
             action(i / colorComponentsNumber, pixelColor)
         }
     }
 
-    override fun parse(filePath: String): List<Plane> {
-        val bufferedImage = loadBufferedImage(filePath) ?: return emptyList()
+    private fun BufferedImage.getPixelColor(pixelPosition: Point) : Int? {
+        val imageByteDataArray = getImageByteDataArray(this)
+        val colorSegmentsType: ColorSegmentsType =
+            ColorSegmentsType.getColorSegmentsType(colorModel.numComponents) ?: return null
+        val colorComponentsNumber = colorSegmentsType.colorComponentsNumber
+        val pixelFirstComponentIndex = (pixelPosition.y * this.width + pixelPosition.x) * colorComponentsNumber
 
-        val planePoints = mutableMapOf<Long, MutableList<Point>>()
-
-        val imageWidth = bufferedImage.width
-
-        bufferedImage.forEachPixelColor { i, color ->
-            val x = i % imageWidth
-            val y = i / imageWidth
-
-            if (color != BackgroundColor) {
-                planePoints.getOrPut(color.toLong()) { mutableListOf() }.add(Point(x.toShort(), y.toShort()))
-            }
-        }
-
-        return planePoints.keys.map { Plane(it, planePoints[it] ?: emptyList()) }
-    }
-
-    override fun extractUIDs(filePath: String): List<Long> {
-        val bufferedImage = loadBufferedImage(filePath) ?: return emptyList()
-
-        val uids = mutableSetOf<Long>()
-
-        bufferedImage.forEachPixelColor { _, color ->
-            if (color != BackgroundColor) {
-                val uid = color.toLong()
-                uids.add(uid)
-            }
-        }
-
-        return uids.toList()
+        return getImageByteDataPixelColor(pixelFirstComponentIndex, imageByteDataArray, colorSegmentsType)
     }
 }

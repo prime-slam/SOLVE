@@ -26,10 +26,11 @@ sealed class Layer(
         override val getLandmarks: () -> List<Landmark.Line>
     ) : Layer(name, settings, getLandmarks)
 
-    class PlaneLayer(
+    // A PlanesLayer contains all frame frames.
+    class PlanesLayer(
         name: String,
         override val settings: LayerSettings.PlaneLayerSettings,
         val filePath: Path,
-        override val getLandmarks: () -> List<Landmark.Plane> = { emptyList() }
-    ) : Layer(name, settings, getLandmarks)
+        val layerState: LayerState
+    ) : Layer(name, settings, { emptyList() })
 }

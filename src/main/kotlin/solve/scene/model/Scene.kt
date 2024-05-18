@@ -12,7 +12,8 @@ import solve.utils.structures.Size as DoubleSize
  */
 class Scene(
     val frames: List<VisualizationFrame>,
-    val layerSettings: List<LayerSettings>
+    val layerSettings: List<LayerSettings>,
+    val layerStates: List<LayerState>
 ) : OrderManager<LayerSettings> {
     /**
      * Size of images in the project. Assumes that all images have the same size, but there is no guarantee.

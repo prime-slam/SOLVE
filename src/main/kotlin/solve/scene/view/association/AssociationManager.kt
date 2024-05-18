@@ -28,7 +28,6 @@ class AssociationManager {
         if (associatingKeypointLayerIndex !in firstFrameKeypointLayers.indices ||
             associatingKeypointLayerIndex !in secondFramePointLayers.indices
         ) {
-            println("There are no point layer with a given index to associate!")
             return
         }
 
