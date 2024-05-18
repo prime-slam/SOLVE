@@ -42,7 +42,7 @@ internal class ImagePlanesParserTests {
 
         val imageDataFile = createFileWithImageData(onePixelImage, ImageFormat.PNG, tempFolder)
 
-        val onePixelPlane = Plane(onePixelColor.toLong(), listOf(Point(0, 0)))
+        val onePixelPlane = Plane(onePixelColor.toLong())
 
         assertEquals(listOf(onePixelPlane), ImagePlanesParser.parse(imageDataFile.path))
     }
@@ -153,7 +153,7 @@ internal class ImagePlanesParserTests {
             val maskImage = SwingFXUtils.fromFXImage(writableImage, null)
             val planes = planePoints.keys.map {
                     uid ->
-                Plane(uid, planePoints[uid] ?: emptyList())
+                Plane(uid)
             }
 
             return PlaneMaskData(maskImage, planes)

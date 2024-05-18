@@ -24,7 +24,7 @@ internal class SceneTests {
 
     @Test
     fun `Changes layer settings if index is correct`() {
-        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2))
+        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2), emptyList())
         assertEquals(0, orderManager.indexOf(pointLayerSettings1))
         assertEquals(1, orderManager.indexOf(pointLayerSettings2))
         orderManager.changeLayerIndex(pointLayerSettings1, 1)
@@ -37,14 +37,14 @@ internal class SceneTests {
 
     @Test
     fun `Changes layer settings if index is not correct`() {
-        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2))
+        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2), emptyList())
         assertThrows<IllegalStateException> { orderManager.changeLayerIndex(pointLayerSettings1, 10) }
         assertThrows<IllegalStateException> { orderManager.changeLayerIndex(pointLayerSettings1, -1) }
     }
 
     @Test
     fun `Runs order changed callback`() {
-        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2))
+        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2), emptyList())
         var callbackRunCounter = 0
         val callback: () -> Unit = { callbackRunCounter++ }
         orderManager.addOrderChangedListener(callback)
@@ -56,7 +56,7 @@ internal class SceneTests {
 
     @Test
     fun `Remove order changed callback`() {
-        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2))
+        val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2), emptyList())
         var callbackRunCounter = 0
         val callback: () -> Unit = { callbackRunCounter++ }
         orderManager.addOrderChangedListener(callback)
@@ -69,7 +69,8 @@ internal class SceneTests {
     fun `Canvas layers is always above than non-canvas layers`() {
         val orderManager = Scene(
             listOf(),
-            listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2)
+            listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2),
+            emptyList()
         )
         assertEquals(0, orderManager.indexOf(planeLayerSettings1))
         assertEquals(1, orderManager.indexOf(planeLayerSettings2))
@@ -81,7 +82,8 @@ internal class SceneTests {
     fun `Can't swap canvas and non-canvas layers`() {
         val orderManager = Scene(
             listOf(),
-            listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2)
+            listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2),
+            emptyList()
         )
         orderManager.changeLayerIndex(pointLayerSettings1, 1)
         assertEquals(3, orderManager.indexOf(pointLayerSettings1))

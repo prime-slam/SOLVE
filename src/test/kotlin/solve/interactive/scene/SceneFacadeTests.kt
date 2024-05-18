@@ -15,7 +15,7 @@ import solve.scene.model.Scene
 internal class SceneFacadeTests : SceneTestsBase() {
     @BeforeEach
     fun setUp() {
-        controller.setScene(Scene(emptyList(), emptyList()), false)
+        controller.setScene(Scene(emptyList(), emptyList(), emptyList()), false)
     }
 
     @Test
