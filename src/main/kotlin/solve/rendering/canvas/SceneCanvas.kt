@@ -128,16 +128,17 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     fun handleClick(screenPoint: Vector2i, mouseButton: MouseButton) {
+        // Coordinates in the frame coordinate system.
         val frameCoordinates = determineFrameCoordinates(screenPoint)
         val frameIndexCoordinates = frameCoordinates.toIntVector()
         val frameIndex = frameIndexCoordinates.y * columnsNumber + frameIndexCoordinates.x
-        // Frame local coordinate including spacing area.
-        var frameLocalCoordinate = Vector2f(frameCoordinates.x % 1, frameCoordinates.y % 1)
-        // Frame local coordinate excluding spacing area.
-        frameLocalCoordinate = frameToShaderVector(frameLocalCoordinate, framesSize)
-        frameLocalCoordinate.x /= framesRatio
+        // Frame local coordinates (within a frame) including spacing area.
+        var frameLocalCoordinates = Vector2f(frameCoordinates.x % 1, frameCoordinates.y % 1)
+        // Frame local coordinates excluding spacing area.
+        frameLocalCoordinates = frameToShaderVector(frameLocalCoordinates, framesSize)
+        frameLocalCoordinates.x /= framesRatio
         val framePixelCoordinate =
-            Vector2f(frameLocalCoordinate.x * framesSize.x, frameLocalCoordinate.y * framesSize.y).toIntVector()
+            Vector2f(frameLocalCoordinates.x * framesSize.x, frameLocalCoordinates.y * framesSize.y).toIntVector()
 
         if (mouseButton == landmarkInteractionMouseButton) {
             if (isFirstAssociatingFrameChosen) {

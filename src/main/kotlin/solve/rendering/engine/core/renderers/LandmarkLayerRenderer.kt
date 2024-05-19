@@ -96,4 +96,36 @@ abstract class LandmarkLayerRenderer(
         this._visibleLayers = newVisibleLayers
         _visibleLayersSelectionIndices = newVisibleLayersSelectionIndices
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is LandmarkLayerRenderer) return false
+
+        if (getScene != other.getScene) return false
+        if (framesRatio != other.framesRatio) return false
+        if (_visibleLayers != other._visibleLayers) return false
+        if (_previousVisibleLayers != other._previousVisibleLayers) return false
+        if (visibleLayersToLandmarksMap != other.visibleLayersToLandmarksMap) return false
+        if (_visibleLayersLandmarks != other._visibleLayersLandmarks) return false
+        if (_visibleLayersSelectionIndices != other._visibleLayersSelectionIndices) return false
+        if (_hiddenVisibleLayersInCurrentFrame != other._hiddenVisibleLayersInCurrentFrame) return false
+        if (_newVisibleLayersInCurrentFrame != other._newVisibleLayersInCurrentFrame) return false
+        if (layers != other.layers) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = getScene.hashCode()
+        result = 31 * result + framesRatio.hashCode()
+        result = 31 * result + _visibleLayers.hashCode()
+        result = 31 * result + _previousVisibleLayers.hashCode()
+        result = 31 * result + visibleLayersToLandmarksMap.hashCode()
+        result = 31 * result + _visibleLayersLandmarks.hashCode()
+        result = 31 * result + _visibleLayersSelectionIndices.hashCode()
+        result = 31 * result + _hiddenVisibleLayersInCurrentFrame.hashCode()
+        result = 31 * result + _newVisibleLayersInCurrentFrame.hashCode()
+        result = 31 * result + layers.hashCode()
+        return result
+    }
 }
