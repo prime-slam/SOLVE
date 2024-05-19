@@ -9,9 +9,9 @@ out vec4 color;
 void main()
 {
     vec4 premulitpliedColor = fColor;
-    float alpha = fColor.w;
-    premulitpliedColor.x *= alpha;
-    premulitpliedColor.y *= alpha;
-    premulitpliedColor.z *= alpha;
+    float alphaSquare = fColor.w * fColor.w;
+    premulitpliedColor.x *= alphaSquare;
+    premulitpliedColor.y *= alphaSquare;
+    premulitpliedColor.z *= alphaSquare;
     color = premulitpliedColor;
 }

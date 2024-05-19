@@ -184,7 +184,7 @@ class LinesLayerRenderer(
     companion object {
         private const val UseCommonColorUniformName = "uUseCommonColor"
 
-        private const val DefaultLocalVerticesPositionsDivider = 600f
+        private const val DefaultLocalVerticesPositionsDivider = 400f
         private const val HighlightingWidthMultiplier = 2.5f
         private const val NonOpaqueLineWidthFactor = 1f
         private const val NonOpaqueMaxLineWidth = 4f
