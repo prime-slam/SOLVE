@@ -1,0 +1,12 @@
+[1mdiff --git a/src/main/kotlin/solve/rendering/engine/scene/Scene.kt b/src/main/kotlin/solve/rendering/engine/scene/Scene.kt[m
+[1mindex 883c089..ce5a0a0 100644[m
+[1m--- a/src/main/kotlin/solve/rendering/engine/scene/Scene.kt[m
+[1m+++ b/src/main/kotlin/solve/rendering/engine/scene/Scene.kt[m
+[36m@@ -27,6 +27,7 @@[m [mclass Scene([m
+     val landmarkLayerRendererLayers: Map<LandmarkLayerRenderer, Layer>[m
+         get() = _landmarkRenderersLayers[m
+ [m
+[32m+[m[32m    @Volatile[m
+     var isFramesRendererInitializing = false[m
+ [m
+     fun setNewScene(scene: Scene) {[m
