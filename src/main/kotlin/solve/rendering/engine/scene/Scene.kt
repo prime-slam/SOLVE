@@ -27,6 +27,7 @@ class Scene(
     val landmarkLayerRendererLayers: Map<LandmarkLayerRenderer, Layer>
         get() = _landmarkRenderersLayers
 
+    @Volatile
     var isFramesRendererInitializing = false
 
     fun setNewScene(scene: Scene) {
