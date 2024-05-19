@@ -77,7 +77,6 @@ abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
             rebufferBatches()
         }
 
-        batches.sort()
         batches.sorted().forEach { batch ->
             batch.bind()
             glDrawElements(batch.primitiveType.openGLPrimitive, batch.getVerticesNumber(), GL_UNSIGNED_INT, 0)

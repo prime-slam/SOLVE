@@ -58,15 +58,7 @@ open class RenderBatch(
         textures.clear()
     }
 
-    override fun compareTo(other: RenderBatch): Int {
-        return if (zIndex < other.zIndex) {
-            -1
-        } else if (zIndex > other.zIndex) {
-            1
-        } else {
-            0
-        }
-    }
+    override fun compareTo(other: RenderBatch): Int = batchComparator.compare(this, other)
 
     fun bind() {
         glBindVertexArray(vaoID)
@@ -199,5 +191,7 @@ open class RenderBatch(
 
     companion object {
         private const val MaxTexturesNumber = 7
+
+        private val batchComparator = Comparator.comparingInt<RenderBatch> { it.zIndex }
     }
 }
