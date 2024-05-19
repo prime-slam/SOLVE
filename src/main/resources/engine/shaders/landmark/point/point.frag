@@ -17,5 +17,10 @@ void main()
     if (localRadius < 0.6)
         color = vec4(fColor, 1);
     else
-        color = vec4(fColor, (1 - localRadius) * (1 - localRadius));
+        color = vec4(fColor, pow((1 - localRadius), 1.8));
+
+    float alpha = color.w;
+    color.x *= alpha;
+    color.y *= alpha;
+    color.z *= alpha;
 }
