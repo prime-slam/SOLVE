@@ -1,7 +1,6 @@
 package solve.rendering.engine.core.renderers
 
 import org.joml.Vector2f
-import org.joml.Vector3f
 import org.joml.Vector4f
 import solve.constants.ShadersPointAssociationFragmentPath
 import solve.constants.ShadersPointAssociationVertexPath
@@ -100,8 +99,8 @@ class PointAssociationsRenderer(
                     NonOpaqueMaxLineWidth
                 )
                 val nonOpaqueRectNormalOffset = Vector2f(normalVector) *
-                        (AssociationLineWidth + nonOpaqueLineRectWidth) / 2f / window.camera.zoom /
-                        DefaultLocalVerticesPositionsDivider
+                    (AssociationLineWidth + nonOpaqueLineRectWidth) / 2f / window.camera.zoom /
+                    DefaultLocalVerticesPositionsDivider
                 drawLineRectVertices(
                     lineStartShaderPosition + nonOpaqueRectNormalOffset,
                     lineFinishShaderPosition + nonOpaqueRectNormalOffset,
@@ -119,7 +118,6 @@ class PointAssociationsRenderer(
                     normalVector
                 )
             }
-
         }
     }
 
@@ -135,7 +133,7 @@ class PointAssociationsRenderer(
         val centerLinePoints = listOf(rectCenterStartPoint, rectCenterFinishPoint)
         centerLinePoints.forEachIndexed { sideIndex, linePoint ->
             val pointToVertexVector = Vector2f(normalVector) * (rectWidth / 2f) / window.camera.zoom /
-                    DefaultLocalVerticesPositionsDivider
+                DefaultLocalVerticesPositionsDivider
 
             val upperVertexPosition = linePoint + pointToVertexVector
             val bottomVertexPosition = linePoint - pointToVertexVector
