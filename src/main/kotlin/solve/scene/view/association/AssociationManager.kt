@@ -22,8 +22,9 @@ class AssociationManager {
 
         if (associationConnections.any {
             it.firstFrameIndex == firstFrameIndex && it.secondFrameIndex == secondFrameIndex ||
-            it.secondFrameIndex == firstFrameIndex && it.firstFrameIndex == secondFrameIndex
-        }) {
+                it.secondFrameIndex == firstFrameIndex && it.firstFrameIndex == secondFrameIndex
+        }
+        ) {
             return
         }
 

@@ -115,8 +115,10 @@ class PlanesLayerRenderer(
 
         visiblePlanesLayers.forEachIndexed { visibleLayerIndex, _ ->
             if (visibleLayerIndex !in visibleLayersSelectionIndices.indices ||
-                visibleLayerIndex !in visiblePlaneLayersTextures.indices)
+                visibleLayerIndex !in visiblePlaneLayersTextures.indices
+            ) {
                 return
+            }
 
             val selectionLayerIndex = visibleLayersSelectionIndices[visibleLayerIndex]
             val planeLayerTexture = visiblePlaneLayersTextures[visibleLayerIndex]
