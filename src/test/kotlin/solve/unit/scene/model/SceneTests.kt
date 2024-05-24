@@ -25,11 +25,11 @@ internal class SceneTests {
     @Test
     fun `Changes layer settings if index is correct`() {
         val orderManager = Scene(listOf(), listOf(pointLayerSettings1, pointLayerSettings2), emptyList())
-        assertEquals(0, orderManager.indexOf(pointLayerSettings1))
-        assertEquals(1, orderManager.indexOf(pointLayerSettings2))
-        orderManager.changeLayerIndex(pointLayerSettings1, 1)
         assertEquals(1, orderManager.indexOf(pointLayerSettings1))
         assertEquals(0, orderManager.indexOf(pointLayerSettings2))
+        orderManager.changeLayerIndex(pointLayerSettings1, 0)
+        assertEquals(0, orderManager.indexOf(pointLayerSettings1))
+        assertEquals(1, orderManager.indexOf(pointLayerSettings2))
         orderManager.changeLayerIndex(pointLayerSettings1, 1)
         assertEquals(1, orderManager.indexOf(pointLayerSettings1))
         assertEquals(0, orderManager.indexOf(pointLayerSettings2))
@@ -72,10 +72,10 @@ internal class SceneTests {
             listOf(pointLayerSettings1, pointLayerSettings2, planeLayerSettings1, planeLayerSettings2),
             emptyList()
         )
-        assertEquals(0, orderManager.indexOf(planeLayerSettings1))
-        assertEquals(1, orderManager.indexOf(planeLayerSettings2))
-        assertEquals(2, orderManager.indexOf(pointLayerSettings1))
-        assertEquals(3, orderManager.indexOf(pointLayerSettings2))
+        assertEquals(1, orderManager.indexOf(planeLayerSettings1))
+        assertEquals(0, orderManager.indexOf(planeLayerSettings2))
+        assertEquals(3, orderManager.indexOf(pointLayerSettings1))
+        assertEquals(2, orderManager.indexOf(pointLayerSettings2))
     }
 
     @Test
