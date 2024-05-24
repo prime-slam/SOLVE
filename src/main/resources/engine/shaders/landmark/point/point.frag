@@ -19,8 +19,8 @@ void main()
     else
         color = vec4(fColor, pow((1 - localRadius), 1.8));
 
-    float alpha = color.w;
-    color.x *= alpha;
-    color.y *= alpha;
-    color.z *= alpha;
+    float alphaFactor = pow(color.w, 1.8);
+    color.x *= alphaFactor;
+    color.y *= alphaFactor;
+    color.z *= alphaFactor;
 }

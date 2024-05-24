@@ -73,7 +73,7 @@ class SceneCanvas : OpenGLCanvas() {
     private var isFirstAssociatingFrameChosen = false
     private var associationAdorner: AssociationAdorner? = null
 
-    private val contextMenu = buildContextMenu(canvas)
+    private var contextMenu = buildContextMenu(canvas)
 
     init {
         initializeCanvasEvents()
@@ -84,8 +84,9 @@ class SceneCanvas : OpenGLCanvas() {
         this.framesSize = Vector2i(scene.frameSize.width.toInt(), scene.frameSize.height.toInt())
         engineScene?.setNewScene(scene)
         isFirstFramesSelection = true
-
         needToReinitializeRenderers = true
+        contextMenu = buildContextMenu(canvas)
+        removeAssociationsAdorner()
     }
 
     fun setFramesSelection(framesSelection: List<VisualizationFrame>) {
@@ -101,6 +102,7 @@ class SceneCanvas : OpenGLCanvas() {
         associationManager.setFramesSelection(framesSelection)
         framesSelectionSize = framesSelection.count()
         lastFramesSelection = framesSelection
+        removeAssociationsAdorner()
     }
 
     fun setColumnsNumber(columnsNumber: Int) {
@@ -152,7 +154,7 @@ class SceneCanvas : OpenGLCanvas() {
             contextMenuInvokeFrameIndex = frameIndex
             val canvasScreenPosition = canvas.getScreenPosition()
             contextMenu.show(
-                canvas,
+                canvas.scene.window,
                 canvasScreenPosition.x + screenPoint.x.toDouble(),
                 canvasScreenPosition.y + screenPoint.y.toDouble()
             )
@@ -328,8 +330,11 @@ class SceneCanvas : OpenGLCanvas() {
         val contextMenu = MFXContextMenu(parent)
         contextMenu.addCopyTimestampItem()
         contextMenu.lineSeparator()
-        contextMenu.addAssociateKeypointsItem()
+        if (scene?.layers?.any { it is Layer.PointLayer } ?: false) {
+            contextMenu.addAssociateKeypointsItem()
+        }
         contextMenu.addClearAssociationsItem()
+        isFirstAssociatingFrameChosen = false
 
         return contextMenu
     }
@@ -361,11 +366,15 @@ class SceneCanvas : OpenGLCanvas() {
             return
         }
 
-        if (firstAssociatingFrameIndex != secondFrameIndex) {
+        isFirstAssociatingFrameChosen = false
+        removeAssociationsAdorner()
+
+        if (firstAssociatingFrameIndex != secondFrameIndex && secondFrameIndex in lastFramesSelection.indices) {
             associationManager.associate(firstAssociatingFrameIndex, secondFrameIndex)
         }
+    }
 
-        isFirstAssociatingFrameChosen = false
+    private fun removeAssociationsAdorner() {
         val removingAssociationAdorner = associationAdorner ?: return
         canvas.removeSafely(removingAssociationAdorner.node)
         removingAssociationAdorner.destroy()
@@ -411,7 +420,6 @@ class SceneCanvas : OpenGLCanvas() {
 
     private fun getContextMenuInvokeFrame(contextMenuInvokeFrameIndex: Int): VisualizationFrame? {
         if (contextMenuInvokeFrameIndex >= lastFramesSelection.count()) {
-            println("The index of the invoked frame is incorrect!")
             return null
         }
 

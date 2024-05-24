@@ -20,6 +20,13 @@ class AssociationManager {
             return
         }
 
+        if (associationConnections.any {
+            it.firstFrameIndex == firstFrameIndex && it.secondFrameIndex == secondFrameIndex ||
+            it.secondFrameIndex == firstFrameIndex && it.firstFrameIndex == secondFrameIndex
+        }) {
+            return
+        }
+
         val firstFrame = framesSelection[firstFrameIndex]
         val secondFrame = framesSelection[secondFrameIndex]
         val firstFrameKeypointLayers = firstFrame.layers.filterIsInstance<Layer.PointLayer>()

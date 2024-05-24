@@ -24,10 +24,6 @@ class PointAssociationsRenderer(
 ) : Renderer(window) {
     override val maxBatchSize = 1000
 
-    init {
-        renderPriority = 1
-    }
-
     override fun createShaderProgram(): ShaderProgram {
         val shaderProgram = ShaderProgram()
         shaderProgram.addShader(ShadersPointAssociationVertexPath, ShaderType.VERTEX)
