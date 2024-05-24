@@ -28,10 +28,12 @@ class Scene(
     val layers: List<Layer>
         get() = frames.firstOrNull()?.layers ?: emptyList()
 
-    private val planesLayersStorage = layerSettings.filter { it is LayerSettings.PlaneLayerSettings }.toMutableList()
+    private val planesLayersStorage = layerSettings.filter {
+        it is LayerSettings.PlaneLayerSettings
+    }.reversed().toMutableList()
     private val nonPlanesLayersStorage = layerSettings.filterNot {
         it is LayerSettings.PlaneLayerSettings
-    }.toMutableList()
+    }.reversed().toMutableList()
 
     private val changedCallbacks = mutableListOf<() -> Unit>()
 

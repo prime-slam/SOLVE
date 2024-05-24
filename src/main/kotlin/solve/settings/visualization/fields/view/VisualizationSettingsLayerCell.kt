@@ -118,7 +118,10 @@ class VisualizationSettingsLayerCell(
     ) {
         if (droppedItemInfo != null && !isAbleToDropItem(thisItemInfo.item, droppedItemInfo.item)) {
             val hintPopOver = PopOver(
-                label("Plane and non-plane layers cannot be swapped!") {
+                label(
+                    "Plane and non-plane layers cannot be " +
+                        "swapped!"
+                ) {
                     padding = Insets(0.0, 10.0, 0.0, 10.0)
                 }
             )
