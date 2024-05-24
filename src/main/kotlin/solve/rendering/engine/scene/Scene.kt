@@ -88,9 +88,8 @@ class Scene(
             return
         }
 
+        _landmarkRenderers.sorted().forEach { it.render() }
         pointAssociationsRenderer.render()
-        _landmarkRenderers.sort()
-        _landmarkRenderers.forEach { it.render() }
     }
 
     companion object {

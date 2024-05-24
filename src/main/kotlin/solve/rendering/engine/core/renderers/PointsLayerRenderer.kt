@@ -118,7 +118,7 @@ class PointsLayerRenderer(
     }
 
     private fun getPointsRadius(): Float {
-        return visiblePointLayers.firstOrNull()?.settings?.selectedRadius?.toFloat() ?: return 1f
+        return PointsRadiusOffset + (visiblePointLayers.firstOrNull()?.settings?.selectedRadius?.toFloat() ?: 1f)
     }
 
     companion object {
@@ -133,5 +133,6 @@ class PointsLayerRenderer(
 
         private const val DefaultLocalVerticesPositionsDivider = 500f
         private const val HighlightingRadiusMultiplier = 2f
+        private const val PointsRadiusOffset = 2f
     }
 }
