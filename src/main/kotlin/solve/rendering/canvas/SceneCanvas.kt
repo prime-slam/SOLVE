@@ -91,8 +91,10 @@ class SceneCanvas : OpenGLCanvas() {
 
     fun setFramesSelection(framesSelection: List<VisualizationFrame>) {
         if (framesSelection.isNotEmpty() && isFirstFramesSelection) {
-            engineScene?.initializeFramesRenderer()
             isFirstFramesSelection = false
+            if (scene?.layers?.any { it is Layer.PlanesLayer } ?: true) {
+                engineScene?.initializeFramesRenderer()
+            }
         }
 
         recalculateCameraCornersPositions()
@@ -427,7 +429,7 @@ class SceneCanvas : OpenGLCanvas() {
     }
 
     companion object {
-        const val IdentityFramesSizeScale = 1.6f
+        const val IdentityFramesSizeScale = 1.605f
 
         private val landmarkInteractionMouseButton = MouseButton.Left
         private val contextMenuMouseButton = MouseButton.Right
