@@ -10,12 +10,6 @@ This tool will provide following features:
 * Mapping of the same landmarks between different images based on SLAM data association
 * Editing and fine-tuning landmarks positions and association
 
-## Important!
-
-At the moment, the visualization of landmarks and frames is being converted to OpenGL rendering, and most of the functionality of the application **in the master branch** of the repository **does not work**!
-
-If you want to take advantage of **all the features of the application**, use this repository branch: [https://github.com/prime-slam/SOLVE/tree/old-scene-realization](https://github.com/prime-slam/SOLVE/tree/old-scene-realization).
-
 ## Get started
 
 Follow instructions in the [User Guide](https://github.com/prime-slam/SOLVE/wiki/How-to-get-started)
