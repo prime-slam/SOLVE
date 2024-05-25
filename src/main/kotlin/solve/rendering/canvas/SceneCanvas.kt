@@ -209,39 +209,50 @@ class SceneCanvas : OpenGLCanvas() {
         var clickedLandmarkLayerState: LayerState? = null
         var clickedLandmarkUID = 0L
 
-        interactingVisualizationFrame.layers.forEach { layer ->
-            if (!layer.settings.enabled) {
-                return@forEach
-            }
+        run clickHandler@{
+            interactingVisualizationFrame.layers.forEach { layer ->
+                if (!layer.settings.enabled) {
+                    return@forEach
+                }
 
-            when (layer) {
-                is Layer.PointLayer -> {
-                    val clickedLandmark = getClickedPointLandmark(layer, frameInteractionPixel) ?: return@forEach
-                    clickedLandmarkLayerState = clickedLandmark.layerState
-                    clickedLandmarkUID = clickedLandmark.uid
-                }
-                is Layer.LineLayer -> {
-                    val clickedLandmark = getClickedLineLandmark(layer, frameInteractionPixel) ?: return@forEach
-                    clickedLandmarkLayerState = clickedLandmark.layerState
-                    clickedLandmarkUID = clickedLandmark.uid
-                }
-                is Layer.PlanesLayer -> {
-                    clickedLandmarkUID =
-                        getClickedPlaneUID(layer, frameInteractionPixel, true) ?: return@forEach
-                    clickedLandmarkLayerState = layer.layerState
+                when (layer) {
+                    is Layer.PointLayer -> {
+                        val clickedLandmark = getClickedPointLandmark(layer, frameInteractionPixel) ?: return@forEach
+                        clickedLandmarkLayerState = clickedLandmark.layerState
+                        clickedLandmarkUID = clickedLandmark.uid
+                        return@clickHandler
+                    }
+
+                    is Layer.LineLayer -> {
+                        val clickedLandmark = getClickedLineLandmark(layer, frameInteractionPixel) ?: return@forEach
+                        clickedLandmarkLayerState = clickedLandmark.layerState
+                        clickedLandmarkUID = clickedLandmark.uid
+                        return@clickHandler
+                    }
+
+                    is Layer.PlanesLayer -> {
+                        clickedLandmarkUID =
+                            getClickedPlaneUID(layer, frameInteractionPixel, true) ?: return@forEach
+                        clickedLandmarkLayerState = layer.layerState
+                        return@clickHandler
+                    }
                 }
             }
         }
 
         if (clickedLandmarkLayerState == null) {
-            interactingVisualizationFrame.layers.filterIsInstance<Layer.PlanesLayer>().asReversed().forEach { layer ->
-                if (!layer.settings.enabled) {
-                    return@forEach
-                }
+            run clickHandler@{
+                interactingVisualizationFrame.layers.filterIsInstance<Layer.PlanesLayer>().asReversed()
+                    .forEach { layer ->
+                        if (!layer.settings.enabled) {
+                            return@forEach
+                        }
 
-                clickedLandmarkUID =
-                    getClickedPlaneUID(layer, frameInteractionPixel, false) ?: return@forEach
-                clickedLandmarkLayerState = layer.layerState
+                        clickedLandmarkUID =
+                            getClickedPlaneUID(layer, frameInteractionPixel, false) ?: return@forEach
+                        clickedLandmarkLayerState = layer.layerState
+                        return@clickHandler
+                    }
             }
         }
 
