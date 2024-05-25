@@ -22,6 +22,7 @@ import solve.rendering.engine.utils.times
 import solve.rendering.engine.utils.toFloatVector
 import solve.rendering.engine.utils.toIntVector
 import solve.scene.controller.SceneController
+import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.LayerState
 import solve.scene.model.Point
@@ -209,56 +210,38 @@ class SceneCanvas : OpenGLCanvas() {
         var clickedLandmarkUID = 0L
 
         interactingVisualizationFrame.layers.forEach { layer ->
+            if (!layer.settings.enabled) {
+                return@forEach
+            }
+
             when (layer) {
                 is Layer.PointLayer -> {
-                    val pointLandmarks = layer.getLandmarks()
-                    val landmarkIndex =
-                        MouseInputHandler.indexOfClickedPointLandmark(
-                            pointLandmarks,
-                            frameInteractionPixel,
-                            layer.settings.selectedRadius.toFloat() / window.camera.zoom
-                        )
-
-                    if (landmarkIndex == -1) {
-                        return@forEach
-                    }
-
-                    val clickedLandmark = pointLandmarks[landmarkIndex]
+                    val clickedLandmark = getClickedPointLandmark(layer, frameInteractionPixel) ?: return@forEach
                     clickedLandmarkLayerState = clickedLandmark.layerState
                     clickedLandmarkUID = clickedLandmark.uid
                 }
                 is Layer.LineLayer -> {
-                    val lineLandmarks = layer.getLandmarks()
-                    val landmarkIndex =
-                        MouseInputHandler.indexOfClickedLineLandmark(
-                            lineLandmarks,
-                            frameInteractionPixel,
-                            layer.settings.selectedWidth.toFloat() / window.camera.zoom
-                        )
-
-                    if (landmarkIndex == -1) {
-                        return@forEach
-                    }
-
-                    val clickedLandmark = lineLandmarks[landmarkIndex]
+                    val clickedLandmark = getClickedLineLandmark(layer, frameInteractionPixel) ?: return@forEach
                     clickedLandmarkLayerState = clickedLandmark.layerState
                     clickedLandmarkUID = clickedLandmark.uid
                 }
                 is Layer.PlanesLayer -> {
-                    val framePlaneUIDs = ImagePlanesParser.extractUIDs(layer.filePath.toString())
-                    val clickedPixelIntegerColor = ImagePlanesParser.getPixelColor(
-                        layer.filePath.toString(),
-                        Point(frameInteractionPixel.x.toShort(), frameInteractionPixel.y.toShort())
-                    )?.toLong() ?: return@forEach
-
-                    // The integer pixel color is equal to UID of the corresponding plane.
-                    if (!framePlaneUIDs.contains(clickedPixelIntegerColor)) {
-                        return@forEach
-                    }
-
+                    clickedLandmarkUID =
+                        getClickedPlaneUID(layer, frameInteractionPixel, true) ?: return@forEach
                     clickedLandmarkLayerState = layer.layerState
-                    clickedLandmarkUID = clickedPixelIntegerColor
                 }
+            }
+        }
+
+        if (clickedLandmarkLayerState == null) {
+            interactingVisualizationFrame.layers.filterIsInstance<Layer.PlanesLayer>().asReversed().forEach { layer ->
+                if (!layer.settings.enabled) {
+                    return@forEach
+                }
+
+                clickedLandmarkUID =
+                    getClickedPlaneUID(layer, frameInteractionPixel, false) ?: return@forEach
+                clickedLandmarkLayerState = layer.layerState
             }
         }
 
@@ -269,6 +252,61 @@ class SceneCanvas : OpenGLCanvas() {
         } else {
             selectedLandmarkLayerState.selectLandmark(clickedLandmarkUID)
         }
+    }
+
+    private fun getClickedPointLandmark(layer: Layer.PointLayer, frameInteractionPixel: Vector2i): Landmark.Keypoint? {
+        val pointLandmarks = layer.getLandmarks()
+        val landmarkIndex =
+            MouseInputHandler.indexOfClickedPointLandmark(
+                pointLandmarks,
+                frameInteractionPixel,
+                layer.settings.selectedRadius.toFloat() / window.camera.zoom
+            )
+
+        if (landmarkIndex == -1) {
+            return null
+        }
+
+        return pointLandmarks[landmarkIndex]
+    }
+
+    private fun getClickedLineLandmark(layer: Layer.LineLayer, frameInteractionPixel: Vector2i): Landmark.Line? {
+        val lineLandmarks = layer.getLandmarks()
+        val landmarkIndex =
+            MouseInputHandler.indexOfClickedLineLandmark(
+                lineLandmarks,
+                frameInteractionPixel,
+                layer.settings.selectedWidth.toFloat() / window.camera.zoom
+            )
+
+        if (landmarkIndex == -1) {
+            return null
+        }
+
+        return lineLandmarks[landmarkIndex]
+    }
+
+    private fun getClickedPlaneUID(
+        layer: Layer.PlanesLayer,
+        frameInteractionPixel: Vector2i,
+        ignoreSelectedPlanes: Boolean
+    ): Long? {
+        val framePlaneUIDs = ImagePlanesParser.extractUIDs(layer.filePath.toString())
+        val clickedPixelIntegerColor = ImagePlanesParser.getPixelColor(
+            layer.filePath.toString(),
+            Point(frameInteractionPixel.x.toShort(), frameInteractionPixel.y.toShort())
+        )?.toLong() ?: return null
+
+        if (ignoreSelectedPlanes && layer.layerState.selectedLandmarksUIDs.contains(clickedPixelIntegerColor)) {
+            return null
+        }
+
+        // The integer pixel color is equal to UID of the corresponding plane.
+        if (!framePlaneUIDs.contains(clickedPixelIntegerColor)) {
+            return null
+        }
+
+        return clickedPixelIntegerColor
     }
 
     private fun checkRenderersInitialization() {
