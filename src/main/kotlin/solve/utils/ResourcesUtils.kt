@@ -62,7 +62,7 @@ fun getResourceAbsolutePath(resourcesPath: String): String? {
         return null
     }
 
-    return resourceAbsolutePath.substring(1..resourceAbsolutePath.lastIndex)
+    return resourceAbsolutePath
 }
 
 private fun getResource(resourcesPath: String) = Any::class::class.java.getResource("/$resourcesPath")

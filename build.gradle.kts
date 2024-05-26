@@ -104,8 +104,8 @@ dependencies {
     testImplementation("org.testfx:openjfx-monocle:$testfxMonocleVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
 
-    implementation("com.github.husker-dev.openglfx:core:$openglfxVersion")
-    implementation("com.github.husker-dev.openglfx:lwjgl:$openglfxVersion")
+    implementation("com.huskerdev:openglfx:$openglfxVersion")
+    implementation("com.huskerdev:openglfx-lwjgl:$openglfxVersion")
     implementation(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
     implementation("org.lwjgl:lwjgl:$lwjglVersion")
     implementation("org.lwjgl:lwjgl-assimp:$lwjglVersion")

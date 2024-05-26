@@ -141,7 +141,7 @@ internal class ImagePlanesParserTests {
                     val chosenRGBColor = if (unpaintedColors.isEmpty()) {
                         usedColors.random()
                     } else {
-                        unpaintedColors.removeFirst()
+                        unpaintedColors.removeAt(0)
                     }
                     val chosenColor = getColorByIntRGB(chosenRGBColor)
 

@@ -1,10 +1,10 @@
 package solve.rendering.canvas
 
-import com.huskerdev.openglfx.GLCanvasAnimator
-import com.huskerdev.openglfx.events.GLDisposeEvent
-import com.huskerdev.openglfx.events.GLInitializeEvent
-import com.huskerdev.openglfx.events.GLRenderEvent
-import com.huskerdev.openglfx.events.GLReshapeEvent
+import com.huskerdev.openglfx.canvas.GLCanvasAnimator
+import com.huskerdev.openglfx.canvas.events.GLDisposeEvent
+import com.huskerdev.openglfx.canvas.events.GLInitializeEvent
+import com.huskerdev.openglfx.canvas.events.GLRenderEvent
+import com.huskerdev.openglfx.canvas.events.GLReshapeEvent
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor
 import org.joml.Vector2i
 import org.lwjgl.opengl.GL.createCapabilities
@@ -28,10 +28,10 @@ import solve.rendering.engine.Window
 import solve.rendering.engine.utils.minus
 import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.toFloatVector
-import com.huskerdev.openglfx.OpenGLCanvas as OpenGLFXCanvas
+import com.huskerdev.openglfx.canvas.GLCanvas as OpenGLFXCanvas
 
 abstract class OpenGLCanvas {
-    val canvas: OpenGLFXCanvas = OpenGLFXCanvas.create(LWJGLExecutor.LWJGL_MODULE)
+    val canvas: OpenGLFXCanvas = OpenGLFXCanvas(LWJGLExecutor.LWJGL_MODULE, flipY = true)
 
     protected lateinit var window: Window
 

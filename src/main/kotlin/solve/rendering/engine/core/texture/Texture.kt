@@ -1,8 +1,8 @@
 package solve.rendering.engine.core.texture
 
-import com.huskerdev.openglfx.core.GL_NEAREST
 import org.joml.Vector2f
 import org.lwjgl.opengl.GL11.GL_LINEAR
+import org.lwjgl.opengl.GL11.GL_NEAREST
 import org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER
 import org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER
 import org.lwjgl.opengl.GL11.glBindTexture
