@@ -105,6 +105,8 @@ class SceneView : View() {
         }
         root.setOnScroll { event ->
             val scrollDelta = event.deltaY
+            if (scrollDelta == 0.0)
+                return@setOnScroll
             if (scrollDelta > 0) {
                 controller.increaseScale()
             } else {
