@@ -1,6 +1,7 @@
 package solve.rendering.engine.core.texture
 
 import org.joml.Vector2f
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_LINEAR
 import org.lwjgl.opengl.GL11.GL_NEAREST
 import org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER
@@ -39,10 +40,12 @@ abstract class Texture(private val filterType: TextureFilterType = TextureFilter
 
     fun bind() {
         glBindTexture(textureOpenGLType, textureID)
+        println("bind ${GL11.glGetError()}")
     }
 
     fun unbind() {
         glBindTexture(textureOpenGLType, 0)
+        println("unbind ${GL11.glGetError()}")
     }
 
     fun bindToSlot(unit: Int) {
@@ -52,11 +55,14 @@ abstract class Texture(private val filterType: TextureFilterType = TextureFilter
         }
 
         glActiveTexture(GL_TEXTURE0 + unit)
+        println("bindToSlot ${GL11.glGetError()}")
         glBindTexture(textureOpenGLType, textureID)
+        println("bindToSlot ${GL11.glGetError()}")
     }
 
     fun delete() {
         glDeleteTextures(textureID)
+        println("delete ${GL11.glGetError()}")
     }
 
     protected fun initialize() {
@@ -64,6 +70,7 @@ abstract class Texture(private val filterType: TextureFilterType = TextureFilter
         initializeTexture()
         initializeTextureFilterParams()
         initializeTextureParams()
+        println("initialize ${GL11.glGetError()}")
     }
 
     override fun equals(other: Any?): Boolean {

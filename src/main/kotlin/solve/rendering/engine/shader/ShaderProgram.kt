@@ -10,6 +10,7 @@ import org.joml.Vector3i
 import org.joml.Vector4f
 import org.joml.Vector4i
 import org.lwjgl.BufferUtils
+import org.lwjgl.opengl.GL11.glGetError
 import org.lwjgl.opengl.GL20.GL_COMPILE_STATUS
 import org.lwjgl.opengl.GL20.GL_FALSE
 import org.lwjgl.opengl.GL20.GL_INFO_LOG_LENGTH
@@ -69,6 +70,7 @@ class ShaderProgram {
 
     fun link() {
         glLinkProgram(shaderProgramID)
+        println("link ${glGetError()}")
 
         val linkStatus = glGetProgrami(shaderProgramID, GL_LINK_STATUS)
         if (linkStatus == GL_FALSE) {
@@ -91,6 +93,7 @@ class ShaderProgram {
         }
 
         glUseProgram(shaderProgramID)
+        println("use ${glGetError()}")
         isUsed = true
     }
 
@@ -100,6 +103,7 @@ class ShaderProgram {
         }
 
         glUseProgram(GL_FALSE)
+        println("detach ${glGetError()}")
         isUsed = false
     }
 
@@ -107,17 +111,20 @@ class ShaderProgram {
         detach()
         if (shaderProgramID != GL_FALSE) {
             glDeleteProgram(shaderProgramID)
+            println("delete ${glGetError()}")
         }
     }
 
     fun uploadInt(variableName: String, value: Int) {
         val variableLocation = getVariableLocationWithUse(variableName)
         glUniform1i(variableLocation, value)
+        println("uploadInt ${glGetError()}")
     }
 
     fun uploadFloat(variableName: String, value: Float) {
         val variableLocation = getVariableLocationWithUse(variableName)
         glUniform1f(variableLocation, value)
+        println("uploadFloat ${glGetError()}")
     }
 
     fun uploadVector2f(variableName: String, vector: Vector2f) {

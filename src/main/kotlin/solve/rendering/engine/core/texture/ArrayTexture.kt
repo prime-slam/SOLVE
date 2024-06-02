@@ -1,5 +1,6 @@
 package solve.rendering.engine.core.texture
 
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S
 import org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T
 import org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE
@@ -32,6 +33,7 @@ class ArrayTexture(
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
         glGenerateMipmap(GL_TEXTURE_2D_ARRAY)
+        println("initializeTextureParams ${GL11.glGetError()}")
     }
 
     fun uploadTexture(textureData: Texture2DData, layerIndex: Int) {
@@ -53,6 +55,7 @@ class ArrayTexture(
             GL_UNSIGNED_BYTE,
             textureData.data
         )
+        println("uploadTexture ${GL11.glGetError()}")
     }
 
     override fun initializeTexture() {
@@ -68,5 +71,6 @@ class ArrayTexture(
             GL_UNSIGNED_BYTE,
             null as ByteBuffer?
         )
+        println("initializeTexture ${GL11.glGetError()}")
     }
 }

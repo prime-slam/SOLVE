@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector2i
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL13.GL_TEXTURE0
 import org.lwjgl.opengl.GL13.glActiveTexture
 import solve.constants.ShadersFrameFragmentPath
@@ -103,6 +104,7 @@ class FramesRenderer(
         shaderProgram.uploadFloat(TexturesRatioUniformName, framesRatio)
         shaderProgram.uploadVector2f(CameraPositionUniformName, getScreenTopLeftGridCellPosition().toFloatVector())
         shaderProgram.uploadFloat(FramesSpacingUniformName, FramesSpacing)
+        println("uploadUniforms ${GL11.glGetError()}")
     }
 
     override fun createNewBatch(zIndex: Int) =
@@ -115,6 +117,7 @@ class FramesRenderer(
         }
 
         glActiveTexture(GL_TEXTURE0)
+        println("updateBatchesData ${GL11.glGetError()}")
         bufferFramesArrayTexture?.bind()
     }
 
