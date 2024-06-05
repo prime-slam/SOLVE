@@ -190,7 +190,7 @@ open class RenderBatch(
     }
 
     companion object {
-        private const val MaxTexturesNumber = 7
+        const val MaxTexturesNumber = 7
 
         private val batchComparator = Comparator.comparingInt<RenderBatch> { it.zIndex }
     }
