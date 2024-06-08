@@ -24,7 +24,6 @@ class SceneView : View() {
     private var mouseScreenPoint = Vector2i()
 
     private var wasMouseDragging = false
-    private var screen = Screen.getPrimary()
 
     override val root = canvas.canvas
 
@@ -41,6 +40,7 @@ class SceneView : View() {
     }
 
     private fun extrudeEventMousePosition(event: MouseEvent) : Vector2i {
+        val screen = Screen.getPrimary()
         return Vector2i(
             (event.x * screen.outputScaleX).toInt(),
             (event.y * screen.outputScaleY).toInt()
