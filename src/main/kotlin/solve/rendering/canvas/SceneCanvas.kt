@@ -41,6 +41,10 @@ import solve.utils.structures.DoublePoint
 import tornadofx.*
 import solve.rendering.engine.scene.Scene as EngineScene
 
+/**
+ * Aggregates logic related to scene control.
+ * Provides interface for managing frames and changing visualization settings.
+ */
 class SceneCanvas : OpenGLCanvas() {
     private var sceneController: SceneController? = null
     private var engineScene: EngineScene? = null

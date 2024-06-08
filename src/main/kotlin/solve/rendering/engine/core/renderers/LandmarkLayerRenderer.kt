@@ -8,6 +8,10 @@ import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.Scene
 
+/**
+ * The base class for all landmarks renderers.
+ * Encapsulates logic to provide virtualization at the data layer.
+ */
 abstract class LandmarkLayerRenderer(
     window: Window,
     protected val getScene: () -> Scene?

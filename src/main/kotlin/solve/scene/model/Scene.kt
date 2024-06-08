@@ -9,6 +9,7 @@ import solve.utils.structures.Size as DoubleSize
  *
  * @param frames images with related landmarks selected in the catalog {@link CatalogueController}.
  * @param layerSettings information about layers in the project, used to determine current order of a layer.
+ * @param layerStates stores current layers states.
  */
 class Scene(
     val frames: List<VisualizationFrame>,

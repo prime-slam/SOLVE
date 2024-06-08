@@ -22,6 +22,13 @@ import solve.rendering.engine.core.texture.Texture
 import solve.rendering.engine.shader.ShaderAttributeType
 import solve.rendering.engine.utils.toList
 
+/**
+ * Used to draw similar objects in a single draw call.
+ * @param maxBatchSize maximum allowed number of the objects in the batch.
+ * @param zIndex depth index of the batch.
+ * @param primitiveType used to determine the type of the drawing primitives in EBO.
+ * @param attributes used to specify the attributes of each vertex.
+ */
 open class RenderBatch(
     private val maxBatchSize: Int,
     val zIndex: Int,
@@ -58,25 +65,30 @@ open class RenderBatch(
         textures.clear()
     }
 
+    // Compares batches according to their depth.
     override fun compareTo(other: RenderBatch): Int = batchComparator.compare(this, other)
 
+    // Binds vertices data, attributes data and textures before the rendering.
     fun bind() {
         glBindVertexArray(vaoID)
         attributes.forEachIndexed { index, _ -> glEnableVertexAttribArray(index) }
         textures.forEachIndexed { index, texture -> texture.bindToSlot(index + 1) }
     }
 
+    // Unbinds vertices data, attributes data and textures after the rendering.
     fun unbind() {
         attributes.forEachIndexed { index, _ -> glDisableVertexAttribArray(index) }
         textures.forEach { texture -> texture.unbind() }
         glBindVertexArray(0)
     }
 
+    // Cleans the vertices data buffer.
     fun rebuffer() {
         glBindBuffer(GL_ARRAY_BUFFER, vboID)
         glBufferSubData(GL_ARRAY_BUFFER, 0, verticesDataBuffer)
     }
 
+    // Deletes the batch buffers.
     fun deleteBuffers() {
         glDeleteBuffers(vboID)
         glDeleteBuffers(eboID)
@@ -150,6 +162,7 @@ open class RenderBatch(
         }
     }
 
+    // Used to generate vertex indices to specify an order of their drawing.
     private fun generateElementsIndices(): IntArray {
         val elementsBuffer = IntArray(maxBatchSize * primitiveType.drawingOrderElementsNumber)
         for (i in 0 until maxBatchSize) {

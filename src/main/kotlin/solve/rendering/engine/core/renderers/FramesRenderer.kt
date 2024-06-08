@@ -33,6 +33,10 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * Used to draw the frames.
+ * Encapsulates logic to provide virtualization at the data layer.*
+ */
 class FramesRenderer(
     window: Window
 ) : Renderer(window) {
@@ -165,6 +169,7 @@ class FramesRenderer(
         }
     }
 
+    // Updates the buffers with actual frames textures.
     private fun updateBuffersTextures() {
         val cameraGridCellPosition = getScreenTopLeftGridCellPosition()
         if (cameraGridCellPosition != cameraLastGridCellPosition) {
@@ -173,6 +178,7 @@ class FramesRenderer(
         cameraLastGridCellPosition = cameraGridCellPosition
     }
 
+    // Defines textures that became visible in the last draw call and uploads them to the buffers.
     private fun loadNewTexturesToBuffers(cameraGridCellPosition: Vector2i) {
         val cameraPosition = Vector2i(cameraGridCellPosition)
         cameraPosition.x.coerceIn(0 until gridWidth)
@@ -226,6 +232,7 @@ class FramesRenderer(
         return framesRect
     }
 
+    // Uploads the rect of frames (that was taken from frames selection) to the buffers.
     private fun loadRectFramesToBuffers(framesRect: IntRect) {
         val rectFrames = getFramesAtRect(framesRect)
 
@@ -250,6 +257,7 @@ class FramesRenderer(
         }
     }
 
+    // Returns the integer position of the frame cell located in the top-left corner of the screen.
     private fun getScreenTopLeftGridCellPosition(): Vector2i {
         val cameraGridCellPosition = getCameraCellPosition()
         return (cameraGridCellPosition - Vector2f(buffersSize) / 2f).toIntVector()

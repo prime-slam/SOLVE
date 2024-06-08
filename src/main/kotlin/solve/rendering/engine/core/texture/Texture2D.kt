@@ -11,6 +11,9 @@ import org.lwjgl.stb.STBImage.stbi_image_free
 import org.lwjgl.stb.STBImage.stbi_load
 import org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load
 
+/**
+ * Used to store a default 2D texture.
+ */
 class Texture2D(
     private val filePath: String,
     filterType: TextureFilterType = TextureFilterType.Smoothed

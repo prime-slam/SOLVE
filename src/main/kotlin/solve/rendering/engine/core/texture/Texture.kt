@@ -17,6 +17,10 @@ enum class TextureFilterType(val openGLParamValue: Int) {
     Smoothed(GL_LINEAR)
 }
 
+/**
+ * The base class for all textures.
+ * Provides an interface for creating, binding and deleting.
+ */
 abstract class Texture(private val filterType: TextureFilterType = TextureFilterType.Smoothed) {
     protected abstract val textureOpenGLType: Int
 

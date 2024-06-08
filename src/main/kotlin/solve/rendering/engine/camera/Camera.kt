@@ -7,6 +7,10 @@ import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.times
 import solve.rendering.engine.utils.toFloatVector
 
+/**
+ * Used to move around the scene and scale it.
+ * Provides methods for calculating projection matrices that are used in shaders.
+ */
 class Camera(var position: Vector2f = Vector2f(), zoom: Float = 1f) {
     var zoom: Float = zoom
         private set(value) {

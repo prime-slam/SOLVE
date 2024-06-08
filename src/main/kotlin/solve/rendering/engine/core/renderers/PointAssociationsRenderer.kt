@@ -18,6 +18,9 @@ import solve.rendering.engine.utils.toVector2i
 import solve.scene.view.association.AssociationManager
 import kotlin.math.min
 
+/**
+ * Used to draw points associations.
+ */
 class PointAssociationsRenderer(
     window: Window,
     private val associationManager: AssociationManager
