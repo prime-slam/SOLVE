@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import solve.rendering.engine.utils.pointToSegmentDistance
 import solve.rendering.engine.utils.pointToSegmentDistanceSquared
-import kotlin.math.sqrt
 
 internal class CalculationUtilsTests {
     @Test
