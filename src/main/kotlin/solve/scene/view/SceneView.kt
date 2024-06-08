@@ -39,7 +39,7 @@ class SceneView : View() {
         addBindings()
     }
 
-    private fun extrudeEventMousePosition(event: MouseEvent) : Vector2i {
+    private fun extrudeEventMousePosition(event: MouseEvent): Vector2i {
         val screen = Screen.getPrimary()
         return Vector2i(
             (event.x * screen.outputScaleX).toInt(),
