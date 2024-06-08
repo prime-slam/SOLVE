@@ -45,6 +45,9 @@ import org.lwjgl.opengl.GL20.glValidateProgram
 import solve.rendering.engine.shader.ShaderType.Companion.getShaderTypeID
 import solve.utils.readResourcesFileText
 
+/**
+ * Used to create, link and manage shaders.
+ */
 class ShaderProgram {
     private val shaderProgramID: Int = glCreateProgram()
 

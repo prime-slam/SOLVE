@@ -30,6 +30,9 @@ import solve.rendering.engine.utils.plus
 import solve.rendering.engine.utils.toFloatVector
 import com.huskerdev.openglfx.canvas.GLCanvas as OpenGLFXCanvas
 
+/**
+ * Encapsulates initialization logic of the OpenGLFX library component.
+ */
 abstract class OpenGLCanvas {
     val canvas: OpenGLFXCanvas = OpenGLFXCanvas(LWJGLExecutor.LWJGL_MODULE, flipY = true)
 

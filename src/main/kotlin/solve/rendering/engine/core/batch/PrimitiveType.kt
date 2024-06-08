@@ -4,6 +4,9 @@ import org.lwjgl.opengl.GL11.GL_LINES
 import org.lwjgl.opengl.GL11.GL_POINTS
 import org.lwjgl.opengl.GL11.GL_TRIANGLES
 
+/**
+ * Used to draw with EBO in OpenGL.
+ */
 enum class PrimitiveType(
     val verticesNumber: Int,
     val openGLPrimitive: Int,

@@ -14,6 +14,9 @@ import solve.scene.model.Scene
 import solve.scene.model.VisualizationFrame
 import java.util.concurrent.CopyOnWriteArrayList
 
+/**
+ * Aggregates all renderers of the application scene.
+ */
 class Scene(
     val framesRenderer: FramesRenderer,
     val pointAssociationsRenderer: PointAssociationsRenderer,

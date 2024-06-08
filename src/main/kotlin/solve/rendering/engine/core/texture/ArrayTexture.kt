@@ -11,6 +11,9 @@ import org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY
 import org.lwjgl.opengl.GL30.glGenerateMipmap
 import java.nio.ByteBuffer
 
+/**
+ * Used to store a large number of textures of the same size.
+ */
 class ArrayTexture(
     width: Int,
     height: Int,

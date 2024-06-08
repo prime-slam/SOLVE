@@ -14,6 +14,10 @@ import solve.scene.model.VisualizationFrame
 import solve.utils.ceilToInt
 import kotlin.math.min
 
+/**
+ * The base class for all renderers.
+ * Provides methods for managing shaders and controlling the rendering process
+ */
 abstract class Renderer(protected val window: Window) : Comparable<Renderer> {
     protected abstract val maxBatchSize: Int
 
