@@ -19,6 +19,13 @@ internal class ColorTests {
         assertEquals(testColor, color)
     }
 
+    @Test
+    fun `Compares same colors`() {
+        val firstColor = Color(0.5f, 1f, 0.25f, 1f)
+        val secondColor = Color(0.5f, 1f, 0.25f, 1f)
+        assert(firstColor == secondColor)
+    }
+
     companion object {
         val testColor = Color(0.5f, 0.25f, 0.75f, 0.9f)
     }
