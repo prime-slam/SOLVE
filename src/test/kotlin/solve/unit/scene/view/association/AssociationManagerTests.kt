@@ -3,7 +3,6 @@ package solve.unit.scene.view.association
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import solve.scene.model.ColorManager
-import solve.scene.model.Landmark
 import solve.scene.model.Layer
 import solve.scene.model.LayerSettings
 import solve.scene.model.VisualizationFrame
@@ -16,9 +15,11 @@ internal class AssociationManagerTests {
         val associationManager = AssociationManager()
         associationManager.setFramesSelection(testFrames)
         associationManager.associate(0, 1)
-        assert(associationManager.associationConnections.any {
-            it.firstFrameIndex == 0 && it.secondFrameIndex == 1
-        })
+        assert(
+            associationManager.associationConnections.any {
+                it.firstFrameIndex == 0 && it.secondFrameIndex == 1
+            }
+        )
     }
 
     @Test
@@ -28,13 +29,15 @@ internal class AssociationManagerTests {
         associationManager.associate(0, 1)
         associationManager.associate(1, 2)
         associationManager.associate(2, 0)
-        assert(associationManager.associationConnections.any {
-            it.firstFrameIndex == 0 && it.secondFrameIndex == 1
-        } && associationManager.associationConnections.any {
-            it.firstFrameIndex == 1 && it.secondFrameIndex == 2
-        } && associationManager.associationConnections.any {
-            it.firstFrameIndex == 2 && it.secondFrameIndex == 0
-        })
+        assert(
+            associationManager.associationConnections.any {
+                it.firstFrameIndex == 0 && it.secondFrameIndex == 1
+            } && associationManager.associationConnections.any {
+                it.firstFrameIndex == 1 && it.secondFrameIndex == 2
+            } && associationManager.associationConnections.any {
+                it.firstFrameIndex == 2 && it.secondFrameIndex == 0
+            }
+        )
     }
 
     @Test
