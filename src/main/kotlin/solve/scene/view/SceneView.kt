@@ -3,6 +3,7 @@ package solve.scene.view
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
 import javafx.scene.input.MouseEvent
+import javafx.stage.Screen
 import org.joml.Vector2i
 import solve.rendering.canvas.SceneCanvas
 import solve.rendering.engine.core.input.MouseButton
@@ -23,6 +24,7 @@ class SceneView : View() {
     private var mouseScreenPoint = Vector2i()
 
     private var wasMouseDragging = false
+    private var screen = Screen.getPrimary()
 
     override val root = canvas.canvas
 
@@ -38,8 +40,12 @@ class SceneView : View() {
         addBindings()
     }
 
-    private fun extrudeEventMousePosition(event: MouseEvent) = Vector2i(event.x.toInt(), event.y.toInt())
-
+    private fun extrudeEventMousePosition(event: MouseEvent) : Vector2i {
+        return Vector2i(
+            (event.x * screen.outputScaleX).toInt(),
+            (event.y * screen.outputScaleY).toInt()
+        )
+    }
     private fun addBindings() {
         addSceneParamsBindings()
         addSceneFramesBindings()
