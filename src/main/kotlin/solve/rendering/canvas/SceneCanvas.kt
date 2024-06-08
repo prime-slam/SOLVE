@@ -4,6 +4,7 @@ import io.github.palexdev.materialfx.controls.MFXContextMenu
 import javafx.scene.Node
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
+import javafx.stage.Screen
 import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.parsers.planes.ImagePlanesParser
@@ -371,7 +372,7 @@ class SceneCanvas : OpenGLCanvas() {
             rowsNumber * framesSize.y + (rowsNumber - 1) * Renderer.getSpacingWidth(framesSize)
         )
         val framesSelectionScreenSize =
-            framesSelectionSize * window.camera.zoom / IdentityFramesSizeScale / window.camera.scaledZoom
+            framesSelectionSize * window.camera.zoom / scaledIdentityFramesSizeScale / window.camera.scaledZoom
 
         rightLowerCornerCameraPosition = framesSelectionScreenSize - leftUpperCornerCameraPosition
 
@@ -450,7 +451,7 @@ class SceneCanvas : OpenGLCanvas() {
             )
         }
         val getScreenScale = {
-            window.camera.zoom.toDouble() / IdentityFramesSizeScale
+            window.camera.zoom.toDouble() / scaledIdentityFramesSizeScale
         }
         val associationAdorner = AssociationAdorner(
             framesSize.x.toDouble(),
@@ -483,6 +484,9 @@ class SceneCanvas : OpenGLCanvas() {
 
     companion object {
         const val IdentityFramesSizeScale = 1.605f
+
+        val scaledIdentityFramesSizeScale: Float
+            get() = IdentityFramesSizeScale * Screen.getPrimary().outputScaleX.toFloat()
 
         private val landmarkInteractionMouseButton = MouseButton.Left
         private val contextMenuMouseButton = MouseButton.Right
