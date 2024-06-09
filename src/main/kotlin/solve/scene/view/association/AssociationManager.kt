@@ -7,7 +7,7 @@ class AssociationManager {
     private var framesSelection = listOf<VisualizationFrame>()
     private val _associationConnections = mutableListOf<AssociationConnection>()
     val associationConnections: List<AssociationConnection>
-        get() = _associationConnections
+        get() = _associationConnections.toList()
 
     fun setFramesSelection(framesSelection: List<VisualizationFrame>) {
         this.framesSelection = framesSelection

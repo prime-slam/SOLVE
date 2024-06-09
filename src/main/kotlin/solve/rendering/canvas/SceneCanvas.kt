@@ -46,10 +46,11 @@ import solve.rendering.engine.scene.Scene as EngineScene
  * Provides interface for managing frames and changing visualization settings.
  */
 class SceneCanvas : OpenGLCanvas() {
+    val displayScale: Float
+        get () = canvas.scene?.window?.renderScaleX?.toFloat() ?: 1f
+
     val scaledIdentityFramesSizeScale: Float
-        get() {
-            return IdentityFramesSizeScale * (canvas.scene?.window?.renderScaleX?.toFloat() ?: 1f)
-        }
+        get() = IdentityFramesSizeScale * displayScale
 
     private var sceneController: SceneController? = null
     private var engineScene: EngineScene? = null
@@ -168,8 +169,8 @@ class SceneCanvas : OpenGLCanvas() {
             val canvasScreenPosition = canvas.getScreenPosition()
             contextMenu.show(
                 canvas.scene.window,
-                canvasScreenPosition.x + screenPoint.x.toDouble(),
-                canvasScreenPosition.y + screenPoint.y.toDouble()
+                canvasScreenPosition.x + screenPoint.x.toDouble() / displayScale,
+                canvasScreenPosition.y + screenPoint.y.toDouble() / displayScale
             )
         }
     }
