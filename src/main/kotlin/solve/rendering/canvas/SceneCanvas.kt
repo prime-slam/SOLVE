@@ -378,7 +378,7 @@ class SceneCanvas : OpenGLCanvas() {
             rowsNumber * framesSize.y + (rowsNumber - 1) * Renderer.getSpacingWidth(framesSize)
         )
         val framesSelectionScreenSize =
-            framesSelectionSize * window.camera.zoom / scaledIdentityFramesSizeScale / window.camera.scaledZoom
+            framesSelectionSize * window.camera.zoom / IdentityFramesSizeScale / window.camera.scaledZoom
 
         rightLowerCornerCameraPosition = framesSelectionScreenSize - leftUpperCornerCameraPosition
 
