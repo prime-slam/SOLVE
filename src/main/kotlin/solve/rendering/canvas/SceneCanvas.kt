@@ -47,7 +47,7 @@ import solve.rendering.engine.scene.Scene as EngineScene
  */
 class SceneCanvas : OpenGLCanvas() {
     val displayScale: Float
-        get () = canvas.scene?.window?.renderScaleX?.toFloat() ?: 1f
+        get() = canvas.scene?.window?.renderScaleX?.toFloat() ?: 1f
 
     val scaledIdentityFramesSizeScale: Float
         get() = IdentityFramesSizeScale * displayScale
