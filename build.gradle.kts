@@ -75,9 +75,7 @@ application {
         "--add-opens", "javafx.graphics/javafx.scene.image=ALL-UNNAMED",
         "--add-exports", "javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
         "-Xms2g",
-        "-Xmx4g",
-        "-Dglass.win.uiScale=1.0",
-        "-Dsun.java2d.uiScale=1.0"
+        "-Xmx4g"
     )
 }
 

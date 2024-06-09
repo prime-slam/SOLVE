@@ -198,7 +198,7 @@ class SceneController : Controller() {
             max(
                 installedMinScale,
                 sceneWidthProperty.value / ((scene.frameSize.width + SceneView.framesMargin) * columnsNumber) *
-                    SceneCanvas.scaledIdentityFramesSizeScale
+                    (ServiceLocator.getService<SceneCanvas>()?.scaledIdentityFramesSizeScale ?: 1f)
             ),
             DefaultMaxScale
         )
