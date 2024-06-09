@@ -4,7 +4,6 @@ import io.github.palexdev.materialfx.controls.MFXContextMenu
 import javafx.scene.Node
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
-import javafx.stage.Screen
 import org.joml.Vector2f
 import org.joml.Vector2i
 import solve.parsers.planes.ImagePlanesParser
@@ -47,6 +46,11 @@ import solve.rendering.engine.scene.Scene as EngineScene
  * Provides interface for managing frames and changing visualization settings.
  */
 class SceneCanvas : OpenGLCanvas() {
+    val scaledIdentityFramesSizeScale: Float
+        get() {
+            return IdentityFramesSizeScale * (canvas.scene?.window?.renderScaleX?.toFloat() ?: 1f)
+        }
+
     private var sceneController: SceneController? = null
     private var engineScene: EngineScene? = null
 
@@ -83,6 +87,7 @@ class SceneCanvas : OpenGLCanvas() {
 
     init {
         initializeCanvasEvents()
+        ServiceLocator.registerService(this)
     }
 
     fun setNewScene(scene: Scene) {
@@ -484,9 +489,6 @@ class SceneCanvas : OpenGLCanvas() {
 
     companion object {
         const val IdentityFramesSizeScale = 1.605f
-
-        val scaledIdentityFramesSizeScale: Float
-            get() = IdentityFramesSizeScale * Screen.getPrimary().outputScaleX.toFloat()
 
         private val landmarkInteractionMouseButton = MouseButton.Left
         private val contextMenuMouseButton = MouseButton.Right
